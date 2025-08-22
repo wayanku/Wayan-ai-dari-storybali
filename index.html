@@ -1279,7 +1279,9 @@
         }
     }
     
-    // Fungsi baru untuk menangani pilihan tombol
+    // =================================================================================
+    // PERBAIKAN: Menambahkan pesan sistem saat peran AI diubah untuk memberikan feedback
+    // =================================================================================
     function selectChoice(settingName, value, element) {
         settings[settingName] = value;
         const parent = element.parentElement;
@@ -1289,6 +1291,21 @@
         if (settingName === 'aiRole') {
             const customRoleContainer = document.getElementById('customRoleContainer');
             customRoleContainer.classList.toggle('hidden', value !== 'kustom');
+            
+            // Menambahkan pesan sistem untuk konfirmasi perubahan peran
+            const roleNames = {
+                'umum': 'Asisten Umum',
+                'guru_jepang': 'Guru Bahasa Jepang',
+                'guru_matematika': 'Guru Matematika',
+                'dokter': 'Dokter Virtual',
+                'programmer': 'Programmer Senior',
+                'penerjemah': 'Penerjemah'
+            };
+
+            const friendlyRoleName = roleNames[value];
+            if (friendlyRoleName) {
+                 addSystemMessage(`Mode peran AI telah diubah menjadi: ${friendlyRoleName}.`);
+            }
         }
     }
 
