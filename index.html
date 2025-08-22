@@ -6,26 +6,23 @@
   <title>StoryBali - Mobile Chat</title>
   <meta name="Generator" content="Cocoa HTML Writer">
   <meta name="CocoaVersion" content="2299.77">
-  <!-- Viewport meta tag untuk responsivitas yang benar -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Viewport diubah untuk menangani safe area (home bar) di iOS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-    /* ATURAN GLOBAL: Memaksa semua elemen menjadi kotak */
     * {
         -webkit-tap-highlight-color: transparent;
-        border-radius: 0 !important;
     }
 
-    /* Pengaturan dasar untuk tampilan layar penuh */
     html, body {
         background: #ffffff !important;
         height: 100%;
         width: 100%;
         margin: 0;
         padding: 0;
-        overflow: hidden; /* Mencegah scrolling pada body */
+        overflow: hidden;
     }
 
     body {
@@ -33,10 +30,11 @@
         background: #f0f2f5 !important;
     }
 
+    /* PERBAIKAN: Menggunakan variabel --vh untuk tinggi yang benar di mobile */
     .chat-container {
         background: #ffffff;
-        height: 100vh; /* Mengisi seluruh tinggi layar */
-        width: 100vw;  /* Mengisi seluruh lebar layar */
+        height: calc(var(--vh, 1vh) * 100); /* Mengganti 100vh */
+        width: 100vw;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -45,62 +43,49 @@
     .chat-window {
         background: white;
         border: none;
-        box-shadow: none; /* Menghilangkan bayangan */
+        box-shadow: none;
         animation: slideInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        height: 100%; /* Mengisi penuh container */
-        width: 100%;  /* Mengisi penuh container */
+        height: 100%;
+        width: 100%;
         overflow: hidden;
         display: flex;
         flex-direction: column;
         position: relative;
+        border-radius: 0;
     }
 
     @keyframes slideInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Header Gradient & Shimmer */
     .header-gradient {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
         position: relative;
         overflow: hidden;
     }
-
     .header-gradient::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
+        content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
         background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent);
         animation: shimmer 3s infinite;
     }
-
     @keyframes shimmer {
         0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
         100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
     }
 
-    /* AI Avatar & Pulse */
     .ai-avatar {
         background: linear-gradient(135deg, #667eea, #764ba2);
-        animation: avatarPulse 2s infinite;
-        position: relative;
+        animation: avatarPulse 2s infinite; position: relative;
         border: 3px solid rgba(255, 255, 255, 0.4);
         box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+        border-radius: 9999px !important;
     }
     .ai-avatar::after {
         content: ''; position: absolute; inset: -2px;
         background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
-        z-index: -1; animation: rotate 4s linear infinite;
+        border-radius: inherit; z-index: -1;
+        animation: rotate 4s linear infinite;
     }
     @keyframes avatarPulse {
         0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
@@ -108,7 +93,6 @@
     }
     @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-    /* Message Bubbles */
     .message-bubble {
         animation: messageSlide 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         transform-origin: bottom left; margin-bottom: 1rem;
@@ -120,12 +104,14 @@
     }
     .ai-message {
         background: #e2e8f0; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        border: 1px solid rgba(102, 126, 234, 0.05); padding: 1rem;
-        max-width: 85%; position: relative;
+        border: 1px solid rgba(102, 126, 234, 0.05);
+        border-radius: 1.25rem; border-top-left-radius: 0.375rem;
+        padding: 1rem; max-width: 85%; position: relative;
     }
     .user-message {
         background: linear-gradient(135deg, #10b981, #059669);
         box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); color: white;
+        border-radius: 1.25rem; border-top-right-radius: 0.375rem;
         padding: 1rem; max-width: 85%;
     }
     .system-message-bubble {
@@ -134,13 +120,10 @@
     }
     .system-message {
         background-color: #e2e8f0; color: #4a5568; font-size: 0.75rem;
-        font-style: italic; padding: 0.25rem 0.75rem;
+        font-style: italic; padding: 0.25rem 0.75rem; border-radius: 9999px;
     }
 
-    /* Typing Indicator */
-    .typing-indicator {
-        display: none; align-items: center; margin-bottom: 1rem;
-    }
+    .typing-indicator { display: none; align-items: center; margin-bottom: 1rem; }
     .typing-indicator.show { display: flex; animation: fadeInBounce 0.5s ease-out; }
     @keyframes fadeInBounce {
         0% { opacity: 0; transform: translateY(10px) scale(0.8); }
@@ -148,7 +131,7 @@
         100% { opacity: 1; transform: translateY(0) scale(1); }
     }
     .dot {
-        width: 8px; height: 8px;
+        width: 8px; height: 8px; border-radius: 50%;
         background: linear-gradient(135deg, #667eea, #764ba2);
         animation: typing 1.4s infinite ease-in-out; margin: 0 2px;
     }
@@ -160,13 +143,18 @@
         40% { transform: scale(1.2) translateY(-8px); opacity: 1; }
     }
 
-    /* Input Area */
+    /* PERBAIKAN: Menambahkan padding bawah untuk home bar di ponsel modern */
     .input-area {
-        background: white; border-top: 1px solid #e2e8f0; padding: 1rem;
+        background: white; border-top: 1px solid #e2e8f0;
+        padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom)) 1rem;
+        border-top-left-radius: 1.5rem;
+        border-top-right-radius: 1.5rem;
+        box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
     }
     .input-field {
         transition: all 0.3s ease; border: 2px solid #cbd5e1;
-        padding: 0.75rem 1rem; font-size: 0.95rem; background: #f8fafc;
+        border-radius: 9999px; padding: 0.75rem 1rem;
+        font-size: 0.95rem; background: #f8fafc;
     }
     .input-field:focus {
         border-color: #667eea;
@@ -176,27 +164,20 @@
         position: relative; overflow: hidden;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         background: linear-gradient(135deg, #667eea, #764ba2);
-        width: 3.25rem; height: 3.25rem;
+        border-radius: 9999px; width: 3.25rem; height: 3.25rem;
         box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
     }
     .send-button::before {
-        content: ''; position: absolute; top: 0; left: -100%;
-        width: 100%; height: 100%;
+        content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
         background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
         transition: left 0.5s;
     }
     .send-button:hover::before, .send-button:active::before { left: 100%; }
     .send-button:active { transform: scale(0.9); }
 
-    /* Voice Wave */
-    .voice-wave {
-        display: none; align-items: center; gap: 4px; height: 24px;
-    }
+    .voice-wave { display: none; align-items: center; gap: 4px; height: 24px; }
     .voice-wave.active { display: flex; }
-    .wave-bar {
-        width: 4px; height: 100%; background: #667eea;
-        animation: waveAnimation 1s infinite ease-in-out;
-    }
+    .wave-bar { width: 4px; height: 100%; background: #667eea; border-radius: 2px; animation: waveAnimation 1s infinite ease-in-out; }
     .wave-bar:nth-child(2) { animation-delay: 0.1s; }
     .wave-bar:nth-child(3) { animation-delay: 0.2s; }
     .wave-bar:nth-child(4) { animation-delay: 0.3s; }
@@ -206,7 +187,6 @@
         20% { transform: scaleY(1); }
     }
 
-    /* Quick Actions */
     .quick-actions {
         display: flex; gap: 0.5rem; padding: 0.75rem 1rem;
         background: white; border-top: 1px solid #e2e8f0;
@@ -216,48 +196,53 @@
     .quick-actions::-webkit-scrollbar { display: none; }
     .quick-action-btn {
         flex-shrink: 0; padding: 0.5rem 1rem; background: #e0e7ff;
-        border: 1px solid #a7c0ff; font-size: 0.75rem; font-weight: 500;
-        color: #4f46e5; transition: all 0.2s ease-in-out;
+        border: 1px solid #a7c0ff; border-radius: 9999px; font-size: 0.75rem;
+        font-weight: 500; color: #4f46e5; transition: all 0.2s ease-in-out;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
     .quick-action-btn:hover { background: #c7d2fe; border-color: #6366f1; transform: translateY(-1px); }
     .quick-action-btn:active { background: #a5b4fc; transform: scale(0.98); }
 
-    /* Suggestion Buttons */
     .suggestion-btn {
-        background: #f0f2f5; border: 1px solid #cbd5e1; font-size: 0.7rem;
-        color: #4a5568; transition: all 0.2s ease-in-out; padding: 0.4rem 0.8rem;
+        background: #f0f2f5; border: 1px solid #cbd5e1;
+        border-radius: 9999px; font-size: 0.7rem; color: #4a5568;
+        transition: all 0.2s ease-in-out; padding: 0.4rem 0.8rem;
     }
     .suggestion-btn:hover, .suggestion-btn:active {
         background: #e2e8f0; border-color: #a0aec0; transform: translateY(-1px);
     }
 
-    /* Modals */
     .modal-overlay {
         background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px);
         transition: opacity 0.3s ease;
     }
     .modal-content {
         background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(25px);
-        border: 1px solid rgba(255, 255, 255, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 1.5rem;
         box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); transform: scale(0.9);
         transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
     }
-    #settingsModal .modal-content { background: #f7f8fc; padding: 0; overflow: hidden; }
+    #settingsModal .modal-content {
+        background: #f7f8fc; padding: 0; overflow: hidden;
+    }
     .modal-overlay.hidden { opacity: 0; pointer-events: none; }
     .modal-overlay:not(.hidden) .modal-content { opacity: 1; transform: scale(1); }
     .modal-close-btn {
         background: #ef4444; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
-        transition: all 0.2s ease-in-out;
+        transition: all 0.2s ease-in-out; border-radius: 9999px !important;
     }
-    #settingsModal .modal-close-btn { background: #e2e8f0; box-shadow: none; color: #475569; }
+    #settingsModal .modal-close-btn {
+        background: #e2e8f0; box-shadow: none; color: #475569;
+    }
     #settingsModal .modal-close-btn:hover { background: #cbd5e1; transform: scale(1.05); }
     .modal-close-btn:hover { background: #dc2626; transform: scale(1.05); }
     .modal-close-btn:active { transform: scale(0.95); }
+
     .profile-avatar-border {
         border: 4px solid;
         border-image: linear-gradient(135deg, #667eea, #764ba2, #f093fb) 1;
         animation: rotateBorder 4s linear infinite;
+        border-radius: 9999px !important;
     }
     @keyframes rotateBorder {
         0% { border-image-source: linear-gradient(135deg, #667eea, #764ba2, #f093fb); }
@@ -267,14 +252,13 @@
         100% { border-image-source: linear-gradient(135deg, #764ba2, #f093fb, #667eea); }
     }
     
-    /* NEW SETTINGS UI STYLES */
     .settings-tab { transition: all 0.3s ease; border-bottom: 2px solid transparent; }
     .settings-tab.active { color: #4f46e5; font-weight: 600; border-bottom-color: #4f46e5; }
     .settings-tab-content { display: none; animation: fadeIn 0.5s ease; }
     .settings-tab-content.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .settings-card {
-        background: white; padding: 1rem;
+        background: white; border-radius: 1rem; padding: 1rem;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); transition: all 0.3s ease;
     }
     .settings-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08); }
@@ -282,7 +266,7 @@
     .settings-item:last-child { border-bottom: none; }
     .settings-icon { width: 1.25rem; height: 1.25rem; color: #6366f1; }
     .settings-input, .settings-select {
-        background: #f8fafc; border: 1px solid #e2e8f0;
+        border-radius: 0.5rem; background: #f8fafc; border: 1px solid #e2e8f0;
         padding: 0.5rem 0.75rem; font-size: 0.875rem;
         transition: all 0.2s ease-in-out; width: 55%;
     }
@@ -291,59 +275,54 @@
         box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); outline: none;
     }
     .settings-btn-action {
-        width: 100%; display: flex; align-items: center;
-        justify-content: center; gap: 0.5rem; padding: 0.75rem;
-        font-weight: 500; transition: all 0.2s ease-in-out;
+        width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+        padding: 0.75rem; border-radius: 0.75rem; font-weight: 500;
+        transition: all 0.2s ease-in-out;
     }
     .settings-btn-action:hover { transform: translateY(-1px); }
     .settings-btn-action:active { transform: scale(0.98); }
-    .theme-option-new { padding: 0.5rem; border: 2px solid transparent; transition: all 0.2s ease-in-out; cursor: pointer; text-align: center; }
+    .theme-option-new {
+        border-radius: 0.75rem; padding: 0.5rem; border: 2px solid transparent;
+        transition: all 0.2s ease-in-out; cursor: pointer; text-align: center;
+    }
     .theme-option-new.active { border-color: #4f46e5; background-color: #eef2ff; }
-    .theme-swatch { width: 100%; height: 1.5rem; margin-bottom: 0.5rem; }
+    .theme-swatch { width: 100%; height: 1.5rem; border-radius: 0.5rem; margin-bottom: 0.5rem; }
     .toggle-new {
-        appearance: none; width: 44px; height: 24px;
+        appearance: none; width: 44px; height: 24px; border-radius: 12px;
         background-color: #cbd5e1; position: relative; cursor: pointer;
         transition: background-color 0.3s ease;
     }
     .toggle-new::before {
         content: ''; position: absolute; top: 3px; left: 3px;
-        width: 18px; height: 18px; background-color: white;
+        width: 18px; height: 18px; border-radius: 50%; background-color: white;
         transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
     .toggle-new:checked { background-color: #6366f1; }
     .toggle-new:checked::before { transform: translateX(20px); }
 
-    /* Mobile optimizations - Disederhanakan karena layout dasar sudah full-screen */
     @media (max-width: 768px) {
         .message-bubble { margin-bottom: 0.75rem; }
-        .ai-message, .user-message {
-            max-width: 90%;
-            padding: 0.8rem 1.2rem;
-        }
-        .input-field {
-            font-size: 1rem; /* Mencegah zoom otomatis di iOS */
-            padding: 0.6rem 1rem;
-        }
+        .ai-message, .user-message { max-width: 90%; padding: 0.8rem 1.2rem; }
+        .input-field { font-size: 1rem; padding: 0.6rem 1rem; }
         .send-button { width: 3rem; height: 3rem; }
         .quick-actions { padding: 0.6rem 0.8rem; }
         .quick-action-btn { padding: 0.4rem 0.8rem; font-size: 0.7rem; }
-        .modal-content { padding: 1.5rem; }
+        .modal-content { border-radius: 1rem; padding: 1.5rem; }
         #settingsModal .modal-content { padding: 0; }
     }
-
-    /* Scrollbar styling */
+    
     .chat-messages::-webkit-scrollbar { width: 8px; }
     .chat-messages::-webkit-scrollbar-track { background: transparent; }
     .chat-messages::-webkit-scrollbar-thumb {
-      background-color: rgba(0, 0, 0, 0.2);
+      background-color: rgba(0, 0, 0, 0.2); border-radius: 20px;
       border: 2px solid transparent; background-clip: content-box;
     }
     .chat-messages::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.3); }
-
   </style>
 </head>
 <body>
+<!-- Konten HTML lainnya tetap sama -->
 <div class="chat-container">
     <div class="chat-window flex flex-col">
         <!-- Header -->
@@ -354,7 +333,6 @@
                          onclick="showProfileModal()">
                         <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali"
                              class="w-full h-full object-cover">
-                        <div class="status-indicator"></div>
                     </div>
                     <div>
                         <h1 class="text-xl font-bold">Wayan AI</h1>
@@ -363,14 +341,14 @@
                 </div>
                 <div class="flex items-center space-x-2">
                     <button onclick="toggleVoiceMode()"
-                            class="w-10 h-10 bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95">
+                            class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
                         </svg>
                     </button>
                     <button onclick="toggleSettings()"
-                            class="w-10 h-10 bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95">
+                            class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -400,7 +378,7 @@
                         <!-- Suggestions will be generated here -->
                     </div>
                     <!-- Tombol Pembaca Jawaban AI & Copy -->
-                    <button onclick="readAiResponse(this, 'SGFsbyEgR3VlIFdheWFuIG5paCwgQUkgYXNzaXN0YW50IHlhbmcgc2lhcCBiYW50dSBqYXdhYiBwZXJ0YW55YW4ga2FtdS4gU2FudGFpIGFqYSwgdGFueWEgYXBhIGFqYSB5YW4nZyBrYW11IG1hdSB0YXUgeWEh')" class="absolute bottom-2 right-2 w-6 h-6 bg-gray-200 text-gray-600 flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90" title="Baca Jawaban">
+                    <button onclick="readAiResponse(this, 'SGFsbyEgR3VlIFdheWFuIG5paCwgQUkgYXNzaXN0YW50IHlhbmcgc2lhcCBiYW50dSBqYXdhYiBwZXJ0YW55YW4ga2FtdS4gU2FudGFpIGFqYSwgdGFueWEgYXBhIGFqYSB5YW4nZyBrYW11IG1hdSB0YXUgeWEh')" class="absolute bottom-2 right-2 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90" title="Baca Jawaban">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path>
                         </svg>
@@ -409,10 +387,10 @@
             </div>
             <!-- Typing Indicator -->
             <div id="typingIndicator" class="typing-indicator items-start space-x-3">
-                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <div class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
                     <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover">
                 </div>
-                <div class="ai-message p-4">
+                <div class="ai-message rounded-2xl rounded-tl-md p-4">
                     <div class="flex space-x-1">
                         <div class="dot"></div>
                         <div class="dot"></div>
@@ -422,10 +400,10 @@
             </div>
             <!-- Image Processing Indicator -->
             <div id="imageProcessingIndicator" class="typing-indicator items-start space-x-3">
-                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <div class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
                     <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover">
                 </div>
-                <div class="ai-message p-4">
+                <div class="ai-message rounded-2xl rounded-tl-md p-4">
                     <div class="flex space-x-1">
                         <div class="dot"></div>
                         <div class="dot"></div>
@@ -448,7 +426,7 @@
                     >
                     <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
                         <button onclick="triggerImageUpload()"
-                                class="text-gray-400 hover:text-blue-500 transition-colors p-1 transform hover:scale-110 active:scale-90"
+                                class="text-gray-400 hover:text-blue-500 transition-colors p-1 rounded-full transform hover:scale-110 active:scale-90"
                                 title="Upload gambar">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -479,19 +457,21 @@
             </div>
         </div>
     </div>
-    <!-- Image Preview Modal -->
+    
+    <!-- Modals (Profile, Settings, Image Preview) -->
+    <!-- ... Konten modal tidak berubah, jadi saya singkat di sini ... -->
     <div id="imagePreviewModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
         <div class="modal-content p-6 max-w-sm w-full"
              id="imagePreviewContent">
             <div class="text-center relative">
                 <button onclick="hideImagePreview()"
-                        class="absolute -top-2 -right-2 w-8 h-8 flex items-center justify-center shadow-lg modal-close-btn">
+                        class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn">
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
                 <div class="mb-4">
-                    <img id="previewImage" src="" alt="Preview" class="w-full h-auto max-h-48 object-cover mx-auto shadow-md">
+                    <img id="previewImage" src="" alt="Preview" class="w-full h-auto rounded-lg max-h-48 object-cover mx-auto shadow-md">
                     <p id="previewFileName" class="text-sm text-gray-600 mt-2"></p>
                 </div>
                 <div class="mb-4">
@@ -500,40 +480,39 @@
                     <textarea
                             id="imageQuestionInput"
                             placeholder="Contoh: Apa yang ada di gambar ini? Jelaskan detail yang kamu lihat..."
-                            class="w-full px-4 py-3 border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm settings-input"
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm settings-input"
                             rows="3"
                     ></textarea>
                 </div>
                 <div class="flex space-x-3">
                     <button onclick="hideImagePreview()"
-                            class="flex-1 bg-gray-500 text-white py-3 font-semibold text-sm settings-btn">
+                            class="flex-1 bg-gray-500 text-white py-3 rounded-xl font-semibold text-sm settings-btn">
                         Batal
                     </button>
                     <button onclick="sendImageWithQuestion()"
-                            class="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 font-semibold text-sm settings-btn">
+                            class="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-xl font-semibold text-sm settings-btn">
                         Kirim
                     </button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Profile Modal -->
     <div id="profileModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
         <div class="modal-content p-6 max-w-sm w-full"
              id="profileModalContent">
             <div class="text-center relative">
                 <button onclick="hideProfileModal()"
-                        class="absolute -top-2 -right-2 w-8 h-8 flex items-center justify-center shadow-lg modal-close-btn">
+                        class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn">
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
                 <div class="w-20 h-20 mx-auto mb-4 overflow-hidden profile-avatar-border shadow-lg">
                     <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover">
-                </div> <!-- Corrected alt text -->
+                </div>
                 <h2 class="text-xl font-bold text-gray-800 mb-2">Wayan AI</h2>
                 <p class="text-purple-600 font-semibold mb-4 text-sm">AI Assistant Dari Storybali</p>
-                <div class="text-gray-600 text-xs leading-relaxed mb-4 text-left bg-gray-50 p-3">
+                <div class="text-gray-600 text-xs leading-relaxed mb-4 text-left bg-gray-50 p-3 rounded-xl">
                     <p class="mb-2"><strong>Halo! Gue Wayan!</strong></p>
                     <p class="mb-2">Gue adalah AI assistant yang dibuat khusus untuk membantu kamu dengan gaya bahasa yang santai dan friendly.</p>
                     <p>Santai aja, tanya apa aja yang kamu mau!</p>
@@ -541,34 +520,27 @@
                 </div>
                 <div class="grid grid-cols-2 gap-2 text-xs">
                     <a href="https://www.instagram.com/sudiarsana_wayan?igsh=MXE4NHFvZzAyOXd6NQ%3D%3D&utm_source=qr" target="_blank"
-                       class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 py-2 settings-btn">
+                       class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 py-2 rounded-full settings-btn">
                         Instagram
                     </a>
                     <a href="https://wa.me/message/RNPBCG25N5V2A1" target="_blank"
-                       class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-2 settings-btn">
+                       class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-2 rounded-full settings-btn">
                         WhatsApp
                     </a>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- ================================================================= -->
-    <!-- START: UPDATED SETTINGS MODAL -->
-    <!-- ================================================================= -->
     <div id="settingsModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
         <div class="modal-content max-w-sm w-full max-h-[90vh] overflow-hidden flex flex-col" id="settingsModalContent">
-            <!-- Modal Header -->
             <div class="p-4 flex items-center justify-between flex-shrink-0 bg-white border-b border-gray-200">
                 <h3 class="text-lg font-bold text-gray-800">Pengaturan</h3>
-                <button onclick="toggleSettings()" class="w-8 h-8 flex items-center justify-center shadow-lg modal-close-btn">
+                <button onclick="toggleSettings()" class="w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
-
-            <!-- Tab Navigation -->
             <div class="flex-shrink-0 bg-white border-b border-gray-200">
                 <nav class="flex justify-around text-sm text-gray-600">
                     <button onclick="switchSettingsTab('general')" class="settings-tab active flex-1 py-3 px-2 text-center">Umum</button>
@@ -576,10 +548,7 @@
                     <button onclick="switchSettingsTab('advanced')" class="settings-tab flex-1 py-3 px-2 text-center">Lanjutan</button>
                 </nav>
             </div>
-
-            <!-- Tab Content -->
             <div class="flex-1 overflow-y-auto p-4 space-y-4">
-                <!-- General Tab -->
                 <div id="tab-general" class="settings-tab-content active space-y-4">
                     <div class="settings-card">
                         <div class="settings-item">
@@ -633,7 +602,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Appearance Tab -->
                 <div id="tab-appearance" class="settings-tab-content space-y-4">
                     <div class="settings-card">
                         <div class="p-2">
@@ -700,7 +668,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Advanced Tab -->
                 <div id="tab-advanced" class="settings-tab-content space-y-4">
                      <div class="settings-card">
                         <div class="settings-item">
@@ -751,19 +718,25 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Modal Footer -->
             <div class="p-3 bg-white border-t border-gray-200 flex-shrink-0 text-center">
                 <p class="text-xs text-gray-500">StoryBali v2.2 | © 2024</p>
             </div>
         </div>
     </div>
-    <!-- ================================================================= -->
-    <!-- END: UPDATED SETTINGS MODAL -->
-    <!-- ================================================================= -->
 </div>
 
 <script>
+    // PERBAIKAN: Fungsi untuk menyesuaikan tinggi layar pada mobile
+    function adjustHeightForMobile() {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    // Panggil fungsi saat halaman dimuat dan saat ukuran jendela berubah
+    window.addEventListener('resize', adjustHeightForMobile);
+    adjustHeightForMobile();
+
+    // Sisa kode JavaScript Anda tetap sama
+    // ... (salin semua kode JavaScript dari file asli Anda ke sini) ...
     // Variabel Global
     let apiKeys = [];
     let conversationHistory = [];
@@ -879,20 +852,17 @@
 
         const messageId = `cooldown-timer-${currentUserIP}`;
         
-        // Hapus timer lama jika ada, untuk memastikan notifikasi baru muncul di bawah
         const oldTimerMessage = document.getElementById(messageId);
         if(oldTimerMessage) {
             oldTimerMessage.remove();
         }
 
-        // Selalu buat elemen pesan baru untuk timer
         const chatMessages = document.getElementById('chatMessages');
         const timerMessageElement = document.createElement('div');
         timerMessageElement.className = 'system-message-bubble';
-        timerMessageElement.id = messageId; // Beri ID agar bisa diupdate
+        timerMessageElement.id = messageId; 
         chatMessages.insertBefore(timerMessageElement, document.getElementById('typingIndicator'));
         
-        // Panggil scroll sekali saat pesan dibuat, setelah itu jangan lagi
         scrollToBottom(); 
 
         if (countdownInterval) {
@@ -911,7 +881,6 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
             
-            // Perbarui innerHTML tanpa memanggil scrollToBottom()
             timerMessageElement.innerHTML = `<div class="system-message">Anda mencapai batas limit mengirim chat. Kembali setelah ${minutes}m ${seconds}s lagi.</div>`;
         }, 1000);
     }
@@ -926,7 +895,6 @@
             timerMessageElement.innerHTML = `<div class="system-message">Anda sudah bisa mengobrol lagi!</div>`;
         }
 
-        // Hapus data pengguna dari localStorage
         const allUserData = getChatLimitData();
         if (allUserData[currentUserIP]) {
             delete allUserData[currentUserIP];
@@ -1036,14 +1004,10 @@
         saveSettings();
     }
 
-    // =================================================================
-    // START: PERUBAHAN - Penggunaan API Key Acak
-    // =================================================================
     function getCurrentApiKey() {
         if (apiKeys.length === 0) {
             loadApiKeys();
         }
-        // Filter hanya API key yang valid (bukan placeholder)
         const validApiKeys = apiKeys.filter(key => key && !key.startsWith('YOUR_GEMINI_API_KEY_'));
         
         if (validApiKeys.length === 0) {
@@ -1051,19 +1015,11 @@
             return null;
         }
 
-        // Pilih satu API key secara acak dari daftar yang valid
         const randomIndex = Math.floor(Math.random() * validApiKeys.length);
         console.log(`Menggunakan API Key acak index: ${randomIndex}`);
         return validApiKeys[randomIndex];
     }
     
-    // Fungsi switchToNextApiKey() sudah tidak relevan lagi karena pemilihan bersifat acak setiap saat.
-    // Kita akan menangani error API dengan cara me-retry, yang secara otomatis akan memanggil getCurrentApiKey() lagi untuk mendapatkan kunci acak (bisa sama, bisa beda).
-    // =================================================================
-    // END: PERUBAHAN - Penggunaan API Key Acak
-    // =================================================================
-
-
     function getApiUrl() {
         const apiKey = getCurrentApiKey();
         if (!apiKey) {
@@ -1163,7 +1119,6 @@
         else if (fontSize === 'lg') sizeClass = 'text-lg';
         else sizeClass = 'text-base';
         
-        // This is a simplified approach. For full control, you'd adjust paragraph tags etc.
         chatMessages.querySelectorAll('.ai-message p, .user-message p').forEach(p => {
              p.style.fontSize = fontSize === 'sm' ? '0.8rem' : (fontSize === 'lg' ? '1.1rem' : '0.95rem');
         });
@@ -1214,7 +1169,6 @@
     }
 
     function saveSettings() {
-        // Ambil nilai terbaru dari UI sebelum menyimpan
         settings.voiceURI = document.getElementById('voiceSelect').value;
         localStorage.setItem('storybaliSettings', JSON.stringify(settings));
     }
@@ -1228,7 +1182,6 @@
         document.getElementById('fontSizeSelect').value = settings.fontSize || 'base';
         document.getElementById('personalitySelect').value = settings.personality || 'santai';
         
-        // Terapkan pengaturan suara setelah daftar suara dimuat
         const voiceSelect = document.getElementById('voiceSelect');
         if (settings.voiceURI && voiceSelect.options.length > 1) {
              voiceSelect.value = settings.voiceURI;
@@ -1268,7 +1221,7 @@
             localStorage.removeItem('storybaliConversationHistory');
             const chatMessages = document.getElementById('chatMessages');
             
-            const messages = chatMessages.querySelectorAll('.message-bubble, .system-message-bubble'); // also remove system messages
+            const messages = chatMessages.querySelectorAll('.message-bubble, .system-message-bubble');
             for (let i = messages.length - 1; i > 0; i--) {
                 messages[i].remove();
             }
@@ -1277,7 +1230,6 @@
         }
     }
     
-    // NEW: Function to switch settings tabs
     function switchSettingsTab(tabName) {
         document.querySelectorAll('.settings-tab').forEach(tab => tab.classList.remove('active'));
         document.querySelector(`.settings-tab[onclick="switchSettingsTab('${tabName}')"]`).classList.add('active');
@@ -1291,7 +1243,7 @@
         const modal = document.getElementById('settingsModal');
         const content = document.getElementById('settingsModalContent');
         if (modal.classList.contains('hidden')) {
-            switchSettingsTab('general'); // Reset to general tab on open
+            switchSettingsTab('general');
             modal.classList.remove('hidden');
             setTimeout(() => content.style.transform = 'scale(1)', 10);
         } else {
@@ -1366,7 +1318,6 @@
             return;
         }
 
-        // --- MODIFIKASI: Pengecekan limit sebelum kirim gambar ---
         const allUserData = getChatLimitData();
         const userData = allUserData[currentUserIP] || { count: 0 };
         if (userData.count >= CHAT_LIMIT) {
@@ -1374,7 +1325,6 @@
              hideImagePreview();
              return;
         }
-        // --- AKHIR MODIFIKASI ---
         
         hideImagePreview();
         addImageMessageWithQuestion(currentPreviewImage, currentPreviewFileName, question, true);
@@ -1389,20 +1339,19 @@
         if (isUser) {
             messageDiv.className += ' flex-row-reverse space-x-reverse user';
             messageDiv.innerHTML = `
-                <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center flex-shrink-0 shadow-lg">
+                <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
                     <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                     </svg>
                 </div>
                 <div class="user-message text-white p-4 max-w-xs">
-                    <img src="${imageSrc}" alt="${fileName}" class="w-full h-auto mb-2 max-h-32 object-cover shadow-sm">
+                    <img src="${imageSrc}" alt="${fileName}" class="w-full h-auto rounded-lg mb-2 max-h-32 object-cover shadow-sm">
                     <p class="text-xs mb-2 opacity-90">${fileName}</p>
-                    <div class="bg-white bg-opacity-20 p-2">
+                    <div class="bg-white bg-opacity-20 rounded-lg p-2">
                         <p class="text-xs font-medium">${question}</p>
                     </div>
                 </div>
             `;
-             // --- MODIFIKASI: Perbarui hitungan setelah kirim gambar ---
             const allUserData = getChatLimitData();
             const userData = allUserData[currentUserIP] || { count: 0 };
             userData.count++;
@@ -1416,7 +1365,6 @@
                 saveChatLimitData(allUserData);
                 startCooldown(cooldownEndTime);
             }
-            // --- AKHIR MODIFIKASI ---
         }
         const typingIndicator = document.getElementById('typingIndicator');
         chatMessages.insertBefore(messageDiv, typingIndicator);
@@ -1430,9 +1378,6 @@
         }
     }
 
-    // =================================================================
-    // START: PENAMBAHAN FUNGSI - Notifikasi Perubahan Mode AI
-    // =================================================================
     function addSystemMessage(message) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
@@ -1443,9 +1388,6 @@
         chatMessages.insertBefore(messageDiv, typingIndicator);
         scrollToBottom();
     }
-    // =================================================================
-    // END: PENAMBAHAN FUNGSI - Notifikasi Perubahan Mode AI
-    // =================================================================
     
     function addMessage(message, isUser = false, suggestions = []) {
         const chatMessages = document.getElementById('chatMessages');
@@ -1454,7 +1396,7 @@
         if (isUser) {
             messageDiv.className += ' flex-row-reverse space-x-reverse user';
             messageDiv.innerHTML = `
-                <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center flex-shrink-0 shadow-lg">
+                <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
                     <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                     </svg>
@@ -1475,7 +1417,7 @@
                     <div class="mt-3">
                         ${renderSuggestions(suggestions)}
                     </div>
-                    <button onclick="readAiResponse(this, '${encodedMessage}')" class="absolute bottom-2 right-2 w-6 h-6 bg-gray-200 text-gray-600 flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90" title="Baca Jawaban">
+                    <button onclick="readAiResponse(this, '${encodedMessage}')" class="absolute bottom-2 right-2 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90" title="Baca Jawaban">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path>
                         </svg>
@@ -1483,7 +1425,7 @@
                 </div>
             `;
             messageDiv.querySelector('.ai-message').innerHTML += `
-                <button onclick="copyToClipboard(this.previousElementSibling.previousElementSibling.previousElementSibling.textContent, this)" class="copy-button absolute bottom-2 right-9 w-6 h-6 bg-gray-200 text-gray-600 flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90 opacity-0 group-hover:opacity-100 transition-opacity" title="Salin Jawaban">
+                <button onclick="copyToClipboard(this.previousElementSibling.previousElementSibling.previousElementSibling.textContent, this)" class="copy-button absolute bottom-2 right-9 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90 opacity-0 group-hover:opacity-100 transition-opacity" title="Salin Jawaban">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                 </button>
             `;
@@ -1574,7 +1516,6 @@
         }
     }
 
-    // Copy to Clipboard
     function copyToClipboard(text, buttonElement) {
         navigator.clipboard.writeText(text).then(() => {
             const originalText = buttonElement.innerHTML;
@@ -1595,19 +1536,13 @@
         });
     }
 
-    // =================================================================
-    // START: FUNGSI BARU DAN MODIFIKASI UNTUK PEMILIHAN SUARA
-    // =================================================================
-    
-    // Fungsi untuk mengisi dropdown dengan suara yang tersedia
     function populateVoiceList() {
         const voices = speechSynthesis.getVoices();
         const voiceSelect = document.getElementById('voiceSelect');
-        const savedVoiceURI = settings.voiceURI; // Ambil URI yang tersimpan
+        const savedVoiceURI = settings.voiceURI; 
 
-        voiceSelect.innerHTML = ''; // Kosongkan pilihan lama
+        voiceSelect.innerHTML = ''; 
 
-        // Tambahkan pilihan default
         const defaultOption = document.createElement('option');
         defaultOption.textContent = 'Default Browser';
         defaultOption.value = '';
@@ -1618,11 +1553,9 @@
             return;
         }
 
-        // Prioritaskan suara Indonesia
         const idVoices = voices.filter(voice => voice.lang === 'id-ID');
         const otherVoices = voices.filter(voice => voice.lang !== 'id-ID');
 
-        // Buat grup untuk suara Indonesia
         if (idVoices.length > 0) {
             const idGroup = document.createElement('optgroup');
             idGroup.label = 'Bahasa Indonesia';
@@ -1635,7 +1568,6 @@
             voiceSelect.appendChild(idGroup);
         }
 
-        // Buat grup untuk suara lainnya
         if (otherVoices.length > 0) {
              const otherGroup = document.createElement('optgroup');
             otherGroup.label = 'Bahasa Lain';
@@ -1648,13 +1580,11 @@
             voiceSelect.appendChild(otherGroup);
         }
 
-        // Coba pilih kembali suara yang sudah disimpan
         if (savedVoiceURI) {
             voiceSelect.value = savedVoiceURI;
         }
     }
 
-    // Fungsi pembaca respons AI yang sudah dimodifikasi
     function readAiResponse(buttonElement, encodedMessage) {
         if (!settings.readAiResponseEnabled) {
             alert('Fitur pembaca jawaban AI dinonaktifkan di pengaturan.');
@@ -1676,7 +1606,6 @@
 
         currentUtterance = new SpeechSynthesisUtterance(message);
         
-        // --- LOGIKA BARU: Terapkan suara yang dipilih ---
         const selectedVoiceURI = settings.voiceURI;
         const voices = speechSynthesis.getVoices();
         const selectedVoice = voices.find(voice => voice.voiceURI === selectedVoiceURI);
@@ -1684,13 +1613,11 @@
         if (selectedVoice) {
             currentUtterance.voice = selectedVoice;
         } else {
-            // Jika suara yang dipilih tidak ada, gunakan default untuk bahasa Indonesia
             const idVoiceDefault = voices.find(voice => voice.lang === 'id-ID');
             if(idVoiceDefault) {
                currentUtterance.voice = idVoiceDefault;
             }
         }
-        // --- AKHIR LOGIKA BARU ---
 
         currentUtterance.rate = 1.0;
         currentUtterance.pitch = 1.0;
@@ -1715,10 +1642,6 @@
         speechSynthesis.speak(currentUtterance);
     }
     
-    // =================================================================
-    // END: FUNGSI BARU DAN MODIFIKASI UNTUK PEMILIHAN SUARA
-    // =================================================================
-
     function stopReading() {
         if (speechSynthesis.speaking) {
             speechSynthesis.cancel();
@@ -1767,7 +1690,6 @@
         const message = input.value.trim();
         if (!message) return;
 
-        // --- START: MODIFIKASI UNTUK BATAS CHAT ---
         if (!currentUserIP) {
             alert("Harap tunggu sebentar, sedang mengidentifikasi sesi Anda.");
             return;
@@ -1778,39 +1700,32 @@
 
         if (userData.count >= CHAT_LIMIT) {
             if (!userData.cooldownUntil) {
-                 // Mulai cooldown jika belum ada
                 const cooldownEndTime = new Date().getTime() + COOLDOWN_MINUTES * 60 * 1000;
                 userData.cooldownUntil = cooldownEndTime;
                 allUserData[currentUserIP] = userData;
                 saveChatLimitData(allUserData);
                 startCooldown(cooldownEndTime);
             }
-            return; // Hentikan pengiriman pesan jika limit tercapai
+            return;
         }
 
-        // Tingkatkan hitungan
         userData.count++;
         allUserData[currentUserIP] = userData;
         saveChatLimitData(allUserData);
-        // --- END: MODIFIKASI UNTUK BATAS CHAT ---
 
         addMessage(message, true);
         addToConversationHistory('user', message);
         input.value = '';
         showTypingIndicator();
         
-        // --- START: MODIFIKASI - Mulai cooldown jika pesan ke-5 dikirim ---
         if (userData.count >= CHAT_LIMIT) {
             const cooldownEndTime = new Date().getTime() + COOLDOWN_MINUTES * 60 * 1000;
             userData.cooldownUntil = cooldownEndTime;
             allUserData[currentUserIP] = userData;
             saveChatLimitData(allUserData);
             
-            // Tunda aktivasi cooldown sedikit agar AI sempat merespons
             setTimeout(() => startCooldown(cooldownEndTime), 1000);
         }
-        // --- END: MODIFIKASI ---
-
 
         const apiUrl = getApiUrl();
         if (!apiUrl) {
@@ -1829,16 +1744,11 @@
             
             const response = await fetch(apiUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json', },
                 body: JSON.stringify({
                     contents: [systemPrompt, ...contents],
                     generationConfig: {
-                        temperature: 0.9,
-                        topK: 1,
-                        topP: 1,
-                        maxOutputTokens: 2048,
+                        temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048,
                     }
                 })
             });
@@ -1850,7 +1760,6 @@
                     specificErrorMessage = 'Permintaan tidak valid. Mungkin ada masalah dengan format pesan.';
                 } else if (response.status === 401 || response.status === 403 || response.status === 429) {
                     specificErrorMessage = 'API Key bermasalah (limit atau tidak valid). Mencoba API Key acak lainnya...';
-                    // Coba kirim lagi, fungsi getApiUrl akan mengambil kunci acak baru
                     setTimeout(() => sendMessage(), 1000); 
                     return;
                 } else if (response.status >= 500) {
@@ -1909,26 +1818,13 @@
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json', },
                 body: JSON.stringify({
                     contents: [{
-                        parts: [
-                            { text: promptText },
-                            {
-                                inline_data: {
-                                    mime_type: "image/jpeg",
-                                    data: imageData
-                                }
-                            }
-                        ]
+                        parts: [ { text: promptText }, { inline_data: { mime_type: "image/jpeg", data: imageData } } ]
                     }],
                     generationConfig: {
-                        temperature: 0.9,
-                        topK: 32,
-                        topP: 1,
-                        maxOutputTokens: 2048,
+                        temperature: 0.9, topK: 32, topP: 1, maxOutputTokens: 2048,
                     }
                 })
             });
@@ -1983,17 +1879,14 @@
     }
 
     // Initialize
-    window.addEventListener('load', async () => { // --- MODIFIKASI: Menjadikan fungsi async ---
+    window.addEventListener('load', async () => {
         loadApiKeys();
         loadSettings();
         updateApiStatus();
         
-        // --- START: MODIFIKASI UNTUK FITUR BATAS CHAT ---
-        currentUserIP = await getUserIP(); // Dapatkan IP saat memuat
-        checkUserStatus(); // Cek status cooldown pengguna
-        // --- END: MODIFIKASI ---
+        currentUserIP = await getUserIP();
+        checkUserStatus();
 
-        // Panggil populateVoiceList setelah load dan juga pasang listener
         populateVoiceList();
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = populateVoiceList;
@@ -2049,7 +1942,6 @@
             addSystemMessage(`Mode peran kustom AI telah ditetapkan.`);
         });
         
-        // Listener untuk dropdown suara baru
         document.getElementById('voiceSelect').addEventListener('change', (event) => {
             settings.voiceURI = event.target.value;
             saveSettings();
@@ -2068,10 +1960,7 @@
         });
     });
 
-    // Prevent zoom on input focus (iOS)
-    document.addEventListener('touchstart', function () {
-    }, true);
+    document.addEventListener('touchstart', function () {}, true);
 </script>
 </body>
-</html></body>
 </html>
