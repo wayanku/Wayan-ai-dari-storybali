@@ -154,7 +154,8 @@
     .input-field {
         transition: all 0.3s ease; border: 2px solid #cbd5e1;
         border-radius: 9999px; padding: 0.75rem 1rem;
-        font-size: 0.95rem; background: #f8fafc;
+        font-size: 16px; /* Mencegah zoom di iOS */
+        background: #f8fafc;
     }
     .input-field:focus {
         border-color: #667eea;
@@ -263,12 +264,19 @@
     }
     .settings-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08); }
     .settings-item { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #f1f5f9; }
+    /* PERUBAHAN: Style untuk item yang diubah menjadi flex-col */
+    .settings-item.flex-col {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
     .settings-item:last-child { border-bottom: none; }
     .settings-icon { width: 1.25rem; height: 1.25rem; color: #6366f1; }
     .settings-input, .settings-select {
         border-radius: 0.5rem; background: #f8fafc; border: 1px solid #e2e8f0;
-        padding: 0.5rem 0.75rem; font-size: 0.875rem;
+        padding: 0.5rem 0.75rem;
         transition: all 0.2s ease-in-out; width: 55%;
+        font-size: 16px; /* Mencegah zoom di iOS */
     }
     .settings-input:focus, .settings-select:focus {
         border-color: #6366f1;
@@ -301,15 +309,45 @@
     .toggle-new:checked { background-color: #6366f1; }
     .toggle-new:checked::before { transform: translateX(20px); }
 
+    /* PENAMBAHAN: Style untuk tombol pilihan baru */
+    .choice-btn {
+        width: 100%;
+        padding: 0.5rem;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #475569;
+        transition: all 0.2s ease-in-out;
+        text-align: center;
+        cursor: pointer;
+    }
+    .choice-btn:hover {
+        background: #e2e8f0;
+        border-color: #cbd5e1;
+    }
+    .choice-btn.active {
+        background: #eef2ff;
+        border-color: #6366f1;
+        color: #4f46e5;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(99, 102, 241, 0.1);
+    }
+
+
     @media (max-width: 768px) {
         .message-bubble { margin-bottom: 0.75rem; }
         .ai-message, .user-message { max-width: 90%; padding: 0.8rem 1.2rem; }
-        .input-field { font-size: 1rem; padding: 0.6rem 1rem; }
         .send-button { width: 3rem; height: 3rem; }
         .quick-actions { padding: 0.6rem 0.8rem; }
         .quick-action-btn { padding: 0.4rem 0.8rem; font-size: 0.7rem; }
         .modal-content { border-radius: 1rem; padding: 1.5rem; }
         #settingsModal .modal-content { padding: 0; }
+        
+        .settings-input, .settings-select {
+            font-size: 16px; /* Mencegah zoom di iOS */
+        }
     }
     
     .chat-messages::-webkit-scrollbar { width: 8px; }
@@ -558,43 +596,46 @@
                             </div>
                             <input type="text" id="aiNameInput" value="Wayan AI" class="settings-input text-right">
                         </div>
-                        <div class="settings-item">
-                            <div class="flex items-center space-x-3">
+                        <!-- PERUBAHAN: Tampilan Bahasa menjadi Tombol -->
+                        <div class="settings-item flex-col">
+                            <div class="w-full flex items-center space-x-3">
                                 <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m4 0v2M3 19h18M5 15h14M9 11h6"></path></svg>
                                 <label class="text-sm font-medium text-gray-700">Bahasa</label>
                             </div>
-                            <select id="languageSelect" class="settings-select text-right">
-                                <option value="id">Indonesia</option>
-                                <option value="en">English</option>
-                            </select>
+                            <div class="grid grid-cols-2 gap-2 w-full pt-2">
+                                <button id="language-id" onclick="selectChoice('language', 'id', this)" class="choice-btn">Indonesia</button>
+                                <button id="language-en" onclick="selectChoice('language', 'en', this)" class="choice-btn">English</button>
+                            </div>
                         </div>
-                        <div class="settings-item">
-                            <div class="flex items-center space-x-3">
+                        <!-- PERUBAHAN: Tampilan Gaya Bahasa menjadi Tombol -->
+                        <div class="settings-item flex-col">
+                            <div class="w-full flex items-center space-x-3">
                                 <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                                 <label class="text-sm font-medium text-gray-700">Gaya Bahasa</label>
                             </div>
-                            <select id="personalitySelect" class="settings-select text-right">
-                                <option value="santai" selected>Santai</option>
-                                <option value="profesional">Profesional</option>
-                                <option value="lucu">Humoris</option>
-                            </select>
+                            <div class="grid grid-cols-3 gap-2 w-full pt-2">
+                                <button id="personality-santai" onclick="selectChoice('personality', 'santai', this)" class="choice-btn">Santai</button>
+                                <button id="personality-profesional" onclick="selectChoice('personality', 'profesional', this)" class="choice-btn">Profesional</button>
+                                <button id="personality-lucu" onclick="selectChoice('personality', 'lucu', this)" class="choice-btn">Humoris</button>
+                            </div>
                         </div>
                     </div>
                     <div class="settings-card">
-                        <div class="settings-item">
-                            <div class="flex items-center space-x-3">
+                        <!-- PERUBAHAN: Tampilan Mode Peran menjadi Tombol -->
+                        <div class="settings-item flex-col">
+                             <div class="w-full flex items-center space-x-3">
                                 <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V21H9z"></path></svg>
                                 <label class="text-sm font-medium text-gray-700">Mode Peran AI</label>
                             </div>
-                            <select id="aiRoleSelect" class="settings-select text-right">
-                                <option value="umum" selected>Asisten Umum</option>
-                                <option value="guru_jepang">Guru B. Jepang</option>
-                                <option value="guru_matematika">Guru Matematika</option>
-                                <option value="dokter">Dokter Umum</option>
-                                <option value="programmer">Programmer</option>
-                                <option value="penerjemah">Penerjemah</option>
-                                <option value="kustom">Kustom...</option>
-                            </select>
+                            <div class="grid grid-cols-3 gap-2 w-full pt-2">
+                                <button id="aiRole-umum" onclick="selectChoice('aiRole', 'umum', this)" class="choice-btn">Umum</button>
+                                <button id="aiRole-guru_jepang" onclick="selectChoice('aiRole', 'guru_jepang', this)" class="choice-btn">B. Jepang</button>
+                                <button id="aiRole-guru_matematika" onclick="selectChoice('aiRole', 'guru_matematika', this)" class="choice-btn">Matematika</button>
+                                <button id="aiRole-dokter" onclick="selectChoice('aiRole', 'dokter', this)" class="choice-btn">Dokter</button>
+                                <button id="aiRole-programmer" onclick="selectChoice('aiRole', 'programmer', this)" class="choice-btn">Programmer</button>
+                                <button id="aiRole-penerjemah" onclick="selectChoice('aiRole', 'penerjemah', this)" class="choice-btn">Penerjemah</button>
+                                <button id="aiRole-kustom" onclick="selectChoice('aiRole', 'kustom', this)" class="choice-btn col-span-3">Kustom...</button>
+                            </div>
                         </div>
                         <div id="customRoleContainer" class="hidden p-2 mt-2">
                             <label class="block text-xs text-gray-600 mb-1">Definisikan peran kustom AI:</label>
@@ -639,7 +680,7 @@
                                 <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                 <label class="text-sm font-medium text-gray-700">Efek Animasi</label>
                             </div>
-                            <input type="checkbox" id="animationToggle" class="toggle-new" onchange="toggleAnimations()" checked>
+                            <input type="checkbox" id="animationToggle" class="toggle-new" checked>
                         </div>
                     </div>
                     <div class="settings-card">
@@ -648,14 +689,14 @@
                                 <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>
                                 <label class="text-sm font-medium text-gray-700">Suara Notifikasi</label>
                             </div>
-                            <input type="checkbox" id="soundToggle" class="toggle-new" onchange="toggleSound()" checked>
+                            <input type="checkbox" id="soundToggle" class="toggle-new" checked>
                         </div>
                         <div class="settings-item">
                             <div class="flex items-center space-x-3">
                                 <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
                                 <label class="text-sm font-medium text-gray-700">Pembaca Jawaban</label>
                             </div>
-                            <input type="checkbox" id="readAiResponseToggle" class="toggle-new" onchange="toggleReadAiResponse()" checked>
+                            <input type="checkbox" id="readAiResponseToggle" class="toggle-new" checked>
                         </div>
                         <div class="settings-item">
                             <div class="flex items-center space-x-3">
@@ -718,8 +759,19 @@
                     </div>
                 </div>
             </div>
+            <!-- PENAMBAHAN: Tombol Simpan dan Reset Pengaturan -->
+            <div class="p-4 bg-gray-50 border-t border-gray-200 flex-shrink-0">
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="resetAllSettings()" class="settings-btn-action bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm py-2">
+                        <span>Reset</span>
+                    </button>
+                    <button onclick="saveAllSettings()" class="settings-btn-action bg-blue-600 text-white hover:bg-blue-700 text-sm py-2">
+                        <span>Simpan & Tutup</span>
+                    </button>
+                </div>
+            </div>
             <div class="p-3 bg-white border-t border-gray-200 flex-shrink-0 text-center">
-                <p class="text-xs text-gray-500">StoryBali v2.2 | © 2024</p>
+                <p class="text-xs text-gray-500">StoryBali v2.3 | © 2024</p>
             </div>
         </div>
     </div>
@@ -750,17 +802,25 @@
     let countdownInterval = null;
     // --- END: PENGATURAN FITUR BATAS CHAT ---
 
-    // Settings
-    let settings = {
+    // Objek Pengaturan Default
+    const defaultSettings = {
         theme: 'blue',
         soundEnabled: true,
         animationsEnabled: true,
         readAiResponseEnabled: true,
+        aiName: 'Wayan AI',
+        language: 'id',
         personality: 'santai',
-        aiRole: 'umum', // Properti baru untuk peran
-        customAiRolePrompt: '', // Properti baru untuk menyimpan prompt kustom
-        voiceURI: '' // Properti baru untuk menyimpan suara pilihan
+        aiRole: 'umum',
+        customAiRolePrompt: '',
+        fontSize: 'base',
+        voiceURI: '',
+        saveHistory: true
     };
+    
+    // Settings dimuat dari localStorage atau dari default
+    let settings = { ...defaultSettings };
+
 
     // Variables for AI response reader
     let currentUtterance = null;
@@ -982,9 +1042,10 @@
 
     // Animation Toggle
     function toggleAnimations() {
-        settings.animationsEnabled = document.getElementById('animationToggle').checked;
+        const isEnabled = document.getElementById('animationToggle').checked;
+        settings.animationsEnabled = isEnabled;
         const style = document.createElement('style');
-        if (!settings.animationsEnabled) {
+        if (!isEnabled) {
             style.textContent = `
                 *, *::before, *::after {
                     animation-duration: 0.01ms !important;
@@ -998,10 +1059,9 @@
         if (existingStyle) {
             existingStyle.remove();
         }
-        if (!settings.animationsEnabled) {
+        if (!isEnabled) {
             document.head.appendChild(style);
         }
-        saveSettings();
     }
 
     function getCurrentApiKey() {
@@ -1030,12 +1090,13 @@
 
     // Conversation Memory
     function saveConversationHistory() {
-        if (document.getElementById('saveHistoryToggle').checked) {
+        if (settings.saveHistory) {
             localStorage.setItem('storybaliConversationHistory', JSON.stringify(conversationHistory));
         }
     }
 
     function loadConversationHistory() {
+        if (!settings.saveHistory) return;
         const savedHistory = localStorage.getItem('storybaliConversationHistory');
         if (savedHistory) {
             conversationHistory = JSON.parse(savedHistory);
@@ -1085,7 +1146,7 @@
             recognition = new webkitSpeechRecognition();
             recognition.continuous = true;
             recognition.interimResults = true;
-            recognition.lang = 'id-ID';
+            recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
             recognition.onresult = function (event) {
                 let finalTranscript = '';
                 for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -1109,24 +1170,6 @@
             recognition = null;
         }
     }
-
-    // Font Size Toggle
-    function changeFontSize() {
-        const fontSize = document.getElementById('fontSizeSelect').value;
-        const chatMessages = document.getElementById('chatMessages');
-        let sizeClass;
-        if (fontSize === 'sm') sizeClass = 'text-sm';
-        else if (fontSize === 'lg') sizeClass = 'text-lg';
-        else sizeClass = 'text-base';
-        
-        chatMessages.querySelectorAll('.ai-message p, .user-message p').forEach(p => {
-             p.style.fontSize = fontSize === 'sm' ? '0.8rem' : (fontSize === 'lg' ? '1.1rem' : '0.95rem');
-        });
-        
-        settings.fontSize = fontSize;
-        saveSettings();
-    }
-
 
     // Theme Management
     function changeTheme(themeName) {
@@ -1156,64 +1199,102 @@
         if (profileAvatarBorder) {
             profileAvatarBorder.style.borderImage = `linear-gradient(135deg, ${colors.from}, ${colors.to}, #f093fb) 1`;
         }
-        saveSettings();
     }
 
     // Settings Management
     function loadSettings() {
         const savedSettings = localStorage.getItem('storybaliSettings');
         if (savedSettings) {
-            settings = { ...settings, ...JSON.parse(savedSettings) };
+            // Gabungkan pengaturan tersimpan dengan default untuk memastikan semua kunci ada
+            settings = { ...defaultSettings, ...JSON.parse(savedSettings) };
+        } else {
+            settings = { ...defaultSettings };
         }
         applySettings();
     }
 
     function saveSettings() {
-        settings.voiceURI = document.getElementById('voiceSelect').value;
         localStorage.setItem('storybaliSettings', JSON.stringify(settings));
+    }
+    
+    function saveAllSettings() {
+        // Mengambil nilai dari elemen UI dan menyimpannya ke objek settings
+        settings.aiName = document.getElementById('aiNameInput').value;
+        settings.customAiRolePrompt = document.getElementById('customRoleInput').value;
+        settings.fontSize = document.getElementById('fontSizeSelect').value;
+        settings.animationsEnabled = document.getElementById('animationToggle').checked;
+        settings.soundEnabled = document.getElementById('soundToggle').checked;
+        settings.readAiResponseEnabled = document.getElementById('readAiResponseToggle').checked;
+        settings.voiceURI = document.getElementById('voiceSelect').value;
+        settings.saveHistory = document.getElementById('saveHistoryToggle').checked;
+        
+        saveSettings();
+        
+        applySettings(); // Terapkan semua perubahan
+        
+        alert('Pengaturan berhasil disimpan!');
+        toggleSettings();
+    }
+
+    function resetAllSettings() {
+        if (confirm('Yakin ingin mereset semua pengaturan? Riwayat chat dan API Key akan dihapus. Halaman akan dimuat ulang.')) {
+            localStorage.removeItem('storybaliSettings');
+            localStorage.removeItem('storybaliApiKeys');
+            localStorage.removeItem('storybaliConversationHistory');
+            
+            alert('Pengaturan telah direset ke default. Halaman akan dimuat ulang.');
+            window.location.reload();
+        }
     }
 
     function applySettings() {
+        // Terapkan semua pengaturan dari objek 'settings' ke UI
+        document.querySelector('.header-gradient h1').textContent = settings.aiName;
         changeTheme(settings.theme);
-        document.getElementById('soundToggle').checked = settings.soundEnabled;
-        document.getElementById('animationToggle').checked = settings.animationsEnabled;
-        document.getElementById('readAiResponseToggle').checked = settings.readAiResponseEnabled;
-        document.getElementById('aiNameInput').value = settings.aiName || 'Wayan AI';
-        document.getElementById('fontSizeSelect').value = settings.fontSize || 'base';
-        document.getElementById('personalitySelect').value = settings.personality || 'santai';
-        
-        const voiceSelect = document.getElementById('voiceSelect');
-        if (settings.voiceURI && voiceSelect.options.length > 1) {
-             voiceSelect.value = settings.voiceURI;
-        }
 
-        const currentRole = settings.aiRole || 'umum';
-        const aiRoleSelect = document.getElementById('aiRoleSelect');
+        document.getElementById('aiNameInput').value = settings.aiName;
+        document.getElementById('fontSizeSelect').value = settings.fontSize;
+        document.getElementById('animationToggle').checked = settings.animationsEnabled;
+        toggleAnimations(); // Panggil fungsi ini untuk menerapkan style on/off animasi
+        document.getElementById('soundToggle').checked = settings.soundEnabled;
+        document.getElementById('readAiResponseToggle').checked = settings.readAiResponseEnabled;
+        document.getElementById('saveHistoryToggle').checked = settings.saveHistory;
+
+        // Terapkan pilihan tombol visual
+        document.querySelectorAll('.choice-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`language-${settings.language}`)?.classList.add('active');
+        document.getElementById(`personality-${settings.personality}`)?.classList.add('active');
+        document.getElementById(`aiRole-${settings.aiRole}`)?.classList.add('active');
+        
+        // Tampilkan/sembunyikan input peran kustom
         const customRoleContainer = document.getElementById('customRoleContainer');
         const customRoleInput = document.getElementById('customRoleInput');
-
-        aiRoleSelect.value = currentRole;
-        if (currentRole === 'kustom') {
+        if (settings.aiRole === 'kustom') {
             customRoleContainer.classList.remove('hidden');
-            customRoleInput.value = settings.customAiRolePrompt || '';
+            customRoleInput.value = settings.customAiRolePrompt;
         } else {
             customRoleContainer.classList.add('hidden');
         }
 
-        if (!settings.animationsEnabled) {
-            toggleAnimations();
+        const voiceSelect = document.getElementById('voiceSelect');
+        if (settings.voiceURI && voiceSelect.options.length > 1) {
+             voiceSelect.value = settings.voiceURI;
+        }
+    }
+    
+    // Fungsi baru untuk menangani pilihan tombol
+    function selectChoice(settingName, value, element) {
+        settings[settingName] = value;
+        const parent = element.parentElement;
+        Array.from(parent.children).forEach(child => child.classList.remove('active'));
+        element.classList.add('active');
+
+        if (settingName === 'aiRole') {
+            const customRoleContainer = document.getElementById('customRoleContainer');
+            customRoleContainer.classList.toggle('hidden', value !== 'kustom');
         }
     }
 
-    function toggleSound() {
-        settings.soundEnabled = document.getElementById('soundToggle').checked;
-        saveSettings();
-    }
-
-    function toggleReadAiResponse() {
-        settings.readAiResponseEnabled = document.getElementById('readAiResponseToggle').checked;
-        saveSettings();
-    }
 
     function clearChatHistory() {
         if (confirm('Yakin mau hapus semua riwayat chat? Tindakan ini tidak bisa dibatalkan.')) {
@@ -1222,6 +1303,7 @@
             const chatMessages = document.getElementById('chatMessages');
             
             const messages = chatMessages.querySelectorAll('.message-bubble, .system-message-bubble');
+            // Hapus semua kecuali pesan sambutan pertama
             for (let i = messages.length - 1; i > 0; i--) {
                 messages[i].remove();
             }
@@ -1243,6 +1325,7 @@
         const modal = document.getElementById('settingsModal');
         const content = document.getElementById('settingsModalContent');
         if (modal.classList.contains('hidden')) {
+            loadSettings(); // Muat pengaturan terbaru setiap kali modal dibuka
             switchSettingsTab('general');
             modal.classList.remove('hidden');
             setTimeout(() => content.style.transform = 'scale(1)', 10);
@@ -1613,12 +1696,13 @@
         if (selectedVoice) {
             currentUtterance.voice = selectedVoice;
         } else {
-            const idVoiceDefault = voices.find(voice => voice.lang === 'id-ID');
+            const idVoiceDefault = voices.find(voice => voice.lang === 'id-ID' || voice.lang.startsWith('id'));
             if(idVoiceDefault) {
                currentUtterance.voice = idVoiceDefault;
             }
         }
-
+        
+        currentUtterance.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
         currentUtterance.rate = 1.0;
         currentUtterance.pitch = 1.0;
 
@@ -1676,10 +1760,15 @@
                     break;
                 case 'santai':
                 default:
-                    roleInstruction = `Kamu adalah ${aiName}, asisten AI dari StoryBali yang santai, friendly, dan menggunakan bahasa sehari-hari.`;
+                    roleInstruction = `Kamu adalah ${aiName}, asisten AI dari StoryBali yang santai, friendly, dan menggunakan bahasa Indonesia sehari-hari.`;
                     break;
             }
         }
+        
+        if (settings.language === 'en') {
+            roleInstruction += ' Please respond in English.';
+        }
+
 
         return `${roleInstruction} ${baseInstructions}`;
     }
@@ -1737,20 +1826,21 @@
         try {
             const contents = [...conversationHistory];
             const systemPromptText = getSystemPrompt();
-            const systemPrompt = {
-                role: "user",
-                parts: [{ text: systemPromptText }]
-            };
             
+            const requestBody = {
+                contents: contents,
+                systemInstruction: {
+                    parts: [{ text: systemPromptText }]
+                },
+                generationConfig: {
+                    temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048,
+                }
+            };
+
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', },
-                body: JSON.stringify({
-                    contents: [systemPrompt, ...contents],
-                    generationConfig: {
-                        temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048,
-                    }
-                })
+                body: JSON.stringify(requestBody)
             });
             hideTypingIndicator();
 
@@ -1881,7 +1971,7 @@
     // Initialize
     window.addEventListener('load', async () => {
         loadApiKeys();
-        loadSettings();
+        loadSettings(); // Ini akan memanggil applySettings di dalamnya
         updateApiStatus();
         
         currentUserIP = await getUserIP();
@@ -1902,50 +1992,8 @@
         hideTypingIndicator();
         hideImageProcessingIndicator();
         
-        document.getElementById('aiNameInput').addEventListener('change', (event) => {
-            settings.aiName = event.target.value;
-            saveSettings();
-            document.querySelector('.header-gradient h1').textContent = settings.aiName;
-        });
-
-        document.getElementById('fontSizeSelect').addEventListener('change', changeFontSize);
-        document.getElementById('saveHistoryToggle').addEventListener('change', saveSettings);
-        
-        document.getElementById('personalitySelect').addEventListener('change', (event) => {
-            const selectedText = event.target.options[event.target.selectedIndex].text;
-            settings.personality = event.target.value;
-            saveSettings();
-            addSystemMessage(`Gaya bahasa AI diubah menjadi: ${selectedText}`);
-        });
-
-        const aiRoleSelect = document.getElementById('aiRoleSelect');
-        const customRoleContainer = document.getElementById('customRoleContainer');
-        const customRoleInput = document.getElementById('customRoleInput');
-
-        aiRoleSelect.addEventListener('change', (event) => {
-            const selectedRole = event.target.value;
-            const selectedText = event.target.options[event.target.selectedIndex].text;
-            settings.aiRole = selectedRole;
-
-            if (selectedRole === 'kustom') {
-                customRoleContainer.classList.remove('hidden');
-            } else {
-                customRoleContainer.classList.add('hidden');
-                addSystemMessage(`Mode peran AI diubah menjadi: ${selectedText}`);
-            }
-            saveSettings();
-        });
-
-        customRoleInput.addEventListener('change', (event) => {
-            settings.customAiRolePrompt = event.target.value;
-            saveSettings();
-            addSystemMessage(`Mode peran kustom AI telah ditetapkan.`);
-        });
-        
-        document.getElementById('voiceSelect').addEventListener('change', (event) => {
-            settings.voiceURI = event.target.value;
-            saveSettings();
-        });
+        // Listener untuk perubahan langsung tidak lagi diperlukan karena ada tombol Simpan
+        document.getElementById('fontSizeSelect').addEventListener('change', (e) => settings.fontSize = e.target.value);
 
     });
 
