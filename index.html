@@ -35,19 +35,18 @@
     .chat-window {
         background: white;
         border: none;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Shadow lebih lembut */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         animation: slideInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border-radius: 2rem; /* Sudut lebih melengkung */
-        height: 95vh; /* Sedikit lebih kecil dari 100vh */
-        max-height: 800px; /* Batasi tinggi untuk desktop */
+        border-radius: 0; /* DIUBAH: Dibuat 0 agar sudutnya kotak */
+        height: 100vh; /* Tinggi dibuat penuh */
         width: 100%;
-        max-width: 420px; /* Lebar khas ponsel */
+        /* DIUBAH: Dihapus agar lebar bisa penuh di desktop */
+        /* max-width: 420px; */
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        position: relative; /* Untuk swipe indicator */
+        position: relative;
     }
-
     @keyframes slideInUp {
         from {
             opacity: 0;
