@@ -1,4 +1,4 @@
-<!DOCTYPE 
+<!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -6,27 +6,37 @@
   <title>StoryBali - Mobile Chat</title>
   <meta name="Generator" content="Cocoa HTML Writer">
   <meta name="CocoaVersion" content="2299.77">
+  <!-- Viewport meta tag untuk responsivitas yang benar -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
+    /* ATURAN GLOBAL: Memaksa semua elemen menjadi kotak */
     * {
         -webkit-tap-highlight-color: transparent;
+        border-radius: 0 !important;
+    }
+
+    /* Pengaturan dasar untuk tampilan layar penuh */
+    html, body {
+        background: #ffffff !important;
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* Mencegah scrolling pada body */
     }
 
     body {
         font-family: 'Poppins', sans-serif;
-        background: #f0f2f5 !important; /* Latar belakang abu-abu muda */
-        overflow-x: hidden;
-        margin: 0;
-        padding: 0;
+        background: #f0f2f5 !important;
     }
 
     .chat-container {
-        background: #f0f2f5;
-        min-height: 100vh;
-        position: relative;
-        padding: 0;
+        background: #ffffff;
+        height: 100vh; /* Mengisi seluruh tinggi layar */
+        width: 100vw;  /* Mengisi seluruh lebar layar */
         display: flex;
         justify-content: center;
         align-items: center;
@@ -35,18 +45,16 @@
     .chat-window {
         background: white;
         border: none;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        box-shadow: none; /* Menghilangkan bayangan */
         animation: slideInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border-radius: 0; /* DIUBAH: Dibuat 0 agar sudutnya kotak */
-        height: 100vh; /* Tinggi dibuat penuh */
-        width: 100%;
-        /* DIUBAH: Dihapus agar lebar bisa penuh di desktop */
-        /* max-width: 420px; */
+        height: 100%; /* Mengisi penuh container */
+        width: 100%;  /* Mengisi penuh container */
         overflow: hidden;
         display: flex;
         flex-direction: column;
         position: relative;
     }
+
     @keyframes slideInUp {
         from {
             opacity: 0;
@@ -63,8 +71,6 @@
         background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
         position: relative;
         overflow: hidden;
-        border-top-left-radius: 2rem; /* Ikuti chat-window */
-        border-top-right-radius: 2rem; /* Ikuti chat-window */
     }
 
     .header-gradient::before {
@@ -74,17 +80,13 @@
         left: -50%;
         width: 200%;
         height: 200%;
-        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent); /* Shimmer lebih jelas */
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent);
         animation: shimmer 3s infinite;
     }
 
     @keyframes shimmer {
-        0% {
-            transform: translateX(-100%) translateY(-100%) rotate(45deg);
-        }
-        100% {
-            transform: translateX(100%) translateY(100%) rotate(45deg);
-        }
+        0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
     }
 
     /* AI Avatar & Pulse */
@@ -92,642 +94,254 @@
         background: linear-gradient(135deg, #667eea, #764ba2);
         animation: avatarPulse 2s infinite;
         position: relative;
-        border: 3px solid rgba(255, 255, 255, 0.4); /* Border lebih tebal */
-        box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4); /* Shadow awal */
+        border: 3px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
     }
-
     .ai-avatar::after {
-        content: '';
-        position: absolute;
-        inset: -2px;
+        content: ''; position: absolute; inset: -2px;
         background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
-        border-radius: inherit;
-        z-index: -1;
-        animation: rotate 4s linear infinite;
+        z-index: -1; animation: rotate 4s linear infinite;
     }
-
     @keyframes avatarPulse {
-        0%, 100% {
-            transform: scale(1);
-            box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
-        }
-        50% {
-            transform: scale(1.05);
-            box-shadow: 0 0 0 15px rgba(102, 126, 234, 0); /* Pulse lebih besar */
-        }
+        0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
+        50% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(102, 126, 234, 0); }
     }
-
-    @keyframes rotate {
-        from {
-            transform: rotate(0deg);
-        }
-        to {
-            transform: rotate(360deg);
-        }
-    }
+    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
     /* Message Bubbles */
     .message-bubble {
         animation: messageSlide 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        transform-origin: bottom left;
-        margin-bottom: 1rem; /* Spasi antar pesan */
+        transform-origin: bottom left; margin-bottom: 1rem;
     }
-
-    .message-bubble.user {
-        transform-origin: bottom right;
-    }
-
+    .message-bubble.user { transform-origin: bottom right; }
     @keyframes messageSlide {
-        from {
-            opacity: 0;
-            transform: translateY(20px) scale(0.8);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
+        from { opacity: 0; transform: translateY(20px) scale(0.8); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
     }
-
     .ai-message {
-        background: #e2e8f0; /* Latar belakang pesan AI lebih terang */
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Shadow lebih lembut */
-        border: 1px solid rgba(102, 126, 234, 0.05); /* Border lebih tipis */
-        border-radius: 1.25rem; /* Sudut melengkung */
-        border-top-left-radius: 0.375rem; /* Sudut atas kiri lebih kecil */
-        padding: 1rem; /* Padding lebih konsisten */
-        max-width: 85%; /* Lebar pesan */
-        position: relative; /* Untuk tombol speaker */
+        background: #e2e8f0; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(102, 126, 234, 0.05); padding: 1rem;
+        max-width: 85%; position: relative;
     }
-
     .user-message {
         background: linear-gradient(135deg, #10b981, #059669);
-        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-        color: white;
-        border-radius: 1.25rem; /* Sudut melengkung */
-        border-top-right-radius: 0.375rem; /* Sudut atas kanan lebih kecil */
-        padding: 1rem; /* Padding lebih konsisten */
-        max-width: 85%; /* Lebar pesan */
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); color: white;
+        padding: 1rem; max-width: 85%;
     }
-    
-    /* System Message */
     .system-message-bubble {
-        display: flex;
-        justify-content: center;
-        margin: 0.5rem 0;
+        display: flex; justify-content: center; margin: 0.5rem 0;
         animation: messageSlide 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-
     .system-message {
-        background-color: #e2e8f0;
-        color: #4a5568;
-        font-size: 0.75rem;
-        font-style: italic;
-        padding: 0.25rem 0.75rem;
-        border-radius: 9999px;
+        background-color: #e2e8f0; color: #4a5568; font-size: 0.75rem;
+        font-style: italic; padding: 0.25rem 0.75rem;
     }
-
 
     /* Typing Indicator */
     .typing-indicator {
-        display: none;
-        align-items: center; /* Pastikan dot sejajar */
-        margin-bottom: 1rem; /* Spasi bawah */
+        display: none; align-items: center; margin-bottom: 1rem;
     }
-
-    .typing-indicator.show {
-        display: flex;
-        animation: fadeInBounce 0.5s ease-out;
-    }
-
+    .typing-indicator.show { display: flex; animation: fadeInBounce 0.5s ease-out; }
     @keyframes fadeInBounce {
-        0% {
-            opacity: 0;
-            transform: translateY(10px) scale(0.8);
-        }
-        60% {
-            opacity: 1;
-            transform: translateY(-2px) scale(1.02);
-        }
-        100% {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
+        0% { opacity: 0; transform: translateY(10px) scale(0.8); }
+        60% { opacity: 1; transform: translateY(-2px) scale(1.02); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
     }
-
     .dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
+        width: 8px; height: 8px;
         background: linear-gradient(135deg, #667eea, #764ba2);
-        animation: typing 1.4s infinite ease-in-out;
-        margin: 0 2px; /* Spasi antar dot */
+        animation: typing 1.4s infinite ease-in-out; margin: 0 2px;
     }
-
-    .dot:nth-child(1) {
-        animation-delay: -0.32s;
-    }
-
-    .dot:nth-child(2) {
-        animation-delay: -0.16s;
-    }
-
-    .dot:nth-child(3) {
-        animation-delay: 0s;
-    }
-
+    .dot:nth-child(1) { animation-delay: -0.32s; }
+    .dot:nth-child(2) { animation-delay: -0.16s; }
+    .dot:nth-child(3) { animation-delay: 0s; }
     @keyframes typing {
-        0%, 80%, 100% {
-            transform: scale(0.8) translateY(0);
-            opacity: 0.5;
-        }
-        40% {
-            transform: scale(1.2) translateY(-8px);
-            opacity: 1;
-        }
+        0%, 80%, 100% { transform: scale(0.8) translateY(0); opacity: 0.5; }
+        40% { transform: scale(1.2) translateY(-8px); opacity: 1; }
     }
 
     /* Input Area */
     .input-area {
-        background: white;
-        border-top: 1px solid #e2e8f0; /* Border lebih lembut */
-        padding: 1rem; /* Padding lebih besar */
-        border-bottom-left-radius: 2rem; /* Ikuti chat-window */
-        border-bottom-right-radius: 2rem; /* Ikuti chat-window */
+        background: white; border-top: 1px solid #e2e8f0; padding: 1rem;
     }
-
     .input-field {
-        transition: all 0.3s ease;
-        border: 2px solid #cbd5e1; /* Border abu-abu */
-        border-radius: 9999px; /* Full rounded */
-        padding: 0.75rem 1rem; /* Padding lebih baik */
-        font-size: 0.95rem; /* Ukuran font sedikit lebih besar */
-        background: #f8fafc; /* Latar belakang input */
+        transition: all 0.3s ease; border: 2px solid #cbd5e1;
+        padding: 0.75rem 1rem; font-size: 0.95rem; background: #f8fafc;
     }
-
     .input-field:focus {
         border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2); /* Shadow fokus lebih jelas */
-        background: white; /* Latar belakang putih saat fokus */
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2); background: white;
     }
-
     .send-button {
-        position: relative;
-        overflow: hidden;
+        position: relative; overflow: hidden;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         background: linear-gradient(135deg, #667eea, #764ba2);
-        border-radius: 9999px; /* Full rounded */
-        width: 3.25rem; /* Ukuran tombol */
-        height: 3.25rem; /* Ukuran tombol */
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); /* Shadow tombol kirim */
+        width: 3.25rem; height: 3.25rem;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
     }
-
     .send-button::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
+        content: ''; position: absolute; top: 0; left: -100%;
+        width: 100%; height: 100%;
         background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
         transition: left 0.5s;
     }
-
-    .send-button:hover::before,
-    .send-button:active::before {
-        left: 100%;
-    }
-
-    .send-button:active {
-        transform: scale(0.9); /* Animasi klik lebih terasa */
-    }
+    .send-button:hover::before, .send-button:active::before { left: 100%; }
+    .send-button:active { transform: scale(0.9); }
 
     /* Voice Wave */
     .voice-wave {
-        display: none;
-        align-items: center;
-        gap: 4px; /* Spasi antar bar */
-        height: 24px; /* Tinggi wave */
+        display: none; align-items: center; gap: 4px; height: 24px;
     }
-
-    .voice-wave.active {
-        display: flex;
-    }
-
+    .voice-wave.active { display: flex; }
     .wave-bar {
-        width: 4px; /* Lebar bar */
-        height: 100%;
-        background: #667eea;
-        border-radius: 2px;
+        width: 4px; height: 100%; background: #667eea;
         animation: waveAnimation 1s infinite ease-in-out;
     }
-
-    .wave-bar:nth-child(2) {
-        animation-delay: 0.1s;
-    }
-
-    .wave-bar:nth-child(3) {
-        animation-delay: 0.2s;
-    }
-
-    .wave-bar:nth-child(4) {
-        animation-delay: 0.3s;
-    }
-
-    .wave-bar:nth-child(5) {
-        animation-delay: 0.4s;
-    }
-
+    .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.4s; }
     @keyframes waveAnimation {
-        0%, 40%, 100% {
-            transform: scaleY(0.4);
-        }
-        20% {
-            transform: scaleY(1);
-        }
+        0%, 40%, 100% { transform: scaleY(0.4); }
+        20% { transform: scaleY(1); }
     }
 
     /* Quick Actions */
     .quick-actions {
-        display: flex;
-        gap: 0.5rem; /* Spasi antar tombol */
-        padding: 0.75rem 1rem; /* Padding lebih baik */
-        background: white;
-        border-top: 1px solid #e2e8f0;
-        overflow-x: auto;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.03); /* Shadow lembut di bawah quick actions */
+        display: flex; gap: 0.5rem; padding: 0.75rem 1rem;
+        background: white; border-top: 1px solid #e2e8f0;
+        overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
+        box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.03);
     }
-
-    .quick-actions::-webkit-scrollbar {
-        display: none;
-    }
-
+    .quick-actions::-webkit-scrollbar { display: none; }
     .quick-action-btn {
-        flex-shrink: 0;
-        padding: 0.5rem 1rem; /* Padding lebih baik */
-        background: #e0e7ff; /* Latar belakang biru muda */
-        border: 1px solid #a7c0ff; /* Border biru */
-        border-radius: 9999px; /* Full rounded */
-        font-size: 0.75rem; /* Ukuran font lebih kecil */
-        font-weight: 500;
-        color: #4f46e5; /* Warna teks biru gelap */
-        transition: all 0.2s ease-in-out; /* Transisi lebih cepat */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Shadow tombol */
+        flex-shrink: 0; padding: 0.5rem 1rem; background: #e0e7ff;
+        border: 1px solid #a7c0ff; font-size: 0.75rem; font-weight: 500;
+        color: #4f46e5; transition: all 0.2s ease-in-out;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
-
-    .quick-action-btn:hover {
-        background: #c7d2fe; /* Hover lebih gelap */
-        border-color: #6366f1;
-        transform: translateY(-1px); /* Sedikit naik */
-    }
-
-    .quick-action-btn:active {
-        background: #a5b4fc; /* Active lebih gelap */
-        transform: scale(0.98); /* Sedikit mengecil */
-    }
+    .quick-action-btn:hover { background: #c7d2fe; border-color: #6366f1; transform: translateY(-1px); }
+    .quick-action-btn:active { background: #a5b4fc; transform: scale(0.98); }
 
     /* Suggestion Buttons */
     .suggestion-btn {
-        background: #f0f2f5; /* Latar belakang abu-abu muda */
-        border: 1px solid #cbd5e1; /* Border abu-abu */
-        border-radius: 9999px; /* Full rounded */
-        font-size: 0.7rem; /* Ukuran font lebih kecil */
-        color: #4a5568; /* Warna teks abu-abu gelap */
-        transition: all 0.2s ease-in-out;
-        padding: 0.4rem 0.8rem; /* Padding lebih kecil */
+        background: #f0f2f5; border: 1px solid #cbd5e1; font-size: 0.7rem;
+        color: #4a5568; transition: all 0.2s ease-in-out; padding: 0.4rem 0.8rem;
     }
-
-    .suggestion-btn:hover,
-    .suggestion-btn:active {
-        background: #e2e8f0; /* Hover lebih gelap */
-        border-color: #a0aec0;
-        transform: translateY(-1px);
+    .suggestion-btn:hover, .suggestion-btn:active {
+        background: #e2e8f0; border-color: #a0aec0; transform: translateY(-1px);
     }
 
     /* Modals */
     .modal-overlay {
-        background: rgba(0, 0, 0, 0.6); /* Overlay lebih gelap */
-        backdrop-filter: blur(8px); /* Blur lebih kuat */
-        transition: opacity 0.3s ease; /* Animasi fade */
+        background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px);
+        transition: opacity 0.3s ease;
     }
-
     .modal-content {
-        background: rgba(255, 255, 255, 0.98); /* Latar belakang modal lebih solid */
-        backdrop-filter: blur(25px); /* Blur lebih kuat */
-        border: 1px solid rgba(255, 255, 255, 0.4); /* Border lebih jelas */
-        border-radius: 1.5rem; /* Sudut melengkung */
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* Shadow lebih besar */
-        transform: scale(0.9); /* Skala awal */
-        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                    opacity 0.3s ease; /* Animasi bounce */
+        background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); transform: scale(0.9);
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
     }
-    
-    /* NEW SETTINGS MODAL STYLE */
-    #settingsModal .modal-content {
-        background: #f7f8fc;
-        padding: 0;
-        overflow: hidden;
-    }
-
-    .modal-overlay.hidden {
-        opacity: 0;
-        pointer-events: none;
-    }
-
-    .modal-overlay:not(.hidden) .modal-content {
-        opacity: 1;
-        transform: scale(1);
-    }
-
+    #settingsModal .modal-content { background: #f7f8fc; padding: 0; overflow: hidden; }
+    .modal-overlay.hidden { opacity: 0; pointer-events: none; }
+    .modal-overlay:not(.hidden) .modal-content { opacity: 1; transform: scale(1); }
     .modal-close-btn {
-        background: #ef4444; /* Merah */
-        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4); /* Shadow merah */
+        background: #ef4444; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
         transition: all 0.2s ease-in-out;
     }
-    
-    #settingsModal .modal-close-btn {
-        background: #e2e8f0;
-        box-shadow: none;
-        color: #475569;
-    }
-    #settingsModal .modal-close-btn:hover {
-        background: #cbd5e1;
-        transform: scale(1.05);
-    }
-
-
-    .modal-close-btn:hover {
-        background: #dc2626; /* Merah lebih gelap */
-        transform: scale(1.05);
-    }
-
-    .modal-close-btn:active {
-        transform: scale(0.95);
-    }
-
+    #settingsModal .modal-close-btn { background: #e2e8f0; box-shadow: none; color: #475569; }
+    #settingsModal .modal-close-btn:hover { background: #cbd5e1; transform: scale(1.05); }
+    .modal-close-btn:hover { background: #dc2626; transform: scale(1.05); }
+    .modal-close-btn:active { transform: scale(0.95); }
     .profile-avatar-border {
         border: 4px solid;
-        border-image: linear-gradient(135deg, #667eea, #764ba2, #f093fb) 1; /* Border gradien */
-        animation: rotateBorder 4s linear infinite; /* Animasi border */
+        border-image: linear-gradient(135deg, #667eea, #764ba2, #f093fb) 1;
+        animation: rotateBorder 4s linear infinite;
     }
-
     @keyframes rotateBorder {
-        0% {
-            border-image-source: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
-        }
-        25% {
-            border-image-source: linear-gradient(135deg, #764ba2, #f093fb, #667eea);
-        }
-        50% {
-            border-image-source: linear-gradient(135deg, #f093fb, #667eea, #764ba2);
-        }
-        75% {
-            border-image-source: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
-        }
-        100% {
-            border-image-source: linear-gradient(135deg, #764ba2, #f093fb, #667eea);
-        }
+        0% { border-image-source: linear-gradient(135deg, #667eea, #764ba2, #f093fb); }
+        25% { border-image-source: linear-gradient(135deg, #764ba2, #f093fb, #667eea); }
+        50% { border-image-source: linear-gradient(135deg, #f093fb, #667eea, #764ba2); }
+        75% { border-image-source: linear-gradient(135deg, #667eea, #764ba2, #f093fb); }
+        100% { border-image-source: linear-gradient(135deg, #764ba2, #f093fb, #667eea); }
     }
     
-    /* START: NEW SETTINGS UI STYLES */
-    .settings-tab {
-        transition: all 0.3s ease;
-        border-bottom: 2px solid transparent;
-    }
-    .settings-tab.active {
-        color: #4f46e5;
-        font-weight: 600;
-        border-bottom-color: #4f46e5;
-    }
-    .settings-tab-content {
-        display: none;
-        animation: fadeIn 0.5s ease;
-    }
-    .settings-tab-content.active {
-        display: block;
-    }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+    /* NEW SETTINGS UI STYLES */
+    .settings-tab { transition: all 0.3s ease; border-bottom: 2px solid transparent; }
+    .settings-tab.active { color: #4f46e5; font-weight: 600; border-bottom-color: #4f46e5; }
+    .settings-tab-content { display: none; animation: fadeIn 0.5s ease; }
+    .settings-tab-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .settings-card {
-        background: white;
-        border-radius: 1rem;
-        padding: 1rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
+        background: white; padding: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); transition: all 0.3s ease;
     }
-    .settings-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-    }
-    .settings-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid #f1f5f9;
-    }
-    .settings-item:last-child {
-        border-bottom: none;
-    }
-    .settings-icon {
-        width: 1.25rem;
-        height: 1.25rem;
-        color: #6366f1;
-    }
+    .settings-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08); }
+    .settings-item { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #f1f5f9; }
+    .settings-item:last-child { border-bottom: none; }
+    .settings-icon { width: 1.25rem; height: 1.25rem; color: #6366f1; }
     .settings-input, .settings-select {
-        border-radius: 0.5rem;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.875rem;
-        transition: all 0.2s ease-in-out;
-        width: 55%;
+        background: #f8fafc; border: 1px solid #e2e8f0;
+        padding: 0.5rem 0.75rem; font-size: 0.875rem;
+        transition: all 0.2s ease-in-out; width: 55%;
     }
     .settings-input:focus, .settings-select:focus {
         border-color: #6366f1;
-        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-        outline: none;
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); outline: none;
     }
     .settings-btn-action {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        padding: 0.75rem;
-        border-radius: 0.75rem;
-        font-weight: 500;
-        transition: all 0.2s ease-in-out;
+        width: 100%; display: flex; align-items: center;
+        justify-content: center; gap: 0.5rem; padding: 0.75rem;
+        font-weight: 500; transition: all 0.2s ease-in-out;
     }
-    .settings-btn-action:hover {
-        transform: translateY(-1px);
-    }
-    .settings-btn-action:active {
-        transform: scale(0.98);
-    }
-    .theme-option-new {
-        border-radius: 0.75rem;
-        padding: 0.5rem;
-        border: 2px solid transparent;
-        transition: all 0.2s ease-in-out;
-        cursor: pointer;
-        text-align: center;
-    }
-    .theme-option-new.active {
-        border-color: #4f46e5;
-        background-color: #eef2ff;
-    }
-    .theme-swatch {
-        width: 100%;
-        height: 1.5rem;
-        border-radius: 0.5rem;
-        margin-bottom: 0.5rem;
-    }
+    .settings-btn-action:hover { transform: translateY(-1px); }
+    .settings-btn-action:active { transform: scale(0.98); }
+    .theme-option-new { padding: 0.5rem; border: 2px solid transparent; transition: all 0.2s ease-in-out; cursor: pointer; text-align: center; }
+    .theme-option-new.active { border-color: #4f46e5; background-color: #eef2ff; }
+    .theme-swatch { width: 100%; height: 1.5rem; margin-bottom: 0.5rem; }
     .toggle-new {
-        appearance: none;
-        width: 44px; /* Slightly wider */
-        height: 24px; /* Slightly taller */
-        border-radius: 12px;
-        background-color: #cbd5e1;
-        position: relative;
-        cursor: pointer;
+        appearance: none; width: 44px; height: 24px;
+        background-color: #cbd5e1; position: relative; cursor: pointer;
         transition: background-color 0.3s ease;
     }
     .toggle-new::before {
-        content: '';
-        position: absolute;
-        top: 3px;
-        left: 3px;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background-color: white;
+        content: ''; position: absolute; top: 3px; left: 3px;
+        width: 18px; height: 18px; background-color: white;
         transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
-    .toggle-new:checked {
-        background-color: #6366f1;
-    }
-    .toggle-new:checked::before {
-        transform: translateX(20px);
-    }
-    /* END: NEW SETTINGS UI STYLES */
+    .toggle-new:checked { background-color: #6366f1; }
+    .toggle-new:checked::before { transform: translateX(20px); }
 
-    /* Mobile optimizations */
+    /* Mobile optimizations - Disederhanakan karena layout dasar sudah full-screen */
     @media (max-width: 768px) {
-        .chat-window {
-            border-radius: 0; /* Full screen on mobile */
-            height: 100vh;
-            max-height: 100vh;
-            max-width: 100vw;
-        }
-
-        .header-gradient {
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-        }
-
-        .input-area {
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-
-        .message-bubble {
-            margin-bottom: 0.75rem;
-        }
-
+        .message-bubble { margin-bottom: 0.75rem; }
         .ai-message, .user-message {
-            max-width: 90%; /* Lebih lebar di mobile */
+            max-width: 90%;
             padding: 0.8rem 1.2rem;
         }
-
         .input-field {
-            font-size: 1rem; /* Prevents zoom on iOS */
+            font-size: 1rem; /* Mencegah zoom otomatis di iOS */
             padding: 0.6rem 1rem;
         }
-
-        .send-button {
-            width: 3rem;
-            height: 3rem;
-        }
-
-        .quick-actions {
-            padding: 0.6rem 0.8rem;
-        }
-
-        .quick-action-btn {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.7rem;
-        }
-
-        .modal-content {
-            border-radius: 1rem; /* Sedikit lebih kecil di mobile */
-            padding: 1.5rem;
-        }
-        
-        #settingsModal .modal-content {
-            padding: 0;
-        }
-    }
-  </style>
-  <style>
-    /* CSS tambahan untuk UI enhancement */
-
-    /* Scrollbar styling for chat messages */
-    .chat-messages::-webkit-scrollbar {
-      width: 8px;
+        .send-button { width: 3rem; height: 3rem; }
+        .quick-actions { padding: 0.6rem 0.8rem; }
+        .quick-action-btn { padding: 0.4rem 0.8rem; font-size: 0.7rem; }
+        .modal-content { padding: 1.5rem; }
+        #settingsModal .modal-content { padding: 0; }
     }
 
-    .chat-messages::-webkit-scrollbar-track {
-      background: transparent; /* Track transparan */
-    }
-
+    /* Scrollbar styling */
+    .chat-messages::-webkit-scrollbar { width: 8px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
     .chat-messages::-webkit-scrollbar-thumb {
-      background-color: rgba(0, 0, 0, 0.2); /* Warna thumb */
-      border-radius: 20px; /* Bentuk rounded */
-      border: 2px solid transparent; /* Border transparan */
-      background-clip: content-box; /* Pastikan background clip ke content box */
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 2px solid transparent; background-clip: content-box;
     }
+    .chat-messages::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.3); }
 
-    .chat-messages::-webkit-scrollbar-thumb:hover {
-      background-color: rgba(0, 0, 0, 0.3); /* Warna thumb saat hover */
-    }
-
-
-    /* General container styling for a lifted effect */
-    .chat-container {
-      border-radius: 24px;    /* atur sudut melengkung */
-      overflow: hidden;       /* biar isi dalam ikut melengkung */
-      box-shadow: 0 6px 20px rgba(0,0,0,0.15); /* opsional bayangan */
-    }
   </style>
-  <style>
-    /* hilangkan background bawaan Canva di wrapper besar */
-    html, body {
-      background: transparent !important;
-    }
-
-    /* kadang Canva bikin pembungkus */
-    .page,
-    .wrapper,
-    .main-container,
-    .container,
-    .app-container {
-      background: transparent !important;
-    }
-
-    /* kotak chat tetap putih & melengkung */
-    .chat-container {
-      background: #ffffff;
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-    }
-  </style>
-
 </head>
 <body>
 <div class="chat-container">
@@ -736,7 +350,7 @@
         <div class="header-gradient p-4 text-white relative flex-shrink-0">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
-                    <div class="ai-avatar w-12 h-12 rounded-full flex items-center justify-center overflow-hidden relative cursor-pointer"
+                    <div class="ai-avatar w-12 h-12 flex items-center justify-center overflow-hidden relative cursor-pointer"
                          onclick="showProfileModal()">
                         <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali"
                              class="w-full h-full object-cover">
@@ -749,14 +363,14 @@
                 </div>
                 <div class="flex items-center space-x-2">
                     <button onclick="toggleVoiceMode()"
-                            class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95">
+                            class="w-10 h-10 bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
                         </svg>
                     </button>
                     <button onclick="toggleSettings()"
-                            class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95">
+                            class="w-10 h-10 bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -777,16 +391,16 @@
         <!-- Chat Messages -->
         <div id="chatMessages" class="flex-1 overflow-y-auto p-4 chat-messages">
             <div class="message-bubble flex items-start space-x-3">
-                <div class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
                     <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover">
                 </div>
-                <div class="ai-message rounded-2xl rounded-tl-md p-4 max-w-xs relative">
+                <div class="ai-message p-4 max-w-xs relative">
                     <p class="text-gray-800 leading-relaxed text-sm">Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Santai aja, tanya apa aja yang kamu mau tau ya!</p>
                     <div class="mt-3">
                         <!-- Suggestions will be generated here -->
                     </div>
                     <!-- Tombol Pembaca Jawaban AI & Copy -->
-                    <button onclick="readAiResponse(this, 'SGFsbyEgR3VlIFdheWFuIG5paCwgQUkgYXNzaXN0YW50IHlhbmcgc2lhcCBiYW50dSBqYXdhYiBwZXJ0YW55YW4ga2FtdS4gU2FudGFpIGFqYSwgdGFueWEgYXBhIGFqYSB5YW4nZyBrYW11IG1hdSB0YXUgeWEh')" class="absolute bottom-2 right-2 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90" title="Baca Jawaban">
+                    <button onclick="readAiResponse(this, 'SGFsbyEgR3VlIFdheWFuIG5paCwgQUkgYXNzaXN0YW50IHlhbmcgc2lhcCBiYW50dSBqYXdhYiBwZXJ0YW55YW4ga2FtdS4gU2FudGFpIGFqYSwgdGFueWEgYXBhIGFqYSB5YW4nZyBrYW11IG1hdSB0YXUgeWEh')" class="absolute bottom-2 right-2 w-6 h-6 bg-gray-200 text-gray-600 flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90" title="Baca Jawaban">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path>
                         </svg>
@@ -795,10 +409,10 @@
             </div>
             <!-- Typing Indicator -->
             <div id="typingIndicator" class="typing-indicator items-start space-x-3">
-                <div class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
                     <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover">
                 </div>
-                <div class="ai-message rounded-2xl rounded-tl-md p-4">
+                <div class="ai-message p-4">
                     <div class="flex space-x-1">
                         <div class="dot"></div>
                         <div class="dot"></div>
@@ -808,10 +422,10 @@
             </div>
             <!-- Image Processing Indicator -->
             <div id="imageProcessingIndicator" class="typing-indicator items-start space-x-3">
-                <div class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
                     <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover">
                 </div>
-                <div class="ai-message rounded-2xl rounded-tl-md p-4">
+                <div class="ai-message p-4">
                     <div class="flex space-x-1">
                         <div class="dot"></div>
                         <div class="dot"></div>
@@ -834,7 +448,7 @@
                     >
                     <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
                         <button onclick="triggerImageUpload()"
-                                class="text-gray-400 hover:text-blue-500 transition-colors p-1 rounded-full transform hover:scale-110 active:scale-90"
+                                class="text-gray-400 hover:text-blue-500 transition-colors p-1 transform hover:scale-110 active:scale-90"
                                 title="Upload gambar">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -871,13 +485,13 @@
              id="imagePreviewContent">
             <div class="text-center relative">
                 <button onclick="hideImagePreview()"
-                        class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn">
+                        class="absolute -top-2 -right-2 w-8 h-8 flex items-center justify-center shadow-lg modal-close-btn">
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
                 <div class="mb-4">
-                    <img id="previewImage" src="" alt="Preview" class="w-full h-auto rounded-lg max-h-48 object-cover mx-auto shadow-md">
+                    <img id="previewImage" src="" alt="Preview" class="w-full h-auto max-h-48 object-cover mx-auto shadow-md">
                     <p id="previewFileName" class="text-sm text-gray-600 mt-2"></p>
                 </div>
                 <div class="mb-4">
@@ -886,22 +500,21 @@
                     <textarea
                             id="imageQuestionInput"
                             placeholder="Contoh: Apa yang ada di gambar ini? Jelaskan detail yang kamu lihat..."
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm settings-input"
+                            class="w-full px-4 py-3 border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm settings-input"
                             rows="3"
                     ></textarea>
                 </div>
                 <div class="flex space-x-3">
                     <button onclick="hideImagePreview()"
-                            class="flex-1 bg-gray-500 text-white py-3 rounded-xl font-semibold text-sm settings-btn">
+                            class="flex-1 bg-gray-500 text-white py-3 font-semibold text-sm settings-btn">
                         Batal
                     </button>
                     <button onclick="sendImageWithQuestion()"
-                            class="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-xl font-semibold text-sm settings-btn">
+                            class="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 font-semibold text-sm settings-btn">
                         Kirim
                     </button>
                 </div>
             </div>
-            <div class="swipe-indicator"></div>
         </div>
     </div>
     <!-- Profile Modal -->
@@ -910,17 +523,17 @@
              id="profileModalContent">
             <div class="text-center relative">
                 <button onclick="hideProfileModal()"
-                        class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn">
+                        class="absolute -top-2 -right-2 w-8 h-8 flex items-center justify-center shadow-lg modal-close-btn">
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
-                <div class="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden profile-avatar-border shadow-lg">
+                <div class="w-20 h-20 mx-auto mb-4 overflow-hidden profile-avatar-border shadow-lg">
                     <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover">
                 </div> <!-- Corrected alt text -->
                 <h2 class="text-xl font-bold text-gray-800 mb-2">Wayan AI</h2>
                 <p class="text-purple-600 font-semibold mb-4 text-sm">AI Assistant Dari Storybali</p>
-                <div class="text-gray-600 text-xs leading-relaxed mb-4 text-left bg-gray-50 p-3 rounded-xl">
+                <div class="text-gray-600 text-xs leading-relaxed mb-4 text-left bg-gray-50 p-3">
                     <p class="mb-2"><strong>Halo! Gue Wayan!</strong></p>
                     <p class="mb-2">Gue adalah AI assistant yang dibuat khusus untuk membantu kamu dengan gaya bahasa yang santai dan friendly.</p>
                     <p>Santai aja, tanya apa aja yang kamu mau!</p>
@@ -928,16 +541,15 @@
                 </div>
                 <div class="grid grid-cols-2 gap-2 text-xs">
                     <a href="https://www.instagram.com/sudiarsana_wayan?igsh=MXE4NHFvZzAyOXd6NQ%3D%3D&utm_source=qr" target="_blank"
-                       class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 py-2 rounded-full settings-btn">
+                       class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 py-2 settings-btn">
                         Instagram
                     </a>
                     <a href="https://wa.me/message/RNPBCG25N5V2A1" target="_blank"
-                       class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-2 rounded-full settings-btn">
+                       class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-2 settings-btn">
                         WhatsApp
                     </a>
                 </div>
             </div>
-            <div class="swipe-indicator"></div>
         </div>
     </div>
     
@@ -949,7 +561,7 @@
             <!-- Modal Header -->
             <div class="p-4 flex items-center justify-between flex-shrink-0 bg-white border-b border-gray-200">
                 <h3 class="text-lg font-bold text-gray-800">Pengaturan</h3>
-                <button onclick="toggleSettings()" class="w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn">
+                <button onclick="toggleSettings()" class="w-8 h-8 flex items-center justify-center shadow-lg modal-close-btn">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -1077,9 +689,6 @@
                             </div>
                             <input type="checkbox" id="readAiResponseToggle" class="toggle-new" onchange="toggleReadAiResponse()" checked>
                         </div>
-                        <!-- ================================================================= -->
-                        <!-- START: PENAMBAHAN DROPDOWN SUARA -->
-                        <!-- ================================================================= -->
                         <div class="settings-item">
                             <div class="flex items-center space-x-3">
                                 <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
@@ -1089,9 +698,6 @@
                                 <option value="">Memuat suara...</option>
                              </select>
                         </div>
-                        <!-- ================================================================= -->
-                        <!-- END: PENAMBAHAN DROPDOWN SUARA -->
-                        <!-- ================================================================= -->
                     </div>
                 </div>
                 <!-- Advanced Tab -->
@@ -1783,15 +1389,15 @@
         if (isUser) {
             messageDiv.className += ' flex-row-reverse space-x-reverse user';
             messageDiv.innerHTML = `
-                <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+                <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center flex-shrink-0 shadow-lg">
                     <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                     </svg>
                 </div>
-                <div class="user-message text-white rounded-2xl rounded-tr-md p-4 max-w-xs">
-                    <img src="${imageSrc}" alt="${fileName}" class="w-full h-auto rounded-lg mb-2 max-h-32 object-cover shadow-sm">
+                <div class="user-message text-white p-4 max-w-xs">
+                    <img src="${imageSrc}" alt="${fileName}" class="w-full h-auto mb-2 max-h-32 object-cover shadow-sm">
                     <p class="text-xs mb-2 opacity-90">${fileName}</p>
-                    <div class="bg-white bg-opacity-20 rounded-lg p-2">
+                    <div class="bg-white bg-opacity-20 p-2">
                         <p class="text-xs font-medium">${question}</p>
                     </div>
                 </div>
@@ -1848,32 +1454,28 @@
         if (isUser) {
             messageDiv.className += ' flex-row-reverse space-x-reverse user';
             messageDiv.innerHTML = `
-                <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+                <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center flex-shrink-0 shadow-lg">
                     <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                     </svg>
                 </div>
-                <div class="user-message text-white rounded-2xl rounded-tr-md p-4 max-w-xs">
+                <div class="user-message text-white p-4 max-w-xs">
                     <p class="leading-relaxed text-sm">${message}</p>
                 </div>
             `;
         } else {
-            // --- PERBAIKAN DIMULAI DI SINI ---
-            // Mengubah karakter baris baru (\n) menjadi tag <br> agar paragraf ditampilkan dengan benar.
             const formattedMessage = message.replace(/\n/g, '<br>');
-            // --- AKHIR PERBAIKAN ---
-
-            const encodedMessage = btoa(encodeURIComponent(message)); // Gunakan pesan asli untuk fitur suara
+            const encodedMessage = btoa(encodeURIComponent(message)); 
             messageDiv.innerHTML = `
-                <div class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
                     <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
                 </div>
-                <div class="ai-message rounded-2xl rounded-tl-md p-4 max-w-xs relative group">
-                    <p class="text-gray-800 leading-relaxed text-sm">${formattedMessage}</p> <!-- Menggunakan pesan yang sudah diformat -->
+                <div class="ai-message p-4 max-w-xs relative group">
+                    <p class="text-gray-800 leading-relaxed text-sm">${formattedMessage}</p>
                     <div class="mt-3">
                         ${renderSuggestions(suggestions)}
                     </div>
-                    <button onclick="readAiResponse(this, '${encodedMessage}')" class="absolute bottom-2 right-2 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90" title="Baca Jawaban">
+                    <button onclick="readAiResponse(this, '${encodedMessage}')" class="absolute bottom-2 right-2 w-6 h-6 bg-gray-200 text-gray-600 flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90" title="Baca Jawaban">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path>
                         </svg>
@@ -1881,7 +1483,7 @@
                 </div>
             `;
             messageDiv.querySelector('.ai-message').innerHTML += `
-                <button onclick="copyToClipboard(this.previousElementSibling.previousElementSibling.previousElementSibling.textContent, this)" class="copy-button absolute bottom-2 right-9 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90 opacity-0 group-hover:opacity-100 transition-opacity" title="Salin Jawaban">
+                <button onclick="copyToClipboard(this.previousElementSibling.previousElementSibling.previousElementSibling.textContent, this)" class="copy-button absolute bottom-2 right-9 w-6 h-6 bg-gray-200 text-gray-600 flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90 opacity-0 group-hover:opacity-100 transition-opacity" title="Salin Jawaban">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                 </button>
             `;
@@ -2471,4 +2073,5 @@
     }, true);
 </script>
 </body>
+</html></body>
 </html>
