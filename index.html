@@ -32,27 +32,125 @@
     }
 
     html, body {
-        background: #ffffff !important;
         height: 100%;
         width: 100%;
         margin: 0;
         padding: 0;
         overflow: hidden;
+        background-color: #f0f2f5;
     }
 
     body {
         font-family: 'Poppins', sans-serif;
-        background: #f0f2f5 !important;
     }
-
-    /* Menggunakan variabel --vh untuk tinggi yang benar di mobile */
-    .chat-container {
-        background: #ffffff;
+    
+    #appContainer {
+        display: flex;
+        height: 100vh; /* Menggunakan vh untuk fallback */
         height: calc(var(--vh, 1vh) * 100);
         width: 100vw;
+    }
+
+    /* === SIDEBAR STYLES START === */
+    #sidebar {
+        width: 260px;
+        background: #f7f8fc;
+        border-right: 1px solid #e2e8f0;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s ease-in-out, min-width 0.3s ease-in-out;
+        flex-shrink: 0;
+    }
+    #sidebar.collapsed {
+        min-width: 0px;
+        width: 0px;
+        transform: translateX(-260px);
+        padding: 0;
+        border-right: none;
+    }
+    .new-chat-btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.75rem;
+        font-weight: 500;
+        color: #374151;
+        background: white;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .new-chat-btn:hover {
+        background-color: #f9fafb;
+        border-color: #a5b4fc;
+        color: #4f46e5;
+    }
+    #chatHistoryList {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .chat-history-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.6rem 1rem;
+        margin: 0.25rem 0.5rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        color: #475569;
+        font-size: 0.875rem;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .chat-history-item:hover {
+        background-color: #eef2ff;
+    }
+    .chat-history-item.active {
+        background-color: #4f46e5;
+        color: white;
+        font-weight: 500;
+    }
+    .chat-history-item .title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex-grow: 1;
+        margin-right: 0.5rem;
+    }
+    .chat-history-item .actions {
+        display: flex;
+        gap: 0.5rem;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+    .chat-history-item:hover .actions, .chat-history-item.active .actions {
+        opacity: 1;
+    }
+    .chat-history-item .action-icon {
+        padding: 2px;
+        border-radius: 4px;
+    }
+    .chat-history-item .action-icon:hover {
+        background-color: rgba(255,255,255,0.2);
+    }
+    .chat-history-item.active .action-icon:hover {
+        background-color: rgba(255,255,255,0.3);
+    }
+    /* === SIDEBAR STYLES END === */
+
+
+    .chat-container {
+        background: #ffffff;
+        flex-grow: 1;
         display: flex;
         justify-content: center;
         align-items: center;
+        min-width: 0; /* Important for flexbox shrinking */
     }
 
     .chat-window {
@@ -435,6 +533,22 @@
 
 
     @media (max-width: 768px) {
+        /* On mobile, sidebar overlays the content */
+        #sidebar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+            transform: translateX(-100%);
+            border-right: 1px solid #e2e8f0;
+        }
+        #sidebar.open {
+            transform: translateX(0);
+        }
+        #sidebar.collapsed {
+             transform: translateX(-100%);
+        }
         .message-bubble { margin-bottom: 0.75rem; }
         .ai-message, .user-message { max-width: 90%; padding: 0.8rem 1.2rem; }
         .quick-actions { padding: 0.6rem 0.8rem; }
@@ -456,349 +570,369 @@
   </style>
 </head>
 <body>
-<div class="chat-container">
-    <div class="chat-window flex flex-col">
-        <!-- Header -->
-        <div class="header-gradient p-4 text-white relative flex-shrink-0">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="ai-avatar w-12 h-12 flex items-center justify-center overflow-hidden relative cursor-pointer"
-                         onclick="showProfileModal()">
-                        <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali"
-                             class="w-full h-full object-cover">
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold">Wayan AI</h1>
-                        <p class="text-blue-100 text-sm opacity-90">Klik untuk lihat profil</p>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <!-- Tombol Chat Baru -->
-                    <button onclick="startNewChat()"
-                            class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95"
-                            title="Mulai Chat Baru">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                        </svg>
-                    </button>
-                    <!-- Tombol Pengaturan -->
-                    <button onclick="toggleSettings()"
-                            class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                    </button>
-                </div>
+<div id="appContainer">
+    <!-- Sidebar Riwayat Chat -->
+    <div id="sidebar">
+        <div class="p-4 flex flex-col h-full">
+            <div class="mb-4 flex-shrink-0">
+                <button onclick="startNewChat()" class="new-chat-btn group">
+                    <span>Mulai Chat Baru</span>
+                    <svg class="w-5 h-5 text-gray-400 group-hover:text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                </button>
+            </div>
+            <div class="flex-grow overflow-y-auto -mr-2 pr-2">
+                 <ul id="chatHistoryList">
+                    <!-- Riwayat chat akan dimuat oleh JavaScript -->
+                 </ul>
             </div>
         </div>
-        <!-- Quick Actions -->
-        <div class="quick-actions flex-shrink-0">
-            <button class="quick-action-btn" onclick="sendQuickMessage('Halo Wayan!')">Halo</button>
-            <button class="quick-action-btn" onclick="sendQuickMessage('Apa kabar hari ini?')">Apa kabar?</button>
-            <button class="quick-action-btn" onclick="sendQuickMessage('Ceritakan joke lucu dong!')">Joke</button>
-            <button class="quick-action-btn" onclick="sendQuickMessage('Kasih tips produktif dong!')">Tips Produktif</button>
-            <button class="quick-action-btn" onclick="sendQuickMessage('Rekomendasi film bagus dong!')">Film</button>
-            <button class="quick-action-btn" onclick="sendQuickMessage('Ajarin coding dong!')">Coding</button>
-        </div>
-        <!-- Chat Messages -->
-        <div id="chatMessages" class="flex-1 overflow-y-auto p-4 chat-messages">
-            <!-- Pesan akan dimuat oleh JavaScript -->
-        </div>
-        
-        <!-- Input Area -->
-        <div class="input-area flex-shrink-0">
-            <div class="input-box">
-                <input
-                    type="text"
-                    id="messageInput"
-                    placeholder="Minta Wayan AI..."
-                    onkeypress="handleKeyPress(event)"
-                    oninput="handleInputChange(event)"
-                >
-                <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
-                
-                <div class="action-buttons">
-                    <div class="left-actions">
-                        <button onclick="triggerImageUpload()" class="action-btn" title="Upload Gambar">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+    </div>
+
+    <!-- Jendela Chat Utama -->
+    <div class="chat-container">
+        <div class="chat-window flex flex-col">
+            <!-- Header -->
+            <div class="header-gradient p-4 text-white relative flex-shrink-0">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <!-- Tombol Toggle Sidebar (Menggantikan tombol New Chat lama) -->
+                        <button onclick="toggleSidebar()"
+                                class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95"
+                                title="Tampilkan Riwayat">
+                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
                         </button>
-                        <button onclick="videoNotAvailable()" class="action-btn" title="Fitur Video">
-                            <span>Video</span>
-                        </button>
-                        <button onclick="openQuickSettings()" class="action-btn" title="Pengaturan Cepat">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
+                        <div class="flex items-center space-x-3">
+                            <div class="ai-avatar w-12 h-12 flex items-center justify-center overflow-hidden relative cursor-pointer"
+                                 onclick="showProfileModal()">
+                                <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali"
+                                     class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h1 class="text-xl font-bold">Wayan AI</h1>
+                                <p class="text-blue-100 text-sm opacity-90">Klik untuk lihat profil</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <!-- Tombol Pengaturan -->
+                        <button onclick="toggleSettings()"
+                                class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
                         </button>
                     </div>
+                </div>
+            </div>
+            <!-- Quick Actions -->
+            <div class="quick-actions flex-shrink-0">
+                <button class="quick-action-btn" onclick="sendQuickMessage('Halo Wayan!')">Halo</button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('Apa kabar hari ini?')">Apa kabar?</button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('Ceritakan joke lucu dong!')">Joke</button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('Kasih tips produktif dong!')">Tips Produktif</button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('Rekomendasi film bagus dong!')">Film</button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('Ajarin coding dong!')">Coding</button>
+            </div>
+            <!-- Chat Messages -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 chat-messages">
+                <!-- Pesan akan dimuat oleh JavaScript -->
+            </div>
+            
+            <!-- Input Area -->
+            <div class="input-area flex-shrink-0">
+                <div class="input-box">
+                    <input
+                        type="text"
+                        id="messageInput"
+                        placeholder="Minta Wayan AI..."
+                        onkeypress="handleKeyPress(event)"
+                        oninput="handleInputChange(event)"
+                    >
+                    <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
                     
-                    <div class="dynamic-icon-container">
-                        <button id="micBtn" onclick="toggleVoiceMode()" class="dynamic-icon-btn" title="Mode Suara">
-                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
-                            </svg>
-                        </button>
-                        <button id="sendBtn" onclick="sendMessage()" class="dynamic-icon-btn send-btn-active" title="Kirim Pesan" style="opacity: 0; pointer-events: none;">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div id="voiceWave" class="voice-wave justify-center mt-2">
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Modals (Tidak ada perubahan signifikan di sini) -->
-    <div id="imagePreviewModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
-        <div class="modal-content p-6 max-w-sm w-full" id="imagePreviewContent">
-            <div class="text-center relative">
-                <button onclick="hideImagePreview()" class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-                <div class="mb-4">
-                    <img id="previewImage" src="" alt="Preview" class="w-full h-auto rounded-lg max-h-48 object-cover mx-auto shadow-md">
-                    <p id="previewFileName" class="text-sm text-gray-600 mt-2"></p>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-left text-sm font-medium text-gray-700 mb-2">Tanya sesuatu tentang gambar ini:</label>
-                    <textarea id="imageQuestionInput" placeholder="Contoh: Apa yang ada di gambar ini? Jelaskan detail yang kamu lihat..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm settings-input" rows="3"></textarea>
-                </div>
-                <div class="flex space-x-3">
-                    <button onclick="hideImagePreview()" class="flex-1 bg-gray-500 text-white py-3 rounded-xl font-semibold text-sm settings-btn">Batal</button>
-                    <button onclick="sendImageWithQuestion()" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-xl font-semibold text-sm settings-btn">Kirim</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="profileModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
-        <div class="modal-content p-6 max-w-sm w-full" id="profileModalContent">
-            <div class="text-center relative">
-                <button onclick="hideProfileModal()" class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-                <div class="w-20 h-20 mx-auto mb-4 overflow-hidden profile-avatar-border shadow-lg">
-                    <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover">
-                </div>
-                <h2 class="text-xl font-bold text-gray-800 mb-2">Wayan AI</h2>
-                <p class="text-purple-600 font-semibold mb-4 text-sm">AI Assistant Dari Storybali</p>
-                <div class="text-gray-600 text-xs leading-relaxed mb-4 text-left bg-gray-50 p-3 rounded-xl">
-                    <p class="mb-2"><strong>Halo! Gue Wayan!</strong></p>
-                    <p class="mb-2">Gue adalah AI assistant yang dibuat khusus untuk membantu kamu dengan gaya bahasa yang santai dan friendly.</p>
-                    <p>Santai aja, tanya apa aja yang kamu mau!</p>
-                    <p>Kepoin Wayan yuk di Instagram atau chat WA pribadi Wayan!</p>
-                </div>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <a href="https://www.instagram.com/sudiarsana_wayan?igsh=MXE4NHFvZzAyOXd6NQ%3D%3D&utm_source=qr" target="_blank" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 py-2 rounded-full settings-btn">Instagram</a>
-                    <a href="https://wa.me/message/RNPBCG25N5V2A1" target="_blank" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-2 rounded-full settings-btn">WhatsApp</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="settingsModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
-        <div class="modal-content max-w-sm w-full max-h-[90vh] overflow-hidden flex flex-col" id="settingsModalContent">
-            <div class="p-4 flex items-center justify-between flex-shrink-0 bg-white border-b border-gray-200">
-                <h3 class="text-lg font-bold text-gray-800">Pengaturan</h3>
-                <button onclick="toggleSettings()" class="w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="flex-shrink-0 bg-white border-b border-gray-200">
-                <nav class="flex justify-around text-sm text-gray-600">
-                    <button onclick="switchSettingsTab('general')" class="settings-tab active flex-1 py-3 px-2 text-center">Umum</button>
-                    <button onclick="switchSettingsTab('appearance')" class="settings-tab flex-1 py-3 px-2 text-center">Tampilan</button>
-                    <button onclick="switchSettingsTab('advanced')" class="settings-tab flex-1 py-3 px-2 text-center">Lanjutan</button>
-                </nav>
-            </div>
-            <div class="flex-1 overflow-y-auto p-4 space-y-4">
-                <div id="tab-general" class="settings-tab-content active space-y-4">
-                    <div class="settings-card">
-                        <div class="settings-item">
-                            <div class="flex items-center space-x-3">
-                                <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                <label class="text-sm font-medium text-gray-700">Nama AI</label>
-                            </div>
-                            <input type="text" id="aiNameInput" value="Wayan" class="settings-input text-right" readonly style="background-color: #e9ecef; cursor: not-allowed;" title="Nama AI tidak dapat diubah.">
+                    <div class="action-buttons">
+                        <div class="left-actions">
+                            <button onclick="triggerImageUpload()" class="action-btn" title="Upload Gambar">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            </button>
+                            <button onclick="videoNotAvailable()" class="action-btn" title="Fitur Video">
+                                <span>Video</span>
+                            </button>
+                            <button onclick="openQuickSettings()" class="action-btn" title="Pengaturan Cepat">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
+                            </button>
                         </div>
-                        <div class="settings-item flex-col">
-                            <div class="w-full flex items-center space-x-3">
-                                <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m4 0v2M3 19h18M5 15h14M9 11h6"></path></svg>
-                                <label class="text-sm font-medium text-gray-700">Bahasa</label>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2 w-full pt-2">
-                                <button id="language-id" onclick="selectChoice('language', 'id', this)" class="choice-btn">Indonesia</button>
-                                <button id="language-en" onclick="selectChoice('language', 'en', this)" class="choice-btn">English</button>
-                            </div>
-                        </div>
-                        <div class="settings-item flex-col">
-                            <div class="w-full flex items-center space-x-3">
-                                <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                                <label class="text-sm font-medium text-gray-700">Gaya Bahasa</label>
-                            </div>
-                            <div class="grid grid-cols-3 gap-2 w-full pt-2">
-                                <button id="personality-santai" onclick="selectChoice('personality', 'santai', this)" class="choice-btn">Santai</button>
-                                <button id="personality-profesional" onclick="selectChoice('personality', 'profesional', this)" class="choice-btn">Profesional</button>
-                                <button id="personality-lucu" onclick="selectChoice('personality', 'lucu', this)" class="choice-btn">Humoris</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="settings-card">
-                        <div class="settings-item flex-col">
-                             <div class="w-full flex items-center space-x-3">
-                                <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V21H9z"></path></svg>
-                                <label class="text-sm font-medium text-gray-700">Mode Peran AI</label>
-                            </div>
-                            <div class="grid grid-cols-3 gap-2 w-full pt-2">
-                                <button id="aiRole-umum" onclick="selectChoice('aiRole', 'umum', this)" class="choice-btn">Umum</button>
-                                <button id="aiRole-guru_jepang" onclick="selectChoice('aiRole', 'guru_jepang', this)" class="choice-btn">B. Jepang</button>
-                                <button id="aiRole-guru_matematika" onclick="selectChoice('aiRole', 'guru_matematika', this)" class="choice-btn">Matematika</button>
-                                <button id="aiRole-dokter" onclick="selectChoice('aiRole', 'dokter', this)" class="choice-btn">Dokter</button>
-                                <button id="aiRole-programmer" onclick="selectChoice('aiRole', 'programmer', this)" class="choice-btn">Programmer</button>
-                                <button id="aiRole-penerjemah" onclick="selectChoice('aiRole', 'penerjemah', this)" class="choice-btn">Penerjemah</button>
-                                <button id="aiRole-kustom" onclick="selectChoice('aiRole', 'kustom', this)" class="choice-btn col-span-3">Kustom...</button>
-                            </div>
-                        </div>
-                        <div id="customRoleContainer" class="hidden p-2 mt-2">
-                            <label class="block text-xs text-gray-600 mb-1">Definisikan peran kustom AI:</label>
-                            <textarea id="customRoleInput" placeholder="Contoh: Kamu adalah seorang ahli sejarah..." class="w-full settings-input text-sm" rows="3"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div id="tab-appearance" class="settings-tab-content space-y-4">
-                    <div class="settings-card">
-                        <div class="p-2">
-                            <h4 class="text-sm font-medium text-gray-700 mb-3">Tema Warna</h4>
-                            <div class="grid grid-cols-3 gap-3">
-                                <div onclick="changeTheme('blue')" id="themeBlue" class="theme-option-new active">
-                                    <div class="theme-swatch bg-gradient-to-r from-blue-500 to-purple-500"></div>
-                                    <span class="text-xs font-medium text-gray-600">Biru</span>
-                                </div>
-                                <div onclick="changeTheme('green')" id="themeGreen" class="theme-option-new">
-                                    <div class="theme-swatch bg-gradient-to-r from-green-500 to-teal-500"></div>
-                                    <span class="text-xs font-medium text-gray-600">Hijau</span>
-                                </div>
-                                <div onclick="changeTheme('pink')" id="themePink" class="theme-option-new">
-                                    <div class="theme-swatch bg-gradient-to-r from-pink-500 to-red-500"></div>
-                                    <span class="text-xs font-medium text-gray-600">Pink</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="settings-card">
-                        <div class="settings-item">
-                            <div class="flex items-center space-x-3">
-                                <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                                <label class="text-sm font-medium text-gray-700">Ukuran Font</label>
-                            </div>
-                            <select id="fontSizeSelect" class="settings-select text-right w-auto">
-                                <option value="sm">Kecil</option>
-                                <option value="base" selected>Normal</option>
-                                <option value="lg">Besar</option>
-                            </select>
-                        </div>
-                        <div class="settings-item">
-                            <div class="flex items-center space-x-3">
-                                <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                <label class="text-sm font-medium text-gray-700">Efek Animasi</label>
-                            </div>
-                            <input type="checkbox" id="animationToggle" class="toggle-new" checked>
-                        </div>
-                    </div>
-                    <div class="settings-card">
-                        <div class="settings-item">
-                            <div class="flex items-center space-x-3">
-                                <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>
-                                <label class="text-sm font-medium text-gray-700">Suara Notifikasi</label>
-                            </div>
-                            <input type="checkbox" id="soundToggle" class="toggle-new" checked>
-                        </div>
-                        <div class="settings-item">
-                            <div class="flex items-center space-x-3">
-                                <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-                                <label class="text-sm font-medium text-gray-700">Pembaca Jawaban</label>
-                            </div>
-                            <input type="checkbox" id="readAiResponseToggle" class="toggle-new" checked>
-                        </div>
-                        <div class="settings-item">
-                            <div class="flex items-center space-x-3">
-                                <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-                                <label class="text-sm font-medium text-gray-700">Jenis Suara</label>
-                            </div>
-                             <select id="voiceSelect" class="settings-select text-right">
-                                <option value="">Memuat suara...</option>
-                             </select>
-                        </div>
-                    </div>
-                </div>
-                <div id="tab-advanced" class="settings-tab-content space-y-4">
-                     <div class="settings-card">
-                        <div class="settings-item">
-                            <div class="flex items-center space-x-3">
-                                <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10h.01M15 10h.01M9 14h.01M15 14h.01"></path></svg>
-                                <label class="text-sm font-medium text-gray-700">Simpan Riwayat</label>
-                            </div>
-                            <input type="checkbox" id="saveHistoryToggle" class="toggle-new" checked>
-                        </div>
-                        <div class="p-2 space-y-2">
-                             <button onclick="exportChatHistory()" class="settings-btn-action bg-green-100 text-green-700 hover:bg-green-200">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                <span>Export Riwayat Chat Ini</span>
-                             </button>
-                             <button onclick="clearChatHistory()" class="settings-btn-action bg-red-100 text-red-700 hover:bg-red-200">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                <span>Hapus Riwayat Chat Ini</span>
-                             </button>
-                        </div>
-                    </div>
-                    <div class="settings-card p-4">
-                        <h4 class="text-sm font-semibold text-gray-800 mb-3">API Keys (Gemini)</h4>
-                        <div class="space-y-2 text-sm">
-                            <div>
-                                <label class="block text-xs text-gray-500 mb-1">API Key 1 (Utama)</label>
-                                <input type="password" id="apiKey1" placeholder="Masukkan API Key" class="settings-input w-full">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-500 mb-1">API Key 2 (Cadangan)</label>
-                                <input type="password" id="apiKey2" placeholder="Opsional" class="settings-input w-full">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-500 mb-1">API Key 3 (Cadangan)</label>
-                                <input type="password" id="apiKey3" placeholder="Opsional" class="settings-input w-full">
-                            </div>
-                             <div>
-                                <label class="block text-xs text-gray-500 mb-1">API Key 4 (Cadangan)</label>
-                                <input type="password" id="apiKey4" placeholder="Opsional" class="settings-input w-full">
-                            </div>
-                             <div>
-                                <label class="block text-xs text-gray-500 mb-1">API Key 5 (Cadangan)</label>
-                                <input type="password" id="apiKey5" placeholder="Opsional" class="settings-input w-full">
-                            </div>
-                            <button onclick="saveApiKeys()" class="w-full settings-btn-action bg-blue-600 text-white mt-4 hover:bg-blue-700">
-                                Simpan API Keys
+                        
+                        <div class="dynamic-icon-container">
+                            <button id="micBtn" onclick="toggleVoiceMode()" class="dynamic-icon-btn" title="Mode Suara">
+                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                                </svg>
+                            </button>
+                            <button id="sendBtn" onclick="sendMessage()" class="dynamic-icon-btn send-btn-active" title="Kirim Pesan" style="opacity: 0; pointer-events: none;">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                </svg>
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="p-4 bg-gray-50 border-t border-gray-200 flex-shrink-0">
-                <div class="grid grid-cols-2 gap-3">
-                    <button onclick="resetAllSettings()" class="settings-btn-action bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm py-2">
-                        <span>Reset</span>
-                    </button>
-                    <button onclick="saveAllSettings()" class="settings-btn-action bg-blue-600 text-white hover:bg-blue-700 text-sm py-2">
-                        <span>Simpan & Tutup</span>
-                    </button>
+                <div id="voiceWave" class="voice-wave justify-center mt-2">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
                 </div>
             </div>
-            <div class="p-3 bg-white border-t border-gray-200 flex-shrink-0 text-center">
-                <p class="text-xs text-gray-500">StoryBali v2.5 | © 2024</p>
+        </div>
+    </div>
+</div>
+    
+<!-- Modals (Tidak ada perubahan signifikan di sini) -->
+<div id="imagePreviewModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
+    <div class="modal-content p-6 max-w-sm w-full" id="imagePreviewContent">
+        <div class="text-center relative">
+            <button onclick="hideImagePreview()" class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <div class="mb-4">
+                <img id="previewImage" src="" alt="Preview" class="w-full h-auto rounded-lg max-h-48 object-cover mx-auto shadow-md">
+                <p id="previewFileName" class="text-sm text-gray-600 mt-2"></p>
             </div>
+            <div class="mb-4">
+                <label class="block text-left text-sm font-medium text-gray-700 mb-2">Tanya sesuatu tentang gambar ini:</label>
+                <textarea id="imageQuestionInput" placeholder="Contoh: Apa yang ada di gambar ini? Jelaskan detail yang kamu lihat..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm settings-input" rows="3"></textarea>
+            </div>
+            <div class="flex space-x-3">
+                <button onclick="hideImagePreview()" class="flex-1 bg-gray-500 text-white py-3 rounded-xl font-semibold text-sm settings-btn">Batal</button>
+                <button onclick="sendImageWithQuestion()" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-xl font-semibold text-sm settings-btn">Kirim</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="profileModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
+    <div class="modal-content p-6 max-w-sm w-full" id="profileModalContent">
+        <div class="text-center relative">
+            <button onclick="hideProfileModal()" class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <div class="w-20 h-20 mx-auto mb-4 overflow-hidden profile-avatar-border shadow-lg">
+                <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover">
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Wayan AI</h2>
+            <p class="text-purple-600 font-semibold mb-4 text-sm">AI Assistant Dari Storybali</p>
+            <div class="text-gray-600 text-xs leading-relaxed mb-4 text-left bg-gray-50 p-3 rounded-xl">
+                <p class="mb-2"><strong>Halo! Gue Wayan!</strong></p>
+                <p class="mb-2">Gue adalah AI assistant yang dibuat khusus untuk membantu kamu dengan gaya bahasa yang santai dan friendly.</p>
+                <p>Santai aja, tanya apa aja yang kamu mau!</p>
+                <p>Kepoin Wayan yuk di Instagram atau chat WA pribadi Wayan!</p>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <a href="https://www.instagram.com/sudiarsana_wayan?igsh=MXE4NHFvZzAyOXd6NQ%3D%3D&utm_source=qr" target="_blank" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 py-2 rounded-full settings-btn">Instagram</a>
+                <a href="https://wa.me/message/RNPBCG25N5V2A1" target="_blank" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-2 rounded-full settings-btn">WhatsApp</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="settingsModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
+    <div class="modal-content max-w-sm w-full max-h-[90vh] overflow-hidden flex flex-col" id="settingsModalContent">
+        <div class="p-4 flex items-center justify-between flex-shrink-0 bg-white border-b border-gray-200">
+            <h3 class="text-lg font-bold text-gray-800">Pengaturan</h3>
+            <button onclick="toggleSettings()" class="w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="flex-shrink-0 bg-white border-b border-gray-200">
+            <nav class="flex justify-around text-sm text-gray-600">
+                <button onclick="switchSettingsTab('general')" class="settings-tab active flex-1 py-3 px-2 text-center">Umum</button>
+                <button onclick="switchSettingsTab('appearance')" class="settings-tab flex-1 py-3 px-2 text-center">Tampilan</button>
+                <button onclick="switchSettingsTab('advanced')" class="settings-tab flex-1 py-3 px-2 text-center">Lanjutan</button>
+            </nav>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4 space-y-4">
+            <div id="tab-general" class="settings-tab-content active space-y-4">
+                <div class="settings-card">
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-3">
+                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            <label class="text-sm font-medium text-gray-700">Nama AI</label>
+                        </div>
+                        <input type="text" id="aiNameInput" value="Wayan" class="settings-input text-right" readonly style="background-color: #e9ecef; cursor: not-allowed;" title="Nama AI tidak dapat diubah.">
+                    </div>
+                    <div class="settings-item flex-col">
+                        <div class="w-full flex items-center space-x-3">
+                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m4 0v2M3 19h18M5 15h14M9 11h6"></path></svg>
+                            <label class="text-sm font-medium text-gray-700">Bahasa</label>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 w-full pt-2">
+                            <button id="language-id" onclick="selectChoice('language', 'id', this)" class="choice-btn">Indonesia</button>
+                            <button id="language-en" onclick="selectChoice('language', 'en', this)" class="choice-btn">English</button>
+                        </div>
+                    </div>
+                    <div class="settings-item flex-col">
+                        <div class="w-full flex items-center space-x-3">
+                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                            <label class="text-sm font-medium text-gray-700">Gaya Bahasa</label>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 w-full pt-2">
+                            <button id="personality-santai" onclick="selectChoice('personality', 'santai', this)" class="choice-btn">Santai</button>
+                            <button id="personality-profesional" onclick="selectChoice('personality', 'profesional', this)" class="choice-btn">Profesional</button>
+                            <button id="personality-lucu" onclick="selectChoice('personality', 'lucu', this)" class="choice-btn">Humoris</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-card">
+                    <div class="settings-item flex-col">
+                         <div class="w-full flex items-center space-x-3">
+                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V21H9z"></path></svg>
+                            <label class="text-sm font-medium text-gray-700">Mode Peran AI</label>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 w-full pt-2">
+                            <button id="aiRole-umum" onclick="selectChoice('aiRole', 'umum', this)" class="choice-btn">Umum</button>
+                            <button id="aiRole-guru_jepang" onclick="selectChoice('aiRole', 'guru_jepang', this)" class="choice-btn">B. Jepang</button>
+                            <button id="aiRole-guru_matematika" onclick="selectChoice('aiRole', 'guru_matematika', this)" class="choice-btn">Matematika</button>
+                            <button id="aiRole-dokter" onclick="selectChoice('aiRole', 'dokter', this)" class="choice-btn">Dokter</button>
+                            <button id="aiRole-programmer" onclick="selectChoice('aiRole', 'programmer', this)" class="choice-btn">Programmer</button>
+                            <button id="aiRole-penerjemah" onclick="selectChoice('aiRole', 'penerjemah', this)" class="choice-btn">Penerjemah</button>
+                            <button id="aiRole-kustom" onclick="selectChoice('aiRole', 'kustom', this)" class="choice-btn col-span-3">Kustom...</button>
+                        </div>
+                    </div>
+                    <div id="customRoleContainer" class="hidden p-2 mt-2">
+                        <label class="block text-xs text-gray-600 mb-1">Definisikan peran kustom AI:</label>
+                        <textarea id="customRoleInput" placeholder="Contoh: Kamu adalah seorang ahli sejarah..." class="w-full settings-input text-sm" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div id="tab-appearance" class="settings-tab-content space-y-4">
+                <div class="settings-card">
+                    <div class="p-2">
+                        <h4 class="text-sm font-medium text-gray-700 mb-3">Tema Warna</h4>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div onclick="changeTheme('blue')" id="themeBlue" class="theme-option-new active">
+                                <div class="theme-swatch bg-gradient-to-r from-blue-500 to-purple-500"></div>
+                                <span class="text-xs font-medium text-gray-600">Biru</span>
+                            </div>
+                            <div onclick="changeTheme('green')" id="themeGreen" class="theme-option-new">
+                                <div class="theme-swatch bg-gradient-to-r from-green-500 to-teal-500"></div>
+                                <span class="text-xs font-medium text-gray-600">Hijau</span>
+                            </div>
+                            <div onclick="changeTheme('pink')" id="themePink" class="theme-option-new">
+                                <div class="theme-swatch bg-gradient-to-r from-pink-500 to-red-500"></div>
+                                <span class="text-xs font-medium text-gray-600">Pink</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-card">
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-3">
+                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <label class="text-sm font-medium text-gray-700">Ukuran Font</label>
+                        </div>
+                        <select id="fontSizeSelect" class="settings-select text-right w-auto">
+                            <option value="sm">Kecil</option>
+                            <option value="base" selected>Normal</option>
+                            <option value="lg">Besar</option>
+                        </select>
+                    </div>
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-3">
+                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            <label class="text-sm font-medium text-gray-700">Efek Animasi</label>
+                        </div>
+                        <input type="checkbox" id="animationToggle" class="toggle-new" checked>
+                    </div>
+                </div>
+                <div class="settings-card">
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-3">
+                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>
+                            <label class="text-sm font-medium text-gray-700">Suara Notifikasi</label>
+                        </div>
+                        <input type="checkbox" id="soundToggle" class="toggle-new" checked>
+                    </div>
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-3">
+                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                            <label class="text-sm font-medium text-gray-700">Pembaca Jawaban</label>
+                        </div>
+                        <input type="checkbox" id="readAiResponseToggle" class="toggle-new" checked>
+                    </div>
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-3">
+                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                            <label class="text-sm font-medium text-gray-700">Jenis Suara</label>
+                        </div>
+                         <select id="voiceSelect" class="settings-select text-right">
+                            <option value="">Memuat suara...</option>
+                         </select>
+                    </div>
+                </div>
+            </div>
+            <div id="tab-advanced" class="settings-tab-content space-y-4">
+                 <div class="settings-card">
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-3">
+                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10h.01M15 10h.01M9 14h.01M15 14h.01"></path></svg>
+                            <label class="text-sm font-medium text-gray-700">Simpan Riwayat</label>
+                        </div>
+                        <input type="checkbox" id="saveHistoryToggle" class="toggle-new" checked>
+                    </div>
+                    <div class="p-2 space-y-2">
+                         <button onclick="exportChatHistory()" class="settings-btn-action bg-green-100 text-green-700 hover:bg-green-200">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            <span>Export Riwayat Chat Ini</span>
+                         </button>
+                         <button onclick="clearAllChatHistory()" class="settings-btn-action bg-red-100 text-red-700 hover:bg-red-200">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            <span>Hapus SEMUA Percakapan</span>
+                         </button>
+                    </div>
+                </div>
+                <div class="settings-card p-4">
+                    <h4 class="text-sm font-semibold text-gray-800 mb-3">API Keys (Gemini)</h4>
+                    <div class="space-y-2 text-sm">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">API Key 1 (Utama)</label>
+                            <input type="password" id="apiKey1" placeholder="Masukkan API Key" class="settings-input w-full">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">API Key 2 (Cadangan)</label>
+                            <input type="password" id="apiKey2" placeholder="Opsional" class="settings-input w-full">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">API Key 3 (Cadangan)</label>
+                            <input type="password" id="apiKey3" placeholder="Opsional" class="settings-input w-full">
+                        </div>
+                         <div>
+                            <label class="block text-xs text-gray-500 mb-1">API Key 4 (Cadangan)</label>
+                            <input type="password" id="apiKey4" placeholder="Opsional" class="settings-input w-full">
+                        </div>
+                         <div>
+                            <label class="block text-xs text-gray-500 mb-1">API Key 5 (Cadangan)</label>
+                            <input type="password" id="apiKey5" placeholder="Opsional" class="settings-input w-full">
+                        </div>
+                        <button onclick="saveApiKeys()" class="w-full settings-btn-action bg-blue-600 text-white mt-4 hover:bg-blue-700">
+                            Simpan API Keys
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-4 bg-gray-50 border-t border-gray-200 flex-shrink-0">
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="resetAllSettings()" class="settings-btn-action bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm py-2">
+                    <span>Reset</span>
+                </button>
+                <button onclick="saveAllSettings()" class="settings-btn-action bg-blue-600 text-white hover:bg-blue-700 text-sm py-2">
+                    <span>Simpan & Tutup</span>
+                </button>
+            </div>
+        </div>
+        <div class="p-3 bg-white border-t border-gray-200 flex-shrink-0 text-center">
+            <p class="text-xs text-gray-500">StoryBali v2.5 | © 2024</p>
         </div>
     </div>
 </div>
@@ -840,7 +974,8 @@
         customAiRolePrompt: '',
         fontSize: 'base',
         voiceURI: '',
-        saveHistory: true
+        saveHistory: true,
+        isSidebarOpen: window.innerWidth > 768 // Sidebar open by default on desktop
     };
     
     let settings = { ...defaultSettings };
@@ -964,6 +1099,96 @@
     }
 
     // ===============================================
+    //      FUNGSI MANAJEMEN SIDEBAR (BARU)
+    // ===============================================
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            sidebar.classList.toggle('open');
+            sidebar.classList.toggle('collapsed'); // toggle collapsed for consistency
+        } else {
+            sidebar.classList.toggle('collapsed');
+        }
+        settings.isSidebarOpen = !sidebar.classList.contains('collapsed');
+        saveSettings();
+    }
+
+    function renderSidebar() {
+        const historyList = document.getElementById('chatHistoryList');
+        historyList.innerHTML = '';
+        
+        // Urutkan dari yang terbaru
+        [...allChatSessions].reverse().forEach(session => {
+            const item = document.createElement('li');
+            item.className = 'chat-history-item';
+            item.dataset.chatId = session.id;
+            item.innerHTML = `
+                <span class="title">${session.title}</span>
+                <div class="actions">
+                    <button onclick="renameChatSession('${session.id}', event)" class="action-icon" title="Ganti Nama">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
+                    </button>
+                    <button onclick="deleteChatSession('${session.id}', event)" class="action-icon" title="Hapus Chat">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </div>`;
+            
+            item.addEventListener('click', () => {
+                if(activeChatId !== session.id) {
+                    loadChat(session.id);
+                }
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
+            
+            historyList.appendChild(item);
+        });
+        
+        updateSidebarActiveState();
+    }
+
+    function updateSidebarActiveState() {
+        document.querySelectorAll('.chat-history-item').forEach(item => {
+            item.classList.toggle('active', item.dataset.chatId === activeChatId);
+        });
+    }
+
+    function renameChatSession(chatId, event) {
+        event.stopPropagation(); // Mencegah event click pada item li
+        const session = allChatSessions.find(s => s.id === chatId);
+        if (!session) return;
+
+        const newTitle = prompt("Masukkan nama baru untuk percakapan ini:", session.title);
+        if (newTitle && newTitle.trim() !== '') {
+            session.title = newTitle.trim();
+            saveAllChatSessions();
+            renderSidebar();
+        }
+    }
+
+    function deleteChatSession(chatId, event) {
+        event.stopPropagation();
+        if (!confirm('Apakah Anda yakin ingin menghapus percakapan ini?')) return;
+
+        allChatSessions = allChatSessions.filter(s => s.id !== chatId);
+        
+        if (activeChatId === chatId) {
+            // Jika chat yang aktif dihapus, muat chat pertama atau buat baru
+            if (allChatSessions.length > 0) {
+                loadChat(allChatSessions[0].id);
+            } else {
+                startNewChat();
+            }
+        }
+        
+        saveAllChatSessions();
+        renderSidebar();
+    }
+
+
+    // ===============================================
     //      FUNGSI MANAJEMEN CHAT (DIPERBAIKI)
     // ===============================================
 
@@ -973,14 +1198,11 @@
         return activeSession ? activeSession.history : null;
     }
     
-    function startNewChat(isInitialLoad = false) {
-        if (!isInitialLoad && !confirm('Apakah Anda yakin ingin memulai percakapan baru? Riwayat chat saat ini akan disimpan.')) {
-            return;
-        }
-        
+    function startNewChat() {
         const newChatId = `chat_${new Date().getTime()}`;
         const newSession = {
             id: newChatId,
+            title: 'Percakapan Baru', // Judul default
             history: [{
                 role: 'model',
                 parts: [{ text: 'Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Santai aja, tanya apa aja yang kamu mau tau ya!' }]
@@ -991,10 +1213,9 @@
         activeChatId = newChatId;
         
         saveAllChatSessions();
+        renderSidebar();
         loadChat(activeChatId);
-        if (!isInitialLoad) {
-            addSystemMessage("Memulai percakapan baru.");
-        }
+        addSystemMessage("Memulai percakapan baru.");
     }
 
     function saveAllChatSessions() {
@@ -1009,7 +1230,7 @@
 
     function loadAllChatSessions() {
         if (!settings.saveHistory) {
-            startNewChat(true);
+            startNewChat();
             return;
         }
 
@@ -1020,43 +1241,42 @@
             activeChatId = parsedData.activeId || null;
 
             if (allChatSessions.length === 0 || !activeChatId || !allChatSessions.find(s => s.id === activeChatId)) {
-                startNewChat(true);
+                startNewChat();
             } else {
+                renderSidebar();
                 loadChat(activeChatId);
             }
         } else {
-            startNewChat(true);
+            startNewChat();
         }
     }
 
     function loadChat(chatId) {
-        const chatMessages = document.getElementById('chatMessages');
-        chatMessages.innerHTML = ''; // Selalu kosongkan dulu
-
         const session = allChatSessions.find(s => s.id === chatId);
-        if (session) {
-            activeChatId = chatId;
-            session.history.forEach(msg => {
-                const isUser = msg.role === 'user';
-                // PERBAIKAN PENTING: Mengakses teks dari struktur data yang benar
-                addOriginalMessage(msg.parts[0].text, isUser);
-            });
+        if (!session) {
+            console.error("Sesi chat tidak ditemukan:", chatId);
+            return;
         }
+
+        activeChatId = chatId;
+        const chatMessages = document.getElementById('chatMessages');
+        chatMessages.innerHTML = ''; 
+
+        session.history.forEach(msg => {
+            const isUser = msg.role === 'user';
+            addOriginalMessage(msg.parts[0].text, isUser);
+        });
         
-        // PERBAIKAN PENTING: Tambahkan indikator sebagai elemen DOM, bukan innerHTML
         recreateIndicators();
         scrollToBottom();
+        updateSidebarActiveState();
     }
     
-    // Fungsi baru untuk membuat ulang indikator dengan benar
     function recreateIndicators() {
         const chatMessages = document.getElementById('chatMessages');
-
-        // Hapus indikator lama jika ada
         document.getElementById('typingIndicator')?.remove();
         document.getElementById('imageProcessingIndicator')?.remove();
 
-        // Buat dan tambahkan Typing Indicator
         const typingIndicator = document.createElement('div');
         typingIndicator.id = 'typingIndicator';
         typingIndicator.className = 'typing-indicator items-start space-x-3';
@@ -1065,7 +1285,6 @@
             <div class="ai-message rounded-2xl rounded-tl-md p-4"><div class="flex space-x-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
         chatMessages.appendChild(typingIndicator);
 
-        // Buat dan tambahkan Image Processing Indicator
         const imageProcessingIndicator = document.createElement('div');
         imageProcessingIndicator.id = 'imageProcessingIndicator';
         imageProcessingIndicator.className = 'typing-indicator items-start space-x-3';
@@ -1077,36 +1296,32 @@
 
 
     function addToConversationHistory(role, message) {
-        const activeHistory = getActiveChatHistory();
-        if (activeHistory) {
-            activeHistory.push({
+        const activeSession = allChatSessions.find(s => s.id === activeChatId);
+        if (activeSession) {
+            activeSession.history.push({
                 role: role,
                 parts: [{text: message}]
             });
-            if (activeHistory.length > 20) {
-                // Hapus 2 pesan tertua (user dan model) untuk menjaga konteks
-                activeHistory.splice(1, 2); 
+            if (activeSession.history.length > 20) {
+                activeSession.history.splice(1, 2); 
             }
             saveAllChatSessions();
         }
     }
-
-    function clearChatHistory() {
-        if (confirm('Yakin mau hapus riwayat chat untuk sesi ini? Tindakan ini tidak bisa dibatalkan.')) {
-            const activeSession = allChatSessions.find(session => session.id === activeChatId);
-            if (activeSession) {
-                // Simpan pesan pertama (salam dari AI) dan hapus sisanya
-                activeSession.history = [activeSession.history[0]];
-                saveAllChatSessions();
-                loadChat(activeChatId);
-                alert('Riwayat chat sesi ini telah dihapus!');
-            }
+    
+    function clearAllChatHistory() {
+        if (confirm('Yakin mau hapus SEMUA riwayat percakapan? Tindakan ini tidak bisa dibatalkan.')) {
+            allChatSessions = [];
+            activeChatId = null;
+            saveAllChatSessions();
+            startNewChat();
+            alert('Semua riwayat percakapan telah dihapus!');
         }
     }
     
     function exportChatHistory() {
         const activeHistory = getActiveChatHistory();
-        if (!activeHistory || activeHistory.length <= 1) { // <= 1 karena ada pesan salam
+        if (!activeHistory || activeHistory.length <= 1) { 
             alert('Belum ada riwayat chat di sesi ini untuk di-export!');
             return;
         }
@@ -1114,7 +1329,6 @@
         exportText += `Diekspor: ${new Date().toLocaleString('id-ID')}\n\n`;
         activeHistory.forEach((msg) => {
             const role = msg.role === 'user' ? 'Kamu' : 'Wayan AI';
-            // PERBAIKAN PENTING: Mengakses teks dari struktur data yang benar
             const text = msg.parts[0].text;
             exportText += `${role}: ${text}\n\n`;
         });
@@ -1257,6 +1471,20 @@
         }
     }
     function applySettings() {
+        // Apply sidebar state
+        const sidebar = document.getElementById('sidebar');
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            sidebar.classList.add('collapsed');
+            sidebar.classList.remove('open');
+        } else {
+            if (settings.isSidebarOpen) {
+                sidebar.classList.remove('collapsed');
+            } else {
+                sidebar.classList.add('collapsed');
+            }
+        }
+
         document.querySelector('.header-gradient h1').textContent = 'Wayan AI';
         document.getElementById('aiNameInput').value = 'Wayan';
         settings.aiName = 'Wayan';
@@ -1561,6 +1789,16 @@
         const input = document.getElementById('messageInput');
         const message = input.value.trim();
         if (!message || !currentUserIP) return;
+
+        const activeSession = allChatSessions.find(s => s.id === activeChatId);
+        if (!activeSession) return;
+        
+        // Auto-naming chat session
+        if(activeSession.title === 'Percakapan Baru') {
+            activeSession.title = message.substring(0, 30) + (message.length > 30 ? '...' : '');
+            renderSidebar();
+        }
+
         const allUserData = getChatLimitData();
         const userData = allUserData[currentUserIP] || { count: 0 };
         if (userData.count >= CHAT_LIMIT && userData.cooldownUntil) { return; }
@@ -1686,9 +1924,9 @@
         <p class="text-gray-700 text-base mb-4">Tulis pertanyaan di kolom bawah, lalu tekan <b>tombol kirim</b>.</p>
       </div>
        <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/2795.png" alt="New Chat" class="w-16 h-16 mb-3 mx-auto" />
-        <h2 class="text-lg font-semibold mb-2 text-blue-700">Mulai Topik Baru</h2>
-        <p class="text-gray-700 text-base mb-4">Ingin membahas hal lain? Klik tombol <b>tambah (+)</b> di pojok kanan atas untuk memulai percakapan baru tanpa kehilangan chat lama.</p>
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f5c3.png" alt="New Chat" class="w-16 h-16 mb-3 mx-auto" />
+        <h2 class="text-lg font-semibold mb-2 text-blue-700">Simpan Percakapan</h2>
+        <p class="text-gray-700 text-base mb-4">Setiap percakapan akan otomatis tersimpan. Klik tombol <b>menu (garis tiga)</b> di pojok kiri atas untuk melihat riwayat chat Anda.</p>
       </div>
       <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
         <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f527.png" alt="Settings" class="w-16 h-16 mb-3 mx-auto animate-spin-slow" />
