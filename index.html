@@ -1,4 +1,4 @@
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -1230,9 +1230,10 @@
             conversationHistory = JSON.parse(savedHistory);
             conversationHistory.forEach(msg => {
                 if (msg.role === 'user') {
-                    addMessage(msg.parts[0].text, true);
+                    // Panggil addMessage asli untuk riwayat, tanpa efek typewriter
+                    addOriginalMessage(msg.parts[0].text, true);
                 } else {
-                    addMessage(msg.parts[0].text, false);
+                    addOriginalMessage(msg.parts[0].text, false);
                 }
             });
         }
@@ -1613,8 +1614,124 @@
         scrollToBottom();
     }
     
-    // LANGKAH 3: Modifikasi Fungsi addMessage untuk Memproses Markdown
+    // ======================================================================
+    // === FUNGSI BARU UNTUK EFEK MENGETIK (TYPEWRITER) ======================
+    // ======================================================================
+    function typewriterEffect(element, text, callback) {
+        let i = 0;
+        element.innerHTML = ""; // Kosongkan elemen terlebih dahulu
+        const chatMessages = document.getElementById('chatMessages');
+
+        function type() {
+            if (i < text.length) {
+                // Cek apakah karakter berikutnya adalah bagian dari tag Markdown (misal: **, ```, * )
+                // dan tampilkan dalam satu blok agar format tidak rusak.
+                let char = text.charAt(i);
+                let nextChunk = char;
+
+                // Handle blok kode ```
+                if (text.substring(i, i + 3) === '```') {
+                    let endBlock = text.indexOf('```', i + 3);
+                    if (endBlock !== -1) {
+                        nextChunk = text.substring(i, endBlock + 3);
+                        i = endBlock + 2;
+                    }
+                }
+                // Handle bold **...** atau *...*
+                else if (char === '*' && text.charAt(i + 1) === '*') {
+                     let endBold = text.indexOf('**', i + 2);
+                     if(endBold !== -1) {
+                        nextChunk = text.substring(i, endBold + 2);
+                        i = endBold + 1;
+                     }
+                }
+                
+                element.innerHTML += nextChunk.replace(/\n/g, '<br>'); // Ganti newline dengan <br> agar berfungsi di HTML
+                i++;
+                
+                // Scroll ke bawah setiap beberapa karakter ditambahkan
+                if (i % 10 === 0) {
+                    scrollToBottom();
+                }
+
+                // Kecepatan mengetik bisa diatur di sini (dalam milidetik)
+                setTimeout(type, 20); // Kecepatan 20ms per karakter
+            } else {
+                 // Panggil fungsi callback setelah selesai
+                if (callback) callback();
+            }
+        }
+        type();
+    }
+    
+    // ======================================================================
+    // === MODIFIKASI FUNGSI addMessage =====================================
+    // ======================================================================
     function addMessage(message, isUser = false, suggestions = []) {
+        const chatMessages = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message-bubble flex items-start space-x-3';
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        if (isUser) {
+            messageDiv.className += ' flex-row-reverse space-x-reverse user';
+            messageDiv.innerHTML = `
+                <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="user-message text-white p-4 max-w-xs">
+                    <p class="leading-relaxed text-sm">${message}</p>
+                </div>
+            `;
+            chatMessages.insertBefore(messageDiv, typingIndicator);
+
+        } else {
+            // Persiapkan bubble chat AI, tapi kontennya akan diisi oleh typewriter
+            const encodedMessage = btoa(encodeURIComponent(message));
+            messageDiv.innerHTML = `
+                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
+                </div>
+                <div class="ai-message p-4 max-w-xs relative group">
+                    <div class="markdown-content text-gray-800 leading-relaxed text-sm"></div>
+                    <div class="suggestions-container mt-3">
+                        <!-- Saran akan ditambahkan di sini setelah selesai mengetik -->
+                    </div>
+                    <button onclick="readAiResponse(this, '${encodedMessage}')" class="absolute bottom-2 right-2 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90" title="Baca Jawaban">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path>
+                        </svg>
+                    </button>
+                    <button onclick="copyToClipboard(this.parentElement.querySelector('.markdown-content').innerText, this)" class="copy-button absolute bottom-2 right-9 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90 opacity-0 group-hover:opacity-100 transition-opacity" title="Salin Jawaban">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    </button>
+                </div>
+            `;
+            chatMessages.insertBefore(messageDiv, typingIndicator);
+            
+            // Panggil typewriter untuk mengisi kontennya
+            const markdownContentElement = messageDiv.querySelector('.markdown-content');
+            typewriterEffect(markdownContentElement, message, () => {
+                // Callback function: Dijalankan setelah typewriter selesai
+                // Proses ulang dengan marked.js untuk memastikan format Markdown diterapkan dengan benar
+                markdownContentElement.innerHTML = marked.parse(message);
+                
+                // Tampilkan suggestions setelah selesai mengetik
+                const suggestionsContainer = messageDiv.querySelector('.suggestions-container');
+                suggestionsContainer.innerHTML = renderSuggestions(suggestions);
+                
+                // Final scroll untuk memastikan semua terlihat
+                scrollToBottom();
+            });
+        }
+        
+        scrollToBottom();
+    }
+
+    // Fungsi untuk menampilkan riwayat chat tanpa efek typewriter
+    function addOriginalMessage(message, isUser = false, suggestions = []) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message-bubble flex items-start space-x-3';
@@ -1659,7 +1776,6 @@
         chatMessages.insertBefore(messageDiv, typingIndicator);
         scrollToBottom();
     }
-
     
     function renderSuggestions(suggestionsArray) {
         if (suggestionsArray && suggestionsArray.length > 0) {
