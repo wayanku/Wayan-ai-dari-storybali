@@ -27,7 +27,7 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-    /* === [BARU] CSS VARIABLES UNTUK DARK/LIGHT MODE === */
+    /* === CSS VARIABLES UNTUK DARK/LIGHT MODE === */
     :root {
       --bg-primary: #ffffff;
       --bg-secondary: #f7f8fc;
@@ -67,15 +67,27 @@
     html.dark .modal-content .text-gray-700,
     html.dark .modal-content .text-gray-600,
     html.dark .modal-content .text-purple-600 {
-        color: var(--text-primary);
+        color: var(--text-primary) !important;
     }
     html.dark .modal-content .text-gray-500 {
-        color: var(--text-secondary);
+        color: var(--text-secondary) !important;
     }
+
+    /* [FIX] Membuat header/footer modal pengaturan menjadi gelap */
+    html.dark #settingsModal .modal-content > div[class*="bg-white"],
+    html.dark #settingsModal .modal-content > div[class*="bg-gray-50"] {
+        background-color: var(--bg-secondary) !important;
+        border-color: var(--border-color) !important;
+    }
+    
+    /* [FIX] Membuat kotak teks profil menjadi gelap */
+    html.dark #profileModal .bg-gray-50 {
+        background-color: var(--bg-tertiary) !important;
+    }
+
 
     * {
         -webkit-tap-highlight-color: transparent;
-        /* Transisi warna yang halus */
         transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     }
 
@@ -1082,7 +1094,7 @@
             </div>
         </div>
         <div class="p-3 bg-white border-t border-gray-200 flex-shrink-0 text-center">
-            <p class="text-xs text-gray-500">StoryBali v2.5.2 | © 2024</p>
+            <p class="text-xs text-gray-500">StoryBali v2.5.4 | © 2024</p>
         </div>
     </div>
 </div>
@@ -1525,7 +1537,6 @@
         document.querySelector('.profile-avatar-border').style.borderImage = `linear-gradient(135deg, ${colors.from}, ${colors.to}, #f093fb) 1`;
     }
 
-    // --- [FUNGSI YANG DIPERBAIKI] ---
     function applyDarkMode(isDark) {
         document.documentElement.classList.toggle('dark', isDark);
         settings.darkMode = isDark;
@@ -1533,19 +1544,16 @@
         const themeOptionsContainer = document.getElementById('themeOptionsContainer');
         const themeDisabledMessage = document.getElementById('themeDisabledMessage');
         
-        // Select all theme-dependent elements that receive inline styles
         const header = document.querySelector('.header-gradient');
         const sendBtn = document.getElementById('sendBtn');
         const aiAvatars = document.querySelectorAll('.ai-avatar');
         const profileAvatarBorder = document.querySelector('.profile-avatar-border');
 
         if (isDark) {
-            // --- UI LOGIC for dark mode ---
             themeOptionsContainer.style.opacity = '0.5';
             themeOptionsContainer.style.pointerEvents = 'none';
             themeDisabledMessage.classList.remove('hidden');
             
-            // --- [FIX] Reset inline styles to allow CSS !important rules to take over ---
             if (header) header.style.background = '';
             if (sendBtn) sendBtn.style.backgroundColor = '';
             if (profileAvatarBorder) profileAvatarBorder.style.borderImage = '';
@@ -1554,12 +1562,10 @@
             });
 
         } else {
-            // --- UI LOGIC for light mode ---
             themeOptionsContainer.style.opacity = '1';
             themeOptionsContainer.style.pointerEvents = 'auto';
             themeDisabledMessage.classList.add('hidden');
             
-            // --- [FIX] Re-apply the selected theme when returning to light mode ---
             changeTheme(settings.theme);
         }
     }
