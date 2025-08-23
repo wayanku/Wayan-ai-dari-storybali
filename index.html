@@ -58,6 +58,20 @@
       --shadow-color: rgba(0, 0, 0, 0.3);
     }
     /* === AKHIR DARI CSS VARIABLES === */
+    
+    /* [FIX] Membuat teks pengaturan lebih terang di mode gelap */
+    html.dark .settings-card label,
+    html.dark .settings-card h4,
+    html.dark #settingsModal h3,
+    html.dark .modal-content .text-gray-800,
+    html.dark .modal-content .text-gray-700,
+    html.dark .modal-content .text-gray-600,
+    html.dark .modal-content .text-purple-600 {
+        color: var(--text-primary);
+    }
+    html.dark .modal-content .text-gray-500 {
+        color: var(--text-secondary);
+    }
 
     * {
         -webkit-tap-highlight-color: transparent;
@@ -1068,7 +1082,7 @@
             </div>
         </div>
         <div class="p-3 bg-white border-t border-gray-200 flex-shrink-0 text-center">
-            <p class="text-xs text-gray-500">StoryBali v2.5.1 | © 2024</p>
+            <p class="text-xs text-gray-500">StoryBali v2.5.2 | © 2024</p>
         </div>
     </div>
 </div>
