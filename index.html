@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -9,6 +9,9 @@
   <!-- Viewport diubah untuk menangani safe area (home bar) di iOS -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- LANGKAH 1: Tambahkan Library Marked.js -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
@@ -388,6 +391,50 @@
         box-shadow: 0 2px 4px rgba(99, 102, 241, 0.1);
     }
 
+    /* LANGKAH 2: Tambahkan CSS untuk Format Markdown */
+    .markdown-content p:not(:last-child) {
+        margin-bottom: 0.75rem;
+    }
+    .markdown-content ul, .markdown-content ol {
+        list-style-position: inside;
+        padding-left: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+    .markdown-content li {
+        margin-bottom: 0.25rem;
+    }
+    .markdown-content code:not(pre > code) {
+        background-color: #d1d5db;
+        padding: 0.1rem 0.3rem;
+        border-radius: 0.25rem;
+        font-size: 0.85em;
+        font-family: 'Courier New', Courier, monospace;
+    }
+    .markdown-content pre {
+        background-color: #1e293b;
+        color: #e2e8f0;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin-bottom: 0.75rem;
+        font-size: 0.85em;
+    }
+    .markdown-content pre code {
+        background: transparent;
+        padding: 0;
+    }
+    .markdown-content blockquote {
+        border-left: 4px solid #a5b4fc;
+        padding-left: 1rem;
+        margin-left: 0.25rem;
+        font-style: italic;
+        color: #475569;
+    }
+    .markdown-content strong {
+      font-weight: 600;
+    }
+
+
     @media (max-width: 768px) {
         .message-bubble { margin-bottom: 0.75rem; }
         .ai-message, .user-message { max-width: 90%; padding: 0.8rem 1.2rem; }
@@ -455,7 +502,7 @@
                     <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover">
                 </div>
                 <div class="ai-message p-4 max-w-xs relative">
-                    <p class="text-gray-800 leading-relaxed text-sm">Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Santai aja, tanya apa aja yang kamu mau tau ya!</p>
+                    <div class="markdown-content text-gray-800 leading-relaxed text-sm"><p>Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Santai aja, tanya apa aja yang kamu mau tau ya!</p></div>
                     <div class="mt-3">
                         <!-- Suggestions will be generated here -->
                     </div>
@@ -1554,6 +1601,7 @@
         scrollToBottom();
     }
     
+    // LANGKAH 3: Modifikasi Fungsi addMessage untuk Memproses Markdown
     function addMessage(message, isUser = false, suggestions = []) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
@@ -1571,14 +1619,14 @@
                 </div>
             `;
         } else {
-            const formattedMessage = message.replace(/\n/g, '<br>');
-            const encodedMessage = btoa(encodeURIComponent(message)); 
+            const formattedMessage = marked.parse(message); // Menggunakan marked.js di sini
+            const encodedMessage = btoa(encodeURIComponent(message)); // Encode teks asli, bukan HTML
             messageDiv.innerHTML = `
                 <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
                     <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
                 </div>
                 <div class="ai-message p-4 max-w-xs relative group">
-                    <p class="text-gray-800 leading-relaxed text-sm">${formattedMessage}</p>
+                    <div class="markdown-content text-gray-800 leading-relaxed text-sm">${formattedMessage}</div>
                     <div class="mt-3">
                         ${renderSuggestions(suggestions)}
                     </div>
@@ -1590,7 +1638,7 @@
                 </div>
             `;
             messageDiv.querySelector('.ai-message').innerHTML += `
-                <button onclick="copyToClipboard(this.previousElementSibling.previousElementSibling.previousElementSibling.textContent, this)" class="copy-button absolute bottom-2 right-9 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90 opacity-0 group-hover:opacity-100 transition-opacity" title="Salin Jawaban">
+                <button onclick="copyToClipboard(this.parentElement.querySelector('.markdown-content').innerText, this)" class="copy-button absolute bottom-2 right-9 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors duration-200 ease-in-out transform hover:scale-110 active:scale-90 opacity-0 group-hover:opacity-100 transition-opacity" title="Salin Jawaban">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                 </button>
             `;
@@ -1599,6 +1647,7 @@
         chatMessages.insertBefore(messageDiv, typingIndicator);
         scrollToBottom();
     }
+
     
     function renderSuggestions(suggestionsArray) {
         if (suggestionsArray && suggestionsArray.length > 0) {
@@ -1814,16 +1863,16 @@
         }
     }
 
-    // PERUBAHAN: Fungsi ini dimodifikasi agar selalu menggunakan nama "Wayan"
+    // LANGKAH 4: Modifikasi getSystemPrompt untuk meminta Markdown
     function getSystemPrompt() {
-        const aiName = 'Wayan'; // Nama AI di-hardcode menjadi "Wayan"
-        const baseInstructions = `Perkenalkan dirimu sebagai Wayan jika ditanya nama. Selalu berikan jawabanmu terlebih dahulu. Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang relevan. Format saran: pisahkan jawaban utama dan saran dengan '[SUGGESTIONS]', dan pisahkan setiap saran dengan tanda pipa '|'.`;
+        const aiName = 'Wayan'; 
+        const baseInstructions = `Perkenalkan dirimu sebagai Wayan jika ditanya nama. Selalu berikan jawabanmu terlebih dahulu. Gunakan format Markdown untuk jawabanmu jika diperlukan, seperti untuk list, teks tebal, atau blok kode. Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang relevan. Format saran: pisahkan jawaban utama dan saran dengan '[SUGGESTIONS]', dan pisahkan setiap saran dengan tanda pipa '|'.`;
         
         const rolePrompts = {
             guru_jepang: `Kamu adalah seorang guru Bahasa Jepang profesional bernama Wayan-sensei. Gaya bicaramu sabar, mendidik, dan ramah. Sapa pengguna dengan "Konnichiwa, gakusei-san!" (Halo, murid!). Gunakan huruf Jepang (Hiragana, Katakana, Kanji) beserta romaji dan artinya saat mengajarkan kosakata atau kalimat. Koreksi kesalahan pengguna dengan lembut dan berikan penjelasan tata bahasa yang jelas. Selalu berikan contoh kalimat untuk setiap konsep yang diajarkan. Kamu juga bisa menyisipkan fakta budaya Jepang yang relevan.`,
             guru_matematika: `Kamu adalah seorang guru Matematika yang handal bernama Pak Wayan. Kamu bisa membuat konsep sulit menjadi mudah dimengerti. Gaya bicaramu logis, terstruktur, dan suportif. Jelaskan setiap langkah pemecahan masalah secara rinci. Gunakan analogi sederhana jika memungkinkan. Jangan hanya memberikan jawaban akhir, tapi pandu pengguna melalui proses berpikir untuk sampai ke jawaban tersebut.`,
             dokter: `Kamu adalah AI yang berperan sebagai Dokter Wayan, seorang Dokter Umum virtual yang informatif dan empatik. Mulai percakapan dengan sapaan yang menenangkan. Berikan informasi medis yang akurat dan berbasis bukti, namun SELALU awali dan akhiri jawabanmu dengan disclaimer penting: "Informasi ini bersifat edukatif dan tidak menggantikan konsultasi medis profesional. Segera kunjungi dokter atau fasilitas kesehatan terdekat untuk diagnosis dan penanganan yang tepat." Jangan pernah memberikan diagnosis atau resep. Fokus pada penjelasan kondisi medis, gejala umum, dan pilihan gaya hidup sehat.`,
-            programmer: `Kamu adalah seorang senior programmer bernama Wayan. Kamu sangat berpengalaman dan suka membantu (coding buddy). Gaya bicaramu to-the-point, efisien, dan jelas. Saat pengguna memberikan kode, identifikasi bug, tawarkan optimisasi, dan jelaskan 'mengapa' perbaikanmu lebih baik. Berikan contoh kode yang bersih dan terdokumentasi dengan baik. Selalu tanyakan bahasa pemrograman apa yang digunakan jika tidak disebutkan.`,
+            programmer: `Kamu adalah seorang senior programmer bernama Wayan. Kamu sangat berpengalaman dan suka membantu (coding buddy). Gaya bicaramu to-the-point, efisien, dan jelas. Saat pengguna memberikan kode, identifikasi bug, tawarkan optimisasi, dan jelaskan 'mengapa' perbaikanmu lebih baik. Berikan contoh kode yang bersih dan terdokumentasi dengan baik dalam blok kode Markdown. Selalu tanyakan bahasa pemrograman apa yang digunakan jika tidak disebutkan.`,
             penerjemah: `Kamu adalah seorang penerjemah multibahasa bernama Wayan yang sangat akurat. Fokus utamamu adalah menerjemahkan teks dari satu bahasa ke bahasa lain. Saat pengguna memberikan teks, deteksi bahasa aslinya dan tanyakan ke bahasa apa mereka ingin menerjemahkannya. Berikan terjemahan literal dan juga terjemahan kontekstual jika diperlukan, serta jelaskan nuansa budaya atau idiom yang mungkin hilang dalam terjemahan.`,
         };
 
