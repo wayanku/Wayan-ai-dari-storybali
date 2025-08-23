@@ -49,6 +49,7 @@
         height: 100vh; /* Menggunakan vh untuk fallback */
         height: calc(var(--vh, 1vh) * 100);
         width: 100vw;
+        position: relative; /* Diperlukan untuk overlay */
     }
 
     /* === SIDEBAR STYLES START === */
@@ -58,7 +59,7 @@
         border-right: 1px solid #e2e8f0;
         display: flex;
         flex-direction: column;
-        transition: transform 0.3s ease-in-out, min-width 0.3s ease-in-out;
+        transition: transform 0.3s ease-in-out, min-width 0.3s ease-in-out, width 0.3s ease-in-out;
         flex-shrink: 0;
     }
     #sidebar.collapsed {
@@ -142,6 +143,24 @@
         background-color: rgba(255,255,255,0.3);
     }
     /* === SIDEBAR STYLES END === */
+
+    /* === [BARU] CSS UNTUK OVERLAY MOBILE === */
+    #sidebarOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 99; /* Di bawah sidebar, di atas konten */
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+        pointer-events: none; /* Tidak bisa diklik saat tersembunyi */
+    }
+    #sidebarOverlay.active {
+        opacity: 1;
+        pointer-events: auto; /* Bisa diklik saat terlihat */
+    }
 
 
     .chat-container {
@@ -532,23 +551,25 @@
     }
 
 
+    /* === [PERBAIKAN] CSS RESPONSIVE UNTUK MOBILE === */
     @media (max-width: 768px) {
-        /* On mobile, sidebar overlays the content */
         #sidebar {
-            position: absolute;
+            position: fixed; /* Menggunakan fixed agar keluar dari alur dokumen */
             left: 0;
             top: 0;
             bottom: 0;
             z-index: 100;
-            transform: translateX(-100%);
+            transform: translateX(-100%); /* Mulai dari luar layar */
             border-right: 1px solid #e2e8f0;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1); /* Tambah bayangan agar terlihat di atas */
+            width: 80vw; /* Lebar responsif */
+            max-width: 280px; /* Lebar maksimal */
         }
         #sidebar.open {
-            transform: translateX(0);
+            transform: translateX(0); /* Munculkan ke layar */
         }
-        #sidebar.collapsed {
-             transform: translateX(-100%);
-        }
+        /* Kelas .collapsed tidak lagi digunakan untuk mobile, .open yang jadi patokan */
+        
         .message-bubble { margin-bottom: 0.75rem; }
         .ai-message, .user-message { max-width: 90%; padding: 0.8rem 1.2rem; }
         .quick-actions { padding: 0.6rem 0.8rem; }
@@ -571,6 +592,9 @@
 </head>
 <body>
 <div id="appContainer">
+    <!-- [BARU] Overlay untuk Sidebar Mobile, diletakkan di sini -->
+    <div id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
     <!-- Sidebar Riwayat Chat -->
     <div id="sidebar">
         <div class="p-4 flex flex-col h-full">
@@ -595,7 +619,7 @@
             <div class="header-gradient p-4 text-white relative flex-shrink-0">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
-                        <!-- Tombol Toggle Sidebar (Menggantikan tombol New Chat lama) -->
+                        <!-- Tombol Toggle Sidebar -->
                         <button onclick="toggleSidebar()"
                                 class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95"
                                 title="Tampilkan Riwayat">
@@ -690,7 +714,7 @@
     </div>
 </div>
     
-<!-- Modals (Tidak ada perubahan signifikan di sini) -->
+<!-- Modals (Tidak ada perubahan) -->
 <div id="imagePreviewModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
     <div class="modal-content p-6 max-w-sm w-full" id="imagePreviewContent">
         <div class="text-center relative">
@@ -992,7 +1016,7 @@
     const DEFAULT_API_KEY_5 = 'AIzaSyCV-88PX1_tKh5VBjki9VeyY8gAH5bpZ0o'; // Ganti dengan kunci asli Anda
     // ==================================================================================================================
     
-    // --- FUNGSI BATAS CHAT (TIDAK BERUBAH) ---
+    // --- FUNGSI BATAS CHAT (Tidak berubah) ---
     async function getUserIP() {
         try {
             const response = await fetch('https://api.ipify.org?format=json');
@@ -1062,7 +1086,7 @@
         setInputEnabled(true);
     }
 
-    // FUNGSI INPUT (TIDAK BERUBAH)
+    // FUNGSI INPUT (Tidak berubah)
     function handleInputChange(event) {
         const messageInput = event.target;
         const micBtn = document.getElementById('micBtn');
@@ -1081,7 +1105,7 @@
         switchSettingsTab('general');
     }
     
-    // API Key Management (TIDAK BERUBAH)
+    // API Key Management (Tidak berubah)
     function saveApiKeys() {
         const keysToSave = Array.from({length: 5}, (_, i) => document.getElementById(`apiKey${i + 1}`).value.trim());
         localStorage.setItem('storybaliApiKeys', JSON.stringify(keysToSave));
@@ -1099,26 +1123,28 @@
     }
 
     // ===============================================
-    //      FUNGSI MANAJEMEN SIDEBAR (BARU)
+    //      [PERBAIKAN] FUNGSI MANAJEMEN SIDEBAR
     // ===============================================
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
         const isMobile = window.innerWidth <= 768;
+
         if (isMobile) {
-            sidebar.classList.toggle('open');
-            sidebar.classList.toggle('collapsed'); // toggle collapsed for consistency
+            const isOpen = sidebar.classList.toggle('open');
+            overlay.classList.toggle('active', isOpen);
         } else {
-            sidebar.classList.toggle('collapsed');
+            // Logika untuk desktop tetap sama
+            const isCollapsed = sidebar.classList.toggle('collapsed');
+            settings.isSidebarOpen = !isCollapsed;
+            saveSettings();
         }
-        settings.isSidebarOpen = !sidebar.classList.contains('collapsed');
-        saveSettings();
     }
 
     function renderSidebar() {
         const historyList = document.getElementById('chatHistoryList');
         historyList.innerHTML = '';
         
-        // Urutkan dari yang terbaru
         [...allChatSessions].reverse().forEach(session => {
             const item = document.createElement('li');
             item.className = 'chat-history-item';
@@ -1138,6 +1164,7 @@
                 if(activeChatId !== session.id) {
                     loadChat(session.id);
                 }
+                // Jika di mobile, tutup sidebar setelah memilih chat
                 if (window.innerWidth <= 768) {
                     toggleSidebar();
                 }
@@ -1156,7 +1183,7 @@
     }
 
     function renameChatSession(chatId, event) {
-        event.stopPropagation(); // Mencegah event click pada item li
+        event.stopPropagation();
         const session = allChatSessions.find(s => s.id === chatId);
         if (!session) return;
 
@@ -1175,9 +1202,9 @@
         allChatSessions = allChatSessions.filter(s => s.id !== chatId);
         
         if (activeChatId === chatId) {
-            // Jika chat yang aktif dihapus, muat chat pertama atau buat baru
             if (allChatSessions.length > 0) {
-                loadChat(allChatSessions[0].id);
+                // Muat chat paling baru
+                loadChat(allChatSessions[allChatSessions.length - 1].id);
             } else {
                 startNewChat();
             }
@@ -1189,7 +1216,7 @@
 
 
     // ===============================================
-    //      FUNGSI MANAJEMEN CHAT (DIPERBAIKI)
+    //      FUNGSI MANAJEMEN CHAT (Tidak berubah)
     // ===============================================
 
     function getActiveChatHistory() {
@@ -1202,7 +1229,7 @@
         const newChatId = `chat_${new Date().getTime()}`;
         const newSession = {
             id: newChatId,
-            title: 'Percakapan Baru', // Judul default
+            title: 'Percakapan Baru', 
             history: [{
                 role: 'model',
                 parts: [{ text: 'Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Santai aja, tanya apa aja yang kamu mau tau ya!' }]
@@ -1470,19 +1497,20 @@
             window.location.reload();
         }
     }
+    
+    // === [PERBAIKAN] Fungsi Apply Settings untuk menangani state mobile ===
     function applySettings() {
-        // Apply sidebar state
         const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
         const isMobile = window.innerWidth <= 768;
+
         if (isMobile) {
-            sidebar.classList.add('collapsed');
+            // Di mobile, sidebar harus selalu mulai dalam keadaan tertutup.
             sidebar.classList.remove('open');
+            overlay.classList.remove('active');
         } else {
-            if (settings.isSidebarOpen) {
-                sidebar.classList.remove('collapsed');
-            } else {
-                sidebar.classList.add('collapsed');
-            }
+            // State buka/tutup di desktop diambil dari pengaturan yang tersimpan.
+            sidebar.classList.toggle('collapsed', !settings.isSidebarOpen);
         }
 
         document.querySelector('.header-gradient h1').textContent = 'Wayan AI';
@@ -1505,6 +1533,7 @@
         const voiceSelect = document.getElementById('voiceSelect');
         if (settings.voiceURI && voiceSelect.options.length > 1) voiceSelect.value = settings.voiceURI;
     }
+
     function selectChoice(settingName, value, element) {
         settings[settingName] = value;
         Array.from(element.parentElement.children).forEach(child => child.classList.remove('active'));
@@ -1793,8 +1822,7 @@
         const activeSession = allChatSessions.find(s => s.id === activeChatId);
         if (!activeSession) return;
         
-        // Auto-naming chat session
-        if(activeSession.title === 'Percakapan Baru') {
+        if(activeSession.title === 'Percakapan Baru' && activeSession.history.length === 1) { // Hanya ganti nama jika ini pesan pertama user
             activeSession.title = message.substring(0, 30) + (message.length > 30 ? '...' : '');
             renderSidebar();
         }
@@ -1909,7 +1937,7 @@
     document.addEventListener('touchstart', function () {}, true);
 </script>
 
-<!-- Onboarding Modal (Diperbarui dengan slide "Chat Baru") -->
+<!-- Onboarding Modal (Diperbarui) -->
 <div id="onboardingModal" class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center transition-all duration-300 hidden">
   <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-0 overflow-hidden border border-gray-200 relative animate-fadein">
     <div id="onboardingSlides" class="w-full">
