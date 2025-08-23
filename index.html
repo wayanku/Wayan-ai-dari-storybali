@@ -1,4 +1,4 @@
-     <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -143,40 +143,93 @@
         40% { transform: scale(1.2) translateY(-8px); opacity: 1; }
     }
 
-    /* PERBAIKAN: Menambahkan padding bawah untuk home bar di ponsel modern */
+    /* --- PERUBAHAN STYLE UNTUK INPUT AREA BARU --- */
     .input-area {
-        background: white; border-top: 1px solid #e2e8f0;
-        padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom)) 1rem;
-        border-top-left-radius: 1.5rem;
-        border-top-right-radius: 1.5rem;
-        box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+        background: white;
+        border-top: 1px solid #e2e8f0;
+        padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom)) 1rem;
     }
-    .input-field {
-        transition: all 0.3s ease; border: 2px solid #cbd5e1;
-        border-radius: 9999px; padding: 0.75rem 1rem;
+
+    .input-box {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        background-color: #f1f5f9;
+        border-radius: 1.25rem;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #e2e8f0;
+    }
+
+    .input-box input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        padding: 0.5rem;
         font-size: 16px;
-        background: #f8fafc;
-        /* PENAMBAHAN: Padding kanan untuk memberi ruang pada ikon di dalam input */
-        padding-right: 6rem;
+        color: #1e293b;
     }
-    .input-field:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2); background: white;
+
+    .input-box input::placeholder {
+        color: #64748b;
     }
-    .send-button {
-        position: relative; overflow: hidden;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        border-radius: 9999px; width: 3.25rem; height: 3.25rem;
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0.5rem;
     }
-    .send-button::before {
-        content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        transition: left 0.5s;
+
+    .action-buttons .left-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
     }
-    .send-button:hover::before, .send-button:active::before { left: 100%; }
-    .send-button:active { transform: scale(0.9); }
+    
+    .action-btn {
+        color: #475569;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: color 0.2s ease;
+        padding: 0.25rem;
+    }
+    .action-btn:hover {
+        color: #4f46e5;
+    }
+
+    .action-btn span {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .dynamic-icon-container {
+        position: relative;
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .dynamic-icon-btn {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #e2e8f0;
+        border-radius: 9999px;
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+        border: none;
+        cursor: pointer;
+    }
+    .dynamic-icon-btn.send-btn-active {
+        background-color: #4f46e5;
+        color: white;
+    }
+    .dynamic-icon-btn:active {
+        transform: scale(0.9);
+    }
+    /* --- AKHIR PERUBAHAN STYLE --- */
 
     .voice-wave { display: none; align-items: center; gap: 4px; height: 24px; }
     .voice-wave.active { display: flex; }
@@ -254,7 +307,7 @@
         75% { border-image-source: linear-gradient(135deg, #667eea, #764ba2, #f093fb); }
         100% { border-image-source: linear-gradient(135deg, #764ba2, #f093fb, #667eea); }
     }
-
+    
     .settings-tab { transition: all 0.3s ease; border-bottom: 2px solid transparent; }
     .settings-tab.active { color: #4f46e5; font-weight: 600; border-bottom-color: #4f46e5; }
     .settings-tab-content { display: none; animation: fadeIn 0.5s ease; }
@@ -338,19 +391,15 @@
     @media (max-width: 768px) {
         .message-bubble { margin-bottom: 0.75rem; }
         .ai-message, .user-message { max-width: 90%; padding: 0.8rem 1.2rem; }
-        .send-button { width: 3rem; height: 3rem; }
         .quick-actions { padding: 0.6rem 0.8rem; }
         .quick-action-btn { padding: 0.4rem 0.8rem; font-size: 0.7rem; }
         .modal-content { border-radius: 1rem; padding: 1.5rem; }
         #settingsModal .modal-content { padding: 0; }
-        .input-field {
-             padding-right: 5.5rem;
-        }
         .settings-input, .settings-select, #customRoleInput {
             font-size: 16px !important;
         }
     }
-
+    
     .chat-messages::-webkit-scrollbar { width: 8px; }
     .chat-messages::-webkit-scrollbar-track { background: transparent; }
     .chat-messages::-webkit-scrollbar-thumb {
@@ -446,50 +495,53 @@
                 </div>
             </div>
         </div>
-        <!-- Input Area -->
+        
+        <!-- ============================================== -->
+        <!--        PERUBAHAN BESAR: INPUT AREA BARU        -->
+        <!-- ============================================== -->
         <div class="input-area flex-shrink-0">
-            <div class="flex space-x-3 items-end">
-                <div class="flex-1 relative">
-                    <input
-                            type="text"
-                            id="messageInput"
-                            placeholder="Tanya kepada Wayan AI..."
-                            class="input-field w-full focus:outline-none text-gray-800 placeholder-gray-500"
-                            onkeypress="handleKeyPress(event)"
-                    >
-                    <!-- PERUBAHAN: Ikon dipindahkan ke dalam container input -->
-                    <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
-                        <button onclick="triggerImageUpload()"
-                                class="text-gray-400 hover:text-indigo-500 transition-colors p-1 rounded-full transform hover:scale-110 active:scale-90"
-                                title="Upload gambar">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
+            <div class="input-box">
+                <!-- Baris Atas: Kolom Input Teks -->
+                <input
+                    type="text"
+                    id="messageInput"
+                    placeholder="Minta Wayan AI..."
+                    onkeypress="handleKeyPress(event)"
+                    oninput="handleInputChange(event)"
+                >
+                <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                
+                <!-- Baris Bawah: Tombol Aksi -->
+                <div class="action-buttons">
+                    <div class="left-actions">
+                        <button onclick="triggerImageUpload()" class="action-btn" title="Upload Gambar">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         </button>
-                        <button onclick="toggleVoiceMode()"
-                                class="text-gray-400 hover:text-indigo-500 transition-colors p-1 rounded-full transform hover:scale-110 active:scale-90"
-                                title="Mode Suara">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button onclick="videoNotAvailable()" class="action-btn" title="Fitur Video">
+                            <span>Video</span>
+                        </button>
+                        <button onclick="openQuickSettings()" class="action-btn" title="Pengaturan Cepat">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Tombol Dinamis: Mikrofon atau Kirim -->
+                    <div class="dynamic-icon-container">
+                        <button id="micBtn" onclick="toggleVoiceMode()" class="dynamic-icon-btn" title="Mode Suara">
+                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
                             </svg>
                         </button>
+                        <button id="sendBtn" onclick="sendMessage()" class="dynamic-icon-btn send-btn-active" title="Kirim Pesan" style="opacity: 0; pointer-events: none;">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                        </button>
                     </div>
-                    <input type="file" id="imageInput" accept="image/*" style="display: none;"
-                           onchange="handleImageUpload(event)">
                 </div>
-                <button
-                        onclick="sendMessage()"
-                        class="send-button text-white flex items-center justify-center"
-                >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                    </svg>
-                </button>
             </div>
-            <!-- Voice Wave Animation -->
-            <div id="voiceWave" class="voice-wave justify-center mt-3">
+             <!-- Voice Wave Animation -->
+            <div id="voiceWave" class="voice-wave justify-center mt-2">
                 <div class="wave-bar"></div>
                 <div class="wave-bar"></div>
                 <div class="wave-bar"></div>
@@ -497,8 +549,11 @@
                 <div class="wave-bar"></div>
             </div>
         </div>
+        <!-- ============================================== -->
+        <!--        AKHIR DARI INPUT AREA BARU              -->
+        <!-- ============================================== -->
     </div>
-
+    
     <!-- Modals (Profile, Settings, Image Preview) -->
     <!-- ... Konten modal tidak berubah ... -->
     <div id="imagePreviewModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
@@ -815,7 +870,7 @@
         voiceURI: '',
         saveHistory: true
     };
-
+    
     // Settings dimuat dari localStorage atau dari default
     let settings = { ...defaultSettings };
 
@@ -832,7 +887,7 @@
     const DEFAULT_API_KEY_4 = 'AIzaSyCkkekhKcQzFUUjx8ZcuqEYyqRde1ZDJcU'; // Ganti dengan kunci asli Anda
     const DEFAULT_API_KEY_5 = 'AIzaSyCV-88PX1_tKh5VBjki9VeyY8gAH5bpZ0o'; // Ganti dengan kunci asli Anda
     // ==================================================================================================================
-
+    
     // --- START: FUNGSI BARU UNTUK BATAS CHAT ---
 
     async function getUserIP() {
@@ -872,37 +927,24 @@
         }
     }
 
-    function setInputEnabled(enabled, message = "Tanya kepada Wayan AI...") {
+    function setInputEnabled(enabled, message = "Minta Wayan AI...") {
         const messageInput = document.getElementById('messageInput');
-        const sendButton = document.querySelector('.send-button');
-        const imageUploadButton = document.querySelector('button[onclick="triggerImageUpload()"]');
-        const voiceModeButton = document.querySelector('button[onclick="toggleVoiceMode()"]');
-
         messageInput.disabled = !enabled;
-        sendButton.disabled = !enabled;
-        imageUploadButton.disabled = !enabled;
-        voiceModeButton.disabled = !enabled;
-
         messageInput.placeholder = message;
 
-        if (!enabled) {
-            sendButton.style.opacity = '0.5';
-            sendButton.style.cursor = 'not-allowed';
-            imageUploadButton.style.opacity = '0.5';
-            voiceModeButton.style.opacity = '0.5';
-        } else {
-            sendButton.style.opacity = '1';
-            sendButton.style.cursor = 'pointer';
-            imageUploadButton.style.opacity = '1';
-            voiceModeButton.style.opacity = '1';
-        }
+        // Menonaktifkan semua tombol aksi jika input dinonaktifkan
+        document.querySelectorAll('.action-btn, .dynamic-icon-btn').forEach(btn => {
+            btn.disabled = !enabled;
+            btn.style.opacity = enabled ? '1' : '0.5';
+            btn.style.cursor = enabled ? 'pointer' : 'not-allowed';
+        });
     }
 
     function startCooldown(cooldownEndTime) {
         setInputEnabled(false, "Anda mencapai batas limit. Silakan tunggu...");
 
         const messageId = `cooldown-timer-${currentUserIP}`;
-
+        
         const oldTimerMessage = document.getElementById(messageId);
         if(oldTimerMessage) {
             oldTimerMessage.remove();
@@ -911,10 +953,10 @@
         const chatMessages = document.getElementById('chatMessages');
         const timerMessageElement = document.createElement('div');
         timerMessageElement.className = 'system-message-bubble';
-        timerMessageElement.id = messageId;
+        timerMessageElement.id = messageId; 
         chatMessages.insertBefore(timerMessageElement, document.getElementById('typingIndicator'));
-
-        scrollToBottom();
+        
+        scrollToBottom(); 
 
         if (countdownInterval) {
             clearInterval(countdownInterval);
@@ -931,15 +973,15 @@
 
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
+            
             timerMessageElement.innerHTML = `<div class="system-message">Anda mencapai batas limit mengirim chat. Kembali setelah ${minutes}m ${seconds}s lagi.</div>`;
         }, 1000);
     }
-
+    
     function endCooldown() {
         clearInterval(countdownInterval);
         countdownInterval = null;
-
+        
         const timerMessageElement = document.getElementById(`cooldown-timer-${currentUserIP}`);
         if (timerMessageElement) {
             timerMessageElement.innerHTML = `<div class="system-message">Anda sudah bisa mengobrol lagi!</div>`;
@@ -955,6 +997,44 @@
     }
 
     // --- END: FUNGSI BARU UNTUK BATAS CHAT ---
+
+    // ===============================================
+    //      PENAMBAHAN FUNGSI UNTUK INPUT BARU
+    // ===============================================
+    function handleInputChange(event) {
+        const messageInput = event.target;
+        const micBtn = document.getElementById('micBtn');
+        const sendBtn = document.getElementById('sendBtn');
+
+        if (messageInput.value.trim().length > 0) {
+            // Ada teks, tampilkan tombol kirim
+            micBtn.style.opacity = '0';
+            micBtn.style.pointerEvents = 'none';
+            sendBtn.style.opacity = '1';
+            sendBtn.style.pointerEvents = 'auto';
+        } else {
+            // Tidak ada teks, tampilkan tombol mic
+            micBtn.style.opacity = '1';
+            micBtn.style.pointerEvents = 'auto';
+            sendBtn.style.opacity = '0';
+            sendBtn.style.pointerEvents = 'none';
+        }
+    }
+
+    function videoNotAvailable() {
+        alert('Fitur video belum tersedia untuk saat ini.');
+    }
+
+    function openQuickSettings() {
+        const modal = document.getElementById('settingsModal');
+        // Buka modal jika sedang tertutup
+        if (modal.classList.contains('hidden')) {
+            toggleSettings();
+        }
+        // Pastikan tab 'Umum' yang aktif karena di sana ada pengaturan peran & gaya bahasa
+        switchSettingsTab('general');
+    }
+    // ===============================================
 
     // API Key Management
     function saveApiKeys() {
@@ -1058,7 +1138,7 @@
             loadApiKeys();
         }
         const validApiKeys = apiKeys.filter(key => key && !key.startsWith('YOUR_GEMINI_API_KEY_'));
-
+        
         if (validApiKeys.length === 0) {
             console.warn("Tidak ada API Key yang valid ditemukan. Pastikan Anda telah memasukkan API Key di pengaturan.");
             return null;
@@ -1068,11 +1148,11 @@
         console.log(`Menggunakan API Key acak index: ${randomIndex}`);
         return validApiKeys[randomIndex];
     }
-
+    
     function getApiUrl() {
         const apiKey = getCurrentApiKey();
         if (!apiKey) {
-            return null;
+            return null; 
         }
         return `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
     }
@@ -1098,7 +1178,7 @@
             });
         }
     }
-
+    
     function addToConversationHistory(role, message) {
         conversationHistory.push({
             role: role,
@@ -1181,9 +1261,13 @@
         const colors = themeColors[themeName];
         const header = document.querySelector('.header-gradient');
         header.style.background = `linear-gradient(135deg, ${colors.from}, ${colors.to})`;
-        document.querySelectorAll('.send-button').forEach(btn => {
-            btn.style.background = `linear-gradient(135deg, ${colors.from}, ${colors.to})`;
-        });
+        
+        // Menyesuaikan warna tombol kirim baru
+        const sendBtn = document.getElementById('sendBtn');
+        if (sendBtn) {
+           sendBtn.style.backgroundColor = colors.from;
+        }
+
         document.querySelectorAll('.ai-avatar').forEach(avatar => {
             avatar.style.background = `linear-gradient(135deg, ${colors.from}, ${colors.to})`;
         });
@@ -1205,11 +1289,10 @@
         applySettings();
     }
 
-
     function saveSettings() {
         localStorage.setItem('storybaliSettings', JSON.stringify(settings));
     }
-
+    
     function saveAllSettings() {
         // PERUBAHAN: Pengaturan nama AI tidak lagi diambil dari input, karena sudah readonly
         settings.customAiRolePrompt = document.getElementById('customRoleInput').value;
@@ -1219,21 +1302,20 @@
         settings.readAiResponseEnabled = document.getElementById('readAiResponseToggle').checked;
         settings.voiceURI = document.getElementById('voiceSelect').value;
         settings.saveHistory = document.getElementById('saveHistoryToggle').checked;
-
+        
         saveSettings();
         applySettings();
-
+        
         alert('Pengaturan berhasil disimpan!');
         toggleSettings();
     }
-
 
     function resetAllSettings() {
         if (confirm('Yakin ingin mereset semua pengaturan? Riwayat chat dan API Key akan dihapus. Halaman akan dimuat ulang.')) {
             localStorage.removeItem('storybaliSettings');
             localStorage.removeItem('storybaliApiKeys');
             localStorage.removeItem('storybaliConversationHistory');
-
+            
             alert('Pengaturan telah direset ke default. Halaman akan dimuat ulang.');
             window.location.reload();
         }
@@ -1258,7 +1340,7 @@
         document.getElementById(`language-${settings.language}`)?.classList.add('active');
         document.getElementById(`personality-${settings.personality}`)?.classList.add('active');
         document.getElementById(`aiRole-${settings.aiRole}`)?.classList.add('active');
-
+        
         const customRoleContainer = document.getElementById('customRoleContainer');
         const customRoleInput = document.getElementById('customRoleInput');
         if (settings.aiRole === 'kustom') {
@@ -1273,7 +1355,7 @@
              voiceSelect.value = settings.voiceURI;
         }
     }
-
+    
     function selectChoice(settingName, value, element) {
         settings[settingName] = value;
         const parent = element.parentElement;
@@ -1283,7 +1365,7 @@
         if (settingName === 'aiRole') {
             const customRoleContainer = document.getElementById('customRoleContainer');
             customRoleContainer.classList.toggle('hidden', value !== 'kustom');
-
+            
             const roleNames = {
                 'umum': 'Asisten Umum', 'guru_jepang': 'Guru Bahasa Jepang', 'guru_matematika': 'Guru Matematika',
                 'dokter': 'Dokter Virtual', 'programmer': 'Programmer Senior', 'penerjemah': 'Penerjemah',
@@ -1302,7 +1384,7 @@
             conversationHistory = [];
             localStorage.removeItem('storybaliConversationHistory');
             const chatMessages = document.getElementById('chatMessages');
-
+            
             const messages = chatMessages.querySelectorAll('.message-bubble, .system-message-bubble');
             for (let i = messages.length - 1; i > 0; i--) {
                 messages[i].remove();
@@ -1311,11 +1393,11 @@
             alert('Riwayat chat telah dihapus!');
         }
     }
-
+    
     function switchSettingsTab(tabName) {
         document.querySelectorAll('.settings-tab').forEach(tab => tab.classList.remove('active'));
         document.querySelector(`.settings-tab[onclick="switchSettingsTab('${tabName}')"]`).classList.add('active');
-
+        
         document.querySelectorAll('.settings-tab-content').forEach(content => content.classList.remove('active'));
         document.getElementById(`tab-${tabName}`).classList.add('active');
     }
@@ -1408,7 +1490,7 @@
              hideImagePreview();
              return;
         }
-
+        
         hideImagePreview();
         addImageMessageWithQuestion(currentPreviewImage, currentPreviewFileName, question, true);
         showImageProcessingIndicator();
@@ -1466,12 +1548,12 @@
         const messageDiv = document.createElement('div');
         messageDiv.className = 'system-message-bubble';
         messageDiv.innerHTML = `<div class="system-message">${message}</div>`;
-
+        
         const typingIndicator = document.getElementById('typingIndicator');
         chatMessages.insertBefore(messageDiv, typingIndicator);
         scrollToBottom();
     }
-
+    
     function addMessage(message, isUser = false, suggestions = []) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
@@ -1490,7 +1572,7 @@
             `;
         } else {
             const formattedMessage = message.replace(/\n/g, '<br>');
-            const encodedMessage = btoa(encodeURIComponent(message));
+            const encodedMessage = btoa(encodeURIComponent(message)); 
             messageDiv.innerHTML = `
                 <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
                     <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
@@ -1517,7 +1599,7 @@
         chatMessages.insertBefore(messageDiv, typingIndicator);
         scrollToBottom();
     }
-
+    
     function renderSuggestions(suggestionsArray) {
         if (suggestionsArray && suggestionsArray.length > 0) {
             return `
@@ -1622,9 +1704,9 @@
     function populateVoiceList() {
         const voices = speechSynthesis.getVoices();
         const voiceSelect = document.getElementById('voiceSelect');
-        const savedVoiceURI = settings.voiceURI;
+        const savedVoiceURI = settings.voiceURI; 
 
-        voiceSelect.innerHTML = '';
+        voiceSelect.innerHTML = ''; 
 
         const defaultOption = document.createElement('option');
         defaultOption.textContent = 'Default Browser';
@@ -1688,7 +1770,7 @@
         }
 
         currentUtterance = new SpeechSynthesisUtterance(message);
-
+        
         const selectedVoiceURI = settings.voiceURI;
         const voices = speechSynthesis.getVoices();
         const selectedVoice = voices.find(voice => voice.voiceURI === selectedVoiceURI);
@@ -1701,7 +1783,7 @@
                currentUtterance.voice = idVoiceDefault;
             }
         }
-
+        
         currentUtterance.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
         currentUtterance.rate = 1.0;
         currentUtterance.pitch = 1.0;
@@ -1725,7 +1807,7 @@
 
         speechSynthesis.speak(currentUtterance);
     }
-
+    
     function stopReading() {
         if (speechSynthesis.speaking) {
             speechSynthesis.cancel();
@@ -1736,7 +1818,7 @@
     function getSystemPrompt() {
         const aiName = 'Wayan'; // Nama AI di-hardcode menjadi "Wayan"
         const baseInstructions = `Perkenalkan dirimu sebagai Wayan jika ditanya nama. Selalu berikan jawabanmu terlebih dahulu. Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang relevan. Format saran: pisahkan jawaban utama dan saran dengan '[SUGGESTIONS]', dan pisahkan setiap saran dengan tanda pipa '|'.`;
-
+        
         const rolePrompts = {
             guru_jepang: `Kamu adalah seorang guru Bahasa Jepang profesional bernama Wayan-sensei. Gaya bicaramu sabar, mendidik, dan ramah. Sapa pengguna dengan "Konnichiwa, gakusei-san!" (Halo, murid!). Gunakan huruf Jepang (Hiragana, Katakana, Kanji) beserta romaji dan artinya saat mengajarkan kosakata atau kalimat. Koreksi kesalahan pengguna dengan lembut dan berikan penjelasan tata bahasa yang jelas. Selalu berikan contoh kalimat untuk setiap konsep yang diajarkan. Kamu juga bisa menyisipkan fakta budaya Jepang yang relevan.`,
             guru_matematika: `Kamu adalah seorang guru Matematika yang handal bernama Pak Wayan. Kamu bisa membuat konsep sulit menjadi mudah dimengerti. Gaya bicaramu logis, terstruktur, dan suportif. Jelaskan setiap langkah pemecahan masalah secara rinci. Gunakan analogi sederhana jika memungkinkan. Jangan hanya memberikan jawaban akhir, tapi pandu pengguna melalui proses berpikir untuk sampai ke jawaban tersebut.`,
@@ -1745,9 +1827,8 @@
             penerjemah: `Kamu adalah seorang penerjemah multibahasa bernama Wayan yang sangat akurat. Fokus utamamu adalah menerjemahkan teks dari satu bahasa ke bahasa lain. Saat pengguna memberikan teks, deteksi bahasa aslinya dan tanyakan ke bahasa apa mereka ingin menerjemahkannya. Berikan terjemahan literal dan juga terjemahan kontekstual jika diperlukan, serta jelaskan nuansa budaya atau idiom yang mungkin hilang dalam terjemahan.`,
         };
 
-
         let roleInstruction = '';
-
+        
         if (settings.aiRole === 'kustom' && settings.customAiRolePrompt) {
             roleInstruction = settings.customAiRolePrompt;
         } else if (rolePrompts[settings.aiRole]) {
@@ -1766,14 +1847,13 @@
                     break;
             }
         }
-
+        
         if (settings.language === 'en') {
             roleInstruction += ' Please respond in English.';
         }
 
         return `${roleInstruction} ${baseInstructions}`;
     }
-
 
     // AI Communication
     async function sendMessage() {
@@ -1807,14 +1887,15 @@
         addMessage(message, true);
         addToConversationHistory('user', message);
         input.value = '';
+        handleInputChange({ target: input }); // PERUBAHAN: Reset tombol mic/kirim setelah mengirim
         showTypingIndicator();
-
+        
         if (userData.count >= CHAT_LIMIT) {
             const cooldownEndTime = new Date().getTime() + COOLDOWN_MINUTES * 60 * 1000;
             userData.cooldownUntil = cooldownEndTime;
             allUserData[currentUserIP] = userData;
             saveChatLimitData(allUserData);
-
+            
             setTimeout(() => startCooldown(cooldownEndTime), 1000);
         }
 
@@ -1828,7 +1909,7 @@
         try {
             const contents = [...conversationHistory];
             const systemPromptText = getSystemPrompt();
-
+            
             const requestBody = {
                 contents: contents,
                 systemInstruction: {
@@ -1852,7 +1933,7 @@
                     specificErrorMessage = 'Permintaan tidak valid. Mungkin ada masalah dengan format pesan.';
                 } else if (response.status === 401 || response.status === 403 || response.status === 429) {
                     specificErrorMessage = 'API Key bermasalah (limit atau tidak valid). Mencoba API Key acak lainnya...';
-                    setTimeout(() => sendMessage(), 1000);
+                    setTimeout(() => sendMessage(), 1000); 
                     return;
                 } else if (response.status >= 500) {
                     specificErrorMessage = 'Terjadi masalah di server AI. Coba lagi beberapa saat.';
@@ -1863,16 +1944,16 @@
             const data = await response.json();
             if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
                 let aiResponseText = data.candidates[0].content.parts[0].text;
-
+                
                 let mainAnswer = aiResponseText;
                 let dynamicSuggestions = [];
-
+                
                 if (aiResponseText.includes('[SUGGESTIONS]')) {
                     const parts = aiResponseText.split('[SUGGESTIONS]');
                     mainAnswer = parts[0].trim();
                     dynamicSuggestions = parts[1].split('|').map(s => s.trim()).filter(s => s);
                 }
-
+                
                 addToConversationHistory('model', mainAnswer);
                 addMessage(mainAnswer, false, dynamicSuggestions);
                 playNotificationSound();
@@ -1929,7 +2010,7 @@
                 } else if (response.status === 401 || response.status === 403 || response.status === 429) {
                     specificErrorMessage = 'API Key bermasalah (limit atau tidak valid). Mencoba API Key acak lainnya...';
                     setTimeout(() => analyzeImageWithQuestion(base64Image, userQuestion), 1000);
-                    return;
+                    return; 
                 } else if (response.status >= 500) {
                     specificErrorMessage = 'Terjadi masalah di server AI. Coba lagi beberapa saat.';
                 }
@@ -1939,16 +2020,16 @@
             const data = await response.json();
             if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
                 let aiResponseText = data.candidates[0].content.parts[0].text;
-
+                
                 let mainAnswer = aiResponseText;
                 let dynamicSuggestions = [];
-
+                
                 if (aiResponseText.includes('[SUGGESTIONS]')) {
                     const parts = aiResponseText.split('[SUGGESTIONS]');
                     mainAnswer = parts[0].trim();
                     dynamicSuggestions = parts[1].split('|').map(s => s.trim()).filter(s => s);
                 }
-
+                
                 addToConversationHistory('model', mainAnswer);
                 addMessage(mainAnswer, false, dynamicSuggestions);
                 playNotificationSound();
@@ -1975,7 +2056,7 @@
         loadApiKeys();
         loadSettings();
         updateApiStatus();
-
+        
         currentUserIP = await getUserIP();
         checkUserStatus();
 
@@ -1983,7 +2064,7 @@
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = populateVoiceList;
         }
-
+        
         const chatMessages = document.getElementById('chatMessages');
         const messages = chatMessages.querySelectorAll('.message-bubble');
         for (let i = messages.length - 1; i > 0; i--) {
@@ -1993,7 +2074,7 @@
         updateChatCount();
         hideTypingIndicator();
         hideImageProcessingIndicator();
-
+        
         document.getElementById('fontSizeSelect').addEventListener('change', (e) => settings.fontSize = e.target.value);
     });
 
@@ -2026,7 +2107,7 @@
              alt="Chat" class="w-16 h-16 mb-3 mx-auto animate-pulse" />
         <h2 class="text-lg font-semibold mb-2 text-blue-700">Mulai Bertanya!</h2>
         <p class="text-gray-700 text-base mb-4">
-          Tulis pertanyaan atau pesan di kolom bawah,<br>lalu tekan <b>Kirim</b>.<br>
+          Tulis pertanyaan atau pesan di kolom bawah,<br>lalu tekan <b>tombol kirim</b>.<br>
           <span class="text-xs text-gray-500">(Contoh: "Apa itu PWA?")</span>
         </p>
       </div>
@@ -2035,7 +2116,7 @@
              alt="Settings" class="w-16 h-16 mb-3 mx-auto animate-spin-slow" />
         <h2 class="text-lg font-semibold mb-2 text-blue-700">Atur Gaya AI-mu</h2>
         <p class="text-gray-700 text-base mb-4">
-          Pilih <b>peran</b> dan <b>gaya bahasa</b> AI di menu <b>Pengaturan</b>.<br>
+          Pilih <b>peran</b> dan <b>gaya bahasa</b> AI melalui tombol <b>titik tiga (...)</b>.<br>
           Bisa jadi Guru, Dokter, Programmer, dsb!
         </p>
       </div>
@@ -2045,7 +2126,7 @@
         <h2 class="text-lg font-semibold mb-2 text-blue-700">Upload Gambar</h2>
         <p class="text-gray-700 text-base mb-4">
           Kamu juga bisa upload gambar &amp; bertanya tentang isi gambar tersebut.<br>
-          Coba klik tombol <b>Upload</b> di samping kolom chat!
+          Coba klik tombol <b>tambah (+)</b> di kolom chat!
         </p>
       </div>
       <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
@@ -2159,43 +2240,3 @@
 </script>
 </body>
 </html>
-```
-
-### Ringkasan Perubahan:
-
-1.  **Pengaturan Nama AI (HTML):**
-    *   Di dalam modal "Pengaturan", kolom input untuk "Nama AI" telah diubah menjadi `readonly`.
-    *   Ini mencegah pengguna mengubah nama AI dari "Wayan". Tampilannya juga sedikit berbeda untuk menandakan bahwa kolom ini tidak dapat diubah.
-
-    ```html
-    <!-- SEBELUMNYA -->
-    <input type="text" id="aiNameInput" value="Wayan AI" class="settings-input text-right">
-
-    <!-- SESUDAHNYA -->
-    <input type="text" id="aiNameInput" value="Wayan" class="settings-input text-right" readonly style="background-color: #e9ecef; cursor: not-allowed;" title="Nama AI tidak dapat diubah.">
-    ```
-
-2.  **Instruksi Sistem untuk AI (JavaScript):**
-    *   Fungsi `getSystemPrompt()` yang memberikan instruksi inti kepada AI telah dimodifikasi secara signifikan.
-    *   Nama AI sekarang di-set secara permanen menjadi `'Wayan'`.
-    *   Setiap peran (role) yang dipilih (Guru Jepang, Dokter, Programmer, dll.) kini secara eksplisit diperintahkan untuk menggunakan nama "Wayan" dalam persona mereka (misalnya, "Wayan-sensei", "Pak Wayan", "Dokter Wayan").
-    *   Ada instruksi tambahan: `"Perkenalkan dirimu sebagai Wayan jika ditanya nama."` untuk memperkuat identitasnya.
-
-    ```javascript
-    // Di dalam fungsi getSystemPrompt()
-    function getSystemPrompt() {
-        const aiName = 'Wayan'; // Nama AI di-hardcode menjadi "Wayan"
-        const baseInstructions = `Perkenalkan dirimu sebagai Wayan jika ditanya nama. Selalu berikan jawabanmu terlebih dahulu...`;
-
-        const rolePrompts = {
-            guru_jepang: `Kamu adalah seorang guru Bahasa Jepang profesional bernama Wayan-sensei...`,
-            guru_matematika: `Kamu adalah seorang guru Matematika yang handal bernama Pak Wayan...`,
-            dokter: `Kamu adalah AI yang berperan sebagai Dokter Wayan...`,
-            programmer: `Kamu adalah seorang senior programmer bernama Wayan...`,
-            penerjemah: `Kamu adalah seorang penerjemah multibahasa bernama Wayan...`,
-        };
-        // ... sisa fungsi ...
-    }
-    ```
-
-Dengan perubahan ini, AI akan secara konsisten mengidentifikasi dirinya sebagai "Wayan", tidak peduli gaya bahasa atau peran apa yang dipilih pengguna, dan identitas ini tidak dapat diubah.
