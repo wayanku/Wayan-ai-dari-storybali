@@ -4,14 +4,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta http-equiv="Content-Style-Type" content="text/css">
   <title>Wayan AI - Storybali</title>
-  
-  <!-- ▼▼▼ PWA & SEO META TAGS ▼▼▼ -->
+  <!-- ▼▼▼ Meta Tags untuk SEO dan Social Media ▼▼▼ -->
   <meta name="description" content="Wayan AI adalah asisten AI dari Storybali yang siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah. Tanya apa saja!">
-  <meta name="theme-color" content="#222222"/>
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg">
-
-  <!-- ▼▼▼ Social Media Meta Tags ▼▼▼ -->
   <meta property="og:title" content="Wayan AI - Asisten Cerdas dari Storybali">
   <meta property="og:description" content="Wayan AI adalah asisten AI dari Storybali yang siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah. Tanya apa saja!">
   <meta property="og:image" content="https://i.postimg.cc/c46vsmdS/Creative-Portfolio.png">
@@ -21,18 +15,19 @@
   <meta name="twitter:title" content="Wayan AI - Asisten Cerdas dari Storybali">
   <meta name="twitter:description" content="Wayan AI adalah asisten AI dari Storybali yang siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah. Tanya apa saja!">
   <meta name="twitter:image" content="https://i.postimg.cc/c46vsmdS/Creative-Portfolio.png">
-  
+  <!-- ▲▲▲ AKHIR DARI META TAGS ▲▲▲ -->
   <meta name="Generator" content="Cocoa HTML Writer">
   <meta name="CocoaVersion" content="2299.77">
+  <!-- Viewport diubah untuk menangani safe area (home bar) di iOS -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Library untuk memformat Markdown -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-    /* === CSS VARIABLES === */
+    /* === CSS VARIABLES UNTUK DARK/LIGHT MODE === */
     :root {
       --bg-primary: #ffffff;
       --bg-secondary: #f7f8fc;
@@ -49,13 +44,13 @@
     }
 
     html.dark {
-      --bg-primary: #121212;
-      --bg-secondary: #1e1e1e;
-      --bg-tertiary: #2a2a2a;
-      --bg-accent: #3c3c3c;
-      --text-primary: #f5f5f5;
-      --text-secondary: #a0a0a0;
-      --text-light: #6b6b6b;
+      --bg-primary: #121212;        /* Pure Black/Off-black */
+      --bg-secondary: #1e1e1e;      /* Darker Gray */
+      --bg-tertiary: #2a2a2a;      /* Lighter Gray */
+      --bg-accent: #3c3c3c;        /* Accent Gray for selections */
+      --text-primary: #f5f5f5;      /* Bright White for readability */
+      --text-secondary: #a0a0a0;    /* Medium Gray */
+      --text-light: #6b6b6b;        /* Darker Gray */
       --border-color: #3a3a3a;
       --ai-message-bg: #2c2c2c;
       --modal-bg: rgba(20, 20, 20, 0.95);
@@ -64,7 +59,7 @@
     }
     /* === AKHIR DARI CSS VARIABLES === */
     
-    /* === [SEMUA PERBAIKAN CSS UNTUK MODE GELAP] === */
+    /* [FIX] Membuat teks pengaturan lebih terang di mode gelap */
     html.dark .settings-card label,
     html.dark .settings-card h4,
     html.dark #settingsModal h3,
@@ -78,30 +73,18 @@
         color: var(--text-secondary) !important;
     }
 
+    /* [FIX] Membuat header/footer modal pengaturan menjadi gelap */
     html.dark #settingsModal .modal-content > div[class*="bg-white"],
     html.dark #settingsModal .modal-content > div[class*="bg-gray-50"] {
         background-color: var(--bg-secondary) !important;
         border-color: var(--border-color) !important;
     }
     
+    /* [FIX] Membuat kotak teks profil menjadi gelap */
     html.dark #profileModal .bg-gray-50 {
         background-color: var(--bg-tertiary) !important;
     }
-    
-    html.dark .settings-btn-action[class*="bg-gray-200"] {
-        background-color: var(--bg-tertiary) !important;
-        color: var(--text-primary) !important;
-    }
-    html.dark .settings-btn-action[class*="bg-gray-200"]:hover {
-        background-color: var(--bg-accent) !important;
-    }
-    html.dark .settings-btn-action[class*="bg-blue-600"] {
-        background-color: var(--text-primary) !important; /* Tombol jadi putih */
-        color: var(--bg-primary) !important; /* Teks jadi hitam */
-    }
-    html.dark .settings-btn-action[class*="bg-blue-600"]:hover {
-        opacity: 0.9;
-    }
+
 
     * {
         -webkit-tap-highlight-color: transparent;
@@ -109,7 +92,11 @@
     }
 
     html, body {
-        height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden;
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
     }
 
     body {
@@ -118,10 +105,14 @@
     }
     
     #appContainer {
-        display: flex; height: 100vh; height: calc(var(--vh, 1vh) * 100); width: 100vw; position: relative;
+        display: flex;
+        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
+        width: 100vw;
+        position: relative;
     }
 
-    /* ... SISA CSS ANDA YANG LAIN (SAMA SEPERTI SEBELUMNYA) ... */
+    /* === SIDEBAR STYLES === */
     #sidebar {
         width: 260px;
         background: var(--bg-secondary);
@@ -224,6 +215,7 @@
         background-color: rgba(0,0,0,0.3);
     }
     
+    /* === CSS UNTUK OVERLAY MOBILE === */
     #sidebarOverlay {
         position: fixed;
         top: 0;
@@ -275,7 +267,7 @@
         overflow: hidden;
     }
     html.dark .header-gradient {
-        background: #222222 !important; 
+        background: #222222 !important; /* Black/White header for dark mode */
     }
 
     .header-gradient::before {
@@ -701,20 +693,34 @@
     }
     .markdown-content strong { font-weight: 600; }
 
+
+    /* === CSS RESPONSIVE UNTUK MOBILE === */
     @media (max-width: 768px) {
         #sidebar {
-            position: fixed; left: 0; top: 0; bottom: 0; z-index: 100;
-            transform: translateX(-100%); border-right: 1px solid var(--border-color);
-            box-shadow: 0 0 20px rgba(0,0,0,0.1); width: 80vw; max-width: 280px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+            transform: translateX(-100%);
+            border-right: 1px solid var(--border-color);
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            width: 80vw;
+            max-width: 280px;
         }
-        #sidebar.open { transform: translateX(0); }
+        #sidebar.open {
+            transform: translateX(0);
+        }
+        
         .message-bubble { margin-bottom: 0.75rem; }
         .ai-message, .user-message { max-width: 90%; padding: 0.8rem 1.2rem; }
         .quick-actions { padding: 0.6rem 0.8rem; }
         .quick-action-btn { padding: 0.4rem 0.8rem; font-size: 0.7rem; }
         .modal-content { border-radius: 1rem; padding: 1.5rem; }
         #settingsModal .modal-content { padding: 0; }
-        .settings-input, .settings-select, #customRoleInput { font-size: 16px !important; }
+        .settings-input, .settings-select, #customRoleInput {
+            font-size: 16px !important;
+        }
     }
     
     .chat-messages::-webkit-scrollbar { width: 8px; }
@@ -723,13 +729,14 @@
       background-color: rgba(0, 0, 0, 0.2); border-radius: 20px;
       border: 2px solid transparent; background-clip: content-box;
     }
-    html.dark .chat-messages::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.2); }
+    html.dark .chat-messages::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
     .chat-messages::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.3); }
     html.dark .chat-messages::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.3); }
   </style>
 </head>
 <body>
-<!-- ... SEMUA KONTEN BODY ANDA YANG LAIN (SAMA SEPERTI SEBELUMNYA) ... -->
 <div id="appContainer">
     <div id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
@@ -1087,16 +1094,12 @@
             </div>
         </div>
         <div class="p-3 bg-white border-t border-gray-200 flex-shrink-0 text-center">
-            <p class="text-xs text-gray-500">StoryBali v2.5.5 | © 2024</p>
+            <p class="text-xs text-gray-500">StoryBali v2.5.4 | © 2024</p>
         </div>
     </div>
 </div>
 
-<!-- ... SISA KONTEN BODY ANDA YANG LAIN (SAMA SEPERTI SEBELUMNYA) ... -->
-<!-- SEMUA SCRIPT JAVASCRIPT ANDA DI SINI -->
 <script>
-    // ... SEMUA KODE JAVASCRIPT ANDA YANG SEBELUMNYA ADA DI SINI ...
-    // Cukup salin semua yang ada di dalam <script>...</script> dari kode sebelumnya
     function adjustHeightForMobile() {
         let vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -1518,7 +1521,7 @@
     }
     function changeTheme(themeName) {
         if (document.documentElement.classList.contains('dark')) {
-            return; 
+            return; // Don't allow theme changes in dark mode
         }
         settings.theme = themeName;
         document.querySelectorAll('.theme-option-new').forEach(btn => btn.classList.remove('active'));
@@ -2025,18 +2028,6 @@
         });
     });
     document.addEventListener('touchstart', function () {}, true);
-
-    // ▼▼▼ REGISTRASI SERVICE WORKER UNTUK PWA ▼▼▼
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then(registration => {
-          console.log('ServiceWorker registration successful with scope: ', registration.scope);
-        }, err => {
-          console.log('ServiceWorker registration failed: ', err);
-        });
-      });
-    }
-
 </script>
 
 <div id="onboardingModal" class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center transition-all duration-300 hidden">
