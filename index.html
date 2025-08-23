@@ -1,4 +1,4 @@
-       <!DOCTYPE html>
+     <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -157,7 +157,7 @@
         font-size: 16px;
         background: #f8fafc;
         /* PENAMBAHAN: Padding kanan untuk memberi ruang pada ikon di dalam input */
-        padding-right: 6rem; 
+        padding-right: 6rem;
     }
     .input-field:focus {
         border-color: #667eea;
@@ -254,7 +254,7 @@
         75% { border-image-source: linear-gradient(135deg, #667eea, #764ba2, #f093fb); }
         100% { border-image-source: linear-gradient(135deg, #764ba2, #f093fb, #667eea); }
     }
-    
+
     .settings-tab { transition: all 0.3s ease; border-bottom: 2px solid transparent; }
     .settings-tab.active { color: #4f46e5; font-weight: 600; border-bottom-color: #4f46e5; }
     .settings-tab-content { display: none; animation: fadeIn 0.5s ease; }
@@ -350,7 +350,7 @@
             font-size: 16px !important;
         }
     }
-    
+
     .chat-messages::-webkit-scrollbar { width: 8px; }
     .chat-messages::-webkit-scrollbar-track { background: transparent; }
     .chat-messages::-webkit-scrollbar-thumb {
@@ -498,7 +498,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Modals (Profile, Settings, Image Preview) -->
     <!-- ... Konten modal tidak berubah ... -->
     <div id="imagePreviewModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
@@ -597,7 +597,8 @@
                                 <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                 <label class="text-sm font-medium text-gray-700">Nama AI</label>
                             </div>
-                            <input type="text" id="aiNameInput" value="Wayan AI" class="settings-input text-right">
+                            <!-- PERUBAHAN: Input nama AI dibuat read-only -->
+                            <input type="text" id="aiNameInput" value="Wayan" class="settings-input text-right" readonly style="background-color: #e9ecef; cursor: not-allowed;" title="Nama AI tidak dapat diubah.">
                         </div>
                         <div class="settings-item flex-col">
                             <div class="w-full flex items-center space-x-3">
@@ -805,7 +806,7 @@
         soundEnabled: true,
         animationsEnabled: true,
         readAiResponseEnabled: true,
-        aiName: 'Wayan AI',
+        aiName: 'Wayan', // PERUBAHAN: Nama default diubah menjadi 'Wayan'
         language: 'id',
         personality: 'santai',
         aiRole: 'umum',
@@ -814,7 +815,7 @@
         voiceURI: '',
         saveHistory: true
     };
-    
+
     // Settings dimuat dari localStorage atau dari default
     let settings = { ...defaultSettings };
 
@@ -831,7 +832,7 @@
     const DEFAULT_API_KEY_4 = 'AIzaSyCkkekhKcQzFUUjx8ZcuqEYyqRde1ZDJcU'; // Ganti dengan kunci asli Anda
     const DEFAULT_API_KEY_5 = 'AIzaSyCV-88PX1_tKh5VBjki9VeyY8gAH5bpZ0o'; // Ganti dengan kunci asli Anda
     // ==================================================================================================================
-    
+
     // --- START: FUNGSI BARU UNTUK BATAS CHAT ---
 
     async function getUserIP() {
@@ -881,7 +882,7 @@
         sendButton.disabled = !enabled;
         imageUploadButton.disabled = !enabled;
         voiceModeButton.disabled = !enabled;
-        
+
         messageInput.placeholder = message;
 
         if (!enabled) {
@@ -901,7 +902,7 @@
         setInputEnabled(false, "Anda mencapai batas limit. Silakan tunggu...");
 
         const messageId = `cooldown-timer-${currentUserIP}`;
-        
+
         const oldTimerMessage = document.getElementById(messageId);
         if(oldTimerMessage) {
             oldTimerMessage.remove();
@@ -910,10 +911,10 @@
         const chatMessages = document.getElementById('chatMessages');
         const timerMessageElement = document.createElement('div');
         timerMessageElement.className = 'system-message-bubble';
-        timerMessageElement.id = messageId; 
+        timerMessageElement.id = messageId;
         chatMessages.insertBefore(timerMessageElement, document.getElementById('typingIndicator'));
-        
-        scrollToBottom(); 
+
+        scrollToBottom();
 
         if (countdownInterval) {
             clearInterval(countdownInterval);
@@ -930,15 +931,15 @@
 
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
+
             timerMessageElement.innerHTML = `<div class="system-message">Anda mencapai batas limit mengirim chat. Kembali setelah ${minutes}m ${seconds}s lagi.</div>`;
         }, 1000);
     }
-    
+
     function endCooldown() {
         clearInterval(countdownInterval);
         countdownInterval = null;
-        
+
         const timerMessageElement = document.getElementById(`cooldown-timer-${currentUserIP}`);
         if (timerMessageElement) {
             timerMessageElement.innerHTML = `<div class="system-message">Anda sudah bisa mengobrol lagi!</div>`;
@@ -1057,7 +1058,7 @@
             loadApiKeys();
         }
         const validApiKeys = apiKeys.filter(key => key && !key.startsWith('YOUR_GEMINI_API_KEY_'));
-        
+
         if (validApiKeys.length === 0) {
             console.warn("Tidak ada API Key yang valid ditemukan. Pastikan Anda telah memasukkan API Key di pengaturan.");
             return null;
@@ -1067,11 +1068,11 @@
         console.log(`Menggunakan API Key acak index: ${randomIndex}`);
         return validApiKeys[randomIndex];
     }
-    
+
     function getApiUrl() {
         const apiKey = getCurrentApiKey();
         if (!apiKey) {
-            return null; 
+            return null;
         }
         return `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
     }
@@ -1097,7 +1098,7 @@
             });
         }
     }
-    
+
     function addToConversationHistory(role, message) {
         conversationHistory.push({
             role: role,
@@ -1196,19 +1197,21 @@
     function loadSettings() {
         const savedSettings = localStorage.getItem('storybaliSettings');
         if (savedSettings) {
-            settings = { ...defaultSettings, ...JSON.parse(savedSettings) };
+            // Gabungkan pengaturan default dengan yang disimpan, tapi pastikan nama AI selalu 'Wayan'
+            settings = { ...defaultSettings, ...JSON.parse(savedSettings), aiName: 'Wayan' };
         } else {
             settings = { ...defaultSettings };
         }
         applySettings();
     }
 
+
     function saveSettings() {
         localStorage.setItem('storybaliSettings', JSON.stringify(settings));
     }
-    
+
     function saveAllSettings() {
-        settings.aiName = document.getElementById('aiNameInput').value;
+        // PERUBAHAN: Pengaturan nama AI tidak lagi diambil dari input, karena sudah readonly
         settings.customAiRolePrompt = document.getElementById('customRoleInput').value;
         settings.fontSize = document.getElementById('fontSizeSelect').value;
         settings.animationsEnabled = document.getElementById('animationToggle').checked;
@@ -1216,30 +1219,34 @@
         settings.readAiResponseEnabled = document.getElementById('readAiResponseToggle').checked;
         settings.voiceURI = document.getElementById('voiceSelect').value;
         settings.saveHistory = document.getElementById('saveHistoryToggle').checked;
-        
+
         saveSettings();
         applySettings();
-        
+
         alert('Pengaturan berhasil disimpan!');
         toggleSettings();
     }
+
 
     function resetAllSettings() {
         if (confirm('Yakin ingin mereset semua pengaturan? Riwayat chat dan API Key akan dihapus. Halaman akan dimuat ulang.')) {
             localStorage.removeItem('storybaliSettings');
             localStorage.removeItem('storybaliApiKeys');
             localStorage.removeItem('storybaliConversationHistory');
-            
+
             alert('Pengaturan telah direset ke default. Halaman akan dimuat ulang.');
             window.location.reload();
         }
     }
 
     function applySettings() {
-        document.querySelector('.header-gradient h1').textContent = settings.aiName;
+        // PERUBAHAN: Nama AI di header dan input di-hardcode
+        document.querySelector('.header-gradient h1').textContent = 'Wayan AI';
+        document.getElementById('aiNameInput').value = 'Wayan';
+        settings.aiName = 'Wayan'; // Memastikan variabel settings juga konsisten
+
         changeTheme(settings.theme);
 
-        document.getElementById('aiNameInput').value = settings.aiName;
         document.getElementById('fontSizeSelect').value = settings.fontSize;
         document.getElementById('animationToggle').checked = settings.animationsEnabled;
         toggleAnimations();
@@ -1251,7 +1258,7 @@
         document.getElementById(`language-${settings.language}`)?.classList.add('active');
         document.getElementById(`personality-${settings.personality}`)?.classList.add('active');
         document.getElementById(`aiRole-${settings.aiRole}`)?.classList.add('active');
-        
+
         const customRoleContainer = document.getElementById('customRoleContainer');
         const customRoleInput = document.getElementById('customRoleInput');
         if (settings.aiRole === 'kustom') {
@@ -1266,7 +1273,7 @@
              voiceSelect.value = settings.voiceURI;
         }
     }
-    
+
     function selectChoice(settingName, value, element) {
         settings[settingName] = value;
         const parent = element.parentElement;
@@ -1276,7 +1283,7 @@
         if (settingName === 'aiRole') {
             const customRoleContainer = document.getElementById('customRoleContainer');
             customRoleContainer.classList.toggle('hidden', value !== 'kustom');
-            
+
             const roleNames = {
                 'umum': 'Asisten Umum', 'guru_jepang': 'Guru Bahasa Jepang', 'guru_matematika': 'Guru Matematika',
                 'dokter': 'Dokter Virtual', 'programmer': 'Programmer Senior', 'penerjemah': 'Penerjemah',
@@ -1295,7 +1302,7 @@
             conversationHistory = [];
             localStorage.removeItem('storybaliConversationHistory');
             const chatMessages = document.getElementById('chatMessages');
-            
+
             const messages = chatMessages.querySelectorAll('.message-bubble, .system-message-bubble');
             for (let i = messages.length - 1; i > 0; i--) {
                 messages[i].remove();
@@ -1304,11 +1311,11 @@
             alert('Riwayat chat telah dihapus!');
         }
     }
-    
+
     function switchSettingsTab(tabName) {
         document.querySelectorAll('.settings-tab').forEach(tab => tab.classList.remove('active'));
         document.querySelector(`.settings-tab[onclick="switchSettingsTab('${tabName}')"]`).classList.add('active');
-        
+
         document.querySelectorAll('.settings-tab-content').forEach(content => content.classList.remove('active'));
         document.getElementById(`tab-${tabName}`).classList.add('active');
     }
@@ -1401,7 +1408,7 @@
              hideImagePreview();
              return;
         }
-        
+
         hideImagePreview();
         addImageMessageWithQuestion(currentPreviewImage, currentPreviewFileName, question, true);
         showImageProcessingIndicator();
@@ -1459,12 +1466,12 @@
         const messageDiv = document.createElement('div');
         messageDiv.className = 'system-message-bubble';
         messageDiv.innerHTML = `<div class="system-message">${message}</div>`;
-        
+
         const typingIndicator = document.getElementById('typingIndicator');
         chatMessages.insertBefore(messageDiv, typingIndicator);
         scrollToBottom();
     }
-    
+
     function addMessage(message, isUser = false, suggestions = []) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
@@ -1483,7 +1490,7 @@
             `;
         } else {
             const formattedMessage = message.replace(/\n/g, '<br>');
-            const encodedMessage = btoa(encodeURIComponent(message)); 
+            const encodedMessage = btoa(encodeURIComponent(message));
             messageDiv.innerHTML = `
                 <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
                     <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
@@ -1510,7 +1517,7 @@
         chatMessages.insertBefore(messageDiv, typingIndicator);
         scrollToBottom();
     }
-    
+
     function renderSuggestions(suggestionsArray) {
         if (suggestionsArray && suggestionsArray.length > 0) {
             return `
@@ -1615,9 +1622,9 @@
     function populateVoiceList() {
         const voices = speechSynthesis.getVoices();
         const voiceSelect = document.getElementById('voiceSelect');
-        const savedVoiceURI = settings.voiceURI; 
+        const savedVoiceURI = settings.voiceURI;
 
-        voiceSelect.innerHTML = ''; 
+        voiceSelect.innerHTML = '';
 
         const defaultOption = document.createElement('option');
         defaultOption.textContent = 'Default Browser';
@@ -1681,7 +1688,7 @@
         }
 
         currentUtterance = new SpeechSynthesisUtterance(message);
-        
+
         const selectedVoiceURI = settings.voiceURI;
         const voices = speechSynthesis.getVoices();
         const selectedVoice = voices.find(voice => voice.voiceURI === selectedVoiceURI);
@@ -1694,7 +1701,7 @@
                currentUtterance.voice = idVoiceDefault;
             }
         }
-        
+
         currentUtterance.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
         currentUtterance.rate = 1.0;
         currentUtterance.pitch = 1.0;
@@ -1718,27 +1725,29 @@
 
         speechSynthesis.speak(currentUtterance);
     }
-    
+
     function stopReading() {
         if (speechSynthesis.speaking) {
             speechSynthesis.cancel();
         }
     }
 
+    // PERUBAHAN: Fungsi ini dimodifikasi agar selalu menggunakan nama "Wayan"
     function getSystemPrompt() {
-        const aiName = settings.aiName || 'Wayan';
-        const baseInstructions = `Selalu berikan jawabanmu terlebih dahulu. Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang relevan. Format saran: pisahkan jawaban utama dan saran dengan '[SUGGESTIONS]', dan pisahkan setiap saran dengan tanda pipa '|'.`;
-        
+        const aiName = 'Wayan'; // Nama AI di-hardcode menjadi "Wayan"
+        const baseInstructions = `Perkenalkan dirimu sebagai Wayan jika ditanya nama. Selalu berikan jawabanmu terlebih dahulu. Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang relevan. Format saran: pisahkan jawaban utama dan saran dengan '[SUGGESTIONS]', dan pisahkan setiap saran dengan tanda pipa '|'.`;
+
         const rolePrompts = {
-            guru_jepang: `Kamu adalah seorang guru Bahasa Jepang profesional bernama Tanaka-sensei. Gaya bicaramu sabar, mendidik, dan ramah. Sapa pengguna dengan "Konnichiwa, gakusei-san!" (Halo, murid!). Gunakan huruf Jepang (Hiragana, Katakana, Kanji) beserta romaji dan artinya saat mengajarkan kosakata atau kalimat. Koreksi kesalahan pengguna dengan lembut dan berikan penjelasan tata bahasa yang jelas. Selalu berikan contoh kalimat untuk setiap konsep yang diajarkan. Kamu juga bisa menyisipkan fakta budaya Jepang yang relevan.`,
-            guru_matematika: `Kamu adalah seorang guru Matematika yang handal dan bisa membuat konsep sulit menjadi mudah dimengerti. Gaya bicaramu logis, terstruktur, dan suportif. Jelaskan setiap langkah pemecahan masalah secara rinci. Gunakan analogi sederhana jika memungkinkan. Jangan hanya memberikan jawaban akhir, tapi pandu pengguna melalui proses berpikir untuk sampai ke jawaban tersebut.`,
-            dokter: `Kamu adalah AI yang berperan sebagai Dokter Umum virtual yang informatif dan empatik. Mulai percakapan dengan sapaan yang menenangkan. Berikan informasi medis yang akurat dan berbasis bukti, namun SELALU awali dan akhiri jawabanmu dengan disclaimer penting: "Informasi ini bersifat edukatif dan tidak menggantikan konsultasi medis profesional. Segera kunjungi dokter atau fasilitas kesehatan terdekat untuk diagnosis dan penanganan yang tepat." Jangan pernah memberikan diagnosis atau resep. Fokus pada penjelasan kondisi medis, gejala umum, dan pilihan gaya hidup sehat.`,
-            programmer: `Kamu adalah seorang senior programmer yang sangat berpengalaman dan suka membantu (coding buddy). Gaya bicaramu to-the-point, efisien, dan jelas. Saat pengguna memberikan kode, identifikasi bug, tawarkan optimisasi, dan jelaskan 'mengapa' perbaikanmu lebih baik. Berikan contoh kode yang bersih dan terdokumentasi dengan baik. Selalu tanyakan bahasa pemrograman apa yang digunakan jika tidak disebutkan.`,
-            penerjemah: `Kamu adalah seorang penerjemah multibahasa yang sangat akurat. Fokus utamamu adalah menerjemahkan teks dari satu bahasa ke bahasa lain. Saat pengguna memberikan teks, deteksi bahasa aslinya dan tanyakan ke bahasa apa mereka ingin menerjemahkannya. Berikan terjemahan literal dan juga terjemahan kontekstual jika diperlukan, serta jelaskan nuansa budaya atau idiom yang mungkin hilang dalam terjemahan.`,
+            guru_jepang: `Kamu adalah seorang guru Bahasa Jepang profesional bernama Wayan-sensei. Gaya bicaramu sabar, mendidik, dan ramah. Sapa pengguna dengan "Konnichiwa, gakusei-san!" (Halo, murid!). Gunakan huruf Jepang (Hiragana, Katakana, Kanji) beserta romaji dan artinya saat mengajarkan kosakata atau kalimat. Koreksi kesalahan pengguna dengan lembut dan berikan penjelasan tata bahasa yang jelas. Selalu berikan contoh kalimat untuk setiap konsep yang diajarkan. Kamu juga bisa menyisipkan fakta budaya Jepang yang relevan.`,
+            guru_matematika: `Kamu adalah seorang guru Matematika yang handal bernama Pak Wayan. Kamu bisa membuat konsep sulit menjadi mudah dimengerti. Gaya bicaramu logis, terstruktur, dan suportif. Jelaskan setiap langkah pemecahan masalah secara rinci. Gunakan analogi sederhana jika memungkinkan. Jangan hanya memberikan jawaban akhir, tapi pandu pengguna melalui proses berpikir untuk sampai ke jawaban tersebut.`,
+            dokter: `Kamu adalah AI yang berperan sebagai Dokter Wayan, seorang Dokter Umum virtual yang informatif dan empatik. Mulai percakapan dengan sapaan yang menenangkan. Berikan informasi medis yang akurat dan berbasis bukti, namun SELALU awali dan akhiri jawabanmu dengan disclaimer penting: "Informasi ini bersifat edukatif dan tidak menggantikan konsultasi medis profesional. Segera kunjungi dokter atau fasilitas kesehatan terdekat untuk diagnosis dan penanganan yang tepat." Jangan pernah memberikan diagnosis atau resep. Fokus pada penjelasan kondisi medis, gejala umum, dan pilihan gaya hidup sehat.`,
+            programmer: `Kamu adalah seorang senior programmer bernama Wayan. Kamu sangat berpengalaman dan suka membantu (coding buddy). Gaya bicaramu to-the-point, efisien, dan jelas. Saat pengguna memberikan kode, identifikasi bug, tawarkan optimisasi, dan jelaskan 'mengapa' perbaikanmu lebih baik. Berikan contoh kode yang bersih dan terdokumentasi dengan baik. Selalu tanyakan bahasa pemrograman apa yang digunakan jika tidak disebutkan.`,
+            penerjemah: `Kamu adalah seorang penerjemah multibahasa bernama Wayan yang sangat akurat. Fokus utamamu adalah menerjemahkan teks dari satu bahasa ke bahasa lain. Saat pengguna memberikan teks, deteksi bahasa aslinya dan tanyakan ke bahasa apa mereka ingin menerjemahkannya. Berikan terjemahan literal dan juga terjemahan kontekstual jika diperlukan, serta jelaskan nuansa budaya atau idiom yang mungkin hilang dalam terjemahan.`,
         };
 
+
         let roleInstruction = '';
-        
+
         if (settings.aiRole === 'kustom' && settings.customAiRolePrompt) {
             roleInstruction = settings.customAiRolePrompt;
         } else if (rolePrompts[settings.aiRole]) {
@@ -1757,13 +1766,14 @@
                     break;
             }
         }
-        
+
         if (settings.language === 'en') {
             roleInstruction += ' Please respond in English.';
         }
 
         return `${roleInstruction} ${baseInstructions}`;
     }
+
 
     // AI Communication
     async function sendMessage() {
@@ -1798,13 +1808,13 @@
         addToConversationHistory('user', message);
         input.value = '';
         showTypingIndicator();
-        
+
         if (userData.count >= CHAT_LIMIT) {
             const cooldownEndTime = new Date().getTime() + COOLDOWN_MINUTES * 60 * 1000;
             userData.cooldownUntil = cooldownEndTime;
             allUserData[currentUserIP] = userData;
             saveChatLimitData(allUserData);
-            
+
             setTimeout(() => startCooldown(cooldownEndTime), 1000);
         }
 
@@ -1818,7 +1828,7 @@
         try {
             const contents = [...conversationHistory];
             const systemPromptText = getSystemPrompt();
-            
+
             const requestBody = {
                 contents: contents,
                 systemInstruction: {
@@ -1842,7 +1852,7 @@
                     specificErrorMessage = 'Permintaan tidak valid. Mungkin ada masalah dengan format pesan.';
                 } else if (response.status === 401 || response.status === 403 || response.status === 429) {
                     specificErrorMessage = 'API Key bermasalah (limit atau tidak valid). Mencoba API Key acak lainnya...';
-                    setTimeout(() => sendMessage(), 1000); 
+                    setTimeout(() => sendMessage(), 1000);
                     return;
                 } else if (response.status >= 500) {
                     specificErrorMessage = 'Terjadi masalah di server AI. Coba lagi beberapa saat.';
@@ -1853,16 +1863,16 @@
             const data = await response.json();
             if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
                 let aiResponseText = data.candidates[0].content.parts[0].text;
-                
+
                 let mainAnswer = aiResponseText;
                 let dynamicSuggestions = [];
-                
+
                 if (aiResponseText.includes('[SUGGESTIONS]')) {
                     const parts = aiResponseText.split('[SUGGESTIONS]');
                     mainAnswer = parts[0].trim();
                     dynamicSuggestions = parts[1].split('|').map(s => s.trim()).filter(s => s);
                 }
-                
+
                 addToConversationHistory('model', mainAnswer);
                 addMessage(mainAnswer, false, dynamicSuggestions);
                 playNotificationSound();
@@ -1919,7 +1929,7 @@
                 } else if (response.status === 401 || response.status === 403 || response.status === 429) {
                     specificErrorMessage = 'API Key bermasalah (limit atau tidak valid). Mencoba API Key acak lainnya...';
                     setTimeout(() => analyzeImageWithQuestion(base64Image, userQuestion), 1000);
-                    return; 
+                    return;
                 } else if (response.status >= 500) {
                     specificErrorMessage = 'Terjadi masalah di server AI. Coba lagi beberapa saat.';
                 }
@@ -1929,16 +1939,16 @@
             const data = await response.json();
             if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
                 let aiResponseText = data.candidates[0].content.parts[0].text;
-                
+
                 let mainAnswer = aiResponseText;
                 let dynamicSuggestions = [];
-                
+
                 if (aiResponseText.includes('[SUGGESTIONS]')) {
                     const parts = aiResponseText.split('[SUGGESTIONS]');
                     mainAnswer = parts[0].trim();
                     dynamicSuggestions = parts[1].split('|').map(s => s.trim()).filter(s => s);
                 }
-                
+
                 addToConversationHistory('model', mainAnswer);
                 addMessage(mainAnswer, false, dynamicSuggestions);
                 playNotificationSound();
@@ -1965,7 +1975,7 @@
         loadApiKeys();
         loadSettings();
         updateApiStatus();
-        
+
         currentUserIP = await getUserIP();
         checkUserStatus();
 
@@ -1973,7 +1983,7 @@
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = populateVoiceList;
         }
-        
+
         const chatMessages = document.getElementById('chatMessages');
         const messages = chatMessages.querySelectorAll('.message-bubble');
         for (let i = messages.length - 1; i > 0; i--) {
@@ -1983,7 +1993,7 @@
         updateChatCount();
         hideTypingIndicator();
         hideImageProcessingIndicator();
-        
+
         document.getElementById('fontSizeSelect').addEventListener('change', (e) => settings.fontSize = e.target.value);
     });
 
@@ -2149,3 +2159,43 @@
 </script>
 </body>
 </html>
+```
+
+### Ringkasan Perubahan:
+
+1.  **Pengaturan Nama AI (HTML):**
+    *   Di dalam modal "Pengaturan", kolom input untuk "Nama AI" telah diubah menjadi `readonly`.
+    *   Ini mencegah pengguna mengubah nama AI dari "Wayan". Tampilannya juga sedikit berbeda untuk menandakan bahwa kolom ini tidak dapat diubah.
+
+    ```html
+    <!-- SEBELUMNYA -->
+    <input type="text" id="aiNameInput" value="Wayan AI" class="settings-input text-right">
+
+    <!-- SESUDAHNYA -->
+    <input type="text" id="aiNameInput" value="Wayan" class="settings-input text-right" readonly style="background-color: #e9ecef; cursor: not-allowed;" title="Nama AI tidak dapat diubah.">
+    ```
+
+2.  **Instruksi Sistem untuk AI (JavaScript):**
+    *   Fungsi `getSystemPrompt()` yang memberikan instruksi inti kepada AI telah dimodifikasi secara signifikan.
+    *   Nama AI sekarang di-set secara permanen menjadi `'Wayan'`.
+    *   Setiap peran (role) yang dipilih (Guru Jepang, Dokter, Programmer, dll.) kini secara eksplisit diperintahkan untuk menggunakan nama "Wayan" dalam persona mereka (misalnya, "Wayan-sensei", "Pak Wayan", "Dokter Wayan").
+    *   Ada instruksi tambahan: `"Perkenalkan dirimu sebagai Wayan jika ditanya nama."` untuk memperkuat identitasnya.
+
+    ```javascript
+    // Di dalam fungsi getSystemPrompt()
+    function getSystemPrompt() {
+        const aiName = 'Wayan'; // Nama AI di-hardcode menjadi "Wayan"
+        const baseInstructions = `Perkenalkan dirimu sebagai Wayan jika ditanya nama. Selalu berikan jawabanmu terlebih dahulu...`;
+
+        const rolePrompts = {
+            guru_jepang: `Kamu adalah seorang guru Bahasa Jepang profesional bernama Wayan-sensei...`,
+            guru_matematika: `Kamu adalah seorang guru Matematika yang handal bernama Pak Wayan...`,
+            dokter: `Kamu adalah AI yang berperan sebagai Dokter Wayan...`,
+            programmer: `Kamu adalah seorang senior programmer bernama Wayan...`,
+            penerjemah: `Kamu adalah seorang penerjemah multibahasa bernama Wayan...`,
+        };
+        // ... sisa fungsi ...
+    }
+    ```
+
+Dengan perubahan ini, AI akan secara konsisten mengidentifikasi dirinya sebagai "Wayan", tidak peduli gaya bahasa atau peran apa yang dipilih pengguna, dan identitas ini tidak dapat diubah.
