@@ -241,7 +241,7 @@
         overflow: hidden;
     }
     html.dark .header-gradient {
-        background: #222222; /* Black/White header for dark mode */
+        background: #222222 !important; /* Black/White header for dark mode */
     }
 
     .header-gradient::before {
@@ -262,7 +262,7 @@
         border-radius: 9999px !important;
     }
     html.dark .ai-avatar {
-        background: #555;
+        background: #555 !important;
         border-color: #777;
         box-shadow: 0 0 0 0 rgba(150, 150, 150, 0.4);
         animation: avatarPulseDark 2s infinite;
@@ -426,7 +426,7 @@
         color: white;
     }
     html.dark .dynamic-icon-btn.send-btn-active {
-        background-color: #f5f5f5;
+        background-color: #f5f5f5 !important;
         color: #121212;
     }
     .dynamic-icon-btn:active { transform: scale(0.9); }
@@ -516,7 +516,7 @@
         border-radius: 9999px !important;
     }
     html.dark .profile-avatar-border {
-        border-image: linear-gradient(135deg, #eee, #888, #eee) 1;
+        border-image: linear-gradient(135deg, #eee, #888, #eee) 1 !important;
     }
 
     @keyframes rotateBorder {
@@ -1068,7 +1068,7 @@
             </div>
         </div>
         <div class="p-3 bg-white border-t border-gray-200 flex-shrink-0 text-center">
-            <p class="text-xs text-gray-500">StoryBali v2.5 | © 2024</p>
+            <p class="text-xs text-gray-500">StoryBali v2.5.1 | © 2024</p>
         </div>
     </div>
 </div>
@@ -1494,7 +1494,7 @@
         }
     }
     function changeTheme(themeName) {
-        if (settings.darkMode) {
+        if (document.documentElement.classList.contains('dark')) {
             return; // Don't allow theme changes in dark mode
         }
         settings.theme = themeName;
@@ -1511,22 +1511,41 @@
         document.querySelector('.profile-avatar-border').style.borderImage = `linear-gradient(135deg, ${colors.from}, ${colors.to}, #f093fb) 1`;
     }
 
+    // --- [FUNGSI YANG DIPERBAIKI] ---
     function applyDarkMode(isDark) {
         document.documentElement.classList.toggle('dark', isDark);
         settings.darkMode = isDark;
 
         const themeOptionsContainer = document.getElementById('themeOptionsContainer');
         const themeDisabledMessage = document.getElementById('themeDisabledMessage');
+        
+        // Select all theme-dependent elements that receive inline styles
+        const header = document.querySelector('.header-gradient');
+        const sendBtn = document.getElementById('sendBtn');
+        const aiAvatars = document.querySelectorAll('.ai-avatar');
+        const profileAvatarBorder = document.querySelector('.profile-avatar-border');
 
         if (isDark) {
+            // --- UI LOGIC for dark mode ---
             themeOptionsContainer.style.opacity = '0.5';
             themeOptionsContainer.style.pointerEvents = 'none';
             themeDisabledMessage.classList.remove('hidden');
+            
+            // --- [FIX] Reset inline styles to allow CSS !important rules to take over ---
+            if (header) header.style.background = '';
+            if (sendBtn) sendBtn.style.backgroundColor = '';
+            if (profileAvatarBorder) profileAvatarBorder.style.borderImage = '';
+            aiAvatars.forEach(avatar => {
+                avatar.style.background = '';
+            });
+
         } else {
+            // --- UI LOGIC for light mode ---
             themeOptionsContainer.style.opacity = '1';
             themeOptionsContainer.style.pointerEvents = 'auto';
             themeDisabledMessage.classList.add('hidden');
-            // Re-apply theme when switching back to light mode
+            
+            // --- [FIX] Re-apply the selected theme when returning to light mode ---
             changeTheme(settings.theme);
         }
     }
@@ -1588,7 +1607,6 @@
         document.getElementById('aiNameInput').value = 'Wayan';
         settings.aiName = 'Wayan';
         
-        // Only change theme colors if not in dark mode
         if (!settings.darkMode) {
             changeTheme(settings.theme);
         }
