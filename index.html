@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -366,19 +367,6 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         color: var(--text-primary);
     }
-    
-    .chat-timestamp {
-        font-size: 0.65rem;
-        color: var(--text-light);
-        margin-top: 0.35rem;
-        padding: 0 0.5rem;
-    }
-    .message-bubble.flex.flex-col.items-end .chat-timestamp {
-        text-align: right;
-    }
-    .message-bubble.flex.flex-col.items-start .chat-timestamp {
-        text-align: left;
-    }
 
     .system-message-bubble {
         display: flex; justify-content: center; margin: 0.5rem 0;
@@ -428,7 +416,7 @@
         border-radius: 1.25rem;
         padding: 0.5rem 0.75rem;
         border: 1px solid var(--border-color);
-        position: relative;
+        position: relative; /* [BARU] Diperlukan untuk UI Perekaman Suara */
     }
 
     .input-box input {
@@ -497,6 +485,7 @@
     }
     .dynamic-icon-btn:active { transform: scale(0.9); }
     
+    /* === [BARU] STYLE UNTUK FITUR BARU === */
     .voice-wave { display: flex; align-items: center; gap: 4px; height: 24px; }
     .wave-bar { width: 4px; height: 100%; background: #667eea; border-radius: 2px; animation: waveAnimation 1s infinite ease-in-out; }
     html.dark .wave-bar { background: #888; }
@@ -520,6 +509,8 @@
       background-color: var(--bg-tertiary);
       transform: translateY(-1px);
     }
+    /* === AKHIR DARI STYLE BARU === */
+
 
     .quick-actions {
         display: flex; gap: 0.5rem; padding: 0.75rem 1rem;
@@ -726,8 +717,6 @@
         overflow-x: auto;
         margin-bottom: 0.75rem;
         font-size: 0.85em;
-        white-space: pre-wrap;
-        word-wrap: break-word;
     }
     html.dark .markdown-content pre { background-color: #0c0c0c; }
     .markdown-content pre code {
@@ -790,7 +779,7 @@
   </style>
 </head>
 <body>
-<!-- ... Isi body Anda tidak berubah ... -->
+<!-- ... (Isi dari <body> Anda tetap sama) ... -->
 <div id="appContainer">
     <div id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
@@ -870,8 +859,11 @@
                         oninput="handleInputChange(event)"
                     >
 
+                    <!-- [REFINED] UI Perekaman Suara -->
                     <div id="voiceRecordingUI" class="absolute inset-0 items-center justify-between px-3 hidden" style="background-color: var(--bg-tertiary); border-radius: 1.25rem;">
-                        <div class="flex items-center gap-3 min-w-0">
+                        <!-- ▼▼▼ PERUBAHAN DI SINI ▼▼▼ -->
+                        <div class="flex items-center gap-3 min-w-0"> <!-- Ditambahkan 'min-w-0' -->
+                        <!-- ▲▲▲ AKHIR PERUBAHAN ▲▲▲ -->
                             <div class="voice-wave">
                                 <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
                             </div>
@@ -886,6 +878,7 @@
                             </button>
                         </div>
                     </div>
+                    <!-- Akhir UI Perekaman Suara -->
 
                     <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
                     
@@ -921,7 +914,7 @@
     </div>
 </div>
     
-<!-- ... Semua Modal dan Script Onboarding tidak berubah ... -->
+<!-- Semua Modal (tidak diubah) -->
 <div id="imagePreviewModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
     <div class="modal-content p-6 max-w-sm w-full" id="imagePreviewContent">
         <div class="text-center relative">
@@ -1171,102 +1164,12 @@
             </div>
         </div>
         <div class="p-3 bg-white border-t border-gray-200 flex-shrink-0 text-center">
-            <p class="text-xs text-gray-500">StoryBali v2.5.5 | © 2024</p>
+            <p class="text-xs text-gray-500">StoryBali v2.5.4 | © 2024</p>
         </div>
     </div>
 </div>
 
-<div id="onboardingModal" class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center transition-all duration-300 hidden">
-  <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-0 overflow-hidden border border-gray-200 relative animate-fadein">
-    <div id="onboardingSlides" class="w-full">
-      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:block">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f44b.png" alt="Hi" class="w-16 h-16 mb-3 mx-auto animate-bounce" />
-        <h2 class="text-xl font-bold mb-2 text-blue-700">Selamat Datang di Wayan AI!</h2>
-        <p class="text-gray-700 text-base mb-4">Aplikasi chat cerdas dengan AI berbahasa Indonesia yang ramah &amp; mudah digunakan.</p>
-      </div>
-      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4ac.png" alt="Chat" class="w-16 h-16 mb-3 mx-auto animate-pulse" />
-        <h2 class="text-lg font-semibold mb-2 text-blue-700">Mulai Bertanya!</h2>
-        <p class="text-gray-700 text-base mb-4">Tulis pertanyaan di kolom bawah, lalu tekan <b>tombol kirim</b>.</p>
-      </div>
-       <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f5c3.png" alt="New Chat" class="w-16 h-16 mb-3 mx-auto" />
-        <h2 class="text-lg font-semibold mb-2 text-blue-700">Simpan Percakapan</h2>
-        <p class="text-gray-700 text-base mb-4">Setiap percakapan akan otomatis tersimpan. Klik tombol <b>menu (garis tiga)</b> di pojok kiri atas untuk melihat riwayat chat Anda.</p>
-      </div>
-      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f527.png" alt="Settings" class="w-16 h-16 mb-3 mx-auto animate-spin-slow" />
-        <h2 class="text-lg font-semibold mb-2 text-blue-700">Atur Gaya AI-mu</h2>
-        <p class="text-gray-700 text-base mb-4">Pilih <b>peran</b> dan <b>gaya bahasa</b> AI melalui tombol <b>pengaturan (roda gigi)</b>.</p>
-      </div>
-      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f389.png" alt="Lets Go" class="w-16 h-16 mb-3 mx-auto animate-bounce" />
-        <h2 class="text-lg font-semibold mb-2 text-blue-700">Yuk Mulai Chatting!</h2>
-        <p class="text-gray-700 text-base mb-4">Selamat menikmati Wayan AI. Jangan ragu untuk bereksperimen!</p>
-      </div>
-    </div>
-    <div class="flex items-center justify-between px-5 pb-4 pt-2 bg-gray-50 border-t border-gray-200">
-      <button id="skipOnboardingBtn" class="text-xs text-gray-400 hover:text-blue-500 font-medium">Lewati</button>
-      <div class="flex space-x-1" id="onboardingDots"></div>
-      <button id="nextOnboardingBtn" class="text-sm bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-1.5 rounded-lg shadow">Selanjutnya</button>
-    </div>
-  </div>
-</div>
-<style>
-@keyframes fadein{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}.animate-fadein{animation:fadein .5s}
-@keyframes spin-slow{100%{transform:rotate(360deg)}}.animate-spin-slow{animation:spin-slow 2.5s linear infinite}
-</style>
 <script>
-(function() {
-  const slides = document.querySelectorAll('#onboardingSlides .onboarding-slide');
-  const modal = document.getElementById('onboardingModal');
-  const btnNext = document.getElementById('nextOnboardingBtn');
-  const btnSkip = document.getElementById('skipOnboardingBtn');
-  const dotsContainer = document.getElementById('onboardingDots');
-  let currSlide = 0;
-  function showModalIfFirstTime() {
-    if (!localStorage.getItem('onboardingShown')) {
-      modal.classList.remove('hidden');
-      renderDots();
-      showSlide(0);
-    }
-  }
-  function showSlide(idx) {
-    slides.forEach((slide, i) => slide.style.display = i === idx ? 'block' : 'none');
-    currSlide = idx;
-    updateDots();
-    btnNext.textContent = (currSlide === slides.length - 1) ? "Mulai Chatting" : "Selanjutnya";
-  }
-  function nextSlide() { (currSlide < slides.length - 1) ? showSlide(currSlide + 1) : closeModal(); }
-  function closeModal() { modal.classList.add('hidden'); localStorage.setItem('onboardingShown', 'true'); }
-  function renderDots() {
-    dotsContainer.innerHTML = '';
-    slides.forEach((_, i) => {
-        const dot = document.createElement('span');
-        dot.className = "inline-block w-2.5 h-2.5 mx-0.5 rounded-full transition-all duration-200 cursor-pointer bg-gray-300";
-        dot.onclick = () => showSlide(i);
-        dotsContainer.appendChild(dot);
-    });
-  }
-  function updateDots() { Array.from(dotsContainer.children).forEach((dot, i) => {
-      dot.className = dot.className.replace(/bg-\w+-\d+/, i === currSlide ? "bg-blue-600" : "bg-gray-300");
-  }); }
-  document.addEventListener('DOMContentLoaded', () => { showModalIfFirstTime(); btnNext.onclick = nextSlide; btnSkip.onclick = closeModal; });
-})();
-</script>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-GGGNDKREFK"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-GGGNDKREFK');
-</script>
-
-<script>
-    // ▼▼▼ SELURUH BLOK SCRIPT UTAMA TELAH DIREVISI ▼▼▼
-
     function adjustHeightForMobile() {
         let vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -1274,7 +1177,6 @@
     window.addEventListener('resize', adjustHeightForMobile);
     adjustHeightForMobile();
 
-    // ... (Variabel global tetap sama) ...
     let apiKeys = [];
     let allChatSessions = [];
     let activeChatId = null;
@@ -1314,9 +1216,6 @@
     const DEFAULT_API_KEY_3 = 'AIzaSyAYzvB1mfVdjrBtXY2n4-UUzCH5juQt8rU';
     const DEFAULT_API_KEY_4 = 'AIzaSyCkkekhKcQzFUUjx8ZcuqEYyqRde1ZDJcU';
     const DEFAULT_API_KEY_5 = 'AIzaSyCV-88PX1_tKh5VBjki9VeyY8gAH5bpZ0o';
-    
-    // ... (Fungsi helper seperti getUserIP, save/load settings, dll tidak berubah dan tidak perlu disalin ulang jika sudah ada) ...
-    // ... Cukup salin mulai dari sini sampai akhir blok script ...
     
     async function getUserIP() {
         try {
@@ -1550,10 +1449,7 @@
         chatMessages.innerHTML = ''; 
         session.history.forEach(msg => {
             const isUser = msg.role === 'user';
-            const text = (msg.parts && msg.parts[0] && msg.parts[0].text) ? msg.parts[0].text : '';
-            if (text) {
-                addOriginalMessage(text, isUser);
-            }
+            addOriginalMessage(msg.parts[0].text, isUser);
         });
         recreateIndicators();
         scrollToBottom();
@@ -1893,12 +1789,8 @@
     }
     function addImageMessageWithQuestion(imageSrc, fileName, question, isUser = false) {
         const chatMessages = document.getElementById('chatMessages');
-        const messageWrapper = document.createElement('div');
-        const time = getCurrentTimestamp();
-        messageWrapper.className = `message-bubble flex flex-col ${isUser ? 'items-end' : 'items-start'}`;
-
         const messageDiv = document.createElement('div');
-        messageDiv.className = 'flex items-start space-x-3 w-full';
+        messageDiv.className = 'message-bubble flex items-start space-x-3';
         if (isUser) {
             messageDiv.className += ' flex-row-reverse space-x-reverse user';
             messageDiv.innerHTML = `
@@ -1918,13 +1810,7 @@
                 startCooldown(cooldownEndTime);
             }
         }
-        
-        messageWrapper.appendChild(messageDiv);
-        const timeDiv = document.createElement('div');
-        timeDiv.className = 'chat-timestamp';
-        timeDiv.textContent = time;
-        messageWrapper.appendChild(timeDiv);
-        chatMessages.insertBefore(messageWrapper, document.getElementById('typingIndicator'));
+        chatMessages.insertBefore(messageDiv, document.getElementById('typingIndicator'));
         scrollToBottom();
     }
     function handleKeyPress(event) { if (event.key === 'Enter') sendMessage(); }
@@ -1936,37 +1822,39 @@
         chatMessages.insertBefore(messageDiv, document.getElementById('typingIndicator'));
         scrollToBottom();
     }
-    
-    function getCurrentTimestamp() {
-        const now = new Date();
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        return `${hours}:${minutes}`;
+    function typewriterEffect(element, text, callback) {
+        let i = 0;
+        element.innerHTML = "";
+        function type() {
+            if (i < text.length) {
+                let char = text.charAt(i);
+                let nextChunk = char;
+                if (text.substring(i, i + 3) === '```') {
+                    let endBlock = text.indexOf('```', i + 3);
+                    if (endBlock !== -1) { nextChunk = text.substring(i, endBlock + 3); i = endBlock + 2; }
+                } else if (char === '*' && text.charAt(i + 1) === '*') {
+                     let endBold = text.indexOf('**', i + 2);
+                     if(endBold !== -1) { nextChunk = text.substring(i, endBold + 2); i = endBold + 1; }
+                }
+                element.innerHTML += nextChunk.replace(/\n/g, '<br>');
+                i++;
+                if (i % 10 === 0) scrollToBottom();
+                setTimeout(type, 20);
+            } else if (callback) {
+                callback();
+            }
+        }
+        type();
     }
-
-    // ▼▼▼ [FUNGSI UTAMA YANG DIREVISI] addMessage ▼▼▼
     function addMessage(message, isUser = false, suggestions = []) {
         const chatMessages = document.getElementById('chatMessages');
-        const typingIndicator = document.getElementById('typingIndicator');
-
-        // Wrapper untuk bubble dan timestamp
-        const messageWrapper = document.createElement('div');
-        messageWrapper.className = `message-bubble flex flex-col ${isUser ? 'items-end' : 'items-start'}`;
-
-        // Bubble chat itu sendiri
         const messageDiv = document.createElement('div');
-        messageDiv.className = 'flex items-start space-x-3 w-full';
+        messageDiv.className = 'message-bubble flex items-start space-x-3';
+        const typingIndicator = document.getElementById('typingIndicator');
         if (isUser) {
-            messageDiv.className += ' flex-row-reverse space-x-reverse';
-        }
-
-        // Timestamp
-        const timeDiv = document.createElement('div');
-        timeDiv.className = 'chat-timestamp';
-        timeDiv.textContent = getCurrentTimestamp();
-
-        if (isUser) {
-            messageDiv.innerHTML = `<div class="user-message"><p class="leading-relaxed text-sm">${message}</p></div>`;
+            messageDiv.className += ' flex-row-reverse space-x-reverse user';
+            messageDiv.innerHTML = `<div class="user-message text-white p-4 max-w-xs"><p class="leading-relaxed text-sm">${message}</p></div>`;
+            chatMessages.insertBefore(messageDiv, typingIndicator);
         } else {
             const encodedMessage = btoa(encodeURIComponent(message));
             messageDiv.innerHTML = `
@@ -1977,39 +1865,23 @@
                     <button onclick="readAiResponse(this, '${encodedMessage}')" class="absolute bottom-2 right-2 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300" title="Baca Jawaban"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg></button>
                     <button onclick="copyToClipboard(this.parentElement.querySelector('.markdown-content').innerText, this)" class="copy-button absolute bottom-2 right-9 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 opacity-0 group-hover:opacity-100" title="Salin Jawaban"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg></button>
                 </div>`;
+            chatMessages.insertBefore(messageDiv, typingIndicator);
+            const markdownContentElement = messageDiv.querySelector('.markdown-content');
+            typewriterEffect(markdownContentElement, message, () => {
+                markdownContentElement.innerHTML = marked.parse(message);
+                messageDiv.querySelector('.suggestions-container').innerHTML = renderSuggestions(suggestions);
+                scrollToBottom();
+            });
         }
-        
-        messageWrapper.appendChild(messageDiv);
-        messageWrapper.appendChild(timeDiv);
-        chatMessages.insertBefore(messageWrapper, typingIndicator);
-
-        if (!isUser) {
-            const markdownContentEl = messageWrapper.querySelector('.markdown-content');
-            const suggestionsContainerEl = messageWrapper.querySelector('.suggestions-container');
-            if (markdownContentEl) {
-                markdownContentEl.innerHTML = marked.parse(message);
-            }
-            if (suggestionsContainerEl) {
-                suggestionsContainerEl.innerHTML = renderSuggestions(suggestions);
-            }
-        }
-        
         scrollToBottom();
     }
-    
     function addOriginalMessage(message, isUser = false) {
         const chatMessages = document.getElementById('chatMessages');
-        const messageWrapper = document.createElement('div');
-        messageWrapper.className = `message-bubble flex flex-col ${isUser ? 'items-end' : 'items-start'}`;
-
         const messageDiv = document.createElement('div');
-        messageDiv.className = 'flex items-start space-x-3 w-full';
-         if (isUser) {
-            messageDiv.className += ' flex-row-reverse space-x-reverse';
-        }
-
+        messageDiv.className = 'message-bubble flex items-start space-x-3';
         if (isUser) {
-            messageDiv.innerHTML = `<div class="user-message"><p class="leading-relaxed text-sm">${message}</p></div>`;
+            messageDiv.className += ' flex-row-reverse space-x-reverse user';
+            messageDiv.innerHTML = `<div class="user-message text-white p-4 max-w-xs"><p class="leading-relaxed text-sm">${message}</p></div>`;
         } else {
             const encodedMessage = btoa(encodeURIComponent(message));
             messageDiv.innerHTML = `
@@ -2021,16 +1893,8 @@
                     <button onclick="copyToClipboard(this.parentElement.querySelector('.markdown-content').innerText, this)" class="copy-button absolute bottom-2 right-9 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 opacity-0 group-hover:opacity-100" title="Salin Jawaban"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg></button>
                 </div>`;
         }
-
-        const timeDiv = document.createElement('div');
-        timeDiv.className = 'chat-timestamp';
-        timeDiv.textContent = getCurrentTimestamp();
-
-        messageWrapper.appendChild(messageDiv);
-        messageWrapper.appendChild(timeDiv);
-        chatMessages.appendChild(messageWrapper);
+        chatMessages.appendChild(messageDiv);
     }
-
     function renderSuggestions(suggestionsArray) {
         if (suggestionsArray && suggestionsArray.length > 0) {
             return `<div class="flex flex-wrap gap-2 mt-2">${suggestionsArray.map(s => `<button onclick="sendQuickMessage('${s.replace(/'/g, "\\'")}')" class="suggestion-btn">${s}</button>`).join('')}</div>`;
@@ -2128,6 +1992,7 @@
         return `${roleInstruction} ${baseInstructions}`;
     }
 
+    // --- [FINAL & FIXED] FUNGSI PINTAR DENGAN TITIK AWAL ACAK & FAILOVER ---
     async function makeApiRequest(payload, signal = null) {
         if (apiKeys.length === 0) loadApiKeys();
         const validApiKeys = apiKeys.filter(key => key && key.trim() !== '');
@@ -2175,21 +2040,21 @@
                 if (response.status === 429) {
                     console.warn(`API Key urutan ke-${currentIndex + 1} telah mencapai limit. Mencoba kunci berikutnya...`);
                 } else {
-                    const errorBody = await response.text();
-                    console.error(`HTTP error! status: ${response.status} - Body: ${errorBody}`);
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
                 }
 
             } catch (error) {
                 if (error.name === 'AbortError') throw error; 
                 console.error(`Gagal dengan API Key urutan ke-${currentIndex + 1}:`, error.message);
+                if (!String(error.message).includes("429")) {
+                     throw error;
+                }
             }
         }
 
         throw new Error("Semua API Key yang tersedia telah mencapai limit atau gagal merespons.");
     }
-    
-    // ▼▼▼ [FUNGSI UTAMA YANG DIREVISI] sendMessage ▼▼▼
+
     async function sendMessage() {
         const input = document.getElementById('messageInput');
         const message = input.value.trim();
@@ -2233,30 +2098,21 @@
 
             const data = await makeApiRequest(payload, currentFetchController.signal);
             
-            // Logika pengecekan respons yang lebih aman
-            const responseText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (responseText) {
-                let [mainAnswer, suggestionsPart] = responseText.split('[SUGGESTIONS]');
+            if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
+                let aiResponseText = data.candidates[0].content.parts[0].text;
+                let [mainAnswer, suggestionsPart] = aiResponseText.split('[SUGGESTIONS]');
                 let dynamicSuggestions = suggestionsPart ? suggestionsPart.split('|').map(s => s.trim()).filter(Boolean) : [];
-                
-                // Tambahan: Pastikan mainAnswer tidak kosong
-                mainAnswer = mainAnswer.trim();
-                if (!mainAnswer) {
-                    throw new Error("AI memberikan jawaban kosong.");
-                }
-
-                addToConversationHistory('model', mainAnswer);
-                addMessage(mainAnswer, false, dynamicSuggestions);
+                addToConversationHistory('model', mainAnswer.trim());
+                addMessage(mainAnswer.trim(), false, dynamicSuggestions);
                 playNotificationSound();
             } else {
-                console.error("Respons API tidak valid atau tidak memiliki teks:", JSON.stringify(data, null, 2));
-                throw new Error("Format respons dari AI tidak sesuai.");
+                addMessage('Maaf, Wayan tidak dapat memberikan respons. Coba lagi.');
             }
         } catch (error) {
             if (error.name === 'AbortError') {
                 addSystemMessage("Pembuatan respons dihentikan.");
             } else {
-                addMessage(`Aduh, Wayan error: ${error.message}. Coba lagi nanti ya!`, false);
+                addMessage(`Aduh, Wayan error: ${error.message}. Coba lagi nanti ya!`);
             }
         } finally {
             hideTypingIndicator();
@@ -2266,7 +2122,6 @@
     }
     
     async function analyzeImageWithQuestion(base64Image, userQuestion) {
-        hideImageProcessingIndicator(); // Pindahkan ke atas agar indikator langsung hilang
         try {
             const imageData = base64Image.split(',')[1];
             const payload = {
@@ -2274,20 +2129,22 @@
                 generationConfig: { temperature: 0.9, topK: 32, topP: 1, maxOutputTokens: 2048 }
             };
 
+            hideImageProcessingIndicator();
             const data = await makeApiRequest(payload);
             
-            const responseText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (responseText) {
-                let [mainAnswer, suggestionsPart] = responseText.split('[SUGGESTIONS]');
+            if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
+                let aiResponseText = data.candidates[0].content.parts[0].text;
+                let [mainAnswer, suggestionsPart] = aiResponseText.split('[SUGGESTIONS]');
                 let dynamicSuggestions = suggestionsPart ? suggestionsPart.split('|').map(s => s.trim()).filter(Boolean) : [];
                 addToConversationHistory('model', mainAnswer.trim());
                 addMessage(mainAnswer.trim(), false, dynamicSuggestions);
                 playNotificationSound();
             } else {
-                throw new Error("Gagal menganalisis gambar, format respons tidak sesuai.");
+                addMessage('Wah, gue ga bisa analisis gambar ini.');
             }
         } catch (error) {
-            addMessage(`Aduh, Wayan error saat analisis gambar: ${error.message}. Coba lagi ya!`, false);
+            hideImageProcessingIndicator();
+            addMessage(`Aduh, Wayan error saat analisis gambar: ${error.message}. Coba lagi ya!`);
         }
     }
 
@@ -2336,6 +2193,95 @@
         });
     });
     document.addEventListener('touchstart', function () {}, true);
+</script>
+
+<!-- Onboarding Modal & Script (tidak diubah) -->
+<div id="onboardingModal" class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center transition-all duration-300 hidden">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-0 overflow-hidden border border-gray-200 relative animate-fadein">
+    <div id="onboardingSlides" class="w-full">
+      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:block">
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f44b.png" alt="Hi" class="w-16 h-16 mb-3 mx-auto animate-bounce" />
+        <h2 class="text-xl font-bold mb-2 text-blue-700">Selamat Datang di Wayan AI!</h2>
+        <p class="text-gray-700 text-base mb-4">Aplikasi chat cerdas dengan AI berbahasa Indonesia yang ramah &amp; mudah digunakan.</p>
+      </div>
+      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4ac.png" alt="Chat" class="w-16 h-16 mb-3 mx-auto animate-pulse" />
+        <h2 class="text-lg font-semibold mb-2 text-blue-700">Mulai Bertanya!</h2>
+        <p class="text-gray-700 text-base mb-4">Tulis pertanyaan di kolom bawah, lalu tekan <b>tombol kirim</b>.</p>
+      </div>
+       <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f5c3.png" alt="New Chat" class="w-16 h-16 mb-3 mx-auto" />
+        <h2 class="text-lg font-semibold mb-2 text-blue-700">Simpan Percakapan</h2>
+        <p class="text-gray-700 text-base mb-4">Setiap percakapan akan otomatis tersimpan. Klik tombol <b>menu (garis tiga)</b> di pojok kiri atas untuk melihat riwayat chat Anda.</p>
+      </div>
+      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f527.png" alt="Settings" class="w-16 h-16 mb-3 mx-auto animate-spin-slow" />
+        <h2 class="text-lg font-semibold mb-2 text-blue-700">Atur Gaya AI-mu</h2>
+        <p class="text-gray-700 text-base mb-4">Pilih <b>peran</b> dan <b>gaya bahasa</b> AI melalui tombol <b>pengaturan (roda gigi)</b>.</p>
+      </div>
+      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f389.png" alt="Lets Go" class="w-16 h-16 mb-3 mx-auto animate-bounce" />
+        <h2 class="text-lg font-semibold mb-2 text-blue-700">Yuk Mulai Chatting!</h2>
+        <p class="text-gray-700 text-base mb-4">Selamat menikmati Wayan AI. Jangan ragu untuk bereksperimen!</p>
+      </div>
+    </div>
+    <div class="flex items-center justify-between px-5 pb-4 pt-2 bg-gray-50 border-t border-gray-200">
+      <button id="skipOnboardingBtn" class="text-xs text-gray-400 hover:text-blue-500 font-medium">Lewati</button>
+      <div class="flex space-x-1" id="onboardingDots"></div>
+      <button id="nextOnboardingBtn" class="text-sm bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-1.5 rounded-lg shadow">Selanjutnya</button>
+    </div>
+  </div>
+</div>
+<style>
+@keyframes fadein{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}.animate-fadein{animation:fadein .5s}
+@keyframes spin-slow{100%{transform:rotate(360deg)}}.animate-spin-slow{animation:spin-slow 2.5s linear infinite}
+</style>
+<script>
+(function() {
+  const slides = document.querySelectorAll('#onboardingSlides .onboarding-slide');
+  const modal = document.getElementById('onboardingModal');
+  const btnNext = document.getElementById('nextOnboardingBtn');
+  const btnSkip = document.getElementById('skipOnboardingBtn');
+  const dotsContainer = document.getElementById('onboardingDots');
+  let currSlide = 0;
+  function showModalIfFirstTime() {
+    if (!localStorage.getItem('onboardingShown')) {
+      modal.classList.remove('hidden');
+      renderDots();
+      showSlide(0);
+    }
+  }
+  function showSlide(idx) {
+    slides.forEach((slide, i) => slide.style.display = i === idx ? 'block' : 'none');
+    currSlide = idx;
+    updateDots();
+    btnNext.textContent = (currSlide === slides.length - 1) ? "Mulai Chatting" : "Selanjutnya";
+  }
+  function nextSlide() { (currSlide < slides.length - 1) ? showSlide(currSlide + 1) : closeModal(); }
+  function closeModal() { modal.classList.add('hidden'); localStorage.setItem('onboardingShown', 'true'); }
+  function renderDots() {
+    dotsContainer.innerHTML = '';
+    slides.forEach((_, i) => {
+        const dot = document.createElement('span');
+        dot.className = "inline-block w-2.5 h-2.5 mx-0.5 rounded-full transition-all duration-200 cursor-pointer bg-gray-300";
+        dot.onclick = () => showSlide(i);
+        dotsContainer.appendChild(dot);
+    });
+  }
+  function updateDots() { Array.from(dotsContainer.children).forEach((dot, i) => {
+      dot.className = dot.className.replace(/bg-\w+-\d+/, i === currSlide ? "bg-blue-600" : "bg-gray-300");
+  }); }
+  document.addEventListener('DOMContentLoaded', () => { showModalIfFirstTime(); btnNext.onclick = nextSlide; btnSkip.onclick = closeModal; });
+})();
+</script>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GGGNDKREFK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GGGNDKREFK');
 </script>
 </body>
 </html>
