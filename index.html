@@ -1809,7 +1809,6 @@
         if (userData.count >= CHAT_LIMIT) { alert('Anda telah mencapai batas. Tunggu cooldown selesai.'); hideImagePreview(); return; }
         hideImagePreview();
         addImageMessageWithQuestion(currentPreviewImage, currentPreviewFileName, question, true);
-        showImageProcessingIndicator();
         analyzeImageWithQuestion(currentPreviewImage, question);
     }
     function addImageMessageWithQuestion(imageSrc, fileName, question, isUser = false) {
@@ -1853,79 +1852,26 @@
         chatMessages.insertBefore(messageDiv, document.getElementById('typingIndicator'));
         scrollToBottom();
     }
-    function typewriterEffect(element, text, callback) {
-        let i = 0;
-        element.innerHTML = "";
-        function type() {
-            if (i < text.length) {
-                let char = text.charAt(i);
-                let nextChunk = char;
-                if (text.substring(i, i + 3) === '```') {
-                    let endBlock = text.indexOf('```', i + 3);
-                    if (endBlock !== -1) { nextChunk = text.substring(i, endBlock + 3); i = endBlock + 2; }
-                } else if (char === '*' && text.charAt(i + 1) === '*') {
-                     let endBold = text.indexOf('**', i + 2);
-                     if(endBold !== -1) { nextChunk = text.substring(i, endBold + 2); i = endBold + 1; }
-                }
-                element.innerHTML += nextChunk.replace(/\n/g, '<br>');
-                i++;
-                if (i % 10 === 0) scrollToBottom();
-                setTimeout(type, 20);
-            } else if (callback) {
-                callback();
-            }
-        }
-        type();
-    }
-    function addMessage(message, isUser = false, suggestions = []) {
+    
+    function addMessage(message, isUser = false) {
+        // This function is now only for adding the user's message to the UI
+        if (!isUser) return;
+
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
-        messageDiv.className = 'message-bubble flex items-start space-x-3';
         const typingIndicator = document.getElementById('typingIndicator');
         const timeString = getFormattedTime(new Date());
 
-        if (isUser) {
-            messageDiv.className += ' flex-row-reverse space-x-reverse user';
-            messageDiv.innerHTML = `
-                <div class="user-message text-white p-4 max-w-xs">
-                    <p class="leading-relaxed text-sm">${message.replace(/\n/g, '<br>')}</p>
-                    <div class="chat-timestamp text-right">${timeString}</div>
-                </div>`;
-            chatMessages.insertBefore(messageDiv, typingIndicator);
-        } else {
-            const encodedMessage = btoa(encodeURIComponent(message));
-            messageDiv.innerHTML = `
-                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                    <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
-                </div>
-                <div class="ai-message p-4 max-w-xs">
-                    <div class="markdown-content leading-relaxed text-sm"></div>
-                    <div class="suggestions-container mt-3"></div>
-                    <div class="flex justify-between items-center mt-2 pt-2 border-t border-slate-300/70 dark:border-slate-600/50">
-                        <div class="chat-timestamp">${timeString}</div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="copyToClipboard(this.closest('.ai-message').querySelector('.markdown-content').innerText, this)" class="w-6 h-6 bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600" title="Salin Jawaban">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                            </button>
-                            <button onclick="readAiResponse(this, '${encodedMessage}')" class="w-6 h-6 bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600" title="Baca Jawaban">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>`;
-            chatMessages.insertBefore(messageDiv, typingIndicator);
-            const markdownContentElement = messageDiv.querySelector('.markdown-content');
-            typewriterEffect(markdownContentElement, message, () => {
-                markdownContentElement.innerHTML = marked.parse(message);
-                const suggestionsContainer = messageDiv.querySelector('.suggestions-container');
-                if (suggestionsContainer) {
-                   suggestionsContainer.innerHTML = renderSuggestions(suggestions);
-                }
-                scrollToBottom();
-            });
-        }
+        messageDiv.className = 'message-bubble flex items-start space-x-3 flex-row-reverse space-x-reverse user';
+        messageDiv.innerHTML = `
+            <div class="user-message text-white p-4 max-w-xs">
+                <p class="leading-relaxed text-sm">${message.replace(/\n/g, '<br>')}</p>
+                <div class="chat-timestamp text-right">${timeString}</div>
+            </div>`;
+        chatMessages.insertBefore(messageDiv, typingIndicator);
         scrollToBottom();
     }
+
     function addOriginalMessage(message, isUser = false, timestamp) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
@@ -2062,70 +2008,150 @@
         return `${roleInstruction} ${baseInstructions}`;
     }
 
-    async function makeApiRequest(payload, signal = null) {
+    // ▼▼▼ [BARU] FUNGSI UNTUK MEMBUAT BUBBLE KOSONG UNTUK STREAMING ▼▼▼
+    function createStreamableAiMessage() {
+        const chatMessages = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message-bubble flex items-start space-x-3';
+        const timeString = getFormattedTime(new Date());
+
+        const placeholderEncodedMessage = btoa(encodeURIComponent("..."));
+
+        messageDiv.innerHTML = `
+            <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
+            </div>
+            <div class="ai-message p-4 max-w-xs">
+                <div class="markdown-content leading-relaxed text-sm"><span class="cursor-animation"></span></div>
+                <div class="suggestions-container mt-3"></div>
+                <div class="flex justify-between items-center mt-2 pt-2 border-t border-slate-300/70 dark:border-slate-600/50">
+                    <div class="chat-timestamp">${timeString}</div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="copyToClipboard(this.closest('.ai-message').querySelector('.markdown-content').innerText, this)" class="w-6 h-6 bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600" title="Salin Jawaban">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                        </button>
+                        <button onclick="readAiResponse(this, '${placeholderEncodedMessage}')" class="w-6 h-6 bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600" title="Baca Jawaban">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+        chatMessages.insertBefore(messageDiv, document.getElementById('typingIndicator'));
+        
+        if (!document.getElementById('cursor-style')) {
+            const style = document.createElement('style');
+            style.id = 'cursor-style';
+            style.innerHTML = `
+            .cursor-animation {
+                display: inline-block;
+                width: 8px;
+                height: 1.2em;
+                background-color: var(--text-primary);
+                animation: blink 1s step-end infinite;
+            }
+            @keyframes blink {
+                from, to { background-color: transparent }
+                50% { background-color: var(--text-primary); }
+            }`;
+            document.head.appendChild(style);
+        }
+
+        const contentElement = messageDiv.querySelector('.markdown-content');
+        const suggestionsContainer = messageDiv.querySelector('.suggestions-container');
+        scrollToBottom();
+        
+        return { contentElement, suggestionsContainer, messageDiv };
+    }
+
+    // ▼▼▼ [DIMODIFIKASI] FUNGSI API REQUEST UNTUK MENDUKUNG STREAMING ▼▼▼
+    async function makeApiRequest(payload, { onChunk, onComplete, onError, signal }) {
         if (apiKeys.length === 0) loadApiKeys();
         const validApiKeys = apiKeys.filter(key => key && key.trim() !== '');
         
         if (validApiKeys.length === 0) {
-            throw new Error("Tidak ada API Key yang valid yang dikonfigurasi.");
+            onError(new Error("Tidak ada API Key yang valid yang dikonfigurasi."));
+            return;
         }
 
-        let startingIndex;
-        const lastKeyIndexStr = localStorage.getItem('lastKeyIndex');
-
-        if (lastKeyIndexStr === null) {
-            console.log("Pengguna baru terdeteksi. Memilih API Key awal secara acak.");
-            startingIndex = Math.floor(Math.random() * validApiKeys.length);
-        } else {
-            const lastKeyIndex = parseInt(lastKeyIndexStr);
-            startingIndex = (lastKeyIndex + 1) % validApiKeys.length;
+        let startingIndex = parseInt(localStorage.getItem('lastKeyIndex') || '0');
+        if (isNaN(startingIndex) || startingIndex >= validApiKeys.length) {
+            startingIndex = 0;
         }
 
         for (let i = 0; i < validApiKeys.length; i++) {
             const currentIndex = (startingIndex + i) % validApiKeys.length;
             const currentApiKey = validApiKeys[currentIndex];
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${currentApiKey}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:streamGenerateContent?key=${currentApiKey}`;
             
             console.log(`Mencoba API Key urutan ke-${currentIndex + 1}...`);
 
             try {
-                const fetchOptions = {
+                const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                };
-                if (signal) {
-                    fetchOptions.signal = signal;
-                }
+                    body: JSON.stringify(payload),
+                    signal: signal
+                });
 
-                const response = await fetch(apiUrl, fetchOptions);
-
-                if (response.ok) {
-                    console.log(`Berhasil menggunakan API Key urutan ke-${currentIndex + 1}`);
-                    localStorage.setItem('lastKeyIndex', currentIndex);
-                    return await response.json();
-                }
-
-                if (response.status === 429) {
-                    console.warn(`API Key urutan ke-${currentIndex + 1} telah mencapai limit. Mencoba kunci berikutnya...`);
-                } else {
+                if (!response.ok) {
+                    if (response.status === 429) {
+                        console.warn(`API Key urutan ke-${currentIndex + 1} telah mencapai limit. Mencoba kunci berikutnya...`);
+                        continue;
+                    }
                     const errorBody = await response.text();
                     console.error("API Error Body:", errorBody);
                     throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
                 }
 
-            } catch (error) {
-                if (error.name === 'AbortError') throw error; 
-                console.error(`Gagal dengan API Key urutan ke-${currentIndex + 1}:`, error.message);
-                if (!String(error.message).includes("429")) {
-                     throw error;
+                // Jika respons OK, mulai streaming
+                console.log(`Berhasil menggunakan API Key urutan ke-${currentIndex + 1}`);
+                localStorage.setItem('lastKeyIndex', (currentIndex + 1) % validApiKeys.length); // Siapkan untuk request berikutnya
+                
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+                let fullText = '';
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop(); // Simpan bagian yang mungkin belum lengkap
+
+                    for (const line of lines) {
+                        const trimmedLine = line.trim();
+                        if (trimmedLine.startsWith('{') && trimmedLine.endsWith('}')) {
+                            try {
+                                const json = JSON.parse(trimmedLine);
+                                const textChunk = json.candidates?.[0]?.content?.parts?.[0]?.text;
+                                if (textChunk) {
+                                    fullText += textChunk;
+                                    onChunk(textChunk);
+                                }
+                            } catch (e) {
+                                console.warn("Gagal mem-parsing JSON chunk:", trimmedLine, e);
+                            }
+                        }
+                    }
                 }
+                onComplete(fullText);
+                return;
+
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    onError(error);
+                    return;
+                }
+                console.error(`Gagal dengan API Key urutan ke-${currentIndex + 1}:`, error.message);
             }
         }
 
-        throw new Error("Semua API Key yang tersedia telah mencapai limit atau gagal merespons.");
+        onError(new Error("Semua API Key yang tersedia telah mencapai limit atau gagal merespons."));
     }
 
+    // ▼▼▼ [DIMODIFIKASI] FUNGSI sendMessage UNTUK MENGGUNAKAN STREAMING ▼▼▼
     async function sendMessage() {
         const input = document.getElementById('messageInput');
         const message = input.value.trim();
@@ -2160,37 +2186,65 @@
         currentFetchController = new AbortController();
         document.getElementById('stopGeneratingContainer').style.display = 'block';
 
+        const { contentElement, suggestionsContainer, messageDiv } = createStreamableAiMessage();
+        let fullResponseText = "";
+        let firstChunkReceived = false;
+
         try {
-            // ▼▼▼ [PERBAIKAN KRITIS] HAPUS TIMESTAMP SEBELUM MENGIRIM KE API ▼▼▼
             const fullHistory = getActiveChatHistory();
             const historyForApi = fullHistory.map(({ role, parts }) => ({ role, parts }));
             
             const payload = {
-                contents: historyForApi, // Menggunakan riwayat yang sudah dibersihkan
+                contents: historyForApi,
                 systemInstruction: { parts: [{ text: getSystemPrompt() }] },
                 generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048 }
             };
-            // ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲
 
-            const data = await makeApiRequest(payload, currentFetchController.signal);
-            
-            if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
-                let aiResponseText = data.candidates[0].content.parts[0].text;
-                let [mainAnswer, suggestionsPart] = aiResponseText.split('[SUGGESTIONS]');
-                let dynamicSuggestions = suggestionsPart ? suggestionsPart.split('|').map(s => s.trim()).filter(Boolean) : [];
-                addMessage(mainAnswer.trim(), false, dynamicSuggestions);
-                addToConversationHistory('model', mainAnswer.trim());
-                playNotificationSound();
-            } else {
-                console.warn("Respons API tidak valid:", data);
-                addMessage('Maaf, Wayan tidak dapat memberikan respons. Coba lagi.');
-            }
+            await makeApiRequest(payload, {
+                signal: currentFetchController.signal,
+                onChunk: (textChunk) => {
+                    if (!firstChunkReceived) {
+                        hideTypingIndicator();
+                        firstChunkReceived = true;
+                    }
+                    fullResponseText += textChunk;
+                    contentElement.innerHTML = marked.parse(fullResponseText + ' <span class="cursor-animation"></span>');
+                    scrollToBottom();
+                },
+                onComplete: (finalText) => {
+                    let [mainAnswer, suggestionsPart] = finalText.split('[SUGGESTIONS]');
+                    mainAnswer = mainAnswer.trim();
+                    let dynamicSuggestions = suggestionsPart ? suggestionsPart.split('|').map(s => s.trim()).filter(Boolean) : [];
+
+                    contentElement.innerHTML = marked.parse(mainAnswer);
+                    if (suggestionsContainer) {
+                       suggestionsContainer.innerHTML = renderSuggestions(dynamicSuggestions);
+                    }
+                    
+                    addToConversationHistory('model', mainAnswer);
+                    playNotificationSound();
+
+                    const encodedMessage = btoa(encodeURIComponent(mainAnswer));
+                    const readButton = messageDiv.querySelector('button[onclick^="readAiResponse"]');
+                    if(readButton) readButton.setAttribute('onclick', `readAiResponse(this, '${encodedMessage}')`);
+                },
+                onError: (error) => {
+                     if (error.name !== 'AbortError') {
+                        contentElement.innerHTML = `<p class="text-red-500">Aduh, Wayan error: ${error.message}. Coba lagi nanti ya!</p>`;
+                        console.error("Error in sendMessage stream:", error);
+                     } else {
+                        addSystemMessage("Pembuatan respons dihentikan.");
+                        contentElement.innerHTML = marked.parse(fullResponseText);
+                     }
+                }
+            });
+
         } catch (error) {
-            if (error.name === 'AbortError') {
-                addSystemMessage("Pembuatan respons dihentikan.");
+            if (error.name !== 'AbortError') {
+                console.error("Error setting up sendMessage stream:", error);
+                contentElement.innerHTML = `<p class="text-red-500">Aduh, Wayan error: ${error.message}.</p>`;
             } else {
-                console.error("Error in sendMessage:", error);
-                addMessage(`Aduh, Wayan error: ${error.message}. Coba lagi nanti ya!`);
+                addSystemMessage("Pembuatan respons dihentikan.");
             }
         } finally {
             hideTypingIndicator();
@@ -2199,32 +2253,76 @@
         }
     }
     
+    // ▼▼▼ [DIMODIFIKASI] FUNGSI ANALISIS GAMBAR UNTUK MENGGUNAKAN STREAMING ▼▼▼
     async function analyzeImageWithQuestion(base64Image, userQuestion) {
+        showImageProcessingIndicator();
+        currentFetchController = new AbortController();
+        document.getElementById('stopGeneratingContainer').style.display = 'block';
+
+        const { contentElement, suggestionsContainer, messageDiv } = createStreamableAiMessage();
+        let fullResponseText = "";
+        let firstChunkReceived = false;
+        
         try {
             const imageData = base64Image.split(',')[1];
             const payload = {
-                contents: [{ parts: [{ text: `Instruksi sistem: "${getSystemPrompt()}". Pertanyaan user: "${userQuestion}"` }, { inline_data: { mime_type: "image/jpeg", data: imageData } }] }],
+                contents: [{ parts: [
+                    { text: `Instruksi sistem: "${getSystemPrompt()}". Pertanyaan user: "${userQuestion}"` }, 
+                    { inline_data: { mime_type: "image/jpeg", data: imageData } }
+                ] }],
                 generationConfig: { temperature: 0.9, topK: 32, topP: 1, maxOutputTokens: 2048 }
             };
 
-            const data = await makeApiRequest(payload);
-            hideImageProcessingIndicator();
-            
-            if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
-                let aiResponseText = data.candidates[0].content.parts[0].text;
-                let [mainAnswer, suggestionsPart] = aiResponseText.split('[SUGGESTIONS]');
-                let dynamicSuggestions = suggestionsPart ? suggestionsPart.split('|').map(s => s.trim()).filter(Boolean) : [];
-                addMessage(mainAnswer.trim(), false, dynamicSuggestions);
-                addToConversationHistory('model', mainAnswer.trim());
-                playNotificationSound();
-            } else {
-                addMessage('Wah, gue ga bisa analisis gambar ini.');
-            }
+            await makeApiRequest(payload, {
+                signal: currentFetchController.signal,
+                onChunk: (textChunk) => {
+                    if (!firstChunkReceived) {
+                        hideImageProcessingIndicator();
+                        firstChunkReceived = true;
+                    }
+                    fullResponseText += textChunk;
+                    contentElement.innerHTML = marked.parse(fullResponseText + ' <span class="cursor-animation"></span>');
+                    scrollToBottom();
+                },
+                onComplete: (finalText) => {
+                    let [mainAnswer, suggestionsPart] = finalText.split('[SUGGESTIONS]');
+                    mainAnswer = mainAnswer.trim();
+                    let dynamicSuggestions = suggestionsPart ? suggestionsPart.split('|').map(s => s.trim()).filter(Boolean) : [];
+
+                    contentElement.innerHTML = marked.parse(mainAnswer);
+                    if (suggestionsContainer) {
+                       suggestionsContainer.innerHTML = renderSuggestions(dynamicSuggestions);
+                    }
+                    
+                    addToConversationHistory('model', mainAnswer);
+                    playNotificationSound();
+                    
+                    const encodedMessage = btoa(encodeURIComponent(mainAnswer));
+                    const readButton = messageDiv.querySelector('button[onclick^="readAiResponse"]');
+                    if(readButton) readButton.setAttribute('onclick', `readAiResponse(this, '${encodedMessage}')`);
+                },
+                onError: (error) => {
+                     if (error.name !== 'AbortError') {
+                        contentElement.innerHTML = `<p class="text-red-500">Aduh, Wayan error saat analisis gambar: ${error.message}.</p>`;
+                     } else {
+                        addSystemMessage("Analisis gambar dihentikan.");
+                        contentElement.innerHTML = marked.parse(fullResponseText);
+                     }
+                }
+            });
         } catch (error) {
+            if (error.name !== 'AbortError') {
+                contentElement.innerHTML = `<p class="text-red-500">Aduh, Wayan error saat analisis gambar: ${error.message}.</p>`;
+            } else {
+                addSystemMessage("Analisis gambar dihentikan.");
+            }
+        } finally {
             hideImageProcessingIndicator();
-            addMessage(`Aduh, Wayan error saat analisis gambar: ${error.message}. Coba lagi ya!`);
+            document.getElementById('stopGeneratingContainer').style.display = 'none';
+            currentFetchController = null;
         }
     }
+
 
     window.addEventListener('load', async () => {
         loadApiKeys();
