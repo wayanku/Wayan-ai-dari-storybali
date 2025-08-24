@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -367,6 +366,21 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         color: var(--text-primary);
     }
+
+    /* ▼▼▼ [BARU] CSS UNTUK WAKTU CHAT ▼▼▼ */
+    .chat-timestamp {
+        font-size: 0.65rem;
+        color: var(--text-light);
+        margin-top: 0.5rem;
+    }
+    .user-message .chat-timestamp {
+        color: rgba(255, 255, 255, 0.8);
+    }
+    html.dark .user-message .chat-timestamp {
+        color: #a0a0a0;
+    }
+    /* ▲▲▲ AKHIR DARI CSS BARU ▲▲▲ */
+
 
     .system-message-bubble {
         display: flex; justify-content: center; margin: 0.5rem 0;
@@ -1177,6 +1191,14 @@
     window.addEventListener('resize', adjustHeightForMobile);
     adjustHeightForMobile();
 
+    // ▼▼▼ [BARU] FUNGSI BANTUAN UNTUK FORMAT WAKTU ▼▼▼
+    function getFormattedTime(date = new Date()) {
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+    }
+    // ▲▲▲ AKHIR DARI FUNGSI BANTUAN ▲▲▲
+
     let apiKeys = [];
     let allChatSessions = [];
     let activeChatId = null;
@@ -1402,7 +1424,8 @@
             title: 'Percakapan Baru', 
             history: [{
                 role: 'model',
-                parts: [{ text: 'Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Santai aja, tanya apa aja yang kamu mau tau ya!' }]
+                parts: [{ text: 'Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Santai aja, tanya apa aja yang kamu mau tau ya!' }],
+                timestamp: new Date().toISOString() // [DIUBAH] Menambahkan timestamp
             }]
         };
         allChatSessions.push(newSession);
@@ -1449,7 +1472,8 @@
         chatMessages.innerHTML = ''; 
         session.history.forEach(msg => {
             const isUser = msg.role === 'user';
-            addOriginalMessage(msg.parts[0].text, isUser);
+            // [DIUBAH] Mengirim timestamp ke fungsi addOriginalMessage
+            addOriginalMessage(msg.parts[0].text, isUser, msg.timestamp);
         });
         recreateIndicators();
         scrollToBottom();
@@ -1474,12 +1498,14 @@
             <div class="ai-message rounded-2xl rounded-tl-md p-4"><div class="flex space-x-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="ml-2 text-gray-600 text-sm">Menganalisis gambar...</span></div>`;
         chatMessages.appendChild(imageProcessingIndicator);
     }
+    // ▼▼▼ [DIUBAH] MENYIMPAN TIMESTAMP DI SETIAP PESAN BARU ▼▼▼
     function addToConversationHistory(role, message) {
         const activeSession = allChatSessions.find(s => s.id === activeChatId);
         if (activeSession) {
             activeSession.history.push({
                 role: role,
-                parts: [{text: message}]
+                parts: [{text: message}],
+                timestamp: new Date().toISOString() // Menambahkan timestamp
             });
             if (activeSession.history.length > 20) {
                 activeSession.history.splice(1, 2); 
@@ -1507,7 +1533,8 @@
         activeHistory.forEach((msg) => {
             const role = msg.role === 'user' ? 'Kamu' : 'Wayan AI';
             const text = msg.parts[0].text;
-            exportText += `${role}: ${text}\n\n`;
+            const time = msg.timestamp ? `[${getFormattedTime(new Date(msg.timestamp))}]` : '';
+            exportText += `${time} ${role}: ${text}\n\n`;
         });
         const blob = new Blob([exportText], {type: 'text/plain'});
         const url = URL.createObjectURL(blob);
@@ -1787,18 +1814,25 @@
         showImageProcessingIndicator();
         analyzeImageWithQuestion(currentPreviewImage, question);
     }
+    // ▼▼▼ [DIUBAH] MENAMBAHKAN WAKTU & SIMPAN RIWAYAT GAMBAR ▼▼▼
     function addImageMessageWithQuestion(imageSrc, fileName, question, isUser = false) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message-bubble flex items-start space-x-3';
         if (isUser) {
+            const timeString = getFormattedTime(new Date());
             messageDiv.className += ' flex-row-reverse space-x-reverse user';
             messageDiv.innerHTML = `
                 <div class="user-message text-white p-4 max-w-xs">
                     <img src="${imageSrc}" alt="${fileName}" class="w-full h-auto rounded-lg mb-2 max-h-32 object-cover">
                     <p class="text-xs mb-2 opacity-90">${fileName}</p>
                     <div class="bg-white bg-opacity-20 rounded-lg p-2"><p class="text-xs font-medium">${question}</p></div>
+                    <div class="chat-timestamp text-right">${timeString}</div>
                 </div>`;
+
+            const messageForHistory = `[Gambar: ${fileName}] ${question}`;
+            addToConversationHistory('user', messageForHistory);
+
             const allUserData = getChatLimitData();
             const userData = allUserData[currentUserIP] || { count: 0 };
             userData.count++;
@@ -1846,51 +1880,92 @@
         }
         type();
     }
+    // ▼▼▼ [DIUBAH TOTAL] FUNGSI addMessage DENGAN WAKTU & TOMBOL BARU ▼▼▼
     function addMessage(message, isUser = false, suggestions = []) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message-bubble flex items-start space-x-3';
         const typingIndicator = document.getElementById('typingIndicator');
+        const timeString = getFormattedTime(new Date());
+
         if (isUser) {
             messageDiv.className += ' flex-row-reverse space-x-reverse user';
-            messageDiv.innerHTML = `<div class="user-message text-white p-4 max-w-xs"><p class="leading-relaxed text-sm">${message}</p></div>`;
+            messageDiv.innerHTML = `
+                <div class="user-message text-white p-4 max-w-xs">
+                    <p class="leading-relaxed text-sm">${message.replace(/\n/g, '<br>')}</p>
+                    <div class="chat-timestamp text-right">${timeString}</div>
+                </div>`;
             chatMessages.insertBefore(messageDiv, typingIndicator);
         } else {
             const encodedMessage = btoa(encodeURIComponent(message));
             messageDiv.innerHTML = `
-                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden"><img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover"></div>
-                <div class="ai-message p-4 max-w-xs relative group">
+                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
+                </div>
+                <div class="ai-message p-4 max-w-xs">
                     <div class="markdown-content leading-relaxed text-sm"></div>
                     <div class="suggestions-container mt-3"></div>
-                    <button onclick="readAiResponse(this, '${encodedMessage}')" class="absolute bottom-2 right-2 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300" title="Baca Jawaban"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg></button>
-                    <button onclick="copyToClipboard(this.parentElement.querySelector('.markdown-content').innerText, this)" class="copy-button absolute bottom-2 right-9 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 opacity-0 group-hover:opacity-100" title="Salin Jawaban"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg></button>
+                    <div class="flex justify-between items-center mt-2 pt-2 border-t border-slate-300/70 dark:border-slate-600/50">
+                        <div class="chat-timestamp">${timeString}</div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="copyToClipboard(this.closest('.ai-message').querySelector('.markdown-content').innerText, this)" class="w-6 h-6 bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600" title="Salin Jawaban">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                            </button>
+                            <button onclick="readAiResponse(this, '${encodedMessage}')" class="w-6 h-6 bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600" title="Baca Jawaban">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>`;
             chatMessages.insertBefore(messageDiv, typingIndicator);
             const markdownContentElement = messageDiv.querySelector('.markdown-content');
             typewriterEffect(markdownContentElement, message, () => {
                 markdownContentElement.innerHTML = marked.parse(message);
-                messageDiv.querySelector('.suggestions-container').innerHTML = renderSuggestions(suggestions);
+                const suggestionsContainer = messageDiv.querySelector('.suggestions-container');
+                if (suggestionsContainer) {
+                   suggestionsContainer.innerHTML = renderSuggestions(suggestions);
+                }
                 scrollToBottom();
             });
         }
         scrollToBottom();
     }
-    function addOriginalMessage(message, isUser = false) {
+    // ▼▼▼ [DIUBAH TOTAL] FUNGSI addOriginalMessage UNTUK MEMUAT RIWAYAT DENGAN WAKTU ▼▼▼
+    function addOriginalMessage(message, isUser = false, timestamp) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message-bubble flex items-start space-x-3';
+        const timeString = timestamp ? getFormattedTime(new Date(timestamp)) : '';
+
         if (isUser) {
             messageDiv.className += ' flex-row-reverse space-x-reverse user';
-            messageDiv.innerHTML = `<div class="user-message text-white p-4 max-w-xs"><p class="leading-relaxed text-sm">${message}</p></div>`;
+            const timeHtml = timeString ? `<div class="chat-timestamp text-right">${timeString}</div>` : '';
+            messageDiv.innerHTML = `
+                <div class="user-message text-white p-4 max-w-xs">
+                    <div class="leading-relaxed text-sm">${message.replace(/\n/g, '<br>')}</div>
+                    ${timeHtml}
+                </div>`;
         } else {
+            const timeHtmlAi = timeString ? `<div class="chat-timestamp">${timeString}</div>` : '<div></div>';
             const encodedMessage = btoa(encodeURIComponent(message));
             messageDiv.innerHTML = `
-                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden"><img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover"></div>
-                <div class="ai-message p-4 max-w-xs relative group">
+                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
+                </div>
+                <div class="ai-message p-4 max-w-xs">
                     <div class="markdown-content leading-relaxed text-sm">${marked.parse(message)}</div>
                     <div class="suggestions-container mt-3"></div>
-                    <button onclick="readAiResponse(this, '${encodedMessage}')" class="absolute bottom-2 right-2 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300" title="Baca Jawaban"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg></button>
-                    <button onclick="copyToClipboard(this.parentElement.querySelector('.markdown-content').innerText, this)" class="copy-button absolute bottom-2 right-9 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 opacity-0 group-hover:opacity-100" title="Salin Jawaban"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg></button>
+                    <div class="flex justify-between items-center mt-2 pt-2 border-t border-slate-300/70 dark:border-slate-600/50">
+                         ${timeHtmlAi}
+                        <div class="flex items-center space-x-2">
+                            <button onclick="copyToClipboard(this.closest('.ai-message').querySelector('.markdown-content').innerText, this)" class="w-6 h-6 bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600" title="Salin Jawaban">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                            </button>
+                            <button onclick="readAiResponse(this, '${encodedMessage}')" class="w-6 h-6 bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600" title="Baca Jawaban">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>`;
         }
         chatMessages.appendChild(messageDiv);
@@ -1927,7 +2002,7 @@
     function copyToClipboard(text, button) {
         navigator.clipboard.writeText(text).then(() => {
             const originalHTML = button.innerHTML;
-            button.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+            button.innerHTML = `<svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
             setTimeout(() => button.innerHTML = originalHTML, 2000);
         });
     }
