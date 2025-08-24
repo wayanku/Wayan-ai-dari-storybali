@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -833,8 +834,10 @@
                 <button class="quick-action-btn" onclick="sendQuickMessage('Ajarin coding dong!')">Coding</button>
             </div>
             <div id="chatMessages" class="flex-1 overflow-y-auto p-4 chat-messages">
+                <!-- Pesan chat akan muncul di sini -->
             </div>
-            
+
+            <!-- [BARU] Tombol Stop Generating -->
             <div id="stopGeneratingContainer" class="text-center p-2" style="display: none;">
                 <button id="stopBtn" class="py-2 px-4 border rounded-full text-sm font-medium flex items-center gap-2 mx-auto">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1zm4 0a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
@@ -852,17 +855,12 @@
                         oninput="handleInputChange(event)"
                     >
 
-                    <!-- [REFINED] UI Perekaman Suara -->
+                    <!-- [BARU] UI Perekaman Suara -->
                     <div id="voiceRecordingUI" class="absolute inset-0 items-center justify-between px-3 hidden" style="background-color: var(--bg-tertiary); border-radius: 1.25rem;">
-                        <!-- ▼▼▼ PERUBAHAN DI SINI ▼▼▼ -->
-                        <div class="flex items-center gap-3 min-w-0"> <!-- Ditambahkan 'min-w-0' -->
-                        <!-- ▲▲▲ AKHIR PERUBAHAN ▲▲▲ -->
-                            <div class="voice-wave">
-                                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
-                            </div>
-                            <span id="voiceStatusText" class="text-sm text-gray-500 dark:text-gray-400 truncate">Mendengarkan...</span>
+                        <div class="voice-wave">
+                            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
                         </div>
-                        <div class="flex items-center gap-2 flex-shrink-0">
+                        <div class="flex items-center gap-2">
                             <button id="pauseRecordingBtn" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-300 dark:hover:bg-gray-600" title="Jeda dan Jadikan Teks">
                                 <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z"></path></svg>
                             </button>
@@ -1179,9 +1177,9 @@
     let currentUserIP = null;
     let countdownInterval = null;
 
+    // [BARU] Variabel state untuk fitur baru
     let currentFetchController = null;
     let isRecording = false;
-    let finalTranscript = '';
 
     const defaultSettings = {
         theme: 'blue',
@@ -1310,6 +1308,7 @@
             if (inputElement) inputElement.value = key;
         });
     }
+
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
@@ -1383,6 +1382,7 @@
         saveAllChatSessions();
         renderSidebar();
     }
+
     function getActiveChatHistory() {
         if (!activeChatId) return null;
         const activeSession = allChatSessions.find(session => session.id === activeChatId);
@@ -1527,88 +1527,94 @@
             style.remove();
         }
     }
+    function getCurrentApiKey() {
+        if (apiKeys.length === 0) loadApiKeys();
+        const validApiKeys = apiKeys.filter(key => key && !key.startsWith('YOUR_GEMINI_API_KEY_'));
+        if (validApiKeys.length === 0) return null;
+        return validApiKeys[Math.floor(Math.random() * validApiKeys.length)];
+    }
+    function getApiUrl() {
+        const apiKey = getCurrentApiKey();
+        return apiKey ? `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}` : null;
+    }
     function sendQuickMessage(message) {
         document.getElementById('messageInput').value = message;
         handleInputChange({ target: document.getElementById('messageInput') });
         sendMessage();
     }
+
+    // --- [BARU] LOGIKA INPUT SUARA YANG DISEMPURNAKAN ---
     function toggleVoiceMode() {
         if (isRecording) {
-            stopVoiceRecognition(true);
+            stopVoiceRecognition();
         } else {
             startVoiceRecognition();
         }
     }
+
     function startVoiceRecognition() {
         if (!('webkitSpeechRecognition' in window)) {
             alert('Maaf, browser Anda tidak mendukung fitur pengenalan suara.');
             return;
         }
-        finalTranscript = '';
-        document.getElementById('messageInput').value = '';
-        isRecording = true;
+
+        // Ubah UI ke mode perekaman
         document.getElementById('messageInput').style.visibility = 'hidden';
         document.querySelector('.action-buttons').style.display = 'none';
         document.getElementById('voiceRecordingUI').style.display = 'flex';
-        document.getElementById('voiceStatusText').textContent = 'Mendengarkan...';
+        isRecording = true;
+
         recognition = new webkitSpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
+        recognition.continuous = false; // Hanya proses setelah user selesai bicara
+        recognition.interimResults = false;
         recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
-        recognition.onresult = (event) => {
-            let interim_transcript = '';
-            let transcript_builder = '';
-            for (let i = 0; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    transcript_builder += event.results[i][0].transcript;
-                } else {
-                    interim_transcript += event.results[i][0].transcript;
-                }
+
+        recognition.onresult = function (event) {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('messageInput').value = transcript;
+
+            // Jika `isRecording` masih true, berarti user berhenti bicara secara alami,
+            // jadi kita langsung kirim pesannya.
+            if (isRecording) {
+                sendMessage();
             }
-            finalTranscript = transcript_builder;
-            const displayText = (finalTranscript + interim_transcript).trim();
-            document.getElementById('voiceStatusText').textContent = displayText || 'Mendengarkan...';
         };
-        recognition.onerror = (event) => {
+
+        recognition.onerror = function(event) {
             console.error("Speech recognition error:", event.error);
             if (event.error !== 'aborted') {
                 addSystemMessage(`Error pengenalan suara: ${event.error}`);
             }
-            stopVoiceRecognition(true);
         };
-        recognition.onend = () => {
-            if (isRecording) {
-                stopVoiceRecognition();
+
+        recognition.onend = function() {
+            // Selalu kembalikan UI ke normal saat rekaman berakhir, apapun penyebabnya
+            stopVoiceRecognition();
+        };
+
+        recognition.start();
+    }
+
+    function stopVoiceRecognition() {
+        if (isRecording) { // Hanya jalankan jika sedang merekam
+            isRecording = false;
+            if (recognition) {
+                recognition.stop();
+                recognition = null;
             }
-        };
-        try {
-            recognition.start();
-        } catch (e) {
-            console.error("Error starting speech recognition:", e);
-            addSystemMessage("Tidak dapat memulai pengenalan suara.");
-            stopVoiceRecognition(true);
+
+            // Kembalikan UI ke keadaan normal
+            document.getElementById('messageInput').style.visibility = 'visible';
+            document.querySelector('.action-buttons').style.display = 'flex';
+            document.getElementById('voiceRecordingUI').style.display = 'none';
+            handleInputChange({ target: document.getElementById('messageInput') });
         }
     }
-    function stopVoiceRecognition(isCancel = false) {
-        if (!isRecording) return;
-        isRecording = false;
-        if (recognition) {
-            recognition.stop();
-            recognition = null;
-        }
-        if (!isCancel && finalTranscript.trim()) {
-            document.getElementById('messageInput').value = finalTranscript.trim();
-        } else {
-            document.getElementById('messageInput').value = '';
-        }
-        document.getElementById('messageInput').style.visibility = 'visible';
-        document.querySelector('.action-buttons').style.display = 'flex';
-        document.getElementById('voiceRecordingUI').style.display = 'none';
-        handleInputChange({ target: document.getElementById('messageInput') });
-    }
+    // --- AKHIR DARI LOGIKA INPUT SUARA BARU ---
+
     function changeTheme(themeName) {
         if (document.documentElement.classList.contains('dark')) {
-            return;
+            return; // Don't allow theme changes in dark mode
         }
         settings.theme = themeName;
         document.querySelectorAll('.theme-option-new').forEach(btn => btn.classList.remove('active'));
@@ -1623,30 +1629,40 @@
         document.querySelectorAll('.ai-avatar').forEach(avatar => avatar.style.background = `linear-gradient(135deg, ${colors.from}, ${colors.to})`);
         document.querySelector('.profile-avatar-border').style.borderImage = `linear-gradient(135deg, ${colors.from}, ${colors.to}, #f093fb) 1`;
     }
+
     function applyDarkMode(isDark) {
         document.documentElement.classList.toggle('dark', isDark);
         settings.darkMode = isDark;
+
         const themeOptionsContainer = document.getElementById('themeOptionsContainer');
         const themeDisabledMessage = document.getElementById('themeDisabledMessage');
+        
         const header = document.querySelector('.header-gradient');
         const sendBtn = document.getElementById('sendBtn');
         const aiAvatars = document.querySelectorAll('.ai-avatar');
         const profileAvatarBorder = document.querySelector('.profile-avatar-border');
+
         if (isDark) {
             themeOptionsContainer.style.opacity = '0.5';
             themeOptionsContainer.style.pointerEvents = 'none';
             themeDisabledMessage.classList.remove('hidden');
+            
             if (header) header.style.background = '';
             if (sendBtn) sendBtn.style.backgroundColor = '';
             if (profileAvatarBorder) profileAvatarBorder.style.borderImage = '';
-            aiAvatars.forEach(avatar => { avatar.style.background = ''; });
+            aiAvatars.forEach(avatar => {
+                avatar.style.background = '';
+            });
+
         } else {
             themeOptionsContainer.style.opacity = '1';
             themeOptionsContainer.style.pointerEvents = 'auto';
             themeDisabledMessage.classList.add('hidden');
+            
             changeTheme(settings.theme);
         }
     }
+
     function loadSettings() {
         const savedSettings = localStorage.getItem('storybaliSettings');
         if (savedSettings) {
@@ -1684,24 +1700,30 @@
             window.location.reload();
         }
     }
+    
     function applySettings() {
         document.getElementById('darkModeToggle').checked = settings.darkMode;
         applyDarkMode(settings.darkMode);
+
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
         const isMobile = window.innerWidth <= 768;
+
         if (isMobile) {
             sidebar.classList.remove('open');
             overlay.classList.remove('active');
         } else {
             sidebar.classList.toggle('collapsed', !settings.isSidebarOpen);
         }
+
         document.querySelector('.header-gradient h1').textContent = 'Wayan AI';
         document.getElementById('aiNameInput').value = 'Wayan';
         settings.aiName = 'Wayan';
+        
         if (!settings.darkMode) {
             changeTheme(settings.theme);
         }
+
         document.getElementById('fontSizeSelect').value = settings.fontSize;
         document.getElementById('animationToggle').checked = settings.animationsEnabled;
         toggleAnimations();
@@ -1718,6 +1740,7 @@
         const voiceSelect = document.getElementById('voiceSelect');
         if (settings.voiceURI && voiceSelect.options.length > 1) voiceSelect.value = settings.voiceURI;
     }
+    
     function selectChoice(settingName, value, element) {
         settings[settingName] = value;
         Array.from(element.parentElement.children).forEach(child => child.classList.remove('active'));
@@ -1985,70 +2008,12 @@
         return `${roleInstruction} ${baseInstructions}`;
     }
 
-    // --- [FINAL] FUNGSI PINTAR DENGAN TITIK AWAL ACAK & FAILOVER ---
-    async function makeApiRequest(payload) {
-        if (apiKeys.length === 0) loadApiKeys();
-        const validApiKeys = apiKeys.filter(key => key && key.trim() !== '');
-        
-        if (validApiKeys.length === 0) {
-            throw new Error("Tidak ada API Key yang valid yang dikonfigurasi.");
-        }
-
-        let startingIndex;
-        const lastKeyIndexStr = localStorage.getItem('lastKeyIndex');
-
-        if (lastKeyIndexStr === null) {
-            console.log("Pengguna baru terdeteksi. Memilih API Key awal secara acak.");
-            startingIndex = Math.floor(Math.random() * validApiKeys.length);
-        } else {
-            const lastKeyIndex = parseInt(lastKeyIndexStr);
-            startingIndex = (lastKeyIndex + 1) % validApiKeys.length;
-        }
-
-        for (let i = 0; i < validApiKeys.length; i++) {
-            const currentIndex = (startingIndex + i) % validApiKeys.length;
-            const currentApiKey = validApiKeys[currentIndex];
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${currentApiKey}`;
-            
-            console.log(`Mencoba API Key urutan ke-${currentIndex + 1}...`);
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                    signal: payload.signal
-                });
-
-                if (response.ok) {
-                    console.log(`Berhasil menggunakan API Key urutan ke-${currentIndex + 1}`);
-                    localStorage.setItem('lastKeyIndex', currentIndex);
-                    return await response.json();
-                }
-
-                if (response.status === 429) {
-                    console.warn(`API Key urutan ke-${currentIndex + 1} telah mencapai limit. Mencoba kunci berikutnya...`);
-                } else {
-                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
-                }
-
-            } catch (error) {
-                if (error.name === 'AbortError') throw error; 
-                console.error(`Gagal dengan API Key urutan ke-${currentIndex + 1}:`, error.message);
-                if (!String(error.message).includes("429")) {
-                     throw error;
-                }
-            }
-        }
-
-        throw new Error("Semua API Key yang tersedia telah mencapai limit atau gagal merespons.");
-    }
-
+    // --- [BARU] FUNGSI sendMessage YANG DISEMPURNAKAN DENGAN AbortController ---
     async function sendMessage() {
         const input = document.getElementById('messageInput');
         const message = input.value.trim();
         if (!message || !currentUserIP || currentFetchController) return;
-        
+
         const activeSession = allChatSessions.find(s => s.id === activeChatId);
         if (!activeSession) return;
         if(activeSession.title === 'Percakapan Baru' && activeSession.history.length === 1) {
@@ -2075,19 +2040,30 @@
             setTimeout(() => startCooldown(cooldownEndTime), 1000);
         }
 
+        const apiUrl = getApiUrl();
+        if (!apiUrl) { hideTypingIndicator(); addMessage('Maaf, API Key tidak valid.'); return; }
+        
+        // Inisialisasi AbortController dan tampilkan tombol stop
         currentFetchController = new AbortController();
-        document.getElementById('stopGeneratingContainer').style.display = 'block';
+        const signal = currentFetchController.signal;
+        const stopContainer = document.getElementById('stopGeneratingContainer');
+        stopContainer.style.display = 'block';
 
         try {
-            const payload = {
-                contents: getActiveChatHistory(),
-                systemInstruction: { parts: [{ text: getSystemPrompt() }] },
-                generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048 },
-                signal: currentFetchController.signal
-            };
-
-            const data = await makeApiRequest(payload);
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: getActiveChatHistory(),
+                    systemInstruction: { parts: [{ text: getSystemPrompt() }] },
+                    generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048 }
+                }),
+                signal: signal // Teruskan sinyal ke fetch
+            });
             
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            
+            const data = await response.json();
             if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
                 let aiResponseText = data.candidates[0].content.parts[0].text;
                 let [mainAnswer, suggestionsPart] = aiResponseText.split('[SUGGESTIONS]');
@@ -2100,28 +2076,37 @@
             }
         } catch (error) {
             if (error.name === 'AbortError') {
+                console.log('Fetch aborted by user.');
                 addSystemMessage("Pembuatan respons dihentikan.");
             } else {
-                addMessage(`Aduh, Wayan error: ${error.message}. Coba lagi nanti ya!`);
+                addMessage(`Aduh, Wayan error: ${error.message}. Coba lagi ya!`);
             }
         } finally {
+            // Selalu sembunyikan tombol dan reset controller setelah selesai
             hideTypingIndicator();
-            document.getElementById('stopGeneratingContainer').style.display = 'none';
+            stopContainer.style.display = 'none';
             currentFetchController = null;
         }
     }
-    
+    // --- AKHIR DARI FUNGSI sendMessage BARU ---
+
+
     async function analyzeImageWithQuestion(base64Image, userQuestion) {
+        const apiUrl = getApiUrl();
+        if (!apiUrl) { hideImageProcessingIndicator(); addMessage('API Key tidak valid.'); return; }
         try {
             const imageData = base64Image.split(',')[1];
-            const payload = {
-                contents: [{ parts: [{ text: `Instruksi sistem: "${getSystemPrompt()}". Pertanyaan user: "${userQuestion}"` }, { inline_data: { mime_type: "image/jpeg", data: imageData } }] }],
-                generationConfig: { temperature: 0.9, topK: 32, topP: 1, maxOutputTokens: 2048 }
-            };
-
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: `Instruksi sistem: "${getSystemPrompt()}". Pertanyaan user: "${userQuestion}"` }, { inline_data: { mime_type: "image/jpeg", data: imageData } }] }],
+                    generationConfig: { temperature: 0.9, topK: 32, topP: 1, maxOutputTokens: 2048 }
+                })
+            });
             hideImageProcessingIndicator();
-            const data = await makeApiRequest(payload);
-            
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json();
             if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
                 let aiResponseText = data.candidates[0].content.parts[0].text;
                 let [mainAnswer, suggestionsPart] = aiResponseText.split('[SUGGESTIONS]');
@@ -2153,6 +2138,7 @@
         document.getElementById('fontSizeSelect').addEventListener('change', (e) => settings.fontSize = e.target.value);
         document.getElementById('darkModeToggle').addEventListener('change', (e) => applyDarkMode(e.target.checked));
         
+        // --- [BARU] EVENT LISTENERS UNTUK FITUR BARU ---
         document.getElementById('stopBtn').addEventListener('click', () => {
             if (currentFetchController) {
                 currentFetchController.abort();
@@ -2160,17 +2146,21 @@
         });
 
         document.getElementById('pauseRecordingBtn').addEventListener('click', () => {
-            stopVoiceRecognition(); 
+            // Menghentikan rekaman, hasil transkripsi akan muncul di input
+            // tanpa mengirim pesan.
+            isRecording = false; // Penting: set isRecording ke false SEBELUM stop
+            if (recognition) {
+                recognition.stop();
+            }
         });
 
         document.getElementById('sendRecordingBtn').addEventListener('click', () => {
-            stopVoiceRecognition();
-            setTimeout(() => {
-                if(document.getElementById('messageInput').value.trim()){
-                    sendMessage();
-                }
-            }, 100); 
+            // Menghentikan rekaman, yang akan memicu onresult untuk mengirim pesan.
+            if (recognition) {
+                recognition.stop();
+            }
         });
+        // --- AKHIR DARI EVENT LISTENERS BARU ---
     });
 
     ['profileModal', 'imagePreviewModal', 'settingsModal'].forEach(id => {
