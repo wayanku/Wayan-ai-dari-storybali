@@ -367,7 +367,7 @@
         color: var(--text-primary);
     }
 
-    /* ▼▼▼ [BARU] CSS UNTUK WAKTU CHAT ▼▼▼ */
+    /* ▼▼▼ CSS UNTUK WAKTU CHAT ▼▼▼ */
     .chat-timestamp {
         font-size: 0.65rem;
         color: var(--text-light);
@@ -1178,7 +1178,7 @@
             </div>
         </div>
         <div class="p-3 bg-white border-t border-gray-200 flex-shrink-0 text-center">
-            <p class="text-xs text-gray-500">StoryBali v2.5.4 | © 2024</p>
+            <p class="text-xs text-gray-500">StoryBali v2.5.5 | © 2024</p>
         </div>
     </div>
 </div>
@@ -1191,7 +1191,7 @@
     window.addEventListener('resize', adjustHeightForMobile);
     adjustHeightForMobile();
 
-    // ▼▼▼ [BARU] FUNGSI BANTUAN UNTUK FORMAT WAKTU ▼▼▼
+    // ▼▼▼ FUNGSI BANTUAN UNTUK FORMAT WAKTU ▼▼▼
     function getFormattedTime(date = new Date()) {
         const hours = date.getHours().toString().padStart(2, '0');
         const minutes = date.getMinutes().toString().padStart(2, '0');
@@ -1425,7 +1425,7 @@
             history: [{
                 role: 'model',
                 parts: [{ text: 'Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Santai aja, tanya apa aja yang kamu mau tau ya!' }],
-                timestamp: new Date().toISOString() // [DIUBAH] Menambahkan timestamp
+                timestamp: new Date().toISOString()
             }]
         };
         allChatSessions.push(newSession);
@@ -1472,7 +1472,6 @@
         chatMessages.innerHTML = ''; 
         session.history.forEach(msg => {
             const isUser = msg.role === 'user';
-            // [DIUBAH] Mengirim timestamp ke fungsi addOriginalMessage
             addOriginalMessage(msg.parts[0].text, isUser, msg.timestamp);
         });
         recreateIndicators();
@@ -1498,14 +1497,13 @@
             <div class="ai-message rounded-2xl rounded-tl-md p-4"><div class="flex space-x-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="ml-2 text-gray-600 text-sm">Menganalisis gambar...</span></div>`;
         chatMessages.appendChild(imageProcessingIndicator);
     }
-    // ▼▼▼ [DIUBAH] MENYIMPAN TIMESTAMP DI SETIAP PESAN BARU ▼▼▼
     function addToConversationHistory(role, message) {
         const activeSession = allChatSessions.find(s => s.id === activeChatId);
         if (activeSession) {
             activeSession.history.push({
                 role: role,
                 parts: [{text: message}],
-                timestamp: new Date().toISOString() // Menambahkan timestamp
+                timestamp: new Date().toISOString()
             });
             if (activeSession.history.length > 20) {
                 activeSession.history.splice(1, 2); 
@@ -1814,7 +1812,6 @@
         showImageProcessingIndicator();
         analyzeImageWithQuestion(currentPreviewImage, question);
     }
-    // ▼▼▼ [DIUBAH] MENAMBAHKAN WAKTU & SIMPAN RIWAYAT GAMBAR ▼▼▼
     function addImageMessageWithQuestion(imageSrc, fileName, question, isUser = false) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
@@ -1847,7 +1844,7 @@
         chatMessages.insertBefore(messageDiv, document.getElementById('typingIndicator'));
         scrollToBottom();
     }
-    function handleKeyPress(event) { if (event.key === 'Enter') sendMessage(); }
+    function handleKeyPress(event) { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); } }
     function addSystemMessage(message) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
@@ -1880,7 +1877,6 @@
         }
         type();
     }
-    // ▼▼▼ [DIUBAH TOTAL] FUNGSI addMessage DENGAN WAKTU & TOMBOL BARU ▼▼▼
     function addMessage(message, isUser = false, suggestions = []) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
@@ -1930,7 +1926,6 @@
         }
         scrollToBottom();
     }
-    // ▼▼▼ [DIUBAH TOTAL] FUNGSI addOriginalMessage UNTUK MEMUAT RIWAYAT DENGAN WAKTU ▼▼▼
     function addOriginalMessage(message, isUser = false, timestamp) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
@@ -2067,7 +2062,6 @@
         return `${roleInstruction} ${baseInstructions}`;
     }
 
-    // --- [FINAL & FIXED] FUNGSI PINTAR DENGAN TITIK AWAL ACAK & FAILOVER ---
     async function makeApiRequest(payload, signal = null) {
         if (apiKeys.length === 0) loadApiKeys();
         const validApiKeys = apiKeys.filter(key => key && key.trim() !== '');
@@ -2115,6 +2109,8 @@
                 if (response.status === 429) {
                     console.warn(`API Key urutan ke-${currentIndex + 1} telah mencapai limit. Mencoba kunci berikutnya...`);
                 } else {
+                    const errorBody = await response.text();
+                    console.error("API Error Body:", errorBody);
                     throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
                 }
 
@@ -2165,11 +2161,16 @@
         document.getElementById('stopGeneratingContainer').style.display = 'block';
 
         try {
+            // ▼▼▼ [PERBAIKAN KRITIS] HAPUS TIMESTAMP SEBELUM MENGIRIM KE API ▼▼▼
+            const fullHistory = getActiveChatHistory();
+            const historyForApi = fullHistory.map(({ role, parts }) => ({ role, parts }));
+            
             const payload = {
-                contents: getActiveChatHistory(),
+                contents: historyForApi, // Menggunakan riwayat yang sudah dibersihkan
                 systemInstruction: { parts: [{ text: getSystemPrompt() }] },
                 generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048 }
             };
+            // ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲
 
             const data = await makeApiRequest(payload, currentFetchController.signal);
             
@@ -2177,16 +2178,18 @@
                 let aiResponseText = data.candidates[0].content.parts[0].text;
                 let [mainAnswer, suggestionsPart] = aiResponseText.split('[SUGGESTIONS]');
                 let dynamicSuggestions = suggestionsPart ? suggestionsPart.split('|').map(s => s.trim()).filter(Boolean) : [];
-                addToConversationHistory('model', mainAnswer.trim());
                 addMessage(mainAnswer.trim(), false, dynamicSuggestions);
+                addToConversationHistory('model', mainAnswer.trim());
                 playNotificationSound();
             } else {
+                console.warn("Respons API tidak valid:", data);
                 addMessage('Maaf, Wayan tidak dapat memberikan respons. Coba lagi.');
             }
         } catch (error) {
             if (error.name === 'AbortError') {
                 addSystemMessage("Pembuatan respons dihentikan.");
             } else {
+                console.error("Error in sendMessage:", error);
                 addMessage(`Aduh, Wayan error: ${error.message}. Coba lagi nanti ya!`);
             }
         } finally {
@@ -2204,15 +2207,15 @@
                 generationConfig: { temperature: 0.9, topK: 32, topP: 1, maxOutputTokens: 2048 }
             };
 
-            hideImageProcessingIndicator();
             const data = await makeApiRequest(payload);
+            hideImageProcessingIndicator();
             
             if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
                 let aiResponseText = data.candidates[0].content.parts[0].text;
                 let [mainAnswer, suggestionsPart] = aiResponseText.split('[SUGGESTIONS]');
                 let dynamicSuggestions = suggestionsPart ? suggestionsPart.split('|').map(s => s.trim()).filter(Boolean) : [];
-                addToConversationHistory('model', mainAnswer.trim());
                 addMessage(mainAnswer.trim(), false, dynamicSuggestions);
+                addToConversationHistory('model', mainAnswer.trim());
                 playNotificationSound();
             } else {
                 addMessage('Wah, gue ga bisa analisis gambar ini.');
