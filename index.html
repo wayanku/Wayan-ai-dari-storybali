@@ -854,7 +854,9 @@
 
                     <!-- [REFINED] UI Perekaman Suara -->
                     <div id="voiceRecordingUI" class="absolute inset-0 items-center justify-between px-3 hidden" style="background-color: var(--bg-tertiary); border-radius: 1.25rem;">
-                        <div class="flex items-center gap-3">
+                        <!-- ▼▼▼ PERUBAHAN DI SINI ▼▼▼ -->
+                        <div class="flex items-center gap-3 min-w-0"> <!-- Ditambahkan 'min-w-0' -->
+                        <!-- ▲▲▲ AKHIR PERUBAHAN ▲▲▲ -->
                             <div class="voice-wave">
                                 <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
                             </div>
@@ -1573,35 +1575,53 @@
         recognition.interimResults = true;
         recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
 
+        // ▼▼▼ PERUBAHAN DI SINI ▼▼▼
         recognition.onresult = (event) => {
-            let interimTranscript = '';
-            let currentFinalPortion = '';
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
+            // Logika diubah untuk mengatasi duplikasi (Android) dan masalah iOS
+            let interim_transcript = '';
+            let transcript_builder = ''; // Gunakan builder sementara untuk membangun kembali dari awal
+
+            // Iterasi dari awal setiap saat untuk membangun kembali seluruh transkrip
+            for (let i = 0; i < event.results.length; ++i) {
                 if (event.results[i].isFinal) {
-                    currentFinalPortion += event.results[i][0].transcript;
+                    transcript_builder += event.results[i][0].transcript;
                 } else {
-                    interimTranscript += event.results[i][0].transcript;
+                    interim_transcript += event.results[i][0].transcript;
                 }
             }
-            finalTranscript += currentFinalPortion;
-            const displayText = finalTranscript + interimTranscript;
-            document.getElementById('voiceStatusText').textContent = displayText.trim() || 'Mendengarkan...';
+            
+            // Simpan hanya hasil final yang sudah pasti ke variabel global
+            finalTranscript = transcript_builder;
+            
+            // Tampilkan gabungan dari hasil final dan hasil sementara yang sedang berjalan
+            const displayText = (finalTranscript + interim_transcript).trim();
+            document.getElementById('voiceStatusText').textContent = displayText || 'Mendengarkan...';
         };
+        // ▲▲▲ AKHIR PERUBAHAN ▲▲▲
 
         recognition.onerror = (event) => {
             console.error("Speech recognition error:", event.error);
             if (event.error !== 'aborted') {
                 addSystemMessage(`Error pengenalan suara: ${event.error}`);
             }
+            stopVoiceRecognition(true); // Batalkan jika ada error
         };
 
         recognition.onend = () => {
+            // onend bisa dipanggil bahkan saat rekaman masih berjalan di beberapa browser
+            // hanya proses jika kita secara eksplisit menghentikannya
             if (isRecording) {
                 stopVoiceRecognition();
             }
         };
 
-        recognition.start();
+        try {
+            recognition.start();
+        } catch (e) {
+            console.error("Error starting speech recognition:", e);
+            addSystemMessage("Tidak dapat memulai pengenalan suara.");
+            stopVoiceRecognition(true);
+        }
     }
 
     function stopVoiceRecognition(isCancel = false) {
@@ -1613,6 +1633,7 @@
             recognition = null;
         }
         
+        // Cek lagi nilai finalTranscript saat berhenti, penting untuk iOS
         if (!isCancel && finalTranscript.trim()) {
             document.getElementById('messageInput').value = finalTranscript.trim();
         } else {
