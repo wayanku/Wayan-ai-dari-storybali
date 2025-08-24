@@ -28,20 +28,11 @@
   <meta name="CocoaVersion" content="2299.77">
   <!-- Viewport diubah untuk menangani safe area (home bar) di iOS -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  
-  <!-- [PERFORMA] Mempercepat koneksi ke Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- [PERFORMA] Menunda pemuatan script yang tidak kritikal -->
-  <script src="https://cdn.jsdelivr/npm/marked/marked.min.js" defer></script>
+  <!-- Library untuk memformat Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <style>
-    /* [PERFORMA] SARAN: Untuk performa maksimal, pisahkan CSS Kritis (Critical CSS). */
-    /* CSS yang dibutuhkan untuk merender bagian atas halaman (header, input awal) bisa ditaruh inline. */
-    /* Sisa dari CSS ini bisa dimuat dalam file terpisah secara asinkron untuk menghindari render-blocking. */
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
     /* === CSS VARIABLES UNTUK DARK/LIGHT MODE === */
@@ -814,13 +805,8 @@
                         <div class="flex items-center space-x-3">
                             <div class="ai-avatar w-12 h-12 flex items-center justify-center overflow-hidden relative cursor-pointer"
                                  onclick="showProfileModal()">
-                                <!-- [PERFORMA] Contoh penggunaan <picture> untuk format modern seperti WebP. -->
-                                <!-- Ganti 'path/to/image.webp' dengan URL gambar WebP Anda jika tersedia. -->
-                                <!-- <picture> -->
-                                    <!-- <source srcset="path/to/image.webp" type="image/webp"> -->
-                                    <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali"
-                                         class="w-full h-full object-cover" loading="lazy">
-                                <!-- </picture> -->
+                                <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali"
+                                     class="w-full h-full object-cover">
                             </div>
                             <div>
                                 <h1 class="text-xl font-bold">Wayan AI</h1>
@@ -930,7 +916,7 @@
                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
             <div class="mb-4">
-                <img id="previewImage" src="" alt="Preview" class="w-full h-auto rounded-lg max-h-48 object-cover mx-auto shadow-md" loading="lazy">
+                <img id="previewImage" src="" alt="Preview" class="w-full h-auto rounded-lg max-h-48 object-cover mx-auto shadow-md">
                 <p id="previewFileName" class="text-sm text-gray-600 mt-2"></p>
             </div>
             <div class="mb-4">
@@ -951,7 +937,7 @@
                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
             <div class="w-20 h-20 mx-auto mb-4 overflow-hidden profile-avatar-border shadow-lg">
-                <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover" loading="lazy">
+                <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover">
             </div>
             <h2 class="text-xl font-bold text-gray-800 mb-2">Wayan AI</h2>
             <p class="text-purple-600 font-semibold mb-4 text-sm">AI Assistant Dari Storybali</p>
@@ -1178,10 +1164,6 @@
 </div>
 
 <script>
-    // [PERFORMA] SARAN: Untuk event yang sering terjadi seperti 'resize',
-    // pertimbangkan menggunakan 'debouncing' untuk mencegah fungsi dipanggil terlalu sering.
-    // Ini dapat meningkatkan responsivitas pada perangkat yang lebih lambat.
-    // Contoh: window.addEventListener('resize', debounce(adjustHeightForMobile, 250));
     function adjustHeightForMobile() {
         let vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -1475,14 +1457,14 @@
         typingIndicator.id = 'typingIndicator';
         typingIndicator.className = 'typing-indicator items-start space-x-3';
         typingIndicator.innerHTML = `
-            <div class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"><img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover" loading="lazy"></div>
+            <div class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"><img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover"></div>
             <div class="ai-message rounded-2xl rounded-tl-md p-4"><div class="flex space-x-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
         chatMessages.appendChild(typingIndicator);
         const imageProcessingIndicator = document.createElement('div');
         imageProcessingIndicator.id = 'imageProcessingIndicator';
         imageProcessingIndicator.className = 'typing-indicator items-start space-x-3';
         imageProcessingIndicator.innerHTML = `
-            <div class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"><img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover" loading="lazy"></div>
+            <div class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"><img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover"></div>
             <div class="ai-message rounded-2xl rounded-tl-md p-4"><div class="flex space-x-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="ml-2 text-gray-600 text-sm">Menganalisis gambar...</span></div>`;
         chatMessages.appendChild(imageProcessingIndicator);
     }
@@ -1807,7 +1789,7 @@
             messageDiv.className += ' flex-row-reverse space-x-reverse user';
             messageDiv.innerHTML = `
                 <div class="user-message text-white p-4 max-w-xs">
-                    <img src="${imageSrc}" alt="${fileName}" class="w-full h-auto rounded-lg mb-2 max-h-32 object-cover" loading="lazy">
+                    <img src="${imageSrc}" alt="${fileName}" class="w-full h-auto rounded-lg mb-2 max-h-32 object-cover">
                     <p class="text-xs mb-2 opacity-90">${fileName}</p>
                     <div class="bg-white bg-opacity-20 rounded-lg p-2"><p class="text-xs font-medium">${question}</p></div>
                 </div>`;
@@ -1870,7 +1852,7 @@
         } else {
             const encodedMessage = btoa(encodeURIComponent(message));
             messageDiv.innerHTML = `
-                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden"><img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover" loading="lazy"></div>
+                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden"><img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover"></div>
                 <div class="ai-message p-4 max-w-xs relative group">
                     <div class="markdown-content leading-relaxed text-sm"></div>
                     <div class="suggestions-container mt-3"></div>
@@ -1897,7 +1879,7 @@
         } else {
             const encodedMessage = btoa(encodeURIComponent(message));
             messageDiv.innerHTML = `
-                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden"><img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover" loading="lazy"></div>
+                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden"><img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover"></div>
                 <div class="ai-message p-4 max-w-xs relative group">
                     <div class="markdown-content leading-relaxed text-sm">${marked.parse(message)}</div>
                     <div class="suggestions-container mt-3"></div>
@@ -2212,27 +2194,27 @@
   <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-0 overflow-hidden border border-gray-200 relative animate-fadein">
     <div id="onboardingSlides" class="w-full">
       <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:block">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f44b.png" alt="Hi" class="w-16 h-16 mb-3 mx-auto animate-bounce" loading="lazy" />
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f44b.png" alt="Hi" class="w-16 h-16 mb-3 mx-auto animate-bounce" />
         <h2 class="text-xl font-bold mb-2 text-blue-700">Selamat Datang di Wayan AI!</h2>
         <p class="text-gray-700 text-base mb-4">Aplikasi chat cerdas dengan AI berbahasa Indonesia yang ramah &amp; mudah digunakan.</p>
       </div>
       <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4ac.png" alt="Chat" class="w-16 h-16 mb-3 mx-auto animate-pulse" loading="lazy" />
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4ac.png" alt="Chat" class="w-16 h-16 mb-3 mx-auto animate-pulse" />
         <h2 class="text-lg font-semibold mb-2 text-blue-700">Mulai Bertanya!</h2>
         <p class="text-gray-700 text-base mb-4">Tulis pertanyaan di kolom bawah, lalu tekan <b>tombol kirim</b>.</p>
       </div>
        <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f5c3.png" alt="New Chat" class="w-16 h-16 mb-3 mx-auto" loading="lazy" />
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f5c3.png" alt="New Chat" class="w-16 h-16 mb-3 mx-auto" />
         <h2 class="text-lg font-semibold mb-2 text-blue-700">Simpan Percakapan</h2>
         <p class="text-gray-700 text-base mb-4">Setiap percakapan akan otomatis tersimpan. Klik tombol <b>menu (garis tiga)</b> di pojok kiri atas untuk melihat riwayat chat Anda.</p>
       </div>
       <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f527.png" alt="Settings" class="w-16 h-16 mb-3 mx-auto animate-spin-slow" loading="lazy" />
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f527.png" alt="Settings" class="w-16 h-16 mb-3 mx-auto animate-spin-slow" />
         <h2 class="text-lg font-semibold mb-2 text-blue-700">Atur Gaya AI-mu</h2>
         <p class="text-gray-700 text-base mb-4">Pilih <b>peran</b> dan <b>gaya bahasa</b> AI melalui tombol <b>pengaturan (roda gigi)</b>.</p>
       </div>
       <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f389.png" alt="Lets Go" class="w-16 h-16 mb-3 mx-auto animate-bounce" loading="lazy" />
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f389.png" alt="Lets Go" class="w-16 h-16 mb-3 mx-auto animate-bounce" />
         <h2 class="text-lg font-semibold mb-2 text-blue-700">Yuk Mulai Chatting!</h2>
         <p class="text-gray-700 text-base mb-4">Selamat menikmati Wayan AI. Jangan ragu untuk bereksperimen!</p>
       </div>
