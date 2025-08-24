@@ -194,6 +194,9 @@
         color: var(--text-secondary);
         font-size: 0.875rem;
         transition: background-color 0.2s ease, color 0.2s ease;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     .chat-history-item:hover {
         background-color: var(--bg-tertiary);
@@ -212,6 +215,8 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        flex-grow: 1;
+        margin-right: 0.5rem;
     }
     .chat-history-item .actions {
         display: flex;
@@ -361,6 +366,22 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         color: var(--text-primary);
     }
+    
+    /* ▼▼▼ [BARU] CSS UNTUK TIMESTAMP ▼▼▼ */
+    .chat-timestamp {
+        font-size: 0.65rem; /* Ukuran font sangat kecil */
+        color: var(--text-light); /* Warna abu-abu */
+        margin-top: 0.35rem; /* Jarak dari bubble chat di atasnya */
+        padding: 0 0.5rem; /* Sedikit padding horizontal */
+    }
+    .message-bubble.user .chat-timestamp {
+        text-align: right; /* Waktu rata kanan untuk pesan user */
+    }
+    .message-bubble:not(.user) .chat-timestamp {
+        text-align: left; /* Waktu rata kiri untuk pesan AI */
+    }
+    /* ▲▲▲ AKHIR DARI CSS TIMESTAMP ▲▲▲ */
+
 
     .system-message-bubble {
         display: flex; justify-content: center; margin: 0.5rem 0;
@@ -728,40 +749,6 @@
         border-left-color: #888;
     }
     .markdown-content strong { font-weight: 600; }
-
-    /* ▼▼▼ [BARU] CSS UNTUK TIMESTAMP ▼▼▼ */
-    .message-timestamp {
-        font-size: 0.65rem;
-        color: var(--text-light);
-        opacity: 0.9;
-        white-space: nowrap;
-        margin-left: 0.75rem;
-        align-self: flex-end; /* Memastikan waktu selalu di bawah */
-    }
-    .user-message .message-timestamp {
-        color: rgba(255, 255, 255, 0.8);
-    }
-    html.dark .user-message .message-timestamp {
-        color: var(--text-secondary);
-    }
-
-    .chat-history-item-meta {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        flex-shrink: 0; /* Mencegah waktu terpotong */
-    }
-    .chat-history-timestamp {
-        font-size: 0.65rem;
-        color: var(--text-light);
-    }
-    .chat-history-item.active .chat-history-timestamp {
-        color: rgba(255, 255, 255, 0.9);
-    }
-    html.dark .chat-history-item.active .chat-history-timestamp {
-        color: rgba(18, 18, 18, 0.9);
-    }
-    /* ▲▲▲ AKHIR DARI CSS TIMESTAMP ▲▲▲ */
 
 
     /* === CSS RESPONSIVE UNTUK MOBILE === */
@@ -1192,7 +1179,7 @@
             </div>
         </div>
         <div class="p-3 bg-white border-t border-gray-200 flex-shrink-0 text-center">
-            <p class="text-xs text-gray-500">StoryBali v2.5.5 | © 2024</p> <!-- Version bump -->
+            <p class="text-xs text-gray-500">StoryBali v2.5.4 | © 2024</p>
         </div>
     </div>
 </div>
@@ -1245,38 +1232,6 @@
     const DEFAULT_API_KEY_4 = 'AIzaSyCkkekhKcQzFUUjx8ZcuqEYyqRde1ZDJcU';
     const DEFAULT_API_KEY_5 = 'AIzaSyCV-88PX1_tKh5VBjki9VeyY8gAH5bpZ0o';
     
-    // ▼▼▼ [BARU] FUNGSI HELPER UNTUK FORMAT WAKTU ▼▼▼
-    function formatTimestamp(ts, type = 'chat') {
-        if (!ts) return '';
-        const date = new Date(ts);
-        const now = new Date();
-        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const startOfYesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
-
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        const timeString = `${hours}:${minutes}`;
-
-        if (type === 'chat') {
-            return timeString; // Selalu tampilkan waktu di dalam chat
-        }
-
-        if (type === 'sidebar') {
-            if (date >= startOfToday) {
-                return timeString; // Hari ini: "14:30"
-            } else if (date >= startOfYesterday) {
-                return 'Yesterday'; // Kemarin
-            } else {
-                const day = date.getDate().toString().padStart(2, '0');
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const year = date.getFullYear().toString().slice(-2);
-                return `${day}/${month}/${year}`; // Lebih dari kemarin: "22/08/24"
-            }
-        }
-        return '';
-    }
-    // ▲▲▲ AKHIR DARI FUNGSI HELPER ▲▲▲
-
     async function getUserIP() {
         try {
             const response = await fetch('https://api.ipify.org?format=json');
@@ -1394,33 +1349,20 @@
     function renderSidebar() {
         const historyList = document.getElementById('chatHistoryList');
         historyList.innerHTML = '';
-        // Urutkan sesi berdasarkan lastUpdated terbaru di atas
-        const sortedSessions = [...allChatSessions].sort((a, b) => (b.lastUpdated || 0) - (a.lastUpdated || 0));
-
-        sortedSessions.forEach(session => {
+        [...allChatSessions].reverse().forEach(session => {
             const item = document.createElement('li');
             item.className = 'chat-history-item';
             item.dataset.chatId = session.id;
-
-            // ▼▼▼ [DIUBAH] HTML untuk item riwayat dengan timestamp ▼▼▼
-            const sessionTimestamp = formatTimestamp(session.lastUpdated, 'sidebar');
             item.innerHTML = `
-                <div class="flex-grow overflow-hidden mr-2">
-                    <div class="title">${session.title}</div>
-                </div>
-                <div class="chat-history-item-meta">
-                    <span class="chat-history-timestamp">${sessionTimestamp}</span>
-                    <div class="actions mt-1">
-                        <button onclick="renameChatSession('${session.id}', event)" class="action-icon" title="Ganti Nama">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
-                        </button>
-                        <button onclick="deleteChatSession('${session.id}', event)" class="action-icon" title="Hapus Chat">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
-                    </div>
+                <span class="title">${session.title}</span>
+                <div class="actions">
+                    <button onclick="renameChatSession('${session.id}', event)" class="action-icon" title="Ganti Nama">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
+                    </button>
+                    <button onclick="deleteChatSession('${session.id}', event)" class="action-icon" title="Hapus Chat">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
                 </div>`;
-            // ▲▲▲ AKHIR DARI PERUBAHAN HTML ▲▲▲
-
             item.addEventListener('click', () => {
                 if(activeChatId !== session.id) {
                     loadChat(session.id);
@@ -1455,9 +1397,7 @@
         allChatSessions = allChatSessions.filter(s => s.id !== chatId);
         if (activeChatId === chatId) {
             if (allChatSessions.length > 0) {
-                // Muat chat terbaru setelah menghapus
-                const sortedSessions = [...allChatSessions].sort((a, b) => (b.lastUpdated || 0) - (a.lastUpdated || 0));
-                loadChat(sortedSessions[0].id);
+                loadChat(allChatSessions[allChatSessions.length - 1].id);
             } else {
                 startNewChat();
             }
@@ -1472,14 +1412,11 @@
     }
     function startNewChat() {
         const newChatId = `chat_${new Date().getTime()}`;
-        const currentTime = new Date().getTime();
         const newSession = {
             id: newChatId,
-            title: 'Percakapan Baru',
-            lastUpdated: currentTime, // [DIUBAH] Tambahkan lastUpdated
+            title: 'Percakapan Baru', 
             history: [{
                 role: 'model',
-                timestamp: currentTime, // [DIUBAH] Tambahkan timestamp
                 parts: [{ text: 'Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Santai aja, tanya apa aja yang kamu mau tau ya!' }]
             }]
         };
@@ -1526,8 +1463,8 @@
         const chatMessages = document.getElementById('chatMessages');
         chatMessages.innerHTML = ''; 
         session.history.forEach(msg => {
-            // [DIUBAH] Mengirim seluruh objek pesan ke addOriginalMessage
-            addOriginalMessage(msg);
+            const isUser = msg.role === 'user';
+            addOriginalMessage(msg.parts[0].text, isUser);
         });
         recreateIndicators();
         scrollToBottom();
@@ -1555,13 +1492,10 @@
     function addToConversationHistory(role, message) {
         const activeSession = allChatSessions.find(s => s.id === activeChatId);
         if (activeSession) {
-            const currentTime = new Date().getTime();
             activeSession.history.push({
                 role: role,
-                timestamp: currentTime, // [DIUBAH] Tambahkan timestamp
                 parts: [{text: message}]
             });
-            activeSession.lastUpdated = currentTime; // [DIUBAH] Perbarui waktu sesi
             if (activeSession.history.length > 20) {
                 activeSession.history.splice(1, 2); 
             }
@@ -1588,8 +1522,7 @@
         activeHistory.forEach((msg) => {
             const role = msg.role === 'user' ? 'Kamu' : 'Wayan AI';
             const text = msg.parts[0].text;
-            const time = new Date(msg.timestamp).toLocaleString('id-ID');
-            exportText += `[${time}] ${role}: ${text}\n\n`; // [DIUBAH] Menambahkan waktu ke ekspor
+            exportText += `${role}: ${text}\n\n`;
         });
         const blob = new Blob([exportText], {type: 'text/plain'});
         const url = URL.createObjectURL(blob);
@@ -1871,8 +1804,12 @@
     }
     function addImageMessageWithQuestion(imageSrc, fileName, question, isUser = false) {
         const chatMessages = document.getElementById('chatMessages');
+        const messageWrapper = document.createElement('div'); // Wrapper untuk bubble dan timestamp
+        const time = getCurrentTimestamp();
+        messageWrapper.className = `message-bubble flex flex-col ${isUser ? 'items-end' : 'items-start'}`;
+
         const messageDiv = document.createElement('div');
-        messageDiv.className = 'message-bubble flex items-start space-x-3';
+        messageDiv.className = 'flex items-start space-x-3';
         if (isUser) {
             messageDiv.className += ' flex-row-reverse space-x-reverse user';
             messageDiv.innerHTML = `
@@ -1892,7 +1829,10 @@
                 startCooldown(cooldownEndTime);
             }
         }
-        chatMessages.insertBefore(messageDiv, document.getElementById('typingIndicator'));
+        
+        messageWrapper.appendChild(messageDiv);
+        messageWrapper.innerHTML += `<div class="chat-timestamp">${time}</div>`;
+        chatMessages.insertBefore(messageWrapper, document.getElementById('typingIndicator'));
         scrollToBottom();
     }
     function handleKeyPress(event) { if (event.key === 'Enter') sendMessage(); }
@@ -1928,65 +1868,88 @@
         }
         type();
     }
-    function addMessage(message, isUser = false, suggestions = []) {
-        // [DIUBAH] Fungsi ini sekarang hanya sebagai pembungkus
-        const activeSession = allChatSessions.find(s => s.id === activeChatId);
-        if (!activeSession) return;
-        const latestMessage = activeSession.history[activeSession.history.length - 1];
-        addOriginalMessage(latestMessage, isUser, true, suggestions); // Kirim flag 'isTyping'
-    }
-    function addOriginalMessage(msg, isUser = false, isTyping = false, suggestions = []) {
-        const chatMessages = document.getElementById('chatMessages');
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message-bubble flex items-start space-x-3';
-        const typingIndicator = document.getElementById('typingIndicator');
 
-        const message = msg.parts[0].text;
-        const timestamp = msg.timestamp;
-        const timeString = formatTimestamp(timestamp, 'chat');
+    // ▼▼▼ [BARU] FUNGSI UNTUK MENDAPATKAN WAKTU ▼▼▼
+    function getCurrentTimestamp() {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+    }
+
+    function addMessage(message, isUser = false, suggestions = []) {
+        const chatMessages = document.getElementById('chatMessages');
+        const messageWrapper = document.createElement('div'); // Wrapper untuk bubble dan timestamp
+        const time = getCurrentTimestamp();
+        
+        // Atur class untuk wrapper agar perataan (alignment) benar
+        messageWrapper.className = `message-bubble flex flex-col ${isUser ? 'items-end' : 'items-start'}`;
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'flex items-start space-x-3 w-full'; // w-full untuk memastikan bubble bisa rata
+        const typingIndicator = document.getElementById('typingIndicator');
 
         if (isUser) {
             messageDiv.className += ' flex-row-reverse space-x-reverse user';
-            // ▼▼▼ [DIUBAH] HTML untuk gelembung pesan pengguna dengan timestamp ▼▼▼
-            messageDiv.innerHTML = `
-                <div class="user-message">
-                    <p class="leading-relaxed text-sm">${message}</p>
-                    <div class="text-right -mr-2 -mb-2 mt-1">
-                        <span class="message-timestamp">${timeString}</span>
-                    </div>
-                </div>`;
-            chatMessages.insertBefore(messageDiv, typingIndicator);
-            // ▲▲▲ AKHIR DARI PERUBAHAN ▲▲▲
+            messageDiv.innerHTML = `<div class="user-message text-white p-4 max-w-xs"><p class="leading-relaxed text-sm">${message}</p></div>`;
+            
+            messageWrapper.appendChild(messageDiv);
+            messageWrapper.innerHTML += `<div class="chat-timestamp">${time}</div>`;
+            chatMessages.insertBefore(messageWrapper, typingIndicator);
+
         } else {
             const encodedMessage = btoa(encodeURIComponent(message));
-            // ▼▼▼ [DIUBAH] HTML untuk gelembung pesan AI dengan timestamp ▼▼▼
             messageDiv.innerHTML = `
                 <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden"><img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover"></div>
-                <div class="ai-message group">
+                <div class="ai-message p-4 max-w-xs relative group">
                     <div class="markdown-content leading-relaxed text-sm"></div>
                     <div class="suggestions-container mt-3"></div>
-                    <div class="flex justify-end items-center mt-2 -mr-2 -mb-2">
-                        <span class="message-timestamp">${timeString}</span>
-                    </div>
                     <button onclick="readAiResponse(this, '${encodedMessage}')" class="absolute bottom-2 right-2 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300" title="Baca Jawaban"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg></button>
                     <button onclick="copyToClipboard(this.parentElement.querySelector('.markdown-content').innerText, this)" class="copy-button absolute bottom-2 right-9 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 opacity-0 group-hover:opacity-100" title="Salin Jawaban"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg></button>
                 </div>`;
-            // ▲▲▲ AKHIR DARI PERUBAHAN ▲▲▲
-            chatMessages.insertBefore(messageDiv, typingIndicator);
+            
+            messageWrapper.appendChild(messageDiv);
+            messageWrapper.innerHTML += `<div class="chat-timestamp">${time}</div>`;
+            chatMessages.insertBefore(messageWrapper, typingIndicator);
+            
             const markdownContentElement = messageDiv.querySelector('.markdown-content');
-
-            if (isTyping) { // Gunakan efek ketik jika ini pesan baru
-                typewriterEffect(markdownContentElement, message, () => {
-                    markdownContentElement.innerHTML = marked.parse(message);
-                    messageDiv.querySelector('.suggestions-container').innerHTML = renderSuggestions(suggestions);
-                    scrollToBottom();
-                });
-            } else { // Langsung render jika memuat dari riwayat
-                 markdownContentElement.innerHTML = marked.parse(message);
-            }
+            typewriterEffect(markdownContentElement, message, () => {
+                markdownContentElement.innerHTML = marked.parse(message);
+                messageDiv.querySelector('.suggestions-container').innerHTML = renderSuggestions(suggestions);
+                scrollToBottom();
+            });
         }
         scrollToBottom();
     }
+
+    function addOriginalMessage(message, isUser = false) {
+        const chatMessages = document.getElementById('chatMessages');
+        const messageWrapper = document.createElement('div');
+        const time = getCurrentTimestamp();
+        messageWrapper.className = `message-bubble flex flex-col ${isUser ? 'items-end' : 'items-start'}`;
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'flex items-start space-x-3 w-full';
+        
+        if (isUser) {
+            messageDiv.className += ' flex-row-reverse space-x-reverse user';
+            messageDiv.innerHTML = `<div class="user-message text-white p-4 max-w-xs"><p class="leading-relaxed text-sm">${message}</p></div>`;
+        } else {
+            const encodedMessage = btoa(encodeURIComponent(message));
+            messageDiv.innerHTML = `
+                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden"><img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover"></div>
+                <div class="ai-message p-4 max-w-xs relative group">
+                    <div class="markdown-content leading-relaxed text-sm">${marked.parse(message)}</div>
+                    <div class="suggestions-container mt-3"></div>
+                    <button onclick="readAiResponse(this, '${encodedMessage}')" class="absolute bottom-2 right-2 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300" title="Baca Jawaban"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg></button>
+                    <button onclick="copyToClipboard(this.parentElement.querySelector('.markdown-content').innerText, this)" class="copy-button absolute bottom-2 right-9 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 opacity-0 group-hover:opacity-100" title="Salin Jawaban"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg></button>
+                </div>`;
+        }
+        messageWrapper.appendChild(messageDiv);
+        messageWrapper.innerHTML += `<div class="chat-timestamp">${time}</div>`;
+        chatMessages.appendChild(messageWrapper);
+    }
+
     function renderSuggestions(suggestionsArray) {
         if (suggestionsArray && suggestionsArray.length > 0) {
             return `<div class="flex flex-wrap gap-2 mt-2">${suggestionsArray.map(s => `<button onclick="sendQuickMessage('${s.replace(/'/g, "\\'")}')" class="suggestion-btn">${s}</button>`).join('')}</div>`;
@@ -2156,6 +2119,7 @@
         if (!activeSession) return;
         if(activeSession.title === 'Percakapan Baru' && activeSession.history.length === 1) {
             activeSession.title = message.substring(0, 30) + (message.length > 30 ? '...' : '');
+            renderSidebar();
         }
         
         const allUserData = getChatLimitData();
@@ -2164,12 +2128,11 @@
         userData.count++;
         saveChatLimitData({ ...allUserData, [currentUserIP]: userData });
         
+        addMessage(message, true);
         addToConversationHistory('user', message);
-        addMessage(message, true); // addMessage sekarang hanya perlu tahu role
         input.value = '';
         handleInputChange({ target: input });
         showTypingIndicator();
-        renderSidebar(); // Perbarui sidebar untuk menampilkan waktu baru
 
         if (userData.count >= CHAT_LIMIT) {
             const cooldownEndTime = new Date().getTime() + COOLDOWN_MINUTES * 60 * 1000;
@@ -2198,22 +2161,18 @@
                 addMessage(mainAnswer.trim(), false, dynamicSuggestions);
                 playNotificationSound();
             } else {
-                addToConversationHistory('model', 'Maaf, Wayan tidak dapat memberikan respons. Coba lagi.');
                 addMessage('Maaf, Wayan tidak dapat memberikan respons. Coba lagi.');
             }
         } catch (error) {
-            const errorMessage = error.name === 'AbortError' ? "Pembuatan respons dihentikan." : `Aduh, Wayan error: ${error.message}. Coba lagi nanti ya!`;
-            if (error.name !== 'AbortError') {
-                 addToConversationHistory('model', errorMessage);
-                 addMessage(errorMessage);
+            if (error.name === 'AbortError') {
+                addSystemMessage("Pembuatan respons dihentikan.");
             } else {
-                addSystemMessage(errorMessage);
+                addMessage(`Aduh, Wayan error: ${error.message}. Coba lagi nanti ya!`);
             }
         } finally {
             hideTypingIndicator();
             document.getElementById('stopGeneratingContainer').style.display = 'none';
             currentFetchController = null;
-            renderSidebar(); // Perbarui sidebar lagi setelah AI merespons
         }
     }
     
@@ -2236,16 +2195,11 @@
                 addMessage(mainAnswer.trim(), false, dynamicSuggestions);
                 playNotificationSound();
             } else {
-                 addToConversationHistory('model', 'Wah, gue ga bisa analisis gambar ini.');
                 addMessage('Wah, gue ga bisa analisis gambar ini.');
             }
         } catch (error) {
             hideImageProcessingIndicator();
-            const errorMessage = `Aduh, Wayan error saat analisis gambar: ${error.message}. Coba lagi ya!`;
-            addToConversationHistory('model', errorMessage);
-            addMessage(errorMessage);
-        } finally {
-            renderSidebar();
+            addMessage(`Aduh, Wayan error saat analisis gambar: ${error.message}. Coba lagi ya!`);
         }
     }
 
