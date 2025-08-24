@@ -1,21 +1,29 @@
+html
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta http-equiv="Content-Style-Type" content="text/css">
-  <title>Wayan AI - Storybali</title>
-  <!-- ▼▼▼ Meta Tags untuk SEO dan Social Media ▼▼▼ -->
-  <meta name="description" content="Wayan AI adalah asisten AI dari Storybali yang siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah. Tanya apa saja!">
+  
+  <!-- ▼▼▼ Meta Tags untuk SEO (Search Engine Optimization) yang Dioptimalkan ▼▼▼ -->
+  <title>Wayan AI - Asisten AI Cerdas dari Storybali</title>
+  <meta name="description" content="Wayan AI adalah asisten AI cerdas dari Storybali, siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah. Ngobrol dengan chatbot AI berbahasa Indonesia tentang apa saja!">
+  <meta name="keywords" content="Wayan AI, Storybali, Asisten AI, AI Indonesia, Chatbot Indonesia, AI Bali, Asisten Virtual, Kecerdasan Buatan">
+  <link rel="canonical" href="https://wayanku.github.io/Wayan-ai-dari-storybali/" />
+
+  <!-- Meta Tags untuk Social Media (Open Graph & Twitter) -->
   <meta property="og:title" content="Wayan AI - Asisten Cerdas dari Storybali">
-  <meta property="og:description" content="Wayan AI adalah asisten AI dari Storybali yang siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah. Tanya apa saja!">
+  <meta property="og:description" content="Ngobrol dengan Wayan AI, asisten AI cerdas berbahasa Indonesia dari Storybali. Siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah.">
   <meta property="og:image" content="https://i.postimg.cc/c46vsmdS/Creative-Portfolio.png">
   <meta property="og:url" content="https://wayanku.github.io/Wayan-ai-dari-storybali/">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="id_ID">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Wayan AI - Asisten Cerdas dari Storybali">
-  <meta name="twitter:description" content="Wayan AI adalah asisten AI dari Storybali yang siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah. Tanya apa saja!">
+  <meta name="twitter:description" content="Ngobrol dengan Wayan AI, asisten AI cerdas berbahasa Indonesia dari Storybali. Siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah.">
   <meta name="twitter:image" content="https://i.postimg.cc/c46vsmdS/Creative-Portfolio.png">
   <!-- ▲▲▲ AKHIR DARI META TAGS ▲▲▲ -->
+
   <meta name="Generator" content="Cocoa HTML Writer">
   <meta name="CocoaVersion" content="2299.77">
   <!-- Viewport diubah untuk menangani safe area (home bar) di iOS -->
@@ -84,6 +92,19 @@
     html.dark #profileModal .bg-gray-50 {
         background-color: var(--bg-tertiary) !important;
     }
+
+    /* ▼▼▼ [FIX BARU] Membuat tombol footer modal pengaturan menjadi gelap ▼▼▼ */
+    html.dark #settingsModal .settings-btn-action.bg-gray-200 {
+        background-color: var(--bg-tertiary) !important;
+        color: var(--text-primary) !important;
+    }
+    html.dark #settingsModal .settings-btn-action.bg-gray-200:hover {
+        background-color: var(--bg-accent) !important;
+    }
+    html.dark #settingsModal .settings-btn-action.bg-blue-600:hover {
+        background-color: #2563eb !important; /* Sedikit lebih terang untuk kontras */
+    }
+    /* ▲▲▲ AKHIR DARI FIX BARU ▲▲▲ */
 
 
     * {
