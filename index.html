@@ -1815,7 +1815,6 @@
         currentPreviewData = { base64: null, fileName: null, mimeType: null };
     }
 
-    // ▼▼▼ [FUNGSI YANG DIPERBAIKI] ▼▼▼
     function sendImageWithQuestion() {
         const question = document.getElementById('imageQuestionInput').value.trim();
         if (!question) {
@@ -1835,21 +1834,16 @@
             return;
         }
         
-        // --- PERBAIKAN UTAMA DI SINI ---
-        // 1. Salin data gambar ke variabel lokal SEBELUM modal ditutup dan datanya dihapus.
         const imageData = currentPreviewData.base64;
         const imageName = currentPreviewData.fileName;
         const imageMimeType = currentPreviewData.mimeType;
         
-        // 2. Sekarang, tutup modal dan bersihkan state global.
         hideImagePreview();
         
-        // 3. Gunakan variabel lokal yang sudah disalin untuk fungsi selanjutnya.
         addImageMessageWithQuestion(imageData, imageName, question, true);
         showImageProcessingIndicator();
         analyzeImageWithQuestion(imageData, question, imageMimeType);
     }
-    // ▲▲▲ [AKHIR DARI PERBAIKAN] ▲▲▲
 
     function addImageMessageWithQuestion(imageSrc, fileName, question, isUser = false) {
         const chatMessages = document.getElementById('chatMessages');
@@ -2090,8 +2084,19 @@
         speechSynthesis.speak(currentUtterance);
     }
     function stopReading() { if (speechSynthesis.speaking) speechSynthesis.cancel(); }
+    
+    // ▼▼▼ [FUNGSI YANG DIPERBARUI] ▼▼▼
     function getSystemPrompt() {
-        const baseInstructions = `Perkenalkan dirimu sebagai Wayan jika ditanya nama. Selalu berikan jawabanmu terlebih dahulu. Gunakan format Markdown untuk jawabanmu jika diperlukan (list, tebal, kode). Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang relevan. Format saran: pisahkan jawaban utama dan saran dengan '[SUGGESTIONS]', dan pisahkan setiap saran dengan tanda pipa '|'.`;
+        const baseInstructions = `Perkenalkan dirimu sebagai Wayan jika ditanya nama. Selalu berikan jawabanmu terlebih dahulu. Gunakan format Markdown untuk jawabanmu jika diperlukan (list, tebal, kode).
+
+[PENTING: Aturan Pemberian Link]
+Jika pertanyaan pengguna memerlukan informasi yang sangat baru, data spesifik, atau referensi eksternal untuk mendukung jawabanmu, sertakan 2-3 link relevan yang valid dari ingatanmu.
+- Format link harus menggunakan Markdown, contoh: [Judul Artikel](https://contoh.com).
+- Jangan hanya menempelkan URL mentah. Selalu berikan judul yang deskriptif untuk link tersebut.
+- Jika kamu memberikan link, berikan disclaimer singkat seperti: "Berikut beberapa referensi yang mungkin bisa membantu:", karena kamu tidak bisa memverifikasi link secara real-time. Hindari mengarang atau membuat link palsu.
+
+Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang relevan. Format saran: pisahkan jawaban utama dan saran dengan '[SUGGESTIONS]', dan pisahkan setiap saran dengan tanda pipa '|'.`;
+        
         const rolePrompts = {
             guru_jepang: `Kamu adalah guru Bahasa Jepang bernama Wayan-sensei. Gaya bicaramu sabar dan ramah. Sapa dengan "Konnichiwa, gakusei-san!". Gunakan huruf Jepang (Hiragana, Katakana, Kanji) beserta romaji dan artinya.`,
             guru_matematika: `Kamu adalah guru Matematika bernama Pak Wayan. Kamu bisa membuat konsep sulit menjadi mudah dimengerti. Jelaskan setiap langkah pemecahan masalah secara rinci.`,
@@ -2112,6 +2117,7 @@
         if (settings.language === 'en') roleInstruction += ' Please respond in English.';
         return `${roleInstruction} ${baseInstructions}`;
     }
+    // ▲▲▲ [AKHIR DARI PERUBAHAN] ▲▲▲
 
     async function makeApiRequest(payload, signal = null) {
         if (apiKeys.length === 0) loadApiKeys();
