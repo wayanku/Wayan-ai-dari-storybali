@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -1124,7 +1123,9 @@
                             <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                             <label class="text-sm font-medium text-gray-700">Mode Gelap</label>
                         </div>
-                        <input type="checkbox" id="darkModeToggle" class="toggle-new">
+                        <!-- ▼▼▼ [PERBAIKAN FINAL] onchange ditambahkan di sini ▼▼▼ -->
+                        <input type="checkbox" id="darkModeToggle" class="toggle-new" onchange="handleDarkModeToggle()">
+                        <!-- ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲ -->
                     </div>
                 </div>
                 <div class="settings-card">
@@ -1678,6 +1679,7 @@
         document.getElementById('sendBtn').style.backgroundColor = colors.from;
         document.querySelectorAll('.ai-avatar').forEach(avatar => avatar.style.background = `linear-gradient(135deg, ${colors.from}, ${colors.to})`);
         document.querySelector('.profile-avatar-border').style.borderImage = `linear-gradient(135deg, ${colors.from}, ${colors.to}, #f093fb) 1`;
+        saveSettings();
     }
     function applyDarkMode(isDark) {
         document.documentElement.classList.toggle('dark', isDark);
@@ -1703,6 +1705,15 @@
             changeTheme(settings.theme);
         }
     }
+
+    // ▼▼▼ [FUNGSI BARU] Fungsi ini dipanggil langsung dari HTML ▼▼▼
+    function handleDarkModeToggle() {
+        const isChecked = document.getElementById('darkModeToggle').checked;
+        applyDarkMode(isChecked);
+        saveSettings();
+    }
+    // ▲▲▲ AKHIR DARI FUNGSI BARU ▲▲▲
+
     function loadSettings() {
         const savedSettings = localStorage.getItem('storybaliSettings');
         if (savedSettings) {
@@ -1783,6 +1794,7 @@
             const roleNames = { 'umum': 'Asisten Umum', 'guru_jepang': 'Guru Bahasa Jepang', 'guru_matematika': 'Guru Matematika', 'dokter': 'Dokter Virtual', 'programmer': 'Programmer Senior', 'penerjemah': 'Penerjemah', 'kustom': 'Peran Kustom' };
             if (roleNames[value]) addSystemMessage(`Mode peran AI telah diubah menjadi: ${roleNames[value]}.`);
         }
+        saveSettings();
     }
     function switchSettingsTab(tabName) {
         document.querySelectorAll('.settings-tab, .settings-tab-content').forEach(el => el.classList.remove('active'));
@@ -1991,7 +2003,7 @@
 
         if (isUser) {
             messageDiv.className += ' flex-row-reverse space-x-reverse user';
-            const timeHtml = timeString ? `<div class="chat-timestamp text-right">${timeString}</div>` : '';
+            const timeHtml= timeString ? `<div class="chat-timestamp text-right">${timeString}</div>` : '';
             
             let messageContent = '';
             if (imageMatch) {
@@ -2108,7 +2120,6 @@
     }
     function stopReading() { if (speechSynthesis.speaking) speechSynthesis.cancel(); }
     
-    // ▼▼▼ [FUNGSI YANG DIPERBARUI] ▼▼▼
     function getSystemPrompt() {
         const baseInstructions = `Gunakan format Markdown untuk jawabanmu jika diperlukan (list, tebal, kode).
 
@@ -2131,12 +2142,11 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         let roleInstruction = '';
         let personaRule = '';
 
-        // Tentukan peran utama dan instruksi gaya bahasa
         if (settings.aiRole === 'kustom' && settings.customAiRolePrompt) {
             roleInstruction = settings.customAiRolePrompt;
         } else if (rolePrompts[settings.aiRole]) {
             roleInstruction = rolePrompts[settings.aiRole];
-        } else { // Ini untuk mode peran 'Umum'
+        } else {
             switch (settings.personality) {
                 case 'profesional':
                     roleInstruction = `Kamu adalah sebuah asisten AI yang profesional dan formal.`;
@@ -2144,18 +2154,15 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
                 case 'lucu':
                     roleInstruction = `Kamu adalah Wayan, asisten AI yang humoris.`;
                     break;
-                default: // santai
+                default:
                     roleInstruction = `Kamu adalah Wayan, asisten AI dari StoryBali yang santai dan menggunakan bahasa Indonesia sehari-hari.`;
                     break;
             }
         }
 
-        // Tentukan aturan penggunaan nama "Wayan" berdasarkan pengecualian
         if ((settings.aiRole === 'umum' && settings.personality === 'profesional') || settings.aiRole === 'kustom') {
-            // Untuk mode Profesional dan Kustom, AI hanya memperkenalkan diri jika ditanya.
             personaRule = "Perkenalkan dirimu (jika relevan dengan rolenya) hanya jika pengguna menanyakan namamu.";
         } else {
-            // Untuk semua kasus lain, AI WAJIB menggunakan nama "Wayan".
             personaRule = "SANGAT PENTING: Selalu sertakan nama 'Wayan' (atau persona peranmu seperti 'Dokter Wayan', 'Wayan-sensei') setidaknya sekali dalam setiap jawabanmu untuk membangun karakter. Contoh: 'Menurut Wayan...', 'Wayan pikir...', 'Tentu, ini penjelasan dari Dokter Wayan...'. Ini adalah aturan utama kepribadianmu.";
         }
         
@@ -2163,10 +2170,8 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             roleInstruction += ' Please respond in English.';
         }
         
-        // Gabungkan semua instruksi menjadi satu
         return `${roleInstruction} ${personaRule} ${baseInstructions}`;
     }
-    // ▲▲▲ [AKHIR DARI PERUBAHAN] ▲▲▲
 
     async function makeApiRequest(payload, signal = null) {
         if (apiKeys.length === 0) loadApiKeys();
@@ -2374,8 +2379,36 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         loadAllChatSessions();
         hideTypingIndicator();
         hideImageProcessingIndicator();
-        document.getElementById('fontSizeSelect').addEventListener('change', (e) => settings.fontSize = e.target.value);
-        document.getElementById('darkModeToggle').addEventListener('change', (e) => applyDarkMode(e.target.checked));
+        
+        document.getElementById('fontSizeSelect').addEventListener('change', (e) => {
+            settings.fontSize = e.target.value;
+            saveSettings();
+        });
+
+        document.getElementById('animationToggle').addEventListener('change', () => {
+            toggleAnimations();
+            saveSettings();
+        });
+
+        document.getElementById('soundToggle').addEventListener('change', (e) => {
+            settings.soundEnabled = e.target.checked;
+            saveSettings();
+        });
+
+        document.getElementById('readAiResponseToggle').addEventListener('change', (e) => {
+            settings.readAiResponseEnabled = e.target.checked;
+            saveSettings();
+        });
+
+        document.getElementById('voiceSelect').addEventListener('change', (e) => {
+            settings.voiceURI = e.target.value;
+            saveSettings();
+        });
+
+        document.getElementById('saveHistoryToggle').addEventListener('change', (e) => {
+            settings.saveHistory = e.target.checked;
+            saveSettings();
+        });
         
         document.getElementById('stopBtn').addEventListener('click', () => {
             if (currentFetchController) {
