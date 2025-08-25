@@ -708,7 +708,11 @@
         box-shadow: 0 2px 4px rgba(245, 245, 245, 0.1);
     }
     
-    .markdown-content, .markdown-content strong, .markdown-content p, .markdown-content li { color: var(--text-primary); }
+    .markdown-content, .markdown-content strong, .markdown-content p, .markdown-content li { 
+        color: var(--text-primary); 
+        overflow-wrap: break-word; /* [FIX] Mencegah link keluar dari gelembung chat */
+        word-wrap: break-word; /* Fallback */
+    }
     .markdown-content p:not(:last-child) { margin-bottom: 0.75rem; }
     .markdown-content ul, .markdown-content ol {
         list-style-position: inside;
@@ -748,6 +752,23 @@
         border-left-color: #888;
     }
     .markdown-content strong { font-weight: 600; }
+
+    /* ▼▼▼ [BARU] GAYA UNTUK LINK AGAR BERWARNA BIRU ▼▼▼ */
+    .markdown-content a {
+        color: #3b82f6; /* Warna biru */
+        text-decoration: underline;
+        font-weight: 500;
+    }
+    .markdown-content a:hover {
+        color: #2563eb;
+    }
+    html.dark .markdown-content a {
+        color: #60a5fa; /* Warna biru lebih terang untuk mode gelap */
+    }
+    html.dark .markdown-content a:hover {
+        color: #93c5fd;
+    }
+    /* ▲▲▲ AKHIR DARI GAYA LINK ▲▲▲ */
 
 
     /* === CSS RESPONSIVE UNTUK MOBILE === */
@@ -2085,7 +2106,6 @@
     }
     function stopReading() { if (speechSynthesis.speaking) speechSynthesis.cancel(); }
     
-    // ▼▼▼ [FUNGSI YANG DIPERBARUI] ▼▼▼
     function getSystemPrompt() {
         const baseInstructions = `Perkenalkan dirimu sebagai Wayan jika ditanya nama. Selalu berikan jawabanmu terlebih dahulu. Gunakan format Markdown untuk jawabanmu jika diperlukan (list, tebal, kode).
 
@@ -2117,7 +2137,6 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         if (settings.language === 'en') roleInstruction += ' Please respond in English.';
         return `${roleInstruction} ${baseInstructions}`;
     }
-    // ▲▲▲ [AKHIR DARI PERUBAHAN] ▲▲▲
 
     async function makeApiRequest(payload, signal = null) {
         if (apiKeys.length === 0) loadApiKeys();
