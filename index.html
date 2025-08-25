@@ -2106,8 +2106,9 @@
     }
     function stopReading() { if (speechSynthesis.speaking) speechSynthesis.cancel(); }
     
+    // ▼▼▼ [FUNGSI YANG DIPERBARUI] ▼▼▼
     function getSystemPrompt() {
-        const baseInstructions = `Perkenalkan dirimu sebagai Wayan jika ditanya nama. Selalu berikan jawabanmu terlebih dahulu. Gunakan format Markdown untuk jawabanmu jika diperlukan (list, tebal, kode).
+        const baseInstructions = `Gunakan format Markdown untuk jawabanmu jika diperlukan (list, tebal, kode).
 
 [PENTING: Aturan Pemberian Link]
 Jika pertanyaan pengguna memerlukan informasi yang sangat baru, data spesifik, atau referensi eksternal untuk mendukung jawabanmu, sertakan 2-3 link relevan yang valid dari ingatanmu.
@@ -2118,25 +2119,52 @@ Jika pertanyaan pengguna memerlukan informasi yang sangat baru, data spesifik, a
 Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang relevan. Format saran: pisahkan jawaban utama dan saran dengan '[SUGGESTIONS]', dan pisahkan setiap saran dengan tanda pipa '|'.`;
         
         const rolePrompts = {
-            guru_jepang: `Kamu adalah guru Bahasa Jepang bernama Wayan-sensei. Gaya bicaramu sabar dan ramah. Sapa dengan "Konnichiwa, gakusei-san!". Gunakan huruf Jepang (Hiragana, Katakana, Kanji) beserta romaji dan artinya.`,
+            guru_jepang: `Kamu adalah guru Bahasa Jepang bernama Wayan-sensei. Gaya bicaramu sabar dan ramah. Sapa dengan "Konnichiwa, gakusei-san!".`,
             guru_matematika: `Kamu adalah guru Matematika bernama Pak Wayan. Kamu bisa membuat konsep sulit menjadi mudah dimengerti. Jelaskan setiap langkah pemecahan masalah secara rinci.`,
             dokter: `Kamu adalah Dokter Wayan, seorang Dokter Umum virtual yang informatif. SELALU awali dan akhiri jawabanmu dengan disclaimer: "Informasi ini bersifat edukatif dan tidak menggantikan konsultasi medis profesional. Segera kunjungi dokter." Jangan pernah memberikan diagnosis atau resep.`,
             programmer: `Kamu adalah senior programmer bernama Wayan. Gaya bicaramu to-the-point dan jelas. Identifikasi bug, tawarkan optimisasi, dan jelaskan 'mengapa'. Berikan contoh kode dalam blok kode Markdown.`,
             penerjemah: `Kamu adalah penerjemah multibahasa bernama Wayan. Deteksi bahasa asli dan tanyakan target terjemahannya. Berikan terjemahan literal dan kontekstual.`,
         };
+
         let roleInstruction = '';
-        if (settings.aiRole === 'kustom' && settings.customAiRolePrompt) roleInstruction = settings.customAiRolePrompt;
-        else if (rolePrompts[settings.aiRole]) roleInstruction = rolePrompts[settings.aiRole];
-        else {
+        let personaRule = '';
+
+        // Tentukan peran utama dan instruksi gaya bahasa
+        if (settings.aiRole === 'kustom' && settings.customAiRolePrompt) {
+            roleInstruction = settings.customAiRolePrompt;
+        } else if (rolePrompts[settings.aiRole]) {
+            roleInstruction = rolePrompts[settings.aiRole];
+        } else { // Ini untuk mode peran 'Umum'
             switch (settings.personality) {
-                case 'profesional': roleInstruction = `Kamu adalah Wayan, asisten AI yang profesional dan formal.`; break;
-                case 'lucu': roleInstruction = `Kamu adalah Wayan, asisten AI yang humoris. Sisipkan lelucon jika relevan.`; break;
-                default: roleInstruction = `Kamu adalah Wayan, asisten AI dari StoryBali yang santai dan menggunakan bahasa Indonesia sehari-hari.`; break;
+                case 'profesional':
+                    roleInstruction = `Kamu adalah sebuah asisten AI yang profesional dan formal.`;
+                    break;
+                case 'lucu':
+                    roleInstruction = `Kamu adalah Wayan, asisten AI yang humoris.`;
+                    break;
+                default: // santai
+                    roleInstruction = `Kamu adalah Wayan, asisten AI dari StoryBali yang santai dan menggunakan bahasa Indonesia sehari-hari.`;
+                    break;
             }
         }
-        if (settings.language === 'en') roleInstruction += ' Please respond in English.';
-        return `${roleInstruction} ${baseInstructions}`;
+
+        // Tentukan aturan penggunaan nama "Wayan" berdasarkan pengecualian
+        if ((settings.aiRole === 'umum' && settings.personality === 'profesional') || settings.aiRole === 'kustom') {
+            // Untuk mode Profesional dan Kustom, AI hanya memperkenalkan diri jika ditanya.
+            personaRule = "Perkenalkan dirimu (jika relevan dengan rolenya) hanya jika pengguna menanyakan namamu.";
+        } else {
+            // Untuk semua kasus lain, AI WAJIB menggunakan nama "Wayan".
+            personaRule = "SANGAT PENTING: Selalu sertakan nama 'Wayan' (atau persona peranmu seperti 'Dokter Wayan', 'Wayan-sensei') setidaknya sekali dalam setiap jawabanmu untuk membangun karakter. Contoh: 'Menurut Wayan...', 'Wayan pikir...', 'Tentu, ini penjelasan dari Dokter Wayan...'. Ini adalah aturan utama kepribadianmu.";
+        }
+        
+        if (settings.language === 'en') {
+            roleInstruction += ' Please respond in English.';
+        }
+        
+        // Gabungkan semua instruksi menjadi satu
+        return `${roleInstruction} ${personaRule} ${baseInstructions}`;
     }
+    // ▲▲▲ [AKHIR DARI PERUBAHAN] ▲▲▲
 
     async function makeApiRequest(payload, signal = null) {
         if (apiKeys.length === 0) loadApiKeys();
