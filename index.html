@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -5,19 +6,12 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta http-equiv="Content-Style-Type" content="text/css">
   
-  <!-- ▼▼▼ Meta Tags untuk SEO & Aplikasi Web yang Dioptimalkan ▼▼▼ -->
-  <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="shortcut icon" href="favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
-  
-  <!-- [PERBAIKAN] Manifest Tersemat untuk nama & ikon "Tambah ke Layar Utama" -->
-  <link rel="manifest" href='data:application/json;charset=utf-8,{"name":"Wayan AI","short_name":"Wayan AI","description":"Wayan AI adalah asisten AI cerdas dari Storybali, siap membantu menjawab pertanyaanmu.","icons":[{"src":"apple-touch-icon.png","sizes":"180x180","type":"image/png"},{"src":"favicon-96x96.png","sizes":"96x96","type":"image/png"}],"start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#667eea"}' />
-
-  <!-- [PERBAIKAN] Meta Tag Khusus untuk Apple/Safari -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Wayan AI">
-
+  <!-- ▼▼▼ Meta Tags untuk SEO (Search Engine Optimization) yang Dioptimalkan ▼▼▼ -->
+<link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="shortcut icon" href="favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+<link rel="manifest" href="site.webmanifest" />
   <meta name="description" content="Wayan AI adalah asisten AI cerdas dari Storybali, siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah. Ngobrol dengan chatbot AI berbahasa Indonesia tentang apa saja!">
   <meta name="keywords" content="Wayan AI, Storybali, Asisten AI, AI Indonesia, Chatbot Indonesia, AI Bali, Asisten Virtual, Kecerdasan Buatan">
   <link rel="canonical" href="https://wayanku.github.io/Wayan-ai-dari-storybali/" />
@@ -319,7 +313,6 @@
         border: 3px solid rgba(255, 255, 255, 0.4);
         box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
         border-radius: 9999px !important;
-        overflow: hidden; /* Mencegah gambar keluar dari lingkaran */
     }
     html.dark .ai-avatar {
         background: #555 !important;
@@ -822,7 +815,7 @@
   </style>
 </head>
 <body>
-
+<!-- ... (Isi dari <body> Anda tetap sama) ... -->
 <div id="appContainer">
     <div id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
@@ -852,10 +845,11 @@
                              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
                         </button>
                         <div class="flex items-center space-x-3">
-                            <!-- [PERBAIKAN] Solusi Avatar Paling Stabil Diterapkan di Sini -->
-                            <div class="ai-avatar w-12 h-12 flex-shrink-0 relative cursor-pointer" onclick="showProfileModal()">
+                            <!-- ▼▼▼ BARIS INI TELAH DIPERBAIKI ▼▼▼ -->
+                            <div class="ai-avatar w-12 h-12 flex-shrink-0 flex items-center justify-center overflow-hidden relative cursor-pointer" onclick="showProfileModal()">
+                            <!-- ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲ -->
                                 <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali"
-                                     class="absolute top-0 left-0 w-full h-full object-cover">
+                                     class="w-full h-full object-cover">
                             </div>
                             <div>
                                 <h1 class="text-xl font-bold">Wayan AI</h1>
@@ -917,7 +911,9 @@
 
                     <!-- [REFINED] UI Perekaman Suara -->
                     <div id="voiceRecordingUI" class="absolute inset-0 items-center justify-between px-3 hidden" style="background-color: var(--bg-tertiary); border-radius: 1.25rem;">
-                        <div class="flex items-center gap-3 min-w-0">
+                        <!-- ▼▼▼ PERUBAHAN DI SINI ▼▼▼ -->
+                        <div class="flex items-center gap-3 min-w-0"> <!-- Ditambahkan 'min-w-0' -->
+                        <!-- ▲▲▲ AKHIR PERUBAHAN ▲▲▲ -->
                             <div class="voice-wave">
                                 <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
                             </div>
@@ -968,6 +964,7 @@
     </div>
 </div>
     
+<!-- Semua Modal (tidak diubah) -->
 <div id="imagePreviewModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
     <div class="modal-content p-6 max-w-sm w-full" id="imagePreviewContent">
         <div class="text-center relative">
@@ -1222,49 +1219,7 @@
     </div>
 </div>
 
-<div id="onboardingModal" class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center transition-all duration-300 hidden">
-  <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-0 overflow-hidden border border-gray-200 relative animate-fadein">
-    <div id="onboardingSlides" class="w-full">
-      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:block">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f44b.png" alt="Hi" class="w-16 h-16 mb-3 mx-auto animate-bounce" />
-        <h2 class="text-xl font-bold mb-2 text-blue-700">Selamat Datang di Wayan AI!</h2>
-        <p class="text-gray-700 text-base mb-4">Aplikasi chat cerdas dengan AI berbahasa Indonesia yang ramah &amp; mudah digunakan.</p>
-      </div>
-      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4ac.png" alt="Chat" class="w-16 h-16 mb-3 mx-auto animate-pulse" />
-        <h2 class="text-lg font-semibold mb-2 text-blue-700">Mulai Bertanya!</h2>
-        <p class="text-gray-700 text-base mb-4">Tulis pertanyaan di kolom bawah, lalu tekan <b>tombol kirim</b>.</p>
-      </div>
-       <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f5c3.png" alt="New Chat" class="w-16 h-16 mb-3 mx-auto" />
-        <h2 class="text-lg font-semibold mb-2 text-blue-700">Simpan Percakapan</h2>
-        <p class="text-gray-700 text-base mb-4">Setiap percakapan akan otomatis tersimpan. Klik tombol <b>menu (garis tiga)</b> di pojok kiri atas untuk melihat riwayat chat Anda.</p>
-      </div>
-      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f527.png" alt="Settings" class="w-16 h-16 mb-3 mx-auto animate-spin-slow" />
-        <h2 class="text-lg font-semibold mb-2 text-blue-700">Atur Gaya AI-mu</h2>
-        <p class="text-gray-700 text-base mb-4">Pilih <b>peran</b> dan <b>gaya bahasa</b> AI melalui tombol <b>pengaturan (roda gigi)</b>.</p>
-      </div>
-      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f389.png" alt="Lets Go" class="w-16 h-16 mb-3 mx-auto animate-bounce" />
-        <h2 class="text-lg font-semibold mb-2 text-blue-700">Yuk Mulai Chatting!</h2>
-        <p class="text-gray-700 text-base mb-4">Selamat menikmati Wayan AI. Jangan ragu untuk bereksperimen!</p>
-      </div>
-    </div>
-    <div class="flex items-center justify-between px-5 pb-4 pt-2 bg-gray-50 border-t border-gray-200">
-      <button id="skipOnboardingBtn" class="text-xs text-gray-400 hover:text-blue-500 font-medium">Lewati</button>
-      <div class="flex space-x-1" id="onboardingDots"></div>
-      <button id="nextOnboardingBtn" class="text-sm bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-1.5 rounded-lg shadow">Selanjutnya</button>
-    </div>
-  </div>
-</div>
-<style>
-@keyframes fadein{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}.animate-fadein{animation:fadein .5s}
-@keyframes spin-slow{100%{transform:rotate(360deg)}}.animate-spin-slow{animation:spin-slow 2.5s linear infinite}
-</style>
-
 <script>
-    // Seluruh kode JavaScript Anda ada di sini
     function adjustHeightForMobile() {
         let vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -2153,6 +2108,7 @@
     }
     function stopReading() { if (speechSynthesis.speaking) speechSynthesis.cancel(); }
     
+    // ▼▼▼ [FUNGSI YANG DIPERBARUI] ▼▼▼
     function getSystemPrompt() {
         const baseInstructions = `Gunakan format Markdown untuk jawabanmu jika diperlukan (list, tebal, kode).
 
@@ -2175,11 +2131,12 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         let roleInstruction = '';
         let personaRule = '';
 
+        // Tentukan peran utama dan instruksi gaya bahasa
         if (settings.aiRole === 'kustom' && settings.customAiRolePrompt) {
             roleInstruction = settings.customAiRolePrompt;
         } else if (rolePrompts[settings.aiRole]) {
             roleInstruction = rolePrompts[settings.aiRole];
-        } else {
+        } else { // Ini untuk mode peran 'Umum'
             switch (settings.personality) {
                 case 'profesional':
                     roleInstruction = `Kamu adalah sebuah asisten AI yang profesional dan formal.`;
@@ -2187,15 +2144,18 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
                 case 'lucu':
                     roleInstruction = `Kamu adalah Wayan, asisten AI yang humoris.`;
                     break;
-                default:
+                default: // santai
                     roleInstruction = `Kamu adalah Wayan, asisten AI dari StoryBali yang santai dan menggunakan bahasa Indonesia sehari-hari.`;
                     break;
             }
         }
 
+        // Tentukan aturan penggunaan nama "Wayan" berdasarkan pengecualian
         if ((settings.aiRole === 'umum' && settings.personality === 'profesional') || settings.aiRole === 'kustom') {
+            // Untuk mode Profesional dan Kustom, AI hanya memperkenalkan diri jika ditanya.
             personaRule = "Perkenalkan dirimu (jika relevan dengan rolenya) hanya jika pengguna menanyakan namamu.";
         } else {
+            // Untuk semua kasus lain, AI WAJIB menggunakan nama "Wayan".
             personaRule = "SANGAT PENTING: Selalu sertakan nama 'Wayan' (atau persona peranmu seperti 'Dokter Wayan', 'Wayan-sensei') setidaknya sekali dalam setiap jawabanmu untuk membangun karakter. Contoh: 'Menurut Wayan...', 'Wayan pikir...', 'Tentu, ini penjelasan dari Dokter Wayan...'. Ini adalah aturan utama kepribadianmu.";
         }
         
@@ -2203,8 +2163,10 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             roleInstruction += ' Please respond in English.';
         }
         
+        // Gabungkan semua instruksi menjadi satu
         return `${roleInstruction} ${personaRule} ${baseInstructions}`;
     }
+    // ▲▲▲ [AKHIR DARI PERUBAHAN] ▲▲▲
 
     async function makeApiRequest(payload, signal = null) {
         if (apiKeys.length === 0) loadApiKeys();
@@ -2445,45 +2407,88 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         });
     });
     document.addEventListener('touchstart', function () {}, true);
-
-    (function() {
-      const slides = document.querySelectorAll('#onboardingSlides .onboarding-slide');
-      const modal = document.getElementById('onboardingModal');
-      const btnNext = document.getElementById('nextOnboardingBtn');
-      const btnSkip = document.getElementById('skipOnboardingBtn');
-      const dotsContainer = document.getElementById('onboardingDots');
-      let currSlide = 0;
-      function showModalIfFirstTime() {
-        if (!localStorage.getItem('onboardingShown')) {
-          modal.classList.remove('hidden');
-          renderDots();
-          showSlide(0);
-        }
-      }
-      function showSlide(idx) {
-        slides.forEach((slide, i) => slide.style.display = i === idx ? 'block' : 'none');
-        currSlide = idx;
-        updateDots();
-        btnNext.textContent = (currSlide === slides.length - 1) ? "Mulai Chatting" : "Selanjutnya";
-      }
-      function nextSlide() { (currSlide < slides.length - 1) ? showSlide(currSlide + 1) : closeModal(); }
-      function closeModal() { modal.classList.add('hidden'); localStorage.setItem('onboardingShown', 'true'); }
-      function renderDots() {
-        dotsContainer.innerHTML = '';
-        slides.forEach((_, i) => {
-            const dot = document.createElement('span');
-            dot.className = "inline-block w-2.5 h-2.5 mx-0.5 rounded-full transition-all duration-200 cursor-pointer bg-gray-300";
-            dot.onclick = () => showSlide(i);
-            dotsContainer.appendChild(dot);
-        });
-      }
-      function updateDots() { Array.from(dotsContainer.children).forEach((dot, i) => {
-          dot.className = dot.className.replace(/bg-\w+-\d+/, i === currSlide ? "bg-blue-600" : "bg-gray-300");
-      }); }
-      document.addEventListener('DOMContentLoaded', () => { showModalIfFirstTime(); btnNext.onclick = nextSlide; btnSkip.onclick = closeModal; });
-    })();
 </script>
-<!-- Google tag (gtag.js) -->
+
+<!-- Onboarding Modal & Script (tidak diubah) -->
+<div id="onboardingModal" class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center transition-all duration-300 hidden">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-0 overflow-hidden border border-gray-200 relative animate-fadein">
+    <div id="onboardingSlides" class="w-full">
+      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:block">
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f44b.png" alt="Hi" class="w-16 h-16 mb-3 mx-auto animate-bounce" />
+        <h2 class="text-xl font-bold mb-2 text-blue-700">Selamat Datang di Wayan AI!</h2>
+        <p class="text-gray-700 text-base mb-4">Aplikasi chat cerdas dengan AI berbahasa Indonesia yang ramah &amp; mudah digunakan.</p>
+      </div>
+      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4ac.png" alt="Chat" class="w-16 h-16 mb-3 mx-auto animate-pulse" />
+        <h2 class="text-lg font-semibold mb-2 text-blue-700">Mulai Bertanya!</h2>
+        <p class="text-gray-700 text-base mb-4">Tulis pertanyaan di kolom bawah, lalu tekan <b>tombol kirim</b>.</p>
+      </div>
+       <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f5c3.png" alt="New Chat" class="w-16 h-16 mb-3 mx-auto" />
+        <h2 class="text-lg font-semibold mb-2 text-blue-700">Simpan Percakapan</h2>
+        <p class="text-gray-700 text-base mb-4">Setiap percakapan akan otomatis tersimpan. Klik tombol <b>menu (garis tiga)</b> di pojok kiri atas untuk melihat riwayat chat Anda.</p>
+      </div>
+      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f527.png" alt="Settings" class="w-16 h-16 mb-3 mx-auto animate-spin-slow" />
+        <h2 class="text-lg font-semibold mb-2 text-blue-700">Atur Gaya AI-mu</h2>
+        <p class="text-gray-700 text-base mb-4">Pilih <b>peran</b> dan <b>gaya bahasa</b> AI melalui tombol <b>pengaturan (roda gigi)</b>.</p>
+      </div>
+      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
+        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f389.png" alt="Lets Go" class="w-16 h-16 mb-3 mx-auto animate-bounce" />
+        <h2 class="text-lg font-semibold mb-2 text-blue-700">Yuk Mulai Chatting!</h2>
+        <p class="text-gray-700 text-base mb-4">Selamat menikmati Wayan AI. Jangan ragu untuk bereksperimen!</p>
+      </div>
+    </div>
+    <div class="flex items-center justify-between px-5 pb-4 pt-2 bg-gray-50 border-t border-gray-200">
+      <button id="skipOnboardingBtn" class="text-xs text-gray-400 hover:text-blue-500 font-medium">Lewati</button>
+      <div class="flex space-x-1" id="onboardingDots"></div>
+      <button id="nextOnboardingBtn" class="text-sm bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-1.5 rounded-lg shadow">Selanjutnya</button>
+    </div>
+  </div>
+</div>
+<style>
+@keyframes fadein{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}.animate-fadein{animation:fadein .5s}
+@keyframes spin-slow{100%{transform:rotate(360deg)}}.animate-spin-slow{animation:spin-slow 2.5s linear infinite}
+</style>
+<script>
+(function() {
+  const slides = document.querySelectorAll('#onboardingSlides .onboarding-slide');
+  const modal = document.getElementById('onboardingModal');
+  const btnNext = document.getElementById('nextOnboardingBtn');
+  const btnSkip = document.getElementById('skipOnboardingBtn');
+  const dotsContainer = document.getElementById('onboardingDots');
+  let currSlide = 0;
+  function showModalIfFirstTime() {
+    if (!localStorage.getItem('onboardingShown')) {
+      modal.classList.remove('hidden');
+      renderDots();
+      showSlide(0);
+    }
+  }
+  function showSlide(idx) {
+    slides.forEach((slide, i) => slide.style.display = i === idx ? 'block' : 'none');
+    currSlide = idx;
+    updateDots();
+    btnNext.textContent = (currSlide === slides.length - 1) ? "Mulai Chatting" : "Selanjutnya";
+  }
+  function nextSlide() { (currSlide < slides.length - 1) ? showSlide(currSlide + 1) : closeModal(); }
+  function closeModal() { modal.classList.add('hidden'); localStorage.setItem('onboardingShown', 'true'); }
+  function renderDots() {
+    dotsContainer.innerHTML = '';
+    slides.forEach((_, i) => {
+        const dot = document.createElement('span');
+        dot.className = "inline-block w-2.5 h-2.5 mx-0.5 rounded-full transition-all duration-200 cursor-pointer bg-gray-300";
+        dot.onclick = () => showSlide(i);
+        dotsContainer.appendChild(dot);
+    });
+  }
+  function updateDots() { Array.from(dotsContainer.children).forEach((dot, i) => {
+      dot.className = dot.className.replace(/bg-\w+-\d+/, i === currSlide ? "bg-blue-600" : "bg-gray-300");
+  }); }
+  document.addEventListener('DOMContentLoaded', () => { showModalIfFirstTime(); btnNext.onclick = nextSlide; btnSkip.onclick = closeModal; });
+})();
+</script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-GGGNDKREFK"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
