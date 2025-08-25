@@ -1204,13 +1204,11 @@
     window.addEventListener('resize', adjustHeightForMobile);
     adjustHeightForMobile();
 
-    // ▼▼▼ FUNGSI BANTUAN UNTUK FORMAT WAKTU ▼▼▼
     function getFormattedTime(date = new Date()) {
         const hours = date.getHours().toString().padStart(2, '0');
         const minutes = date.getMinutes().toString().padStart(2, '0');
         return `${hours}:${minutes}`;
     }
-    // ▲▲▲ AKHIR DARI FUNGSI BANTUAN ▲▲▲
 
     let apiKeys = [];
     let allChatSessions = [];
@@ -1225,14 +1223,11 @@
     let isRecording = false;
     let finalTranscript = '';
     
-    // ▼▼▼ [PERBAIKAN] Variabel global untuk data preview gambar ▼▼▼
     let currentPreviewData = {
         base64: null,
         fileName: null,
         mimeType: null
     };
-    // ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲
-
 
     const defaultSettings = {
         theme: 'blue',
@@ -1493,18 +1488,9 @@
         const chatMessages = document.getElementById('chatMessages');
         chatMessages.innerHTML = ''; 
         session.history.forEach(msg => {
-            // Cek apakah pesan berisi gambar (heuristik sederhana)
-            const isImageMessage = msg.parts[0].text.startsWith('[Gambar:');
-            if (isImageMessage) {
-                // Logika untuk menampilkan kembali pesan gambar dari riwayat (jika diimplementasikan)
-                // Untuk saat ini, kita tampilkan teksnya saja
-                addOriginalMessage(msg.parts[0].text, msg.role === 'user', msg.timestamp);
-            } else {
-                addOriginalMessage(msg.parts[0].text, msg.role === 'user', msg.timestamp);
-            }
+            addOriginalMessage(msg.parts[0].text, msg.role === 'user', msg.timestamp);
         });
         
-        // Selalu tambahkan kembali indicators di akhir
         chatMessages.appendChild(document.getElementById('typingIndicator'));
         chatMessages.appendChild(document.getElementById('imageProcessingIndicator'));
         
@@ -1794,18 +1780,16 @@
     function hideProfileModal() { document.getElementById('profileModal').classList.add('hidden'); }
     function triggerImageUpload() { document.getElementById('imageInput').click(); }
     
-    // ▼▼▼ [PERBAIKAN] Fungsi handleImageUpload diperbarui ▼▼▼
     function handleImageUpload(event) {
         const file = event.target.files[0];
         if (file) {
             if (!file.type.startsWith('image/')) {
                 alert('File tidak valid. Silakan pilih file gambar (JPEG, PNG, WEBP, GIF).');
-                event.target.value = ''; // Reset input file
+                event.target.value = '';
                 return;
             }
             const reader = new FileReader();
             reader.onload = e => {
-                // Simpan semua data gambar yang diperlukan ke variabel global
                 currentPreviewData = {
                     base64: e.target.result,
                     fileName: file.name,
@@ -1816,7 +1800,6 @@
             reader.readAsDataURL(file);
         }
     }
-    // ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲
 
     function showImagePreview(base64Image, fileName) {
         document.getElementById('previewImage').src = base64Image;
@@ -1826,34 +1809,47 @@
         setTimeout(() => document.getElementById('imageQuestionInput').focus(), 300);
     }
 
-    // ▼▼▼ [PERBAIKAN] Fungsi hideImagePreview diperbarui ▼▼▼
     function hideImagePreview() {
         document.getElementById('imagePreviewModal').classList.add('hidden');
-        document.getElementById('imageInput').value = ''; // Reset input file
-        // Reset variabel global
+        document.getElementById('imageInput').value = '';
         currentPreviewData = { base64: null, fileName: null, mimeType: null };
     }
-    // ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲
 
-    // ▼▼▼ [PERBAIKAN] Fungsi sendImageWithQuestion diperbarui ▼▼▼
+    // ▼▼▼ [FUNGSI YANG DIPERBAIKI] ▼▼▼
     function sendImageWithQuestion() {
         const question = document.getElementById('imageQuestionInput').value.trim();
-        if (!question) { alert('Tulis pertanyaan dulu ya!'); return; }
-        if (!currentPreviewData.base64) { alert('Terjadi kesalahan, gambar tidak ditemukan.'); return; }
+        if (!question) {
+            alert('Tulis pertanyaan dulu ya!');
+            return;
+        }
+        if (!currentPreviewData.base64) {
+            alert('Terjadi kesalahan, gambar tidak ditemukan. Coba pilih lagi.');
+            return;
+        }
         
         const allUserData = getChatLimitData();
         const userData = allUserData[currentUserIP] || { count: 0 };
-        if (userData.count >= CHAT_LIMIT) { alert('Anda telah mencapai batas. Tunggu cooldown selesai.'); hideImagePreview(); return; }
+        if (userData.count >= CHAT_LIMIT) {
+            alert('Anda telah mencapai batas. Tunggu cooldown selesai.');
+            hideImagePreview();
+            return;
+        }
         
-        // Sembunyikan modal dan tampilkan pesan di UI
+        // --- PERBAIKAN UTAMA DI SINI ---
+        // 1. Salin data gambar ke variabel lokal SEBELUM modal ditutup dan datanya dihapus.
+        const imageData = currentPreviewData.base64;
+        const imageName = currentPreviewData.fileName;
+        const imageMimeType = currentPreviewData.mimeType;
+        
+        // 2. Sekarang, tutup modal dan bersihkan state global.
         hideImagePreview();
-        addImageMessageWithQuestion(currentPreviewData.base64, currentPreviewData.fileName, question, true);
+        
+        // 3. Gunakan variabel lokal yang sudah disalin untuk fungsi selanjutnya.
+        addImageMessageWithQuestion(imageData, imageName, question, true);
         showImageProcessingIndicator();
-
-        // Panggil fungsi analisis dengan semua data yang diperlukan
-        analyzeImageWithQuestion(currentPreviewData.base64, question, currentPreviewData.mimeType);
+        analyzeImageWithQuestion(imageData, question, imageMimeType);
     }
-    // ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲
+    // ▲▲▲ [AKHIR DARI PERBAIKAN] ▲▲▲
 
     function addImageMessageWithQuestion(imageSrc, fileName, question, isUser = false) {
         const chatMessages = document.getElementById('chatMessages');
@@ -1974,8 +1970,6 @@
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message-bubble flex items-start space-x-3';
         const timeString = timestamp ? getFormattedTime(new Date(timestamp)) : '';
-
-        // Cek apakah ini pesan gambar dari riwayat
         const imageMatch = message.match(/^\[Gambar: (.*?)\] (.*)/);
 
         if (isUser) {
@@ -1984,7 +1978,6 @@
             
             let messageContent = '';
             if (imageMatch) {
-                // Tampilkan pesan gambar dari riwayat sebagai teks
                 messageContent = `<div class="bg-white bg-opacity-20 rounded-lg p-2">
                                     <p class="text-xs mb-1 opacity-90">🖼️ ${imageMatch[1]}</p>
                                     <p class="text-sm font-medium">${imageMatch[2]}</p>
@@ -2255,7 +2248,6 @@
         }
     }
     
-    // ▼▼▼ [PERBAIKAN] Fungsi analyzeImageWithQuestion diperbarui total ▼▼▼
     async function analyzeImageWithQuestion(base64Image, userQuestion, mimeType) {
         currentFetchController = new AbortController();
         document.getElementById('stopGeneratingContainer').style.display = 'block';
@@ -2263,14 +2255,13 @@
         try {
             const imageData = base64Image.split(',')[1];
             
-            // Membuat payload yang benar untuk permintaan multimodal
             const payload = {
                 contents: [{
                     parts: [
                         { text: userQuestion },
                         {
                             inline_data: {
-                                mime_type: mimeType, // Menggunakan mimeType dinamis
+                                mime_type: mimeType,
                                 data: imageData
                             }
                         }
@@ -2315,8 +2306,6 @@
             currentFetchController = null;
         }
     }
-    // ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲
-
 
     window.addEventListener('load', async () => {
         loadApiKeys();
