@@ -908,26 +908,9 @@
                         oninput="handleInputChange(event)"
                     >
 
-                    <!-- [REFINED] UI Perekaman Suara -->
-                    <div id="voiceRecordingUI" class="absolute inset-0 items-center justify-between px-3 hidden" style="background-color: var(--bg-tertiary); border-radius: 1.25rem;">
-                        <!-- ▼▼▼ PERUBAHAN DI SINI ▼▼▼ -->
-                        <div class="flex items-center gap-3 min-w-0"> <!-- Ditambahkan 'min-w-0' -->
-                        <!-- ▲▲▲ AKHIR PERUBAHAN ▲▲▲ -->
-                            <div class="voice-wave">
-                                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
-                            </div>
-                            <span id="voiceStatusText" class="text-sm text-gray-500 dark:text-gray-400 truncate">Mendengarkan...</span>
-                        </div>
-                        <div class="flex items-center gap-2 flex-shrink-0">
-                            <button id="pauseRecordingBtn" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-300 dark:hover:bg-gray-600" title="Jeda dan Jadikan Teks">
-                                <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z"></path></svg>
-                            </button>
-                            <button id="sendRecordingBtn" class="w-10 h-10 flex items-center justify-center bg-blue-600 rounded-full hover:bg-blue-700" title="Kirim Suara">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- Akhir UI Perekaman Suara -->
+                    <!-- ▼▼▼ PERUBAHAN DI SINI: UI Suara yang lama dihapus ▼▼▼ -->
+                    <!-- (Tidak ada apa-apa di sini sekarang) -->
+                    <!-- ▲▲▲ AKHIR DARI PERUBAHAN ▲▲▲ -->
 
                     <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
                     
@@ -1265,8 +1248,7 @@
       };
       fetch(SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify(payload),
-        mode: 'no-cors'
+        body: JSON.stringify(payload)
       })
       .then(response => {
         console.log('Notifikasi lengkap pengguna baru berhasil dikirim.');
@@ -1342,7 +1324,7 @@
         button.textContent = 'Mengirim...';
         button.disabled = true;
 
-        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' })
+        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
         .then(() => { alert('Terima kasih atas penilaian Anda!'); hideRatingModal(); })
         .catch(error => { console.error('Gagal mengirim rating:', error); alert('Maaf, terjadi kesalahan.'); })
         .finally(() => { button.textContent = 'Kirim Nilai'; button.disabled = false; });
@@ -1366,10 +1348,97 @@
         button.textContent = 'Mengirim...';
         button.disabled = true;
         
-        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' })
+        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
         .then(() => { alert('Terima kasih! Masukan Anda telah terkirim.'); input.value = ''; })
         .catch(error => { console.error('Gagal mengirim masukan:', error); alert('Maaf, terjadi kesalahan.'); })
         .finally(() => { button.textContent = 'Kirim Masukan'; button.disabled = false; });
+    }
+    
+    // ===================================================================================
+    // ▼▼▼ KODE BARU UNTUK FUNGSI SUARA (LOGIKA GABUNGAN) ▼▼▼
+    // ===================================================================================
+    function toggleVoiceMode() {
+        if (isRecording) {
+            stopAndSendVoice();
+        } 
+        else {
+            startVoiceRecognition();
+        }
+    }
+
+    function startVoiceRecognition() {
+        if (!('webkitSpeechRecognition' in window)) {
+            alert('Maaf, fitur pengenalan suara tidak didukung di browser Anda.');
+            return;
+        }
+
+        isRecording = true;
+        finalTranscript = '';
+        document.getElementById('messageInput').value = '';
+        document.getElementById('messageInput').placeholder = 'Mendengarkan...';
+
+        const micBtn = document.getElementById('micBtn');
+        micBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>`;
+        micBtn.classList.add('send-btn-active');
+
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
+
+        recognition.onresult = (event) => {
+            let interim_transcript = '';
+            finalTranscript = '';
+            for (let i = 0; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
+                } else {
+                    interim_transcript += event.results[i][0].transcript;
+                }
+            }
+            document.getElementById('messageInput').value = (finalTranscript + interim_transcript).trim();
+        };
+
+        recognition.onerror = (event) => {
+            console.error("Speech recognition error:", event.error);
+            resetVoiceUI();
+        };
+
+        recognition.onend = () => {
+            setTimeout(() => {
+                if (isRecording) {
+                    stopAndSendVoice();
+                }
+            }, 300); 
+        };
+        
+        recognition.start();
+    }
+
+    function stopAndSendVoice() {
+        if (!isRecording) return;
+        
+        if (recognition) {
+            recognition.stop();
+        }
+        
+        const message = document.getElementById('messageInput').value.trim();
+        if (message) {
+            sendMessage();
+        }
+        
+        resetVoiceUI();
+    }
+
+    function resetVoiceUI() {
+        isRecording = false;
+        recognition = null;
+        
+        document.getElementById('messageInput').placeholder = 'Minta Wayan AI...';
+
+        const micBtn = document.getElementById('micBtn');
+        micBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>`;
+        micBtn.classList.remove('send-btn-active');
     }
     // ===================================================================================
     // ▲▲▲ AKHIR DARI KODE BARU ▲▲▲
@@ -1378,15 +1447,14 @@
     let apiKeys = [];
     let allChatSessions = [];
     let activeChatId = null;
-    let recognition = null;
+    // Hapus variabel 'recognition' yang lama karena sudah dideklarasikan di atas
     const CHAT_LIMIT = 4;
     const COOLDOWN_MINUTES = 1;
     let currentUserIP = null;
     let countdownInterval = null;
 
     let currentFetchController = null;
-    let isRecording = false;
-    let finalTranscript = '';
+    // Hapus 'isRecording' dan 'finalTranscript' yang lama
     
     let currentPreviewData = {
         base64: null,
@@ -1730,80 +1798,7 @@
         handleInputChange({ target: document.getElementById('messageInput') });
         sendMessage();
     }
-    function toggleVoiceMode() {
-        if (isRecording) {
-            stopVoiceRecognition(true);
-        } else {
-            startVoiceRecognition();
-        }
-    }
-    function startVoiceRecognition() {
-        if (!('webkitSpeechRecognition' in window)) {
-            alert('Maaf, browser Anda tidak mendukung fitur pengenalan suara.');
-            return;
-        }
-        finalTranscript = '';
-        document.getElementById('messageInput').value = '';
-        isRecording = true;
-        document.getElementById('messageInput').style.visibility = 'hidden';
-        document.querySelector('.action-buttons').style.display = 'none';
-        document.getElementById('voiceRecordingUI').style.display = 'flex';
-        document.getElementById('voiceStatusText').textContent = 'Mendengarkan...';
-        recognition = new webkitSpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
-        recognition.onresult = (event) => {
-            let interim_transcript = '';
-            let transcript_builder = '';
-            for (let i = 0; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    transcript_builder += event.results[i][0].transcript;
-                } else {
-                    interim_transcript += event.results[i][0].transcript;
-                }
-            }
-            finalTranscript = transcript_builder;
-            const displayText = (finalTranscript + interim_transcript).trim();
-            document.getElementById('voiceStatusText').textContent = displayText || 'Mendengarkan...';
-        };
-        recognition.onerror = (event) => {
-            console.error("Speech recognition error:", event.error);
-            if (event.error !== 'aborted') {
-                addSystemMessage(`Error pengenalan suara: ${event.error}`);
-            }
-            stopVoiceRecognition(true);
-        };
-        recognition.onend = () => {
-            if (isRecording) {
-                stopVoiceRecognition();
-            }
-        };
-        try {
-            recognition.start();
-        } catch (e) {
-            console.error("Error starting speech recognition:", e);
-            addSystemMessage("Tidak dapat memulai pengenalan suara.");
-            stopVoiceRecognition(true);
-        }
-    }
-    function stopVoiceRecognition(isCancel = false) {
-        if (!isRecording) return;
-        isRecording = false;
-        if (recognition) {
-            recognition.stop();
-            recognition = null;
-        }
-        if (!isCancel && finalTranscript.trim()) {
-            document.getElementById('messageInput').value = finalTranscript.trim();
-        } else {
-            document.getElementById('messageInput').value = '';
-        }
-        document.getElementById('messageInput').style.visibility = 'visible';
-        document.querySelector('.action-buttons').style.display = 'flex';
-        document.getElementById('voiceRecordingUI').style.display = 'none';
-        handleInputChange({ target: document.getElementById('messageInput') });
-    }
+    
     function changeTheme(themeName) {
         if (document.documentElement.classList.contains('dark')) {
             return;
@@ -1847,13 +1842,11 @@
         }
     }
 
-    // ▼▼▼ [FUNGSI BARU] Fungsi ini dipanggil langsung dari HTML ▼▼▼
     function handleDarkModeToggle() {
         const isChecked = document.getElementById('darkModeToggle').checked;
         applyDarkMode(isChecked);
         saveSettings();
     }
-    // ▲▲▲ AKHIR DARI FUNGSI BARU ▲▲▲
 
     function loadSettings() {
         const savedSettings = localStorage.getItem('storybaliSettings');
@@ -2566,19 +2559,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
                 currentFetchController.abort();
             }
         });
-
-        document.getElementById('pauseRecordingBtn').addEventListener('click', () => {
-            stopVoiceRecognition(); 
-        });
-
-        document.getElementById('sendRecordingBtn').addEventListener('click', () => {
-            stopVoiceRecognition();
-            setTimeout(() => {
-                if(document.getElementById('messageInput').value.trim()){
-                    sendMessage();
-                }
-            }, 100); 
-        });
+        
     });
 
     ['profileModal', 'imagePreviewModal', 'settingsModal'].forEach(id => {
