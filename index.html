@@ -1174,6 +1174,18 @@
                          </button>
                     </div>
                 </div>
+                
+                <!-- ▼▼▼ KODE BARU UNTUK FITUR MASUKAN DI PENGATURAN ▼▼▼ -->
+                <div class="settings-card p-4">
+                    <h4 class="text-sm font-semibold text-gray-800 mb-2">Beri Masukan</h4>
+                    <p class="text-xs text-gray-500 mb-3">Punya ide atau saran? Beri tahu kami!</p>
+                    <textarea id="settingsFeedbackInput" placeholder="Tulis masukan Anda di sini..." class="w-full settings-input text-sm" rows="4"></textarea>
+                    <button id="sendSettingsFeedbackBtn" onclick="sendGeneralFeedback()" class="w-full settings-btn-action bg-green-600 text-white mt-3 hover:bg-green-700">
+                        Kirim Masukan
+                    </button>
+                </div>
+                <!-- ▲▲▲ AKHIR DARI KODE BARU ▲▲▲ -->
+                
                 <div class="settings-card p-4">
                     <h4 class="text-sm font-semibold text-gray-800 mb-3">API Keys (Gemini)</h4>
                     <div class="space-y-2 text-sm">
@@ -1235,19 +1247,14 @@
     }
 	
     // ===================================================================================
-    // ▼▼▼ KODE BARU UNTUK NOTIFIKASI PENGGUNA ▼▼▼
+    // ▼▼▼ FUNGSI NOTIFIKASI PENGGUNA BARU ▼▼▼
     // ===================================================================================
     function sendNewUserNotification(ipAddress) {
-      // Cek di browser pengguna apakah notifikasi sudah pernah dikirim
       if (localStorage.getItem('notificationSent')) {
         console.log('Notifikasi untuk pengguna ini sudah pernah dikirim.');
-        return; // Hentikan fungsi jika sudah pernah dikirim
+        return;
       }
-
-      // URL Google Apps Script Anda
       const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCMPCa3374vo347SbP2alsPWfb5MqKcspRHjkuU8ON6ooFLTTQE5h1RC2pxBNYor_Wuw/exec";
-
-      // Kumpulkan semua data yang bisa didapat secara otomatis dari browser
       const payload = {
         ip: ipAddress,
         timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
@@ -1256,19 +1263,113 @@
         browserLanguage: navigator.language,
         connectionType: navigator.connection ? navigator.connection.effectiveType : 'unknown'
       };
-
-      // Kirim semua data ke URL Google Script Anda
       fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify(payload),
-        mode: 'no-cors' // Penting agar tidak terjadi error CORS
+        mode: 'no-cors'
       })
       .then(response => {
         console.log('Notifikasi lengkap pengguna baru berhasil dikirim.');
-        // Simpan penanda di browser pengguna agar tidak mengirim email lagi
         localStorage.setItem('notificationSent', 'true');
       })
       .catch(error => console.error('Gagal mengirim notifikasi:', error));
+    }
+    
+    // ===================================================================================
+    // ▼▼▼ KODE BARU UNTUK RATING & MASUKAN ▼▼▼
+    // ===================================================================================
+    let currentRating = 0;
+
+    function showRatingModal() {
+        currentRating = 0;
+        document.getElementById('ratingFeedbackInput').value = '';
+        renderStars();
+        document.getElementById('ratingModal').classList.remove('hidden');
+    }
+
+    function hideRatingModal() {
+        document.getElementById('ratingModal').classList.add('hidden');
+    }
+    
+    function renderStars() {
+        const container = document.getElementById('starRatingContainer');
+        container.innerHTML = '';
+        for (let i = 1; i <= 5; i++) {
+            const starSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            starSVG.setAttribute('onclick', `handleStarClick(${i})`);
+            starSVG.setAttribute('class', 'w-8 h-8 cursor-pointer star-icon transition-colors ' + (i <= currentRating ? 'text-yellow-400' : 'text-gray-300'));
+            starSVG.setAttribute('fill', 'currentColor');
+            starSVG.setAttribute('viewBox', '0 0 20 20');
+            starSVG.innerHTML = `<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>`;
+            container.appendChild(starSVG);
+        }
+    }
+
+    function handleStarClick(rating) {
+        currentRating = rating;
+        renderStars();
+    }
+
+    function trackUserMessageCount() {
+        if (localStorage.getItem('ratingModalShown')) return;
+        let messageCount = parseInt(localStorage.getItem('userMessageCount') || '0');
+        messageCount++;
+        localStorage.setItem('userMessageCount', messageCount);
+
+        if (messageCount === 3) { // Tampilkan setelah pesan ke-3
+            setTimeout(() => {
+                showRatingModal();
+                localStorage.setItem('ratingModalShown', 'true');
+            }, 2000);
+        }
+    }
+    
+    function submitRating() {
+        if (currentRating === 0) {
+            alert('Mohon pilih setidaknya 1 bintang.');
+            return;
+        }
+        const feedbackText = document.getElementById('ratingFeedbackInput').value.trim();
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCMPCa3374vo347SbP2alsPWfb5MqKcspRHjkuU8ON6ooFLTTQE5h1RC2pxBNYor_Wuw/exec";
+        const payload = {
+            type: 'rating',
+            rating: currentRating,
+            message: feedbackText || 'Tidak ada komentar tambahan.',
+            userIP: currentUserIP || 'tidak diketahui',
+            timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
+        };
+        const button = document.getElementById('submitRatingBtn');
+        button.textContent = 'Mengirim...';
+        button.disabled = true;
+
+        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' })
+        .then(() => { alert('Terima kasih atas penilaian Anda!'); hideRatingModal(); })
+        .catch(error => { console.error('Gagal mengirim rating:', error); alert('Maaf, terjadi kesalahan.'); })
+        .finally(() => { button.textContent = 'Kirim Nilai'; button.disabled = false; });
+    }
+
+    function sendGeneralFeedback() {
+        const input = document.getElementById('settingsFeedbackInput');
+        const feedbackText = input.value.trim();
+        if (!feedbackText) {
+            alert('Mohon tulis masukan Anda terlebih dahulu.');
+            return;
+        }
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCMPCa3374vo347SbP2alsPWfb5MqKcspRHjkuU8ON6ooFLTTQE5h1RC2pxBNYor_Wuw/exec";
+        const payload = {
+            type: 'feedback',
+            message: feedbackText,
+            userIP: currentUserIP || 'tidak diketahui',
+            timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
+        };
+        const button = document.getElementById('sendSettingsFeedbackBtn');
+        button.textContent = 'Mengirim...';
+        button.disabled = true;
+        
+        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' })
+        .then(() => { alert('Terima kasih! Masukan Anda telah terkirim.'); input.value = ''; })
+        .catch(error => { console.error('Gagal mengirim masukan:', error); alert('Maaf, terjadi kesalahan.'); })
+        .finally(() => { button.textContent = 'Kirim Masukan'; button.disabled = false; });
     }
     // ===================================================================================
     // ▲▲▲ AKHIR DARI KODE BARU ▲▲▲
@@ -2296,6 +2397,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         saveChatLimitData({ ...allUserData, [currentUserIP]: userData });
         
         addMessage(message, true);
+        trackUserMessageCount(); // <-- PEMANGGILAN PELACAK RATING
         addToConversationHistory('user', message);
         input.value = '';
         handleInputChange({ target: input });
@@ -2579,5 +2681,29 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
 
   gtag('config', 'G-GGGNDKREFK');
 </script>
+
+<!-- ▼▼▼ KODE BARU UNTUK MODAL RATING & MASUKAN ▼▼▼ -->
+<div id="ratingModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
+    <div class="modal-content p-6 max-w-sm w-full" id="ratingModalContent">
+        <div class="text-center">
+            <h3 class="text-lg font-bold text-gray-800 mb-2">Beri Nilai untuk Wayan AI</h3>
+            <p class="text-sm text-gray-600 mb-4">Masukan Anda sangat berarti untuk pengembangan kami.</p>
+            
+            <!-- Bintang Rating -->
+            <div id="starRatingContainer" class="flex justify-center items-center space-x-2 mb-4 text-gray-300">
+                <!-- Bintang akan dibuat oleh JavaScript, biarkan kosong -->
+            </div>
+            
+            <textarea id="ratingFeedbackInput" placeholder="Tulis masukan Anda di sini (opsional)..." class="w-full settings-input text-sm mb-4" rows="4"></textarea>
+            
+            <div class="flex space-x-3">
+                <button onclick="hideRatingModal()" class="flex-1 bg-gray-200 text-gray-800 py-2.5 rounded-xl font-semibold text-sm settings-btn-action">Nanti Saja</button>
+                <button id="submitRatingBtn" onclick="submitRating()" class="flex-1 bg-blue-600 text-white py-2.5 rounded-xl font-semibold text-sm settings-btn-action">Kirim Nilai</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ▲▲▲ AKHIR DARI KODE BARU ▲▲▲ -->
+
 </body>
 </html>
