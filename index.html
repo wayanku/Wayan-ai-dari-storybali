@@ -1233,6 +1233,46 @@
         const minutes = date.getMinutes().toString().padStart(2, '0');
         return `${hours}:${minutes}`;
     }
+	
+    // ===================================================================================
+    // ▼▼▼ KODE BARU UNTUK NOTIFIKASI PENGGUNA ▼▼▼
+    // ===================================================================================
+    function sendNewUserNotification(ipAddress) {
+      // Cek di browser pengguna apakah notifikasi sudah pernah dikirim
+      if (localStorage.getItem('notificationSent')) {
+        console.log('Notifikasi untuk pengguna ini sudah pernah dikirim.');
+        return; // Hentikan fungsi jika sudah pernah dikirim
+      }
+
+      // URL Google Apps Script Anda
+      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCMPCa3374vo347SbP2alsPWfb5MqKcspRHjkuU8ON6ooFLTTQE5h1RC2pxBNYor_Wuw/exec";
+
+      // Kumpulkan semua data yang bisa didapat secara otomatis dari browser
+      const payload = {
+        ip: ipAddress,
+        timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+        userAgent: navigator.userAgent,
+        screenResolution: `${screen.width}x${screen.height}`,
+        browserLanguage: navigator.language,
+        connectionType: navigator.connection ? navigator.connection.effectiveType : 'unknown'
+      };
+
+      // Kirim semua data ke URL Google Script Anda
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        mode: 'no-cors' // Penting agar tidak terjadi error CORS
+      })
+      .then(response => {
+        console.log('Notifikasi lengkap pengguna baru berhasil dikirim.');
+        // Simpan penanda di browser pengguna agar tidak mengirim email lagi
+        localStorage.setItem('notificationSent', 'true');
+      })
+      .catch(error => console.error('Gagal mengirim notifikasi:', error));
+    }
+    // ===================================================================================
+    // ▲▲▲ AKHIR DARI KODE BARU ▲▲▲
+    // ===================================================================================
 
     let apiKeys = [];
     let allChatSessions = [];
@@ -2371,6 +2411,15 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         loadApiKeys();
         loadSettings();
         currentUserIP = await getUserIP();
+        
+        // ===================================================================================
+        // ▼▼▼ PEMANGGILAN FUNGSI NOTIFIKASI ▼▼▼
+        // ===================================================================================
+        if (currentUserIP) {
+          sendNewUserNotification(currentUserIP);
+        }
+        // ===================================================================================
+        
         checkUserStatus();
         populateVoiceList();
         if (speechSynthesis.onvoiceschanged !== undefined) {
