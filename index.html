@@ -993,7 +993,7 @@
         <h2 class="text-2xl font-bold">Wayan AI</h2>
         <p id="callStatusText" class="text-lg mt-2 text-gray-300 transition-all duration-300">Menghubungkan...</p>
     </div>
-    <button id="endCallBtn" class="absolute bottom-16 w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform">
+    <button id="endCallBtn" onclick="endCall()" class="absolute bottom-16 w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform">
         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l-8 8m0-8l8 8"></path></svg>
     </button>
 </div>
@@ -1411,36 +1411,6 @@
     // ▲▲▲ AKHIR DARI KODE BARU ▲▲▲
     // ===================================================================================
 
-    // ▼▼▼ [BARU] FUNGSI UNTUK MENGATASI MASALAH AUTOPLAY DI ANDROID ▼▼▼
-    let isAudioUnlocked = false;
-    function unlockAudioContext() {
-        if (isAudioUnlocked) return;
-        
-        // Untuk Web Audio API (notifikasi)
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-
-        // Untuk elemen <audio> (ElevenLabs) dan speechSynthesis
-        // Trik paling ampuh adalah memutar audio senyap
-        const silentAudio = new Audio("data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTG93c3RhdGlvbi5jb20AAA");
-        silentAudio.volume = 0;
-        silentAudio.play().catch(e => console.error("Gagal membuka audio:", e));
-        
-        // Untuk SpeechSynthesis, panggil `resume` jika perlu
-        speechSynthesis.cancel(); // Hentikan apa pun yang mungkin macet
-        if(speechSynthesis.paused) {
-           speechSynthesis.resume();
-        }
-
-        isAudioUnlocked = true;
-        console.log("Konteks Audio telah dibuka.");
-        document.body.removeEventListener('touchstart', unlockAudioContext);
-        document.body.removeEventListener('click', unlockAudioContext);
-    }
-    // ▲▲▲ AKHIR DARI FUNGSI BARU ▲▲▲
-
     let apiKeys = [];
     let allChatSessions = [];
     let activeChatId = null;
@@ -1490,11 +1460,52 @@
     let callHistory = [];
     // ▲▲▲ AKHIR DARI VARIABEL PANGGILAN SUARA ▲▲▲
 
+    // [PERBAIKAN] Variabel flag untuk melacak status audio
+    let isAudioUnlocked = false;
+
     const DEFAULT_API_KEY_1 = 'AIzaSyClcqSMaHiXMZI4qYlTySqC3I3hWWg8H9s';
     const DEFAULT_API_KEY_2 = 'AIzaSyB8OPwzNAAyO1nWd9g185rx4YK3WIJy_Fw';
     const DEFAULT_API_KEY_3 = 'AIzaSyAYzvB1mfVdjrBtXY2n4-UUzCH5juQt8rU';
     const DEFAULT_API_KEY_4 = 'AIzaSyCkkekhKcQzFUUjx8ZcuqEYyqRde1ZDJcU';
     const DEFAULT_API_KEY_5 = 'AIzaSyCV-88PX1_tKh5VBjki9VeyY8gAH5bpZ0o';
+
+    // [PERBAIKAN] Fungsi untuk "membuka kunci" konteks audio pada browser mobile
+    function unlockAudio() {
+        if (isAudioUnlocked) return;
+        try {
+            // 1. Membuka AudioContext jika 'suspended'
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            // 2. "Memanaskan" SpeechSynthesis API
+            if ('speechSynthesis' in window && speechSynthesis.getVoices().length === 0) {
+                 speechSynthesis.getVoices(); // Try to populate voices
+            }
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(' '); // Use a space instead of empty string
+                utterance.volume = 0; // Make it silent
+                speechSynthesis.speak(utterance);
+            }
+
+            // 3. "Memanaskan" elemen Audio untuk ElevenLabs
+            elevenLabsAudioPlayer.muted = true;
+            const playPromise = elevenLabsAudioPlayer.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    elevenLabsAudioPlayer.pause();
+                    elevenLabsAudioPlayer.currentTime = 0;
+                    elevenLabsAudioPlayer.muted = false;
+                }).catch(() => {});
+            }
+
+            isAudioUnlocked = true;
+            console.log("Konteks Audio berhasil dibuka.");
+        } catch (e) {
+            console.error("Gagal membuka konteks audio:", e);
+        }
+    }
     
     async function getUserIP() {
         try {
@@ -1810,11 +1821,15 @@
         }
     }
     function sendQuickMessage(message) {
+        // [PERBAIKAN] Panggil unlockAudio pada interaksi pengguna
+        unlockAudio();
         document.getElementById('messageInput').value = message;
         handleInputChange({ target: document.getElementById('messageInput') });
         sendMessage();
     }
     function toggleVoiceMode() {
+        // [PERBAIKAN] Panggil unlockAudio pada interaksi pengguna
+        unlockAudio();
         if (isRecording) {
             stopVoiceRecognition(true);
         } else {
@@ -1971,6 +1986,9 @@
             localStorage.removeItem('elevenLabsApiKey');
             localStorage.removeItem('storybaliChatSessions');
             localStorage.removeItem('onboardingShown');
+            localStorage.removeItem('notificationSent');
+            localStorage.removeItem('userMessageCount');
+            localStorage.removeItem('ratingModalShown');
             alert('Pengaturan telah direset ke default. Halaman akan dimuat ulang.');
             window.location.reload();
         }
@@ -2075,6 +2093,8 @@
     }
 
     function sendImageWithQuestion() {
+        // [PERBAIKAN] Panggil unlockAudio pada interaksi pengguna
+        unlockAudio();
         const question = document.getElementById('imageQuestionInput').value.trim();
         if (!question) {
             alert('Tulis pertanyaan dulu ya!');
@@ -2292,6 +2312,7 @@
     }
     function playNotificationSound() {
         if (settings.soundEnabled) {
+            unlockAudio(); // Ensure audio is unlocked before playing
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
@@ -2372,12 +2393,7 @@
             const audioUrl = URL.createObjectURL(audioBlob);
             
             elevenLabsAudioPlayer.src = audioUrl;
-            elevenLabsAudioPlayer.load(); // [FIX] Ditambahkan untuk keandalan di Android
-            elevenLabsAudioPlayer.play().catch(e => {
-                console.error("Gagal memutar audio ElevenLabs:", e);
-                playBrowserAudio(text, button); // Fallback jika play gagal
-            });
-
+            elevenLabsAudioPlayer.play();
             if(button) button.innerHTML = stopIcon;
 
             return new Promise(resolve => {
@@ -2385,6 +2401,12 @@
                     if(button) button.innerHTML = playIcon;
                     isReading = false;
                     URL.revokeObjectURL(audioUrl);
+                    resolve();
+                };
+                 elevenLabsAudioPlayer.onerror = () => {
+                    console.error("Error playing ElevenLabs audio.");
+                    if(button) button.innerHTML = playIcon;
+                    isReading = false;
                     resolve();
                 };
             });
@@ -2402,10 +2424,13 @@
         const stopIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>`;
         const playIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>`;
         
-        if (currentUtterance) speechSynthesis.cancel();
+        if (speechSynthesis.speaking) speechSynthesis.cancel();
+        
         currentUtterance = new SpeechSynthesisUtterance(text);
-        const selectedVoice = speechSynthesis.getVoices().find(v => v.voiceURI === settings.voiceURI);
-        currentUtterance.voice = selectedVoice || speechSynthesis.getVoices().find(v => v.lang.startsWith('id'));
+        const voices = speechSynthesis.getVoices();
+        const selectedVoice = voices.find(v => v.voiceURI === settings.voiceURI);
+        currentUtterance.voice = selectedVoice || voices.find(v => v.lang.startsWith('id'));
+        
         if(button) button.innerHTML = stopIcon;
         isReading = true;
         
@@ -2428,6 +2453,9 @@
     }
 
     async function readAiResponse(button, encodedMessage) {
+        // [PERBAIKAN] Panggil unlockAudio pada interaksi pengguna
+        unlockAudio();
+
         if (!settings.readAiResponseEnabled) {
             alert('Fitur pembaca jawaban dinonaktifkan.');
             return;
@@ -2581,6 +2609,9 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     }
 
     async function sendMessage() {
+        // [PERBAIKAN] Panggil unlockAudio pada interaksi pengguna
+        unlockAudio();
+
         const input = document.getElementById('messageInput');
         const message = input.value.trim();
         if (!message || !currentUserIP || currentFetchController) return;
@@ -2712,7 +2743,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     }
 
     // ===================================================================================
-    // ▼▼▼ FUNGSI-FUNGSI BARU UNTUK FITUR PANGGILAN SUARA ▼▼▼
+    // ▼▼▼ FUNGSI-FUNGSI UNTUK FITUR PANGGILAN SUARA ▼▼▼
     // ===================================================================================
     async function speakAiResponse(text) {
         isAiSpeaking = true;
@@ -2759,15 +2790,16 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
                     interim_transcript += event.results[i][0].transcript;
                 }
             }
-
+            
+            // Restart silence timer on new speech
             silenceTimer = setTimeout(() => {
-                if(callRecognition) callRecognition.stop();
-            }, 1500);
+                if (callRecognition) callRecognition.stop();
+            }, 1500); // 1.5 detik jeda
         };
 
         callRecognition.onerror = (event) => {
             console.error('Call speech recognition error:', event.error);
-            if(isCallActive) listenForUserSpeech();
+            if (event.error !== 'aborted' && isCallActive) listenForUserSpeech(); // Coba dengarkan lagi jika ada error
         };
 
         callRecognition.onend = () => {
@@ -2775,14 +2807,20 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             if (isCallActive && final_transcript.trim()) {
                 processUserTranscript(final_transcript.trim());
             } else if (isCallActive) {
-                listenForUserSpeech();
+                listenForUserSpeech(); // Jika tidak ada input, dengarkan lagi
             }
         };
 
-        callRecognition.start();
-        silenceTimer = setTimeout(() => {
-            if(callRecognition) callRecognition.stop();
-        }, 5000);
+        try {
+            callRecognition.start();
+            // Set initial silence timer
+            silenceTimer = setTimeout(() => {
+                if(callRecognition) callRecognition.stop();
+            }, 5000); // 5 detik batas waktu awal
+        } catch (e) {
+            console.error("Gagal memulai speech recognition pada panggilan:", e);
+            if(isCallActive) setTimeout(() => listenForUserSpeech(), 100); // Coba lagi jika gagal
+        }
     }
     
     async function processUserTranscript(transcript) {
@@ -2790,6 +2828,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         callHistory.push({ role: 'user', parts: [{ text: transcript }] });
 
         try {
+            // Mengirim beberapa percakapan terakhir untuk konteks
             const contextualHistory = callHistory.slice(-6);
             
             const payload = {
@@ -2817,6 +2856,8 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     }
 
     async function startCall() {
+        // [PERBAIKAN] Panggil unlockAudio pada interaksi pengguna
+        unlockAudio();
         if (isCallActive) return;
         isCallActive = true;
         callHistory = [];
@@ -2828,29 +2869,22 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         await speakAiResponse(openingLine);
     }
 
-    // ▼▼▼ [UPDATED] FUNGSI ENDCALL YANG LEBIH KUAT UNTUK iOS ▼▼▼
     function endCall() {
         if (!isCallActive) return;
-        console.log("Mengakhiri panggilan...");
-        isCallActive = false; // Segera set status tidak aktif
-
-        stopReading(); // Hentikan pembaca suara (speechSynthesis & ElevenLabs)
-
-        if (callRecognition) {
-            callRecognition.onend = null;
-            callRecognition.onerror = null;
-            callRecognition.onresult = null;
-            callRecognition.abort(); // Gunakan abort() untuk penghentian paksa
-            callRecognition = null;
-            console.log("Speech recognition dihentikan paksa.");
-        }
+        isCallActive = false;
         
-        clearTimeout(silenceTimer);
-
         document.getElementById('callModal').classList.add('hidden');
         document.getElementById('callModal').classList.remove('flex');
         document.getElementById('callStatusText').textContent = 'Menghubungkan...';
 
+        stopReading();
+        if (callRecognition) {
+            callRecognition.abort(); // Gunakan abort untuk menghentikan paksa
+            callRecognition = null;
+        }
+        clearTimeout(silenceTimer);
+
+        // Simpan transkrip ke chat
         if (callHistory.length > 1) {
             let transcriptText = "[TRANSKRIP PANGGILAN SUARA]\n";
             callHistory.forEach(turn => {
@@ -2864,6 +2898,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     }
     // ===================================================================================
     // ▲▲▲ AKHIR DARI FUNGSI PANGGILAN SUARA ▲▲▲
+    // ===================================================================================
 
 
     window.addEventListener('load', async () => {
@@ -2876,10 +2911,15 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         }
         
         checkUserStatus();
-        populateVoiceList();
-        if (speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = populateVoiceList;
-        }
+        
+        // Populate voices after a small delay to ensure they are loaded
+        setTimeout(() => {
+            populateVoiceList();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = populateVoiceList;
+            }
+        }, 500);
+        
         loadAllChatSessions();
         hideTypingIndicator();
         hideImageProcessingIndicator();
@@ -2932,13 +2972,6 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
                 }
             }, 100); 
         });
-
-        // [BARU] Menambahkan listener untuk unlock audio context
-        document.body.addEventListener('touchstart', unlockAudioContext, { once: true });
-        document.body.addEventListener('click', unlockAudioContext, { once: true });
-
-        // [BARU & DIREKOMENDASIKAN] Menambahkan listener untuk tombol end call
-        document.getElementById('endCallBtn').addEventListener('click', endCall);
     });
 
     ['profileModal', 'imagePreviewModal', 'settingsModal'].forEach(id => {
@@ -3016,7 +3049,13 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     btnNext.textContent = (currSlide === slides.length - 1) ? "Mulai Chatting" : "Selanjutnya";
   }
   function nextSlide() { (currSlide < slides.length - 1) ? showSlide(currSlide + 1) : closeModal(); }
-  function closeModal() { modal.classList.add('hidden'); localStorage.setItem('onboardingShown', 'true'); }
+  function closeModal() { 
+      modal.classList.add('hidden'); 
+      localStorage.setItem('onboardingShown', 'true'); 
+      if (typeof unlockAudio === 'function') {
+        unlockAudio(); // [PERBAIKAN] Panggil unlockAudio saat onboarding ditutup.
+      }
+  }
   function renderDots() {
     dotsContainer.innerHTML = '';
     slides.forEach((_, i) => {
