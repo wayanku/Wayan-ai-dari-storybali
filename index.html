@@ -872,7 +872,7 @@
                     </div>
                     <div class="flex items-center space-x-2">
                         <!-- ▼▼▼ TOMBOL PANGGILAN SUARA BARU ▼▼▼ -->
-                        <button id="startCallBtn" onclick="startCall()"
+                        <button id="startCallBtn"
                                 class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95"
                                 title="Mulai Panggilan Suara">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
@@ -931,9 +931,7 @@
 
                     <!-- [REFINED] UI Perekaman Suara -->
                     <div id="voiceRecordingUI" class="absolute inset-0 items-center justify-between px-3 hidden" style="background-color: var(--bg-tertiary); border-radius: 1.25rem;">
-                        <!-- ▼▼▼ PERUBAHAN DI SINI ▼▼▼ -->
-                        <div class="flex items-center gap-3 min-w-0"> <!-- Ditambahkan 'min-w-0' -->
-                        <!-- ▲▲▲ AKHIR PERUBAHAN ▲▲▲ -->
+                        <div class="flex items-center gap-3 min-w-0">
                             <div class="voice-wave">
                                 <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
                             </div>
@@ -985,7 +983,7 @@
 </div>
     
 <!-- ▼▼▼ MODAL BARU UNTUK PANGGILAN SUARA ▼▼▼ -->
-<div id="callModal" class="fixed inset-0 z-50 flex-col items-center justify-center hidden" style="background-color: rgba(0,0,0,0.8); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);">
+<div id="callModal" class="fixed inset-0 z-[100] flex-col items-center justify-center hidden">
     <div class="text-center text-white">
         <div class="call-avatar-container w-32 h-32 rounded-full p-1 mx-auto mb-6" style="border: 3px solid rgba(255,255,255,0.5);">
             <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI Avatar" class="w-full h-full object-cover rounded-full">
@@ -993,8 +991,8 @@
         <h2 class="text-2xl font-bold">Wayan AI</h2>
         <p id="callStatusText" class="text-lg mt-2 text-gray-300 transition-all duration-300">Menghubungkan...</p>
     </div>
-    <button id="endCallBtn" onclick="endCall()" class="absolute bottom-16 w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform">
-        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l-8 8m0-8l8 8"></path></svg>
+    <button id="endCallBtn" class="absolute bottom-16 w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform">
+        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" transform="rotate(135 12 12)"></path></svg>
     </button>
 </div>
 <!-- ▲▲▲ AKHIR DARI MODAL PANGGILAN SUARA ▲▲▲ -->
@@ -2342,16 +2340,28 @@
             const audioUrl = URL.createObjectURL(audioBlob);
             
             elevenLabsAudioPlayer.src = audioUrl;
-            elevenLabsAudioPlayer.play();
-            if(button) button.innerHTML = stopIcon;
-
-            return new Promise(resolve => {
+            
+            return new Promise((resolve, reject) => {
+                elevenLabsAudioPlayer.play().then(() => {
+                    if(button) button.innerHTML = stopIcon;
+                }).catch(err => {
+                    console.error("Audio play failed:", err);
+                    reject(err); // Tolak promise jika play gagal
+                });
+                
                 elevenLabsAudioPlayer.onended = () => {
                     if(button) button.innerHTML = playIcon;
                     isReading = false;
                     URL.revokeObjectURL(audioUrl);
                     resolve();
                 };
+                elevenLabsAudioPlayer.onerror = (e) => {
+                    console.error("ElevenLabs audio player error:", e);
+                    if(button) button.innerHTML = playIcon;
+                    isReading = false;
+                    URL.revokeObjectURL(audioUrl);
+                    reject(e); // Tolak promise jika ada error
+                }
             });
 
         } catch (error) {
@@ -2367,28 +2377,34 @@
         const stopIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>`;
         const playIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>`;
         
-        if (currentUtterance) speechSynthesis.cancel();
-        currentUtterance = new SpeechSynthesisUtterance(text);
-        const selectedVoice = speechSynthesis.getVoices().find(v => v.voiceURI === settings.voiceURI);
-        currentUtterance.voice = selectedVoice || speechSynthesis.getVoices().find(v => v.lang.startsWith('id'));
-        if(button) button.innerHTML = stopIcon;
-        isReading = true;
-        
-        return new Promise(resolve => {
-            currentUtterance.onend = () => {
-                if(button) button.innerHTML = playIcon;
-                isReading = false;
-                currentUtterance = null;
-                resolve();
-            };
-            currentUtterance.onerror = (e) => {
-                console.error('SpeechSynthesis Error', e);
-                if(button) button.innerHTML = playIcon;
-                isReading = false;
-                currentUtterance = null;
-                resolve(); // Tetap resolve agar loop tidak berhenti
-            };
-            speechSynthesis.speak(currentUtterance);
+        return new Promise((resolve) => {
+            if (speechSynthesis.speaking) {
+                 speechSynthesis.cancel();
+            }
+            
+            // Perlu jeda singkat di iOS sebelum memanggil speak() lagi
+            setTimeout(() => {
+                currentUtterance = new SpeechSynthesisUtterance(text);
+                const selectedVoice = speechSynthesis.getVoices().find(v => v.voiceURI === settings.voiceURI);
+                currentUtterance.voice = selectedVoice || speechSynthesis.getVoices().find(v => v.lang.startsWith('id'));
+                if(button) button.innerHTML = stopIcon;
+                isReading = true;
+            
+                currentUtterance.onend = () => {
+                    if(button) button.innerHTML = playIcon;
+                    isReading = false;
+                    currentUtterance = null;
+                    resolve();
+                };
+                currentUtterance.onerror = (e) => {
+                    console.error('SpeechSynthesis Error', e);
+                    if(button) button.innerHTML = playIcon;
+                    isReading = false;
+                    currentUtterance = null;
+                    resolve(); // Tetap resolve agar loop tidak berhenti
+                };
+                speechSynthesis.speak(currentUtterance);
+            }, 100);
         });
     }
 
@@ -2406,10 +2422,18 @@
             return;
         }
         
-        if (elevenLabsApiKey) {
-            await playElevenLabsAudio(message, button);
-        } else {
-            await playBrowserAudio(message, button);
+        try {
+            if (elevenLabsApiKey) {
+                await playElevenLabsAudio(message, button);
+            } else {
+                await playBrowserAudio(message, button);
+            }
+        } catch (error) {
+             console.error("Gagal memutar audio:", error);
+             // Jika playElevenLabsAudio ditolak (misal karena autoplay), coba lagi dengan suara browser
+             if (elevenLabsApiKey) {
+                 await playBrowserAudio(message, button);
+             }
         }
     }
 
@@ -2422,63 +2446,21 @@
             elevenLabsAudioPlayer.currentTime = 0;
         }
         isReading = false;
-        // Reset semua tombol 'baca' yang mungkin dalam keadaan 'stop'
-        document.querySelectorAll('.ai-message button[title="Baca Jawaban"]').forEach(btn => {
+        document.querySelectorAll('button[title="Baca Jawaban"]').forEach(btn => {
              btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>`;
         });
     }
     
     function getSystemPrompt() {
-        const baseInstructions = `Gunakan format Markdown untuk jawabanmu jika diperlukan (list, tebal, kode).
-
-[PENTING: Aturan Pemberian Link]
-Jika pertanyaan pengguna memerlukan informasi yang sangat baru, data spesifik, atau referensi eksternal untuk mendukung jawabanmu, sertakan 2-3 link relevan yang valid dari ingatanmu.
-- Format link harus menggunakan Markdown, contoh: [Judul Artikel](https://contoh.com).
-- Jangan hanya menempelkan URL mentah. Selalu berikan judul yang deskriptif untuk link tersebut.
-- Jika kamu memberikan link, berikan disclaimer singkat seperti: "Berikut beberapa referensi yang mungkin bisa membantu:", karena kamu tidak bisa memverifikasi link secara real-time. Hindari mengarang atau membuat link palsu.
-
-Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang relevan. Format saran: pisahkan jawaban utama dan saran dengan '[SUGGESTIONS]', dan pisahkan setiap saran dengan tanda pipa '|'.`;
+        const baseInstructions = `Anda adalah Wayan, asisten AI. Berikan jawaban yang singkat dan langsung ke intinya, seolah-olah sedang berbicara di telepon. Hindari format list atau markdown.`.replace(/\n/g, ' '); // Hapus baris baru untuk prompt suara
         
-        const rolePrompts = {
-            guru_jepang: `Kamu adalah guru Bahasa Jepang bernama Wayan-sensei. Gaya bicaramu sabar dan ramah. Sapa dengan "Konnichiwa, gakusei-san!".`,
-            guru_matematika: `Kamu adalah guru Matematika bernama Pak Wayan. Kamu bisa membuat konsep sulit menjadi mudah dimengerti. Jelaskan setiap langkah pemecahan masalah secara rinci.`,
-            dokter: `Kamu adalah Dokter Wayan, seorang Dokter Umum virtual yang informatif. SELALU awali dan akhiri jawabanmu dengan disclaimer: "Informasi ini bersifat edukatif dan tidak menggantikan konsultasi medis profesional. Segera kunjungi dokter." Jangan pernah memberikan diagnosis atau resep.`,
-            programmer: `Kamu adalah senior programmer bernama Wayan. Gaya bicaramu to-the-point dan jelas. Identifikasi bug, tawarkan optimisasi, dan jelaskan 'mengapa'. Berikan contoh kode dalam blok kode Markdown.`,
-            penerjemah: `Kamu adalah penerjemah multibahasa bernama Wayan. Deteksi bahasa asli dan tanyakan target terjemahannya. Berikan terjemahan literal dan kontekstual.`,
-        };
-
-        let roleInstruction = '';
-        let personaRule = '';
-
-        if (settings.aiRole === 'kustom' && settings.customAiRolePrompt) {
-            roleInstruction = settings.customAiRolePrompt;
-        } else if (rolePrompts[settings.aiRole]) {
-            roleInstruction = rolePrompts[settings.aiRole];
-        } else {
-            switch (settings.personality) {
-                case 'profesional':
-                    roleInstruction = `Kamu adalah sebuah asisten AI yang profesional dan formal.`;
-                    break;
-                case 'lucu':
-                    roleInstruction = `Kamu adalah Wayan, asisten AI yang humoris.`;
-                    break;
-                default:
-                    roleInstruction = `Kamu adalah Wayan, asisten AI dari StoryBali yang santai dan menggunakan bahasa Indonesia sehari-hari.`;
-                    break;
-            }
-        }
-
-        if ((settings.aiRole === 'umum' && settings.personality === 'profesional') || settings.aiRole === 'kustom') {
-            personaRule = "Perkenalkan dirimu (jika relevan dengan rolenya) hanya jika pengguna menanyakan namamu.";
-        } else {
-            personaRule = "SANGAT PENTING: Selalu sertakan nama 'Wayan' (atau persona peranmu seperti 'Dokter Wayan', 'Wayan-sensei') setidaknya sekali dalam setiap jawabanmu untuk membangun karakter. Contoh: 'Menurut Wayan...', 'Wayan pikir...', 'Tentu, ini penjelasan dari Dokter Wayan...'. Ini adalah aturan utama kepribadianmu.";
-        }
+        let roleInstruction = `Kamu adalah Wayan, asisten AI dari StoryBali yang santai dan menggunakan bahasa Indonesia sehari-hari.`;
         
         if (settings.language === 'en') {
-            roleInstruction += ' Please respond in English.';
+            roleInstruction = 'You are Wayan, a helpful and friendly AI assistant. Please respond in English.';
         }
         
-        return `${roleInstruction} ${personaRule} ${baseInstructions}`;
+        return `${roleInstruction} ${baseInstructions}`;
     }
 
     async function makeApiRequest(payload, signal = null) {
@@ -2486,14 +2468,13 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         const validApiKeys = apiKeys.filter(key => key && key.trim() !== '');
         
         if (validApiKeys.length === 0) {
-            throw new Error("Tidak ada API Key yang valid yang dikonfigurasi.");
+            throw new Error("Tidak ada API Key Gemini yang valid.");
         }
 
         let startingIndex;
         const lastKeyIndexStr = localStorage.getItem('lastKeyIndex');
 
         if (lastKeyIndexStr === null) {
-            console.log("Pengguna baru terdeteksi. Memilih API Key awal secara acak.");
             startingIndex = Math.floor(Math.random() * validApiKeys.length);
         } else {
             const lastKeyIndex = parseInt(lastKeyIndexStr);
@@ -2505,28 +2486,23 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             const currentApiKey = validApiKeys[currentIndex];
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${currentApiKey}`;
             
-            console.log(`Mencoba API Key urutan ke-${currentIndex + 1}...`);
-
             try {
                 const fetchOptions = {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 };
-                if (signal) {
-                    fetchOptions.signal = signal;
-                }
+                if (signal) fetchOptions.signal = signal;
 
                 const response = await fetch(apiUrl, fetchOptions);
 
                 if (response.ok) {
-                    console.log(`Berhasil menggunakan API Key urutan ke-${currentIndex + 1}`);
                     localStorage.setItem('lastKeyIndex', currentIndex);
                     return await response.json();
                 }
 
                 if (response.status === 429) {
-                    console.warn(`API Key urutan ke-${currentIndex + 1} telah mencapai limit. Mencoba kunci berikutnya...`);
+                    console.warn(`API Key Gemini urutan ke-${currentIndex + 1} limit.`);
                 } else {
                     const errorBody = await response.text();
                     console.error("API Error Body:", errorBody);
@@ -2535,14 +2511,12 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
 
             } catch (error) {
                 if (error.name === 'AbortError') throw error; 
-                console.error(`Gagal dengan API Key urutan ke-${currentIndex + 1}:`, error.message);
-                if (!String(error.message).includes("429")) {
-                     throw error;
-                }
+                console.error(`Gagal dengan API Key Gemini urutan ke-${currentIndex + 1}:`, error.message);
+                if (!String(error.message).includes("429")) throw error;
             }
         }
 
-        throw new Error("Semua API Key yang tersedia telah mencapai limit atau gagal merespons.");
+        throw new Error("Semua API Key Gemini telah mencapai limit atau gagal.");
     }
 
     async function sendMessage() {
@@ -2559,7 +2533,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         
         const allUserData = getChatLimitData();
         const userData = allUserData[currentUserIP] || { count: 0 };
-        if (userData.count >= CHAT_LIMIT && userData.cooldownUntil) { return; }
+        if (userData.count >= CHAT_LIMIT && userData.cooldownUntil) return;
         userData.count++;
         saveChatLimitData({ ...allUserData, [currentUserIP]: userData });
         
@@ -2680,25 +2654,36 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     // ▼▼▼ FUNGSI-FUNGSI BARU UNTUK FITUR PANGGILAN SUARA ▼▼▼
     // ===================================================================================
     async function speakAiResponse(text) {
+        if (!isCallActive) return;
         isAiSpeaking = true;
         document.getElementById('callStatusText').textContent = 'Wayan AI sedang berbicara...';
         
         const elevenLabsApiKey = localStorage.getItem('elevenLabsApiKey');
         
-        if (elevenLabsApiKey) {
-            await playElevenLabsAudio(text, null);
-        } else {
-            await playBrowserAudio(text, null);
+        try {
+            if (elevenLabsApiKey) {
+                await playElevenLabsAudio(text, null);
+            } else {
+                await playBrowserAudio(text, null);
+            }
+        } catch (error) {
+             console.error("Gagal memutar suara dalam panggilan:", error);
+             // Jika gagal, coba fallback ke suara browser (jika belum)
+             if (elevenLabsApiKey) {
+                await playBrowserAudio(text, null);
+             }
         }
 
         isAiSpeaking = false;
         if (isCallActive) {
-            listenForUserSpeech();
+            // Beri jeda singkat sebelum mendengarkan lagi, penting untuk stabilitas
+            setTimeout(listenForUserSpeech, 200);
         }
     }
 
     function listenForUserSpeech() {
         if (!isCallActive || isAiSpeaking) return;
+        console.log("Memulai listener suara...");
 
         if (!('webkitSpeechRecognition' in window)) {
             alert('Maaf, browser Anda tidak mendukung fitur pengenalan suara. Panggilan tidak dapat dilanjutkan.');
@@ -2708,14 +2693,15 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         
         document.getElementById('callStatusText').textContent = 'Mendengarkan...';
         callRecognition = new webkitSpeechRecognition();
-        callRecognition.continuous = false;
+        callRecognition.continuous = false; // Penting: false untuk mendeteksi jeda
         callRecognition.interimResults = true;
         callRecognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
 
         let final_transcript = '';
 
         callRecognition.onresult = (event) => {
-            clearTimeout(silenceTimer);
+            clearTimeout(silenceTimer); // Reset timer setiap ada hasil
+            
             let interim_transcript = '';
             for (let i = event.resultIndex; i < event.results.length; ++i) {
                 if (event.results[i].isFinal) {
@@ -2724,43 +2710,51 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
                     interim_transcript += event.results[i][0].transcript;
                 }
             }
-            // Optional: update UI with interim transcript
-            // document.getElementById('callStatusText').textContent = final_transcript + interim_transcript;
+            console.log("Interim:", interim_transcript, "Final:", final_transcript);
 
-            // Restart silence timer on new speech
+            // Restart timer jeda
             silenceTimer = setTimeout(() => {
-                callRecognition.stop();
+                console.log("Timer jeda terpicu, menghentikan recognition.");
+                if (callRecognition) callRecognition.stop();
             }, 1500); // 1.5 detik jeda
+        };
+        
+        callRecognition.onspeechend = () => {
+            console.log("Speech end terdeteksi.");
+            if (callRecognition) callRecognition.stop();
         };
 
         callRecognition.onerror = (event) => {
             console.error('Call speech recognition error:', event.error);
-            if(isCallActive) listenForUserSpeech(); // Coba dengarkan lagi jika ada error
+            if(isCallActive && !isAiSpeaking) listenForUserSpeech(); // Coba dengarkan lagi jika ada error
         };
 
         callRecognition.onend = () => {
+            console.log("Recognition berakhir. Final transcript:", final_transcript);
             clearTimeout(silenceTimer);
             if (isCallActive && final_transcript.trim()) {
                 processUserTranscript(final_transcript.trim());
-            } else if (isCallActive) {
+            } else if (isCallActive && !isAiSpeaking) {
                 listenForUserSpeech(); // Jika tidak ada input, dengarkan lagi
             }
         };
 
-        callRecognition.start();
-        // Set initial silence timer
-        silenceTimer = setTimeout(() => {
-            if(callRecognition) callRecognition.stop();
-        }, 5000); // 5 detik batas waktu awal
+        try {
+            callRecognition.start();
+        } catch (e) {
+            console.error("Tidak bisa memulai recognition:", e);
+            // Coba lagi setelah jeda singkat
+            if(isCallActive) setTimeout(listenForUserSpeech, 500);
+        }
     }
     
     async function processUserTranscript(transcript) {
+        console.log("Memproses transkrip:", transcript);
         document.getElementById('callStatusText').textContent = 'Wayan sedang berpikir...';
         callHistory.push({ role: 'user', parts: [{ text: transcript }] });
 
         try {
-            // Mengirim beberapa percakapan terakhir untuk konteks
-            const contextualHistory = callHistory.slice(-6);
+            const contextualHistory = callHistory.slice(-6); // Kirim 6 percakapan terakhir
             
             const payload = {
                 contents: contextualHistory,
@@ -2775,6 +2769,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
                 aiResponseText = data.candidates[0].content.parts[0].text.split('[SUGGESTIONS]')[0].trim();
             }
             
+            console.log("Jawaban AI:", aiResponseText);
             callHistory.push({ role: 'model', parts: [{ text: aiResponseText }] });
             await speakAiResponse(aiResponseText);
 
@@ -2786,20 +2781,32 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         }
     }
 
-    async function startCall() {
+    function startCall() {
         if (isCallActive) return;
         isCallActive = true;
         callHistory = [];
+        
+        // Trik "Audio Unlock" untuk browser seluler
+        try {
+            const audioUnlocker = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
+            audioUnlocker.play().catch(e => console.warn("Audio unlock gagal, mungkin tidak perlu."));
+        } catch (e) {
+            console.error("Gagal membuat audio unlocker:", e);
+        }
+
         document.getElementById('callModal').classList.remove('hidden');
         document.getElementById('callModal').classList.add('flex');
         
         const openingLine = "Halo, ini Wayan. Ada yang bisa dibantu?";
         callHistory.push({ role: 'model', parts: [{ text: openingLine }] });
-        await speakAiResponse(openingLine);
+        
+        // Menunggu sebentar agar modal tampil sebelum berbicara
+        setTimeout(() => speakAiResponse(openingLine), 500);
     }
 
     function endCall() {
         if (!isCallActive) return;
+        console.log("Panggilan diakhiri.");
         isCallActive = false;
         
         document.getElementById('callModal').classList.add('hidden');
@@ -2808,7 +2815,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
 
         stopReading();
         if (callRecognition) {
-            callRecognition.stop();
+            callRecognition.abort(); // Gunakan abort() untuk menghentikan paksa
             callRecognition = null;
         }
         clearTimeout(silenceTimer);
@@ -2848,6 +2855,17 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         hideTypingIndicator();
         hideImageProcessingIndicator();
         
+        // ▼▼▼ EVENT LISTENER BARU UNTUK TOMBOL PANGGILAN ▼▼▼
+        const startCallBtn = document.getElementById('startCallBtn');
+        const endCallBtn = document.getElementById('endCallBtn');
+        
+        startCallBtn.addEventListener('click', startCall);
+        startCallBtn.addEventListener('touchend', (e) => { e.preventDefault(); startCall(); });
+
+        endCallBtn.addEventListener('click', endCall);
+        endCallBtn.addEventListener('touchend', (e) => { e.preventDefault(); endCall(); });
+        // ▲▲▲ AKHIR EVENT LISTENER BARU ▲▲▲
+
         document.getElementById('fontSizeSelect').addEventListener('change', (e) => {
             settings.fontSize = e.target.value;
             saveSettings();
