@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -1461,38 +1460,11 @@
     let callHistory = [];
     // ▲▲▲ AKHIR DARI VARIABEL PANGGILAN SUARA ▲▲▲
 
-    // [PERBAIKAN UTAMA] Variabel dan fungsi baru untuk "Sledgehammer Unlock"
-    let isAudioUnlocked = false;
-    const silentAudio = new Audio("data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gUmVjb3JkZWQgYW5kIEVkaXRlZCBieSBPbGF2IExhdmNpaS8AAAAATGF2YzU4LjI5LjEwMAAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAA/80deAAAAARkAAAAAWJAAAAAAAAAAAAf/74AnAAAAAAAAAAAAAAAAAAAAAD/s+4AAAAAAAAAAAAAA//tADAAAAAAAAAAAAAARMAAAAAAAA//tAQAAAAAAAAAAAAAARGYAAAAAAAAAAAAA/80deAAAAARkAAAAAWJAAAAAAAAAAAAf/74AnAAAAAAAAAAAAAAAAAAAAAD/s+4AAAAAAAAAAAAAA//tADAAAAAAAAAAAAAARMAAAAAAAA//tAQAAAAAAAAAAAAAARGYAAAAAAAAAAAAA/80deAAAAARkAAAAAWJAAAAAAAAAAAAf/74AnAAAAAAAAAAAAAAAAAAAAAD/s+4AAAAAAAAAAAAAA//tADAAAAAAAAAAAAAARMAAAAAAAA//tAQAAAAAAAAAAAAAARGYAAAAAAAAAAAAA/80deAAAAARkAAAAAWJAAAAAAAAAAAAf/74AnAAAAAAAAAAAAAAAAAAAAAD/s+4AAAAAAAAAAAAAA//tADAAAAAAAAAAAAAARMAAAAAAAA//tAQAAAAAAAAAAAAAARGYAAAAAAAAAAAAA/80deAAAAARkAAAAAWJAAAAAAAAAAAAf/74AnAAAAAAAAAAAAAAAAAAAAAD/s+4AAAAAAAAAAAAAA//tADAAAAAAAAAAAAAARMAAAAAAAA//tAQAAAAAAAAAAAAAARGYAAAAAAAAAAAAA/80deAAAAARkAAAAAWJAAAAAAAAAAAAf/74AnAAAAAAAAAAAAAAAAAAAAAD/s+4AAAAAAAAAAAAAA//tADAAAAAAAAAAAAAARMAAAAAAAA//tAQAAAAAAAAAAAAAARGYAAAAAAAAAAAAA/80deAAAAARkAAAAAWJAAAAAAAAAAAAf/74AnAAAAAAAAAAAAAAAAAAAAAD/s+4AAAAAAAAAAAAAA//tADAAAAAAAAAAAAAARMAAAAAAAA//tAQAAAAAAAAAAAAAARGYAAAAAAAAAAAAA/80deAAAAARkAAAAAWJAAAAAAAAAAAAf/74AnAAAAAAAAAAAAAAAAAAAAAD/s+4AAAAAAAAAAAAAA//tADAAAAAAAAAAAAAARMAAAAAAAA//tAQAAAAAAAAAAAAAARGYAAAAAAAAAAAAA/80deAAAAARkAAAAAWJAAAAAAAAAAAAf/74AnAAAAAAAAAAAAAAAAAAAAAD/s+4AAAAAAAAAAAAAA//tADAAAAAAAAAAAAAARMAAAAAAAA//tAQAAAAAAAAAAAAAARGYAAAAAAAAAAAAA/80deAAAAARkAAAAAWJAAAAAAAAAAAAf/74AnAAAAAAAAAAAAAAAAAAAAAD/s+4AAAAAAAAAAAAAA//tADAAAAAAAAAAAAAARMAAAAAAAA//tAQAAAAAAAAAAAAAARGYAAAAAAAAAAAAA/80deAAAAARkAAAAAWJAAAAAAAAAAAAf/74AnAAAAAAAAAAAAAAAAAAAAAD/s+4AAAAAAAAAAAAAA//tADAAAAAAAAAAAAAARMAAAAAAAA//tAQAAAAAAAAAAAAAARGYAAAAAAAAAAAAA/80deAAAAARkAAAAAWJAAAAAAAAAAAAf/74AnAAAAAAAAAAAAAAAAAAAAAD/s+4AAAAAAAAAAAAAA//tADAAAAAAAAAAAAAARMAAAAAAAA//tAQAAAAAAAAAAAAAARGYAAAAAAAAAAAAA");
-
-    function unlockAudio() {
-        if (isAudioUnlocked) return;
-        console.log("Mencoba membuka kunci konteks audio...");
-
-        // Putar audio senyap yang sesungguhnya
-        silentAudio.play().then(() => {
-            console.log("Audio senyap berhasil diputar.");
-        }).catch(e => {
-            console.error("Gagal memutar audio senyap:", e);
-        });
-
-        // "Panaskan" SpeechSynthesis API
-        if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance(' ');
-            utterance.volume = 0;
-            speechSynthesis.speak(utterance);
-        }
-
-        isAudioUnlocked = true;
-        addSystemMessage("Sistem suara diaktifkan.");
-    }
-
     const DEFAULT_API_KEY_1 = 'AIzaSyClcqSMaHiXMZI4qYlTySqC3I3hWWg8H9s';
     const DEFAULT_API_KEY_2 = 'AIzaSyB8OPwzNAAyO1nWd9g185rx4YK3WIJy_Fw';
     const DEFAULT_API_KEY_3 = 'AIzaSyAYzvB1mfVdjrBtXY2n4-UUzCH5juQt8rU';
     const DEFAULT_API_KEY_4 = 'AIzaSyCkkekhKcQzFUUjx8ZcuqEYyqRde1ZDJcU';
     const DEFAULT_API_KEY_5 = 'AIzaSyCV-88PX1_tKh5VBjki9VeyY8gAH5bpZ0o';
-
     
     async function getUserIP() {
         try {
@@ -1808,13 +1780,11 @@
         }
     }
     function sendQuickMessage(message) {
-        unlockAudio();
         document.getElementById('messageInput').value = message;
         handleInputChange({ target: document.getElementById('messageInput') });
         sendMessage();
     }
     function toggleVoiceMode() {
-        unlockAudio();
         if (isRecording) {
             stopVoiceRecognition(true);
         } else {
@@ -1971,9 +1941,6 @@
             localStorage.removeItem('elevenLabsApiKey');
             localStorage.removeItem('storybaliChatSessions');
             localStorage.removeItem('onboardingShown');
-            localStorage.removeItem('notificationSent');
-            localStorage.removeItem('userMessageCount');
-            localStorage.removeItem('ratingModalShown');
             alert('Pengaturan telah direset ke default. Halaman akan dimuat ulang.');
             window.location.reload();
         }
@@ -2078,7 +2045,6 @@
     }
 
     function sendImageWithQuestion() {
-        unlockAudio();
         const question = document.getElementById('imageQuestionInput').value.trim();
         if (!question) {
             alert('Tulis pertanyaan dulu ya!');
@@ -2296,9 +2262,7 @@
     }
     function playNotificationSound() {
         if (settings.soundEnabled) {
-            unlockAudio();
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') { audioCtx.resume(); }
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
             oscillator.connect(gainNode);
@@ -2343,7 +2307,7 @@
 
     async function playElevenLabsAudio(text, button) {
         const apiKey = localStorage.getItem('elevenLabsApiKey');
-        const voiceId = "21m00Tcm4TlvDq8ikWAM";
+        const voiceId = "21m00Tcm4TlvDq8ikWAM"; // Contoh: Adam
         const modelId = "eleven_multilingual_v2";
         const apiUrl = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`;
 
@@ -2362,10 +2326,17 @@
                     'Content-Type': 'application/json',
                     'xi-api-key': apiKey
                 },
-                body: JSON.stringify({ text: text, model_id: modelId, voice_settings: { stability: 0.5, similarity_boost: 0.75 } })
+                body: JSON.stringify({
+                    text: text,
+                    model_id: modelId,
+                    voice_settings: { stability: 0.5, similarity_boost: 0.75 }
+                })
             });
 
-            if (!response.ok) throw new Error(`ElevenLabs API error: ${response.statusText}`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`ElevenLabs API error: ${errorData.detail.message}`);
+            }
 
             const audioBlob = await response.blob();
             const audioUrl = URL.createObjectURL(audioBlob);
@@ -2381,75 +2352,47 @@
                     URL.revokeObjectURL(audioUrl);
                     resolve();
                 };
-                elevenLabsAudioPlayer.onerror = () => {
-                    console.error("Error playing ElevenLabs audio.");
-                    if(button) button.innerHTML = playIcon;
-                    isReading = false;
-                    resolve();
-                };
             });
 
         } catch (error) {
             console.error('Error with ElevenLabs API:', error);
             if(button) button.innerHTML = playIcon;
             isReading = false;
+            // Jika ElevenLabs gagal, coba putar dengan suara browser
             return playBrowserAudio(text, button);
         }
     }
 
-    // [PERBAIKAN] Versi "sabar" dari playBrowserAudio
     function playBrowserAudio(text, button) {
         const stopIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>`;
         const playIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>`;
-
-        const speakNow = () => {
-            if (speechSynthesis.speaking) speechSynthesis.cancel();
-            
-            currentUtterance = new SpeechSynthesisUtterance(text);
-            const voices = speechSynthesis.getVoices();
-            console.log("Suara yang tersedia:", voices);
-            
-            const selectedVoice = voices.find(v => v.voiceURI === settings.voiceURI);
-            currentUtterance.voice = selectedVoice || voices.find(v => v.lang.startsWith('id')) || voices[0];
-            
-            if (!currentUtterance.voice) {
-                console.error("Tidak ada suara yang tersedia untuk sintesis!");
-                addSystemMessage("Maaf, tidak ada suara yang tersedia di browser Anda.");
-                if(button) button.innerHTML = playIcon;
-                isReading = false;
-                return;
-            }
-
-            if(button) button.innerHTML = stopIcon;
-            isReading = true;
-
+        
+        if (currentUtterance) speechSynthesis.cancel();
+        currentUtterance = new SpeechSynthesisUtterance(text);
+        const selectedVoice = speechSynthesis.getVoices().find(v => v.voiceURI === settings.voiceURI);
+        currentUtterance.voice = selectedVoice || speechSynthesis.getVoices().find(v => v.lang.startsWith('id'));
+        if(button) button.innerHTML = stopIcon;
+        isReading = true;
+        
+        return new Promise(resolve => {
             currentUtterance.onend = () => {
                 if(button) button.innerHTML = playIcon;
                 isReading = false;
                 currentUtterance = null;
+                resolve();
             };
             currentUtterance.onerror = (e) => {
                 console.error('SpeechSynthesis Error', e);
-                addSystemMessage(`Gagal membacakan teks: ${e.error}`);
                 if(button) button.innerHTML = playIcon;
                 isReading = false;
                 currentUtterance = null;
+                resolve(); // Tetap resolve agar loop tidak berhenti
             };
-            
             speechSynthesis.speak(currentUtterance);
-        };
-
-        if (speechSynthesis.getVoices().length > 0) {
-            speakNow();
-        } else {
-            speechSynthesis.onvoiceschanged = speakNow;
-        }
+        });
     }
 
-
     async function readAiResponse(button, encodedMessage) {
-        unlockAudio();
-
         if (!settings.readAiResponseEnabled) {
             alert('Fitur pembaca jawaban dinonaktifkan.');
             return;
@@ -2466,7 +2409,7 @@
         if (elevenLabsApiKey) {
             await playElevenLabsAudio(message, button);
         } else {
-            playBrowserAudio(message, button);
+            await playBrowserAudio(message, button);
         }
     }
 
@@ -2479,6 +2422,7 @@
             elevenLabsAudioPlayer.currentTime = 0;
         }
         isReading = false;
+        // Reset semua tombol 'baca' yang mungkin dalam keadaan 'stop'
         document.querySelectorAll('.ai-message button[title="Baca Jawaban"]').forEach(btn => {
              btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>`;
         });
@@ -2602,7 +2546,6 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     }
 
     async function sendMessage() {
-        unlockAudio();
         const input = document.getElementById('messageInput');
         const message = input.value.trim();
         if (!message || !currentUserIP || currentFetchController) return;
@@ -2734,7 +2677,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     }
 
     // ===================================================================================
-    // ▼▼▼ FUNGSI-FUNGSI UNTUK FITUR PANGGILAN SUARA ▼▼▼
+    // ▼▼▼ FUNGSI-FUNGSI BARU UNTUK FITUR PANGGILAN SUARA ▼▼▼
     // ===================================================================================
     async function speakAiResponse(text) {
         isAiSpeaking = true;
@@ -2781,15 +2724,18 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
                     interim_transcript += event.results[i][0].transcript;
                 }
             }
-            
+            // Optional: update UI with interim transcript
+            // document.getElementById('callStatusText').textContent = final_transcript + interim_transcript;
+
+            // Restart silence timer on new speech
             silenceTimer = setTimeout(() => {
-                if (callRecognition) callRecognition.stop();
-            }, 1500);
+                callRecognition.stop();
+            }, 1500); // 1.5 detik jeda
         };
 
         callRecognition.onerror = (event) => {
             console.error('Call speech recognition error:', event.error);
-            if (event.error !== 'aborted' && isCallActive) listenForUserSpeech();
+            if(isCallActive) listenForUserSpeech(); // Coba dengarkan lagi jika ada error
         };
 
         callRecognition.onend = () => {
@@ -2797,19 +2743,15 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             if (isCallActive && final_transcript.trim()) {
                 processUserTranscript(final_transcript.trim());
             } else if (isCallActive) {
-                listenForUserSpeech();
+                listenForUserSpeech(); // Jika tidak ada input, dengarkan lagi
             }
         };
 
-        try {
-            callRecognition.start();
-            silenceTimer = setTimeout(() => {
-                if(callRecognition) callRecognition.stop();
-            }, 5000);
-        } catch (e) {
-            console.error("Gagal memulai speech recognition pada panggilan:", e);
-            if(isCallActive) setTimeout(() => listenForUserSpeech(), 100);
-        }
+        callRecognition.start();
+        // Set initial silence timer
+        silenceTimer = setTimeout(() => {
+            if(callRecognition) callRecognition.stop();
+        }, 5000); // 5 detik batas waktu awal
     }
     
     async function processUserTranscript(transcript) {
@@ -2817,6 +2759,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         callHistory.push({ role: 'user', parts: [{ text: transcript }] });
 
         try {
+            // Mengirim beberapa percakapan terakhir untuk konteks
             const contextualHistory = callHistory.slice(-6);
             
             const payload = {
@@ -2844,7 +2787,6 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     }
 
     async function startCall() {
-        unlockAudio();
         if (isCallActive) return;
         isCallActive = true;
         callHistory = [];
@@ -2866,11 +2808,12 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
 
         stopReading();
         if (callRecognition) {
-            callRecognition.abort();
+            callRecognition.stop();
             callRecognition = null;
         }
         clearTimeout(silenceTimer);
 
+        // Simpan transkrip ke chat
         if (callHistory.length > 1) {
             let transcriptText = "[TRANSKRIP PANGGILAN SUARA]\n";
             callHistory.forEach(turn => {
@@ -2897,14 +2840,10 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         }
         
         checkUserStatus();
-        
-        setTimeout(() => {
-            populateVoiceList();
-            if (speechSynthesis.onvoiceschanged !== undefined) {
-                speechSynthesis.onvoiceschanged = populateVoiceList;
-            }
-        }, 500);
-        
+        populateVoiceList();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = populateVoiceList;
+        }
         loadAllChatSessions();
         hideTypingIndicator();
         hideImageProcessingIndicator();
@@ -2971,7 +2910,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     document.addEventListener('touchstart', function () {}, true);
 </script>
 
-<!-- Onboarding Modal & Script -->
+<!-- Onboarding Modal & Script (tidak diubah) -->
 <div id="onboardingModal" class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center transition-all duration-300 hidden">
   <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-0 overflow-hidden border border-gray-200 relative animate-fadein">
     <div id="onboardingSlides" class="w-full">
@@ -3034,13 +2973,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     btnNext.textContent = (currSlide === slides.length - 1) ? "Mulai Chatting" : "Selanjutnya";
   }
   function nextSlide() { (currSlide < slides.length - 1) ? showSlide(currSlide + 1) : closeModal(); }
-  function closeModal() { 
-      modal.classList.add('hidden'); 
-      localStorage.setItem('onboardingShown', 'true'); 
-      if (typeof unlockAudio === 'function') {
-        unlockAudio(); // [PERBAIKAN] Panggil unlockAudio saat onboarding ditutup.
-      }
-  }
+  function closeModal() { modal.classList.add('hidden'); localStorage.setItem('onboardingShown', 'true'); }
   function renderDots() {
     dotsContainer.innerHTML = '';
     slides.forEach((_, i) => {
@@ -3088,6 +3021,61 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     </div>
 </div>
 <!-- ▲▲▲ AKHIR DARI KODE BARU ▲▲▲ -->
+
+
+<script>
+// ===== Perbaikan Text-to-Speech =====
+function speakText(text) {
+  if ('speechSynthesis' in window) {
+    let utter = new SpeechSynthesisUtterance(text);
+    let voices = speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      let voice = voices.find(v => v.lang.startsWith("id")) || voices[0];
+      utter.voice = voice;
+    }
+    utter.rate = 1;
+    utter.pitch = 1;
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utter);
+  } else {
+    alert("Text-to-speech tidak didukung di browser ini");
+  }
+}
+
+// ===== Perbaikan Speech Recognition =====
+function startListening() {
+  const isiInput = document.getElementById("messageInput");
+
+  // Cek apakah webkitSpeechRecognition tersedia (Android Chrome & sebagian iOS)
+  if ('webkitSpeechRecognition' in window) {
+    let recognition = new webkitSpeechRecognition();
+    recognition.lang = "id-ID";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      console.log("Mendengarkan...");
+      document.getElementById("voiceStatusText")?.innerText = "Mendengarkan...";
+    };
+
+    recognition.onresult = (event) => {
+      let text = event.results[0][0].transcript;
+      console.log("User berkata:", text);
+      isiInput.value = text;
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Error mic:", event.error);
+      alert("Mic error: " + event.error);
+    };
+
+    recognition.start();
+  } else {
+    alert("Speech recognition tidak didukung di browser ini, gunakan input teks.");
+  }
+}
+</script>
 
 </body>
 </html>
