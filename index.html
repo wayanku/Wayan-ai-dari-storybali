@@ -1261,12 +1261,13 @@
             </div>
         </div>
         <div class="p-3 bg-white border-t border-gray-200 flex-shrink-0 text-center">
-            <p class="text-xs text-gray-500">StoryBali v2.6.0 | © 2024</p>
+            <p class="text-xs text-gray-500">StoryBali v2.7.1 | © 2024</p>
         </div>
     </div>
 </div>
 
 <script>
+    // ... (All previous JS code remains here, from 'adjustHeightForMobile' down to 'analyzeImageWithQuestion') ...
     function adjustHeightForMobile() {
         let vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -1450,12 +1451,13 @@
     let isReading = false;
     let elevenLabsAudioPlayer = new Audio();
 
-    // ▼▼▼ VARIABEL BARU UNTUK FITUR PANGGILAN SUARA ▼▼▼
+    // ▼▼▼ VARIABEL FITUR PANGGILAN SUARA ▼▼▼
     let isCallActive = false;
     let isAiSpeaking = false;
     let callRecognition = null;
     let silenceTimer = null;
     let callHistory = [];
+    let micStream = null; // Untuk menyimpan stream mikrofon
     // ▲▲▲ AKHIR DARI VARIABEL PANGGILAN SUARA ▲▲▲
 
     const DEFAULT_API_KEY_1 = 'AIzaSyClcqSMaHiXMZI4qYlTySqC3I3hWWg8H9s';
@@ -1464,6 +1466,7 @@
     const DEFAULT_API_KEY_4 = 'AIzaSyCkkekhKcQzFUUjx8ZcuqEYyqRde1ZDJcU';
     const DEFAULT_API_KEY_5 = 'AIzaSyCV-88PX1_tKh5VBjki9VeyY8gAH5bpZ0o';
     
+    // ... (All previous utility functions like getChatLimitData, saveApiKeys, etc. are here) ...
     async function getUserIP() {
         try {
             const response = await fetch('https://api.ipify.org?format=json');
@@ -2451,16 +2454,50 @@
         });
     }
     
-    function getSystemPrompt() {
-        const baseInstructions = `Anda adalah Wayan, asisten AI. Berikan jawaban yang singkat dan langsung ke intinya, seolah-olah sedang berbicara di telepon. Hindari format list atau markdown.`.replace(/\n/g, ' '); // Hapus baris baru untuk prompt suara
-        
-        let roleInstruction = `Kamu adalah Wayan, asisten AI dari StoryBali yang santai dan menggunakan bahasa Indonesia sehari-hari.`;
-        
-        if (settings.language === 'en') {
-            roleInstruction = 'You are Wayan, a helpful and friendly AI assistant. Please respond in English.';
+    // ▼▼▼ MODIFIKASI KUNCI: Fungsi getSystemPrompt() sekarang memiliki mode ▼▼▼
+    function getSystemPrompt(isCallMode = false) {
+        if (isCallMode) {
+            const voiceCallPrompt = `PERAN UTAMA: Kamu adalah Wayan, seorang teman ngobrol AI dalam sebuah panggilan suara. Lupakan peranmu sebagai asisten yang memberikan informasi lengkap. Fokus pada percakapan yang alami dan mengalir. ATURAN SANGAT PENTING: 1. SUPER SINGKAT: Jawab pertanyaan HANYA dengan 1-2 kalimat pendek. Jangan pernah memberikan jawaban panjang atau penjelasan mendalam. 2. INTERAKTIF: Selalu usahakan agar percakapan terus berjalan. Setelah menjawab, sering-seringlah ajukan pertanyaan balik yang relevan. Contoh: "Menurutku begitu, kalau kamu gimana?", "Ada lagi yang mau dibahas soal itu?", "Paham kan maksud Wayan?". 3. GAYA BAHASA: Gunakan bahasa gaul, santai, dan non-formal. Terdengarlah seperti manusia, bukan robot. 4. TIDAK ADA FORMAT: Jangan pernah menggunakan list, bullet point, tanda bintang (**), atau format markdown lainnya. Jawabanmu harus berupa teks percakapan murni. 5. LANGSUNG KE INTI: Jawab langsung pertanyaan pengguna tanpa basa-basi pembuka yang tidak perlu.`;
+            return voiceCallPrompt;
         }
-        
-        return `${roleInstruction} ${baseInstructions}`;
+
+        // Prompt untuk mode chat teks (tidak berubah)
+        const baseInstructions = `Gunakan format Markdown untuk jawabanmu jika diperlukan (list, tebal, kode). [PENTING: Aturan Pemberian Link] Jika pertanyaan pengguna memerlukan informasi yang sangat baru, data spesifik, atau referensi eksternal untuk mendukung jawabanmu, sertakan 2-3 link relevan yang valid dari ingatanmu. - Format link harus menggunakan Markdown, contoh: [Judul Artikel](https://contoh.com). - Jangan hanya menempelkan URL mentah. Selalu berikan judul yang deskriptif untuk link tersebut. - Jika kamu memberikan link, berikan disclaimer singkat seperti: "Berikut beberapa referensi yang mungkin bisa membantu:", karena kamu tidak bisa memverifikasi link secara real-time. Hindari mengarang atau membuat link palsu. Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang relevan. Format saran: pisahkan jawaban utama dan saran dengan '[SUGGESTIONS]', dan pisahkan setiap saran dengan tanda pipa '|'.`;
+        const rolePrompts = {
+            guru_jepang: `Kamu adalah guru Bahasa Jepang bernama Wayan-sensei. Gaya bicaramu sabar dan ramah. Sapa dengan "Konnichiwa, gakusei-san!".`,
+            guru_matematika: `Kamu adalah guru Matematika bernama Pak Wayan. Kamu bisa membuat konsep sulit menjadi mudah dimengerti. Jelaskan setiap langkah pemecahan masalah secara rinci.`,
+            dokter: `Kamu adalah Dokter Wayan, seorang Dokter Umum virtual yang informatif. SELALU awali dan akhiri jawabanmu dengan disclaimer: "Informasi ini bersifat edukatif dan tidak menggantikan konsultasi medis profesional. Segera kunjungi dokter." Jangan pernah memberikan diagnosis atau resep.`,
+            programmer: `Kamu adalah senior programmer bernama Wayan. Gaya bicaramu to-the-point dan jelas. Identifikasi bug, tawarkan optimisasi, dan jelaskan 'mengapa'. Berikan contoh kode dalam blok kode Markdown.`,
+            penerjemah: `Kamu adalah penerjemah multibahasa bernama Wayan. Deteksi bahasa asli dan tanyakan target terjemahannya. Berikan terjemahan literal dan kontekstual.`,
+        };
+        let roleInstruction = '';
+        let personaRule = '';
+        if (settings.aiRole === 'kustom' && settings.customAiRolePrompt) {
+            roleInstruction = settings.customAiRolePrompt;
+        } else if (rolePrompts[settings.aiRole]) {
+            roleInstruction = rolePrompts[settings.aiRole];
+        } else {
+            switch (settings.personality) {
+                case 'profesional':
+                    roleInstruction = `Kamu adalah sebuah asisten AI yang profesional dan formal.`;
+                    break;
+                case 'lucu':
+                    roleInstruction = `Kamu adalah Wayan, asisten AI yang humoris.`;
+                    break;
+                default:
+                    roleInstruction = `Kamu adalah Wayan, asisten AI dari StoryBali yang santai dan menggunakan bahasa Indonesia sehari-hari.`;
+                    break;
+            }
+        }
+        if ((settings.aiRole === 'umum' && settings.personality === 'profesional') || settings.aiRole === 'kustom') {
+            personaRule = "Perkenalkan dirimu (jika relevan dengan rolenya) hanya jika pengguna menanyakan namamu.";
+        } else {
+            personaRule = "SANGAT PENTING: Selalu sertakan nama 'Wayan' (atau persona peranmu seperti 'Dokter Wayan', 'Wayan-sensei') setidaknya sekali dalam setiap jawabanmu untuk membangun karakter. Contoh: 'Menurut Wayan...', 'Wayan pikir...', 'Tentu, ini penjelasan dari Dokter Wayan...'. Ini adalah aturan utama kepribadianmu.";
+        }
+        if (settings.language === 'en') {
+            roleInstruction += ' Please respond in English.';
+        }
+        return `${roleInstruction} ${personaRule} ${baseInstructions}`;
     }
 
     async function makeApiRequest(payload, signal = null) {
@@ -2560,7 +2597,7 @@
             
             const payload = {
                 contents: historyForApi,
-                systemInstruction: { parts: [{ text: getSystemPrompt() }] },
+                systemInstruction: { parts: [{ text: getSystemPrompt(false) }] }, // Mode teks
                 generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048 }
             };
 
@@ -2612,7 +2649,7 @@
                 }],
                 systemInstruction: {
                     parts: [{
-                        text: getSystemPrompt()
+                        text: getSystemPrompt(false) // Mode teks
                     }]
                 },
                 generationConfig: {
@@ -2668,7 +2705,6 @@
             }
         } catch (error) {
              console.error("Gagal memutar suara dalam panggilan:", error);
-             // Jika gagal, coba fallback ke suara browser (jika belum)
              if (elevenLabsApiKey) {
                 await playBrowserAudio(text, null);
              }
@@ -2676,7 +2712,6 @@
 
         isAiSpeaking = false;
         if (isCallActive) {
-            // Beri jeda singkat sebelum mendengarkan lagi, penting untuk stabilitas
             setTimeout(listenForUserSpeech, 200);
         }
     }
@@ -2693,14 +2728,14 @@
         
         document.getElementById('callStatusText').textContent = 'Mendengarkan...';
         callRecognition = new webkitSpeechRecognition();
-        callRecognition.continuous = false; // Penting: false untuk mendeteksi jeda
+        callRecognition.continuous = false;
         callRecognition.interimResults = true;
         callRecognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
 
         let final_transcript = '';
 
         callRecognition.onresult = (event) => {
-            clearTimeout(silenceTimer); // Reset timer setiap ada hasil
+            clearTimeout(silenceTimer);
             
             let interim_transcript = '';
             for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -2710,32 +2745,27 @@
                     interim_transcript += event.results[i][0].transcript;
                 }
             }
-            console.log("Interim:", interim_transcript, "Final:", final_transcript);
 
-            // Restart timer jeda
             silenceTimer = setTimeout(() => {
-                console.log("Timer jeda terpicu, menghentikan recognition.");
                 if (callRecognition) callRecognition.stop();
             }, 1500); // 1.5 detik jeda
         };
         
         callRecognition.onspeechend = () => {
-            console.log("Speech end terdeteksi.");
             if (callRecognition) callRecognition.stop();
         };
 
         callRecognition.onerror = (event) => {
             console.error('Call speech recognition error:', event.error);
-            if(isCallActive && !isAiSpeaking) listenForUserSpeech(); // Coba dengarkan lagi jika ada error
+            if(isCallActive && !isAiSpeaking) listenForUserSpeech();
         };
 
         callRecognition.onend = () => {
-            console.log("Recognition berakhir. Final transcript:", final_transcript);
             clearTimeout(silenceTimer);
             if (isCallActive && final_transcript.trim()) {
                 processUserTranscript(final_transcript.trim());
             } else if (isCallActive && !isAiSpeaking) {
-                listenForUserSpeech(); // Jika tidak ada input, dengarkan lagi
+                listenForUserSpeech();
             }
         };
 
@@ -2743,7 +2773,6 @@
             callRecognition.start();
         } catch (e) {
             console.error("Tidak bisa memulai recognition:", e);
-            // Coba lagi setelah jeda singkat
             if(isCallActive) setTimeout(listenForUserSpeech, 500);
         }
     }
@@ -2758,8 +2787,13 @@
             
             const payload = {
                 contents: contextualHistory,
-                systemInstruction: { parts: [{ text: getSystemPrompt() }] },
-                generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 256 }
+                systemInstruction: { parts: [{ text: getSystemPrompt(true) }] }, // Mode panggilan
+                generationConfig: {
+                    temperature: 0.9,
+                    topK: 1,
+                    topP: 1,
+                    maxOutputTokens: 100 // Batasi agar jawaban sangat pendek
+                }
             };
 
             const data = await makeApiRequest(payload);
@@ -2780,50 +2814,72 @@
             await speakAiResponse(errorMessage);
         }
     }
-
+    
+    // ▼▼▼ [FIXED] Fungsi startCall() yang lebih aman dan robust ▼▼▼
     function startCall() {
         if (isCallActive) return;
-        isCallActive = true;
-        callHistory = [];
         
-        // Trik "Audio Unlock" untuk browser seluler
+        const callModal = document.getElementById('callModal');
+        callModal.classList.remove('hidden');
+        callModal.classList.add('flex');
+        
+        initializeCall();
+    }
+    
+    async function initializeCall() {
         try {
+            // Minta izin mikrofon SEGERA
+            micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            
+            isCallActive = true;
+            callHistory = [];
+            
+            // Trik Audio Unlock setelah izin diberikan
             const audioUnlocker = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
-            audioUnlocker.play().catch(e => console.warn("Audio unlock gagal, mungkin tidak perlu."));
-        } catch (e) {
-            console.error("Gagal membuat audio unlocker:", e);
-        }
+            await audioUnlocker.play().catch(e => {});
 
-        document.getElementById('callModal').classList.remove('hidden');
-        document.getElementById('callModal').classList.add('flex');
-        
-        const openingLine = "Halo, ini Wayan. Ada yang bisa dibantu?";
-        callHistory.push({ role: 'model', parts: [{ text: openingLine }] });
-        
-        // Menunggu sebentar agar modal tampil sebelum berbicara
-        setTimeout(() => speakAiResponse(openingLine), 500);
+            const openingLine = "Halo, ini Wayan. Ada yang bisa dibantu?";
+            callHistory.push({ role: 'model', parts: [{ text: openingLine }] });
+            await speakAiResponse(openingLine);
+            
+        } catch (err) {
+            console.error("Gagal mendapatkan akses mikrofon:", err);
+            document.getElementById('callStatusText').textContent = 'Akses mikrofon ditolak.';
+            isCallActive = false;
+            // Biarkan tombol 'endCall' tetap berfungsi untuk menutup modal
+        }
     }
 
+    // ▼▼▼ [FIXED] Fungsi endCall() yang lebih responsif dan bersih ▼▼▼
     function endCall() {
-        if (!isCallActive) return;
-        console.log("Panggilan diakhiri.");
-        isCallActive = false;
-        
+        // 1. Update UI dulu agar responsif
         document.getElementById('callModal').classList.add('hidden');
         document.getElementById('callModal').classList.remove('flex');
         document.getElementById('callStatusText').textContent = 'Menghubungkan...';
-
+        
+        if (!isCallActive) return; // Jika sudah tidak aktif, keluar
+        console.log("Panggilan diakhiri.");
+        
+        isCallActive = false;
+        
+        // 2. Hentikan semua proses di latar belakang
         stopReading();
         if (callRecognition) {
-            callRecognition.abort(); // Gunakan abort() untuk menghentikan paksa
+            callRecognition.abort();
             callRecognition = null;
         }
         clearTimeout(silenceTimer);
 
-        // Simpan transkrip ke chat
+        // Hentikan track mikrofon untuk mematikan indikator mic
+        if (micStream) {
+            micStream.getTracks().forEach(track => track.stop());
+            micStream = null;
+        }
+
+        // 3. Simpan transkrip ke chat
         if (callHistory.length > 1) {
             let transcriptText = "[TRANSKRIP PANGGILAN SUARA]\n";
-            callHistory.forEach(turn => {
+            callHistory.slice(1).forEach(turn => {
                 const prefix = turn.role === 'user' ? 'Anda: ' : 'Wayan: ';
                 transcriptText += prefix + turn.parts[0].text + '\n';
             });
@@ -2834,28 +2890,30 @@
     }
     // ===================================================================================
     // ▲▲▲ AKHIR DARI FUNGSI PANGGILAN SUARA ▲▲▲
-    // ===================================================================================
 
 
-    window.addEventListener('load', async () => {
+    document.addEventListener('DOMContentLoaded', () => {
         loadApiKeys();
         loadSettings();
-        currentUserIP = await getUserIP();
         
-        if (currentUserIP) {
-          sendNewUserNotification(currentUserIP);
-        }
-        
-        checkUserStatus();
+        getUserIP().then(ip => {
+            currentUserIP = ip;
+            if (currentUserIP) {
+              sendNewUserNotification(currentUserIP);
+            }
+            checkUserStatus();
+        });
+
         populateVoiceList();
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = populateVoiceList;
         }
+        
         loadAllChatSessions();
         hideTypingIndicator();
         hideImageProcessingIndicator();
         
-        // ▼▼▼ EVENT LISTENER BARU UNTUK TOMBOL PANGGILAN ▼▼▼
+        // ▼▼▼ EVENT LISTENERS DIPINDAHKAN KE SINI ▼▼▼
         const startCallBtn = document.getElementById('startCallBtn');
         const endCallBtn = document.getElementById('endCallBtn');
         
@@ -2864,7 +2922,6 @@
 
         endCallBtn.addEventListener('click', endCall);
         endCallBtn.addEventListener('touchend', (e) => { e.preventDefault(); endCall(); });
-        // ▲▲▲ AKHIR EVENT LISTENER BARU ▲▲▲
 
         document.getElementById('fontSizeSelect').addEventListener('change', (e) => {
             settings.fontSize = e.target.value;
@@ -2914,18 +2971,19 @@
                 }
             }, 100); 
         });
-    });
 
-    ['profileModal', 'imagePreviewModal', 'settingsModal'].forEach(id => {
-        document.getElementById(id).addEventListener('click', e => {
-            if (e.target.id === id) {
-                if (id === 'profileModal') hideProfileModal();
-                else if (id === 'imagePreviewModal') hideImagePreview();
-                else if (id === 'settingsModal') toggleSettings();
-            }
+        ['profileModal', 'imagePreviewModal', 'settingsModal'].forEach(id => {
+            document.getElementById(id).addEventListener('click', e => {
+                if (e.target.id === id) {
+                    if (id === 'profileModal') hideProfileModal();
+                    else if (id === 'imagePreviewModal') hideImagePreview();
+                    else if (id === 'settingsModal') toggleSettings();
+                }
+            });
         });
+        document.addEventListener('touchstart', function () {}, true);
+        // ▲▲▲ AKHIR EVENT LISTENERS ▲▲▲
     });
-    document.addEventListener('touchstart', function () {}, true);
 </script>
 
 <!-- Onboarding Modal & Script (tidak diubah) -->
