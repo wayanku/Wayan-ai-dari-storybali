@@ -1186,6 +1186,20 @@
                             <option value="">Memuat suara...</option>
                          </select>
                     </div>
+                    <!-- ▼▼▼ [BARU] Pilihan Suara ElevenLabs ▼▼▼ -->
+                    <div class="settings-item flex-col items-start" id="elevenLabsVoiceSettings">
+                        <div class="flex items-center space-x-3 w-full justify-between">
+                            <div class="flex items-center space-x-3">
+                                <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                                <label class="text-sm font-medium text-gray-700">Suara ElevenLabs</label>
+                            </div>
+                            <select id="elevenLabsVoiceSelect" class="settings-select text-right w-auto max-w-[50%]">
+                                <option value="">Masukkan API Key dulu</option>
+                            </select>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 px-1">Daftar suara akan muncul di sini setelah Anda menyimpan API Key ElevenLabs di tab "Lanjutan".</p>
+                    </div>
+                    <!-- ▲▲▲ AKHIR DARI KODE BARU ▲▲▲ -->
                 </div>
             </div>
             <div id="tab-advanced" class="settings-tab-content space-y-4">
@@ -1243,7 +1257,7 @@
                         </div>
                         <div class="pt-2 border-t border-gray-200 dark:border-gray-700 mt-4">
                             <label class="block text-xs text-gray-500 mb-1">API Key ElevenLabs (Untuk Suara)</label>
-                            <input type="password" id="elevenLabsApiKey" placeholder="Masukkan API Key ElevenLabs" class="settings-input w-full">
+                            <input type="password" id="elevenLabsApiKey" placeholder="sk_51cca647c5de2291ff8247aad3561325390e4ef1e3166918" class="settings-input w-full">
                         </div>
                         <button onclick="saveApiKeys()" class="w-full settings-btn-action bg-blue-600 text-white mt-4 hover:bg-blue-700">
                             Simpan API Keys
@@ -1442,6 +1456,7 @@
         customAiRolePrompt: '',
         fontSize: 'base',
         voiceURI: '',
+        elevenLabsVoiceId: '21m00Tcm4TlvDq8ikWAM', // [BARU] ID default suara Adam
         saveHistory: true,
         isSidebarOpen: window.innerWidth > 768,
         darkMode: false,
@@ -1560,6 +1575,7 @@
 
         alert('API Keys berhasil disimpan!');
         loadApiKeys();
+        populateElevenLabsVoices(); // [BARU] Panggil fungsi untuk memuat suara setelah simpan API Key
     }
     function loadApiKeys() {
         const savedGeminiKeys = localStorage.getItem('storybaliApiKeys');
@@ -1927,6 +1943,7 @@
         settings.soundEnabled = document.getElementById('soundToggle').checked;
         settings.readAiResponseEnabled = document.getElementById('readAiResponseToggle').checked;
         settings.voiceURI = document.getElementById('voiceSelect').value;
+        settings.elevenLabsVoiceId = document.getElementById('elevenLabsVoiceSelect').value; // [BARU] Simpan ID suara ElevenLabs
         settings.saveHistory = document.getElementById('saveHistoryToggle').checked;
         settings.darkMode = document.getElementById('darkModeToggle').checked;
         saveSettings();
@@ -1976,8 +1993,15 @@
         const customRoleContainer = document.getElementById('customRoleContainer');
         customRoleContainer.classList.toggle('hidden', settings.aiRole !== 'kustom');
         if (settings.aiRole === 'kustom') document.getElementById('customRoleInput').value = settings.customAiRolePrompt;
+        
+        // Atur dropdown suara
         const voiceSelect = document.getElementById('voiceSelect');
         if (settings.voiceURI && voiceSelect.options.length > 1) voiceSelect.value = settings.voiceURI;
+
+        const elevenLabsSelect = document.getElementById('elevenLabsVoiceSelect');
+        if (settings.elevenLabsVoiceId && elevenLabsSelect.options.length > 1) {
+            elevenLabsSelect.value = settings.elevenLabsVoiceId;
+        }
     }
     function selectChoice(settingName, value, element) {
         settings[settingName] = value;
@@ -2304,10 +2328,58 @@
         if (otherVoices.length > 0) voiceSelect.appendChild(createOptGroup('Bahasa Lain', otherVoices));
         if (settings.voiceURI) voiceSelect.value = settings.voiceURI;
     }
+    
+    // ===================================================================================
+    // ▼▼▼ [BARU] FUNGSI UNTUK MENGAMBIL DAN MENAMPILKAN SUARA ELEVENLABS ▼▼▼
+    // ===================================================================================
+    async function populateElevenLabsVoices() {
+        const apiKey = localStorage.getItem('elevenLabsApiKey');
+        const selectElement = document.getElementById('elevenLabsVoiceSelect');
+        
+        if (!apiKey) {
+            selectElement.innerHTML = '<option value="">Masukkan API Key dulu</option>';
+            return;
+        }
 
+        selectElement.innerHTML = '<option value="">Memuat suara...</option>';
+
+        try {
+            const response = await fetch('https://api.elevenlabs.io/v1/voices', {
+                headers: { 'xi-api-key': apiKey }
+            });
+
+            if (!response.ok) {
+                throw new Error('Gagal mengambil daftar suara. Periksa API Key Anda.');
+            }
+
+            const data = await response.json();
+            selectElement.innerHTML = ''; // Kosongkan pilihan
+
+            data.voices.forEach(voice => {
+                const option = document.createElement('option');
+                option.value = voice.voice_id;
+                option.textContent = `${voice.name} (${voice.labels.gender}, ${voice.labels.age})`;
+                selectElement.appendChild(option);
+            });
+
+            // Setelah memuat, atur ke suara yang tersimpan di settings
+            if (settings.elevenLabsVoiceId) {
+                selectElement.value = settings.elevenLabsVoiceId;
+            }
+
+        } catch (error) {
+            console.error('Error fetching ElevenLabs voices:', error);
+            selectElement.innerHTML = `<option value="">Error: ${error.message}</option>`;
+        }
+    }
+
+    // ===================================================================================
+    // ▼▼▼ [MODIFIKASI] FUNGSI PLAY AUDIO ELEVENLABS ▼▼▼
+    // ===================================================================================
     async function playElevenLabsAudio(text, button) {
         const apiKey = localStorage.getItem('elevenLabsApiKey');
-        const voiceId = "21m00Tcm4TlvDq8ikWAM"; // Contoh: Adam
+        // [MODIFIKASI] Ambil voiceId dari settings, bukan hardcode
+        const voiceId = settings.elevenLabsVoiceId || '21m00Tcm4TlvDq8ikWAM'; // Fallback ke Adam jika tidak ada
         const modelId = "eleven_multilingual_v2";
         const apiUrl = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`;
 
@@ -2428,7 +2500,16 @@
         });
     }
     
-    function getSystemPrompt() {
+    // ===================================================================================
+    // ▼▼▼ [PERUBAHAN] FUNGSI SYSTEM PROMPT UNTUK MODE PANGGILAN ▼▼▼
+    // ===================================================================================
+    function getSystemPrompt(isCall = false) {
+        // Jika dalam mode panggilan, gunakan prompt yang lebih singkat dan natural
+        if (isCall) {
+            return `Kamu adalah Wayan, asisten AI yang sedang dalam panggilan suara. Berikan respons yang singkat, jelas, dan natural seperti sedang berbicara di telepon. Hindari jawaban yang panjang dan bertele-tele. Jawab dengan 1-2 kalimat saja kecuali jika diminta untuk menjelaskan lebih detail.`;
+        }
+        
+        // Prompt default untuk mode chat teks
         const baseInstructions = `Gunakan format Markdown untuk jawabanmu jika diperlukan (list, tebal, kode).
 
 [PENTING: Aturan Pemberian Link]
@@ -2754,6 +2835,9 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         }, 5000); // 5 detik batas waktu awal
     }
     
+    // ===================================================================================
+    // ▼▼▼ [PERUBAHAN] FUNGSI PROSES TRANSKRIP UNTUK MODE PANGGILAN ▼▼▼
+    // ===================================================================================
     async function processUserTranscript(transcript) {
         document.getElementById('callStatusText').textContent = 'Wayan sedang berpikir...';
         callHistory.push({ role: 'user', parts: [{ text: transcript }] });
@@ -2764,8 +2848,13 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             
             const payload = {
                 contents: contextualHistory,
-                systemInstruction: { parts: [{ text: getSystemPrompt() }] },
-                generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 256 }
+                systemInstruction: { parts: [{ text: getSystemPrompt(true) }] }, // Memanggil system prompt untuk mode panggilan
+                generationConfig: { 
+                    temperature: 0.9, 
+                    topK: 1, 
+                    topP: 1, 
+                    maxOutputTokens: 80 // Membatasi panjang output agar lebih singkat
+                }
             };
 
             const data = await makeApiRequest(payload);
@@ -2841,6 +2930,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         
         checkUserStatus();
         populateVoiceList();
+        populateElevenLabsVoices(); // [BARU] Muat suara elevenlabs saat halaman dibuka
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = populateVoiceList;
         }
@@ -2870,6 +2960,12 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
 
         document.getElementById('voiceSelect').addEventListener('change', (e) => {
             settings.voiceURI = e.target.value;
+            saveSettings();
+        });
+
+        // [BARU] Event listener untuk dropdown ElevenLabs
+        document.getElementById('elevenLabsVoiceSelect').addEventListener('change', (e) => {
+            settings.elevenLabsVoiceId = e.target.value;
             saveSettings();
         });
 
