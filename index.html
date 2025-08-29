@@ -418,7 +418,6 @@
 
     .input-area {
         background: var(--bg-primary);
-        border-top: 1px solid var(--border-color);
         padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom)) 1rem;
     }
 
@@ -810,8 +809,22 @@
       background-color: rgba(255, 255, 255, 0.2);
     }
     .chat-messages::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.3); }
+
+        position: absolute; top: 1rem; right: 1rem; z-index: 20;
+        background: rgba(255, 255, 255, 0.8); border-radius: 9999px;
+        padding: 0.5rem 0.75rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        cursor: pointer; opacity: 0; transition: opacity 0.3s ease-in-out;
+    }
+
     html.dark .chat-messages::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.3); }
     
+    #scrollToBottomBtn {
+        position: absolute; bottom: 1rem; right: 1rem; z-index: 20;
+        background: rgba(255, 255, 255, 0.8); border-radius: 9999px;
+        padding: 0.5rem 0.75rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        cursor: pointer; opacity: 0; transition: opacity 0.3s ease-in-out;
+    }
+
     /* ▼▼▼ CSS BARU UNTUK FITUR PANGGILAN SUARA ▼▼▼ */
     #callModal {
         background-color: rgba(0, 0, 0, 0.8);
@@ -910,6 +923,10 @@
                         <span class="ml-2 text-sm" style="color: var(--text-secondary);">Menganalisis gambar...</span>
                     </div>
                 </div>
+
+                <!-- Tombol Scroll ke Bawah -->
+                <button id="scrollToBottomBtn" onclick="scrollToBottom()" title="Scroll ke Bawah">⬇️</button>
+                <button id="scrollToTopBtn" onclick="scrollToTop()" title="Scroll ke Atas">⬆️</button>
             </div>
             
             <div id="stopGeneratingContainer" class="text-center p-2" style="display: none;">
@@ -1843,6 +1860,7 @@
         recognition.continuous = true;
         recognition.interimResults = true;
         recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
+        recognition.maxAlternatives = 3; // [IMPROVED] Menambah alternatif untuk hasil lebih baik
         recognition.onresult = (event) => {
             let interim_transcript = '';
             let transcript_builder = '';
@@ -1859,10 +1877,16 @@
         };
         recognition.onerror = (event) => {
             console.error("Speech recognition error:", event.error);
-            if (event.error !== 'aborted') {
-                addSystemMessage(`Error pengenalan suara: ${event.error}`);
+            if (event.error === 'no-speech') {
+               addSystemMessage("Tidak ada suara terdeteksi. Coba lagi?");
+            } else if (event.error === 'audio-capture') {
+                addSystemMessage("Tidak ada akses ke mikrofon. Pastikan izin diberikan.");
+            } else if (event.error === 'not-allowed') {
+                addSystemMessage("Akses mikrofon ditolak. Periksa pengaturan privasi Anda.");
+            }  else if (event.error !== 'aborted') {
+                addSystemMessage(`Error pengenalan suara: ${event.error}`); 
             }
-            stopVoiceRecognition(true);
+          stopVoiceRecognition(true);
         };
         recognition.onend = () => {
             if (isRecording) {
@@ -2303,6 +2327,33 @@
         const chatMessages = document.getElementById('chatMessages');
         setTimeout(() => chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' }), 100);
     }
+    function scrollToTop() {
+        const chatMessages = document.getElementById('chatMessages');
+        setTimeout(() => chatMessages.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+    }
+    
+    // Fungsi untuk menampilkan/sembunyikan tombol scroll
+    function handleScroll() {
+        const chatMessages = document.getElementById('chatMessages');
+        const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
+        if (chatMessages.scrollHeight - chatMessages.scrollTop > chatMessages.clientHeight + 100) {
+            scrollToBottomBtn.style.opacity = '1';
+        } else {
+            scrollToBottomBtn.style.opacity = '0';
+        }
+
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+        if (chatMessages.scrollTop > 100) {
+            scrollToTopBtn.style.opacity = '1';
+        } else {
+            scrollToTopBtn.style.opacity = '0';
+        }
+
+
+    }
+
+    // Tambahkan event listener untuk scroll
+    document.getElementById('chatMessages').addEventListener('scroll', handleScroll);
     function playNotificationSound() {
         if (settings.soundEnabled) {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -3027,7 +3078,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
 
 <!-- Onboarding Modal & Script (tidak diubah) -->
 <div id="onboardingModal" class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center transition-all duration-300 hidden">
-  <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-0 overflow-hidden border border-gray-200 relative animate-fadein">
+   <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-0 overflow-hidden border border-gray-200 relative animate-fadein">
     <div id="onboardingSlides" class="w-full">
       <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:block">
         <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f44b.png" alt="Hi" class="w-16 h-16 mb-3 mx-auto animate-bounce" />
