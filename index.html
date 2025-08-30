@@ -1460,8 +1460,10 @@
     let settings = { ...defaultSettings };
     let currentUtterance = null;
     let isReading = false;
-    let elevenLabsAudioPlayer = new Audio();
-    let elevenLabsPreviewPlayer = new Audio(); // [BARU] Audio player terpisah untuk pratinjau
+    // [FIX IPHONE] Initialize audio players with silent audio data to "prime" them for iOS.
+    const silentAudioData = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+    let elevenLabsAudioPlayer = new Audio(silentAudioData);
+    let elevenLabsPreviewPlayer = new Audio(silentAudioData);
 
     // ▼▼▼ VARIABEL BARU UNTUK FITUR PANGGILAN SUARA ▼▼▼
     let isCallActive = false;
@@ -2460,54 +2462,55 @@
         }
     }
 
+    // [REVISED] for iOS compatibility. This function is now synchronous.
     function playBrowserAudio(text, button) {
         const stopIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>`;
         const playIcon = button ? button.innerHTML : '';
         
-        // If there's a pending utterance, cancel it. This is a safeguard.
-        if (currentUtterance) {
-            speechSynthesis.cancel();
-        }
+        // Immediately cancel any ongoing speech. This is crucial for iOS.
+        speechSynthesis.cancel();
 
-        currentUtterance = new SpeechSynthesisUtterance(text);
+        const utterance = new SpeechSynthesisUtterance(text);
         const voices = speechSynthesis.getVoices();
         const selectedVoice = voices.find(v => v.voiceURI === settings.voiceURI);
         
         // More robust voice finding for Indonesian
-        currentUtterance.voice = selectedVoice || voices.find(v => v.lang === 'id-ID') || voices.find(v => v.lang.startsWith('id'));
-        currentUtterance.lang = 'id-ID'; // Explicitly set lang for better compatibility
+        utterance.voice = selectedVoice || voices.find(v => v.lang === 'id-ID') || voices.find(v => v.lang.startsWith('id'));
+        utterance.lang = 'id-ID'; // Explicitly set lang for better compatibility
 
-        if(button) button.innerHTML = stopIcon;
-        isReading = true;
-        
-        return new Promise(resolve => {
-            currentUtterance.onend = () => {
-                if(button) button.innerHTML = playIcon;
-                isReading = false;
-                currentUtterance = null;
-                resolve();
-            };
-            currentUtterance.onerror = (e) => {
-                console.error('SpeechSynthesis Error', e);
-                // Provide more helpful error on device, ignore 'canceled' errors
-                if(e.error !== 'canceled') {
-                    alert('Maaf, terjadi kesalahan saat memutar suara: ' + e.error);
-                }
-                if(button) button.innerHTML = playIcon;
-                isReading = false;
-                currentUtterance = null;
-                resolve(); 
-            };
-            speechSynthesis.speak(currentUtterance);
-        });
+        utterance.onstart = () => {
+            isReading = true;
+            if(button) button.innerHTML = stopIcon;
+        };
+
+        utterance.onend = () => {
+            isReading = false;
+            currentUtterance = null;
+            if(button) button.innerHTML = playIcon;
+        };
+
+        utterance.onerror = (e) => {
+            console.error('SpeechSynthesis Error', e);
+            if(e.error !== 'canceled') {
+                alert('Maaf, terjadi kesalahan saat memutar suara: ' + e.error);
+            }
+            isReading = false;
+            currentUtterance = null;
+            if(button) button.innerHTML = playIcon;
+        };
+
+        currentUtterance = utterance;
+        speechSynthesis.speak(utterance);
     }
 
+    // [REVISED] for iOS compatibility
     async function readAiResponse(button, encodedMessage) {
         if (!settings.readAiResponseEnabled) {
             alert('Fitur pembaca jawaban dinonaktifkan.');
             return;
         }
 
+        // Stop any currently playing audio first.
         if (isReading) {
             stopReading();
             return;
@@ -2517,20 +2520,16 @@
         const elevenLabsApiKey = localStorage.getItem('elevenLabsApiKey') || DEFAULT_ELEVENLABS_API_KEY;
 
         if (elevenLabsApiKey) {
-            // [FIX IPHONE] "Unlock" the AudioContext by playing and pausing.
-            // This must be done in the same synchronous event handler as the user click.
+            // [FIX IPHONE] "Unlock" the audio context. This must be a direct response to user input.
+            // The audio element now has a silent data URI, so play() is valid.
             elevenLabsAudioPlayer.play().catch(e => console.warn("Audio unlock failed, this is expected on some browsers.", e));
             elevenLabsAudioPlayer.pause();
 
             await playElevenLabsAudio(message, button, null, elevenLabsAudioPlayer);
         } else {
-            // [FIX IPHONE] For browser's SpeechSynthesis, "warm it up".
-            speechSynthesis.cancel(); // Stop anything currently speaking
-            // Speaking an empty string can prime the engine on iOS.
-            const warmUpUtterance = new SpeechSynthesisUtterance('');
-            speechSynthesis.speak(warmUpUtterance);
-
-            await playBrowserAudio(message, button);
+            // [FIX IPHONE] For native TTS, call the function synchronously without 'await'.
+            // The function itself will handle state via event listeners.
+            playBrowserAudio(message, button);
         }
     }
 
