@@ -467,6 +467,13 @@
     }
     .action-btn:hover { color: #4f46e5; }
     html.dark .action-btn:hover { color: var(--text-primary); }
+    .action-btn.active {
+        color: #4f46e5;
+        transform: scale(1.1);
+    }
+    html.dark .action-btn.active {
+        color: #a5b4fc;
+    }
     .action-btn span { font-size: 0.9rem; font-weight: 500; }
     
     .dynamic-icon-container {
@@ -952,8 +959,9 @@
                             <button onclick="triggerImageUpload()" class="action-btn" title="Upload Gambar">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                             </button>
-                            <button onclick="videoNotAvailable()" class="action-btn" title="Fitur Video">
-                                <span>Video</span>
+                            <!-- Tombol Video dihapus dan diganti dengan Tombol Pencarian Internet -->
+                            <button id="toggleSearchModeBtn" onclick="toggleSearchMode()" class="action-btn" title="Mode Pencarian Internet">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m0 18a9 9 0 009-9m-9 9a9 9 0 00-9-9"></path></svg>
                             </button>
                             <button onclick="openQuickSettings()" class="action-btn" title="Pengaturan Cepat">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
@@ -1459,6 +1467,7 @@
 
     let currentFetchController = null;
     let isRecording = false;
+    let isSearchModeActive = false;
     let finalTranscript = '';
     
     let currentPreviewData = {
@@ -1834,6 +1843,17 @@
         document.getElementById('messageInput').value = message;
         handleInputChange({ target: document.getElementById('messageInput') });
         sendMessage();
+    }
+    function toggleSearchMode() {
+        isSearchModeActive = !isSearchModeActive;
+        const searchBtn = document.getElementById('toggleSearchModeBtn');
+        searchBtn.classList.toggle('active', isSearchModeActive);
+        
+        if (isSearchModeActive) {
+            addSystemMessage("Mode pencarian internet diaktifkan. Jawaban mungkin sedikit lebih lambat.");
+        } else {
+            addSystemMessage("Mode pencarian internet dinonaktifkan.");
+        }
     }
     function toggleVoiceMode() {
         if (isRecording) {
@@ -2548,7 +2568,12 @@
         if (isCall) {
             return `Kamu adalah Wayan, asisten AI yang sedang dalam panggilan suara. Berikan respons yang singkat, jelas, dan natural seperti sedang berbicara di telepon. Hindari jawaban yang panjang dan bertele-tele. Jawab dengan 1-2 kalimat saja kecuali jika diminta untuk menjelaskan lebih detail.`;
         }
-        
+
+        let searchInstruction = '';
+        if (isSearchModeActive) {
+            searchInstruction = `[MODE PENCARIAN AKTIF] Kamu HARUS menggunakan tool pencarian internalmu untuk menjawab pertanyaan yang membutuhkan data real-time (seperti harga, berita terkini, cuaca). Prioritaskan informasi terbaru dari web. Beri tahu pengguna bahwa kamu mencari informasi secara live jika relevan.`;
+        }
+
         const baseInstructions = `Gunakan format Markdown untuk jawabanmu jika diperlukan (list, tebal, kode).
 
 [PENTING: Aturan Pemberian Link]
@@ -2598,7 +2623,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             roleInstruction += ' Please respond in English.';
         }
         
-        return `${roleInstruction} ${personaRule} ${baseInstructions}`;
+        return `${searchInstruction} ${roleInstruction} ${personaRule} ${baseInstructions}`;
     }
 
     async function makeApiRequest(payload, signal = null) {
