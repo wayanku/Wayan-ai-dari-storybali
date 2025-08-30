@@ -973,7 +973,7 @@
     </div>
 </div>
     
-<!-- ▼▼▼ MODAL BARU UNTUK PANGGILAN SUARA ▼▼▼ -->
+<!-- ▼▼▼ MODAL BARU UNTUK PANGGILAN SUARA (DENGAN PERUBAHAN) ▼▼▼ -->
 <div id="callModal" class="fixed inset-0 z-50 flex-col items-center justify-center hidden" style="background-color: rgba(0,0,0,0.8); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);">
     <div class="text-center text-white">
         <div class="call-avatar-container w-32 h-32 rounded-full p-1 mx-auto mb-6" style="border: 3px solid rgba(255,255,255,0.5);">
@@ -982,11 +982,25 @@
         <h2 class="text-2xl font-bold">Wayan AI</h2>
         <p id="callStatusText" class="text-lg mt-2 text-gray-300 transition-all duration-300">Menghubungkan...</p>
     </div>
-    <button id="endCallBtn" onclick="endCall()" class="absolute bottom-16 w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform">
-        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l-8 8m0-8l8 8"></path></svg>
-    </button>
+
+    <!-- Wrapper untuk tombol di bagian bawah -->
+    <div class="absolute bottom-16 flex flex-col items-center space-y-6">
+        <!-- ▼▼▼ TOMBOL BARU UNTUK iOS ▼▼▼ -->
+        <!-- Tombol ini hanya akan muncul di iOS saat giliran pengguna berbicara -->
+        <button id="sendVoiceBtn" class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform active:scale-95" title="Kirim Ucapan" style="display: none;">
+            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
+            </svg>
+        </button>
+        <!-- ▲▲▲ AKHIR DARI TOMBOL BARU ▲▲▲ -->
+
+        <button id="endCallBtn" onclick="endCall()" class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l-8 8m0-8l8 8"></path></svg>
+        </button>
+    </div>
 </div>
 <!-- ▲▲▲ AKHIR DARI MODAL PANGGILAN SUARA ▲▲▲ -->
+
 
 <!-- Semua Modal Lainnya (tidak diubah) -->
 <div id="imagePreviewModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
@@ -2788,10 +2802,24 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         }
     }
 
+    // ===================================================================================
+    // ▼▼▼ BAGIAN FUNGSI PANGGILAN SUARA YANG DIMODIFIKASI ▼▼▼
+    // ===================================================================================
+
+    // FUNGSI BARU UNTUK DETEKSI iOS
+    function isIOS() {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    }
+
     async function speakAiResponse(text) {
         isAiSpeaking = true;
         document.getElementById('callStatusText').textContent = 'Wayan AI sedang berbicara...';
         
+        // Sembunyikan dan nonaktifkan tombol kirim manual saat AI berbicara
+        const sendBtn = document.getElementById('sendVoiceBtn');
+        sendBtn.style.display = 'none';
+        sendBtn.disabled = true;
+
         await readAiResponse(null, btoa(encodeURIComponent(text)));
 
         isAiSpeaking = false;
@@ -2803,9 +2831,6 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     function listenForUserSpeech() {
         if (!isCallActive || isAiSpeaking) return;
 
-        // [FIX] Mencegah beberapa instance berjalan bersamaan
-        if (window.isListeningNow) return;
-
         if (!('webkitSpeechRecognition' in window)) {
             alert('Maaf, browser Anda tidak mendukung fitur pengenalan suara. Panggilan tidak dapat dilanjutkan.');
             endCall();
@@ -2814,67 +2839,93 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         
         document.getElementById('callStatusText').textContent = 'Mendengarkan...';
         callRecognition = new webkitSpeechRecognition();
-        callRecognition.continuous = false;
-        callRecognition.interimResults = false; // [FIX for iOS] Lebih stabil di iOS
         callRecognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
 
         let final_transcript = '';
-        window.isListeningNow = true;
 
         callRecognition.onresult = (event) => {
-            clearTimeout(silenceTimer);
-            const transcript = event.results[0][0].transcript;
-            if (transcript) {
-                final_transcript = transcript;
+            let interim_transcript = '';
+            // Reset final_transcript setiap kali ada hasil baru untuk iOS agar tidak menumpuk
+            if(isIOS()) final_transcript = ''; 
+
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    final_transcript += event.results[i][0].transcript;
+                } else {
+                    interim_transcript += event.results[i][0].transcript;
+                }
+            }
+            
+            // Logika spesifik untuk Android (otomatis)
+            if (!isIOS()) {
+                 clearTimeout(silenceTimer);
+                 silenceTimer = setTimeout(() => {
+                    if(callRecognition) callRecognition.stop();
+                 }, 1500); // Waktu jeda sebelum dianggap selesai
             }
         };
 
         callRecognition.onerror = (event) => {
-            window.isListeningNow = false;
             console.error('Call speech recognition error:', event.error);
-            // [FIX for iOS] Hindari loop error yang cepat. Beri jeda.
-            if (isCallActive && event.error !== 'no-speech' && event.error !== 'aborted') {
-                setTimeout(() => listenForUserSpeech(), 300);
-            } else if (isCallActive) {
-                listenForUserSpeech();
-            }
+            if(isCallActive) listenForUserSpeech(); // Coba dengarkan lagi jika ada error
         };
 
         callRecognition.onend = () => {
-            window.isListeningNow = false;
             clearTimeout(silenceTimer);
-            if (isCallActive && final_transcript.trim()) {
+            // Untuk Android, proses transkrip saat onend
+            if (!isIOS() && isCallActive && final_transcript.trim()) {
                 processUserTranscript(final_transcript.trim());
-            } else if (isCallActive && !isAiSpeaking) {
-                // [FIX for iOS] JANGAN langsung mendengarkan lagi. Ini memutus loop.
-                // AI akan menunggu giliran bicara selanjutnya, yang akan memicu listenForUserSpeech() lagi.
-                document.getElementById('callStatusText').textContent = 'Menunggu giliran...';
+            } else if (!isIOS() && isCallActive) {
+                listenForUserSpeech(); // Jika tidak ada hasil, dengarkan lagi
             }
+            // Untuk iOS, onend hanya terjadi jika tombol kirim ditekan, jadi tidak perlu tindakan di sini
         };
 
-        try {
-            callRecognition.start();
-            // Timeout untuk menghentikan jika tidak ada suara sama sekali
-            silenceTimer = setTimeout(() => {
-                if(callRecognition && window.isListeningNow) {
-                    callRecognition.stop();
+        // Logika Berbeda untuk iOS dan Android
+        if (isIOS()) {
+            callRecognition.continuous = true; // Terus mendengarkan sampai dihentikan manual
+            callRecognition.interimResults = false; // Cukup hasil final untuk iOS
+            const sendBtn = document.getElementById('sendVoiceBtn');
+            sendBtn.style.display = 'flex'; // Tampilkan tombol kirim
+            sendBtn.disabled = false;
+            
+            sendBtn.onclick = () => {
+                sendBtn.disabled = true;
+                if (callRecognition) {
+                    callRecognition.stop(); // Menghentikan akan memicu onend
                 }
-            }, 5000);
-        } catch (e) {
-            window.isListeningNow = false;
-            console.error("Gagal memulai speech recognition:", e);
-            if (isCallActive) {
-                setTimeout(() => listenForUserSpeech(), 1000);
-            }
+                // Pastikan ada transkrip sebelum diproses
+                if (final_transcript.trim()) {
+                    processUserTranscript(final_transcript.trim());
+                } else {
+                    // Jika tidak ada ucapan, langsung dengarkan lagi
+                    listenForUserSpeech();
+                }
+            };
+        } else { // Logika untuk Android (tetap otomatis)
+            callRecognition.continuous = false;
+            callRecognition.interimResults = true;
+            silenceTimer = setTimeout(() => {
+                if(callRecognition) callRecognition.stop();
+            }, 5000); // Batas waktu awal jika tidak ada suara sama sekali
         }
+        
+        callRecognition.start();
     }
     
     async function processUserTranscript(transcript) {
         document.getElementById('callStatusText').textContent = 'Wayan sedang berpikir...';
+        
+        // Sembunyikan tombol kirim setelah digunakan
+        if(isIOS()) {
+            const sendBtn = document.getElementById('sendVoiceBtn');
+            sendBtn.style.display = 'none';
+        }
+
         callHistory.push({ role: 'user', parts: [{ text: transcript }] });
 
         try {
-            const contextualHistory = callHistory.slice(-6);
+            const contextualHistory = callHistory.slice(-6); // Ambil 6 percakapan terakhir untuk konteks
             
             const payload = {
                 contents: contextualHistory,
@@ -2909,8 +2960,11 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         if (isCallActive) return;
         isCallActive = true;
         callHistory = [];
-        document.getElementById('callModal').classList.remove('hidden');
-        document.getElementById('callModal').classList.add('flex');
+        
+        // Tampilkan modal panggilan
+        const callModal = document.getElementById('callModal');
+        callModal.classList.remove('hidden');
+        callModal.classList.add('flex');
         
         const openingLine = "Halo, ini Wayan. Ada yang bisa dibantu?";
         callHistory.push({ role: 'model', parts: [{ text: openingLine }] });
@@ -2921,28 +2975,37 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         if (!isCallActive) return;
         isCallActive = false;
         
+        // Sembunyikan modal dan semua tombol di dalamnya
         document.getElementById('callModal').classList.add('hidden');
         document.getElementById('callModal').classList.remove('flex');
+        document.getElementById('sendVoiceBtn').style.display = 'none'; // Pastikan tombol iOS tersembunyi
         document.getElementById('callStatusText').textContent = 'Menghubungkan...';
 
         stopReading();
         if (callRecognition) {
-            callRecognition.stop();
+            callRecognition.abort(); // Gunakan abort untuk menghentikan paksa
             callRecognition = null;
         }
         clearTimeout(silenceTimer);
 
-        if (callHistory.length > 1) {
+        if (callHistory.length > 1) { // Hanya simpan jika ada interaksi
             let transcriptText = "[TRANSKRIP PANGGILAN SUARA]\n";
             callHistory.forEach(turn => {
-                const prefix = turn.role === 'user' ? 'Anda: ' : 'Wayan: ';
-                transcriptText += prefix + turn.parts[0].text + '\n';
+                if (turn.parts && turn.parts[0] && turn.parts[0].text) {
+                    const prefix = turn.role === 'user' ? 'Anda: ' : 'Wayan: ';
+                    transcriptText += prefix + turn.parts[0].text + '\n';
+                }
             });
             addToConversationHistory('user', transcriptText);
             addOriginalMessage(transcriptText, true, new Date().toISOString());
             scrollToBottom();
         }
     }
+
+    // ===================================================================================
+    // ▲▲▲ AKHIR DARI BAGIAN FUNGSI PANGGILAN SUARA YANG DIMODIFIKASI ▲▲▲
+    // ===================================================================================
+
 
     window.addEventListener('load', async () => {
         loadApiKeys();
