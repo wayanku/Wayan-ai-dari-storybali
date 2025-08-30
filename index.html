@@ -348,13 +348,22 @@
         from { opacity: 0; transform: translateY(20px) scale(0.8); }
         to { opacity: 1; transform: translateY(0) scale(1); }
     }
+    /* [DIUBAH] Menghapus max-width agar pesan AI bisa menggunakan lebar penuh */
+    .message-bubble.ai { max-width: 100%; }
+
+    /* [DIUBAH] Gaya gelembung AI dihapus agar mirip ChatGPT/Gemini */
     .ai-message {
-        background: var(--ai-message-bg);
-        box-shadow: 0 2px 8px var(--shadow-color);
-        border: 1px solid rgba(102, 126, 234, 0.05);
-        border-radius: 1.25rem; border-top-left-radius: 0.375rem;
-        padding: 1rem; max-width: 85%; position: relative;
+        max-width: 100%;
+        position: relative;
     }
+    /* [BARU] Gelembung khusus untuk indikator "mengetik" */
+    .typing-bubble {
+        background: var(--ai-message-bg);
+        border-radius: 1.25rem;
+        border-top-left-radius: 0.375rem;
+        padding: 1rem;
+    }
+
     .user-message {
         background: linear-gradient(135deg, #10b981, #059669);
         box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); color: white;
@@ -391,6 +400,44 @@
         color: var(--text-secondary);
         font-size: 0.75rem;
         font-style: italic; padding: 0.25rem 0.75rem; border-radius: 9999px;
+    }
+
+    /* [BARU] Tombol aksi di bawah pesan AI */
+    .action-icon-ai {
+        color: var(--text-light);
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        padding: 0.25rem;
+        border-radius: 9999px;
+    }
+    .action-icon-ai:hover {
+        color: var(--text-primary);
+        background-color: var(--bg-tertiary);
+    }
+
+    /* [BARU] CSS untuk Modal Pencarian Google */
+    #searchModal .modal-content {
+        width: 90%;
+        height: 90%;
+        max-width: 1200px;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+    }
+    #searchModal iframe {
+        flex-grow: 1;
+        border: none;
+    }
+    #searchModalHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        background-color: var(--bg-tertiary);
+        border-bottom: 1px solid var(--border-color);
+        flex-shrink: 0;
     }
 
     .typing-indicator { display: none; align-items: center; margin-bottom: 1rem; }
@@ -795,8 +842,8 @@
             transform: translateX(0);
         }
         
-        .message-bubble { margin-bottom: 0.75rem; }
-        .ai-message, .user-message { max-width: 90%; padding: 0.8rem 1.2rem; }
+        .message-bubble.ai, .user-message { max-width: 90%; }
+        .user-message { padding: 0.8rem 1.2rem; }
         .quick-actions { padding: 0.6rem 0.8rem; }
         .quick-action-btn { padding: 0.4rem 0.8rem; font-size: 0.7rem; }
         .modal-content { border-radius: 1rem; padding: 1.5rem; }
@@ -912,12 +959,12 @@
                  <!-- Typing Indicator will be added here by JS -->
                  <div id="typingIndicator" class="typing-indicator items-start space-x-3">
                     <div class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"><img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover"></div>
-                    <div class="ai-message rounded-2xl rounded-tl-md p-4"><div class="flex space-x-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+                    <div class="typing-bubble"><div class="flex space-x-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
                 </div>
                 <!-- Image Processing Indicator -->
                 <div id="imageProcessingIndicator" class="typing-indicator items-start space-x-3">
                     <div class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"><img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover"></div>
-                    <div class="ai-message rounded-2xl rounded-tl-md p-4 flex items-center">
+                    <div class="typing-bubble flex items-center">
                         <div class="flex space-x-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
                         <span class="ml-2 text-sm" style="color: var(--text-secondary);">Menganalisis gambar...</span>
                     </div>
@@ -1017,6 +1064,19 @@
 </div>
 <!-- ▲▲▲ AKHIR DARI MODAL PANGGILAN SUARA ▲▲▲ -->
 
+<!-- ▼▼▼ [BARU] MODAL UNTUK PENCARIAN GOOGLE ▼▼▼ -->
+<div id="searchModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
+    <div class="modal-content">
+        <div id="searchModalHeader">
+            <span id="searchModalTitle" class="text-sm font-semibold" style="color: var(--text-primary);">Hasil Pencarian</span>
+            <button onclick="hideSearchModal()" class="w-8 h-8 rounded-full flex items-center justify-center modal-close-btn" title="Tutup Pencarian">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <iframe id="searchFrame" src="about:blank"></iframe>
+    </div>
+</div>
+<!-- ▲▲▲ AKHIR DARI MODAL PENCARIAN GOOGLE ▲▲▲ -->
 
 <!-- Semua Modal Lainnya (tidak diubah, hanya ditambah title) -->
 <div id="imagePreviewModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
@@ -2102,6 +2162,24 @@
     }
     function showProfileModal() { document.getElementById('profileModal').classList.remove('hidden'); }
     function hideProfileModal() { document.getElementById('profileModal').classList.add('hidden'); }
+
+    function showSearchModal(query) {
+        const modal = document.getElementById('searchModal');
+        const title = document.getElementById('searchModalTitle');
+        const iframe = document.getElementById('searchFrame');
+
+        title.textContent = `Hasil Pencarian: "${query}"`;
+        // Parameter &igu=1 penting agar Google bisa disematkan
+        iframe.src = `https://www.google.com/search?q=${encodeURIComponent(query)}&igu=1`;
+        
+        modal.classList.remove('hidden');
+    }
+
+    function hideSearchModal() {
+        const modal = document.getElementById('searchModal');
+        modal.classList.add('hidden');
+        document.getElementById('searchFrame').src = 'about:blank'; // Hentikan loading
+    }
     function triggerImageUpload() { document.getElementById('imageInput').click(); }
     
     function handleImageUpload(event) {
@@ -2237,19 +2315,20 @@
     function addMessage(message, isUser = false, suggestions = [], isSearchable = false) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
-        messageDiv.className = 'message-bubble flex items-start space-x-3';
+        messageDiv.className = 'message-bubble';
         const typingIndicator = document.getElementById('typingIndicator');
         const timeString = getFormattedTime(new Date());
 
         if (isUser) {
-            messageDiv.className += ' flex-row-reverse space-x-reverse user';
+            // [DIUBAH] Flex ditambahkan di sini khusus untuk user
+            messageDiv.className += ' flex items-start space-x-3 flex-row-reverse space-x-reverse user';
             
             const searchButtonHtml = isSearchable ? `
                 <div class="mt-2 text-right">
-                    <a href="https://www.google.com/search?q=${encodeURIComponent(message)}" target="_blank" class="inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition-all no-underline" style="color: white; text-decoration: none;">
+                    <button onclick="showSearchModal('${message.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')" class="inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition-all no-underline" style="color: white; text-decoration: none; cursor: pointer; border: none;">
                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
                         Cari di Google
-                    </a>
+                    </button>
                 </div>
             ` : '';
 
@@ -2262,23 +2341,28 @@
             chatMessages.insertBefore(messageDiv, typingIndicator);
         } else {
             const encodedMessage = btoa(encodeURIComponent(message));
+            messageDiv.className += ' ai';
+            // [DIUBAH] Struktur HTML pesan AI dirombak total
             messageDiv.innerHTML = `
-                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                    <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
+                <div class="flex items-center space-x-3 mb-2">
+                    <div class="ai-avatar w-8 h-8 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                        <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
+                    </div>
+                    <div class="font-bold text-sm" style="color: var(--text-primary);">Wayan AI</div>
                 </div>
-                <div class="ai-message p-4 max-w-xs">
-                    <div class="markdown-content leading-relaxed text-sm"></div>
-                    <div class="suggestions-container mt-3"></div>
-                    <div class="flex justify-between items-center mt-2 pt-2 border-t border-slate-300/70 dark:border-slate-600/50">
-                        <div class="chat-timestamp">${timeString}</div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="copyToClipboard(this.closest('.ai-message').querySelector('.markdown-content').innerText, this)" class="w-6 h-6 bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600" title="Salin Jawaban">
+                <div class="pl-11">
+                    <div class="ai-message">
+                        <div class="markdown-content leading-relaxed text-sm"></div>
+                        <div class="suggestions-container mt-3"></div>
+                    </div>
+                    <div class="flex items-center space-x-3 mt-2 text-gray-500 dark:text-gray-400">
+                        <div class="chat-timestamp text-xs">${timeString}</div>
+                        <button onclick="copyToClipboard(this.closest('.pl-11').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" title="Salin Jawaban">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                             </button>
-                            <button onclick="readAiResponse(this, '${encodedMessage}')" class="w-6 h-6 bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600" title="Baca Jawaban">
+                        <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" title="Baca Jawaban">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>
                             </button>
-                        </div>
                     </div>
                 </div>`;
             chatMessages.insertBefore(messageDiv, typingIndicator);
@@ -2297,13 +2381,14 @@
     function addOriginalMessage(message, isUser = false, timestamp) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
-        messageDiv.className = 'message-bubble flex items-start space-x-3';
+        messageDiv.className = 'message-bubble';
         const timeString = timestamp ? getFormattedTime(new Date(timestamp)) : '';
         const imageMatch = message.match(/^\[Gambar: (.*?)\] (.*)/);
         const callMatch = message.match(/^\[TRANSKRIP PANGGILAN SUARA\]\n([\s\S]*)/);
 
         if (isUser) {
-            messageDiv.className += ' flex-row-reverse space-x-reverse user';
+            // [DIUBAH] Flex ditambahkan di sini khusus untuk user
+            messageDiv.className += ' flex items-start space-x-3 flex-row-reverse space-x-reverse user';
             const timeHtml= timeString ? `<div class="chat-timestamp text-right">${timeString}</div>` : '';
             
             let messageContent = '';
@@ -2328,25 +2413,29 @@
                     ${timeHtml}
                 </div>`;
         } else {
-            const timeHtmlAi = timeString ? `<div class="chat-timestamp">${timeString}</div>` : '<div></div>';
             const encodedMessage = btoa(encodeURIComponent(message));
+            messageDiv.className += ' ai';
+            // [DIUBAH] Struktur HTML pesan AI dirombak total
             messageDiv.innerHTML = `
-                <div class="ai-avatar w-8 h-8 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                    <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
+                <div class="flex items-center space-x-3 mb-2">
+                    <div class="ai-avatar w-8 h-8 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                        <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
+                    </div>
+                    <div class="font-bold text-sm" style="color: var(--text-primary);">Wayan AI</div>
                 </div>
-                <div class="ai-message p-4 max-w-xs">
-                    <div class="markdown-content leading-relaxed text-sm">${marked.parse(message)}</div>
-                    <div class="suggestions-container mt-3"></div>
-                    <div class="flex justify-between items-center mt-2 pt-2 border-t border-slate-300/70 dark:border-slate-600/50">
-                         ${timeHtmlAi}
-                        <div class="flex items-center space-x-2">
-                            <button onclick="copyToClipboard(this.closest('.ai-message').querySelector('.markdown-content').innerText, this)" class="w-6 h-6 bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600" title="Salin Jawaban">
+                <div class="pl-11">
+                    <div class="ai-message">
+                        <div class="markdown-content leading-relaxed text-sm">${marked.parse(message)}</div>
+                        <div class="suggestions-container mt-3"></div>
+                    </div>
+                    <div class="flex items-center space-x-3 mt-2 text-gray-500 dark:text-gray-400">
+                        ${timeString ? `<div class="chat-timestamp text-xs">${timeString}</div>` : ''}
+                        <button onclick="copyToClipboard(this.closest('.pl-11').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" title="Salin Jawaban">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                             </button>
-                            <button onclick="readAiResponse(this, '${encodedMessage}')" class="w-6 h-6 bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600" title="Baca Jawaban">
+                        <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" title="Baca Jawaban">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>
                             </button>
-                        </div>
                     </div>
                 </div>`;
         }
@@ -3158,12 +3247,13 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
 
     });
 
-    ['profileModal', 'imagePreviewModal', 'settingsModal'].forEach(id => {
+    ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal'].forEach(id => {
         document.getElementById(id).addEventListener('click', e => {
             if (e.target.id === id) {
                 if (id === 'profileModal') hideProfileModal();
                 else if (id === 'imagePreviewModal') hideImagePreview();
                 else if (id === 'settingsModal') toggleSettings();
+                else if (id === 'searchModal') hideSearchModal();
             }
         });
     });
