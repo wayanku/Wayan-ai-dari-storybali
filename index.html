@@ -399,8 +399,77 @@
         background-color: var(--ai-message-bg);
         color: var(--text-secondary);
         font-size: 0.75rem;
-        font-style: italic; padding: 0.25rem 0.75rem; border-radius: 9999px;
+        padding: 0.35rem 0.85rem; 
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
+    .system-message svg {
+        width: 1rem;
+        height: 1rem;
+        flex-shrink: 0;
+    }
+    /* [BARU] Gaya untuk berbagai jenis notifikasi */
+    .system-message.info {
+        background-color: #e0e7ff; /* Light blue */
+        color: #3730a3;
+    }
+    html.dark .system-message.info {
+        background-color: #312e81;
+        color: #c7d2fe;
+    }
+    .system-message.success {
+        background-color: #dcfce7; /* Light green */
+        color: #166534;
+    }
+    html.dark .system-message.success {
+        background-color: #14532d;
+        color: #bbf7d0;
+    }
+    .system-message.warning {
+        background-color: #fef3c7; /* Light yellow */
+        color: #92400e;
+    }
+    html.dark .system-message.warning {
+        background-color: #78350f;
+        color: #fde68a;
+    }
+
+    /* [BARU] Gaya untuk Timer Cooldown */
+    .cooldown-timer-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        background-color: var(--bg-tertiary);
+        border-radius: 1rem;
+        max-width: 280px;
+        margin: 0 auto;
+        border: 1px solid var(--border-color);
+    }
+    .cooldown-circle-container {
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+    .cooldown-circle-svg {
+        transform: rotate(-90deg);
+        width: 100%;
+        height: 100%;
+    }
+    .cooldown-circle-bg { fill: none; stroke: var(--border-color); stroke-width: 8; }
+    .cooldown-circle-progress {
+        fill: none; stroke: #f59e0b; /* amber-500 */ stroke-width: 8;
+        stroke-linecap: round; transition: stroke-dashoffset 0.2s linear;
+    }
+    html.dark .cooldown-circle-progress { stroke: #fcd34d; /* amber-300 */ }
+    .cooldown-time-text {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        font-size: 1.125rem; font-weight: 600; color: var(--text-primary);
+    }
+    .cooldown-message-text { font-size: 0.875rem; color: var(--text-secondary); text-align: center; }
 
     /* [BARU] Tombol aksi di bawah pesan AI */
     .action-icon-ai {
@@ -425,6 +494,7 @@
         padding: 0;
         display: flex;
         flex-direction: column;
+        overflow: hidden; /* [BARU] Memastikan iframe mengikuti sudut melengkung */
     }
     #searchModal iframe {
         flex-grow: 1;
@@ -1008,7 +1078,11 @@
                             </button>
                             <!-- Tombol Video dihapus dan diganti dengan Tombol Pencarian Internet -->
                             <button id="toggleSearchModeBtn" onclick="toggleSearchMode()" class="action-btn" title="Mode Pencarian Internet">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m0 18a9 9 0 009-9m-9 9a9 9 0 00-9-9"></path></svg>
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                </svg>
                             </button>
                             <button onclick="openQuickSettings()" class="action-btn" title="Pengaturan Cepat">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
@@ -1618,26 +1692,50 @@
         const chatMessages = document.getElementById('chatMessages');
         const timerMessageElement = document.createElement('div');
         timerMessageElement.className = 'system-message-bubble';
-        timerMessageElement.id = messageId; 
+        timerMessageElement.id = messageId;
+
+        timerMessageElement.innerHTML = `
+            <div class="cooldown-timer-wrapper">
+                <div class="cooldown-circle-container">
+                    <svg class="cooldown-circle-svg" viewBox="0 0 36 36">
+                        <path class="cooldown-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                        <path id="cooldown-progress-${currentUserIP}" class="cooldown-circle-progress" stroke-dasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                    </svg>
+                    <div id="cooldown-text-${currentUserIP}" class="cooldown-time-text">...</div>
+                </div>
+                <div class="cooldown-message-text">Waktu Jeda...<br>Wayan lagi istirahat sebentar ya!</div>
+            </div>
+        `;
+        
         chatMessages.appendChild(timerMessageElement);
         scrollToBottom(); 
+        
         if (countdownInterval) clearInterval(countdownInterval);
-        countdownInterval = setInterval(() => {
+
+        const totalCooldown = COOLDOWN_MINUTES * 60 * 1000;
+        const progressCircle = document.getElementById(`cooldown-progress-${currentUserIP}`);
+        const textElement = document.getElementById(`cooldown-text-${currentUserIP}`);
+
+        const updateTimer = () => {
             const distance = cooldownEndTime - new Date().getTime();
-            if (distance < 0) {
-                endCooldown();
-                return;
-            }
+            if (distance < 0) { endCooldown(); return; }
+
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            timerMessageElement.innerHTML = `<div class="system-message">Anda mencapai batas limit mengirim chat. Kembali setelah ${minutes}m ${seconds}s lagi.</div>`;
-        }, 1000);
+            textElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            const progress = ((totalCooldown - distance) / totalCooldown) * 100;
+            if (progressCircle) progressCircle.style.strokeDashoffset = 100 - progress;
+        };
+
+        countdownInterval = setInterval(updateTimer, 1000);
+        updateTimer();
     }
     function endCooldown() {
         clearInterval(countdownInterval);
         countdownInterval = null;
         const timerMessageElement = document.getElementById(`cooldown-timer-${currentUserIP}`);
-        if (timerMessageElement) timerMessageElement.innerHTML = `<div class="system-message">Anda sudah bisa mengobrol lagi!</div>`;
+        const successIcon = `<svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>`;
+        if (timerMessageElement) timerMessageElement.innerHTML = `<div class="system-message success">${successIcon}<span>Waktunya ngobrol lagi! Wayan sudah siap.</span></div>`;
         const allUserData = getChatLimitData();
         if (allUserData[currentUserIP]) {
             delete allUserData[currentUserIP];
@@ -1789,7 +1887,7 @@
         saveAllChatSessions();
         renderSidebar();
         loadChat(activeChatId);
-        addSystemMessage("Memulai percakapan baru.");
+        addSystemMessage("Memulai percakapan baru.", 'info');
     }
     function saveAllChatSessions() {
         if (settings.saveHistory) {
@@ -1910,9 +2008,9 @@
         searchBtn.classList.toggle('active', isSearchModeActive);
         
         if (isSearchModeActive) {
-            addSystemMessage("Mode pencarian internet diaktifkan. Jawaban mungkin sedikit lebih lambat.");
+            addSystemMessage("Mode pencarian internet diaktifkan.", 'info');
         } else {
-            addSystemMessage("Mode pencarian internet dinonaktifkan.");
+            addSystemMessage("Mode pencarian internet dinonaktifkan.", 'info');
         }
     }
     function toggleVoiceMode() {
@@ -1960,7 +2058,7 @@
         recognition.onerror = (event) => {
             console.error("Speech recognition error:", event.error);
             if (event.error !== 'aborted') {
-                addSystemMessage(`Error pengenalan suara: ${event.error}`);
+                addSystemMessage(`Error pengenalan suara: ${event.error}`, 'warning');
             }
             stopVoiceRecognition(false);
         };
@@ -1973,7 +2071,7 @@
             recognition.start();
         } catch (e) {
             console.error("Error starting speech recognition:", e);
-            addSystemMessage("Tidak dapat memulai pengenalan suara.");
+            addSystemMessage("Tidak dapat memulai pengenalan suara.", 'warning');
             stopVoiceRecognition(false);
         }
     }
@@ -2142,7 +2240,7 @@
         if (settingName === 'aiRole') {
             document.getElementById('customRoleContainer').classList.toggle('hidden', value !== 'kustom');
             const roleNames = { 'umum': 'Asisten Umum', 'guru_jepang': 'Guru Bahasa Jepang', 'guru_matematika': 'Guru Matematika', 'dokter': 'Dokter Virtual', 'programmer': 'Programmer Senior', 'penerjemah': 'Penerjemah', 'kustom': 'Peran Kustom' };
-            if (roleNames[value]) addSystemMessage(`Mode peran AI telah diubah menjadi: ${roleNames[value]}.`);
+            if (roleNames[value]) addSystemMessage(`Mode peran AI telah diubah menjadi: ${roleNames[value]}.`, 'info');
         }
     }
     function switchSettingsTab(tabName) {
@@ -2280,11 +2378,16 @@
         scrollToBottom();
     }
     function handleKeyPress(event) { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); } }
-    function addSystemMessage(message) {
+    function addSystemMessage(message, type = 'info') {
+        const icons = {
+            info: `<svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>`,
+            success: `<svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>`,
+            warning: `<svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.636-1.214 2.43-1.214 3.066 0l5.516 10.52c.636 1.214-.26 2.74-1.533 2.74H4.274c-1.274 0-2.169-1.526-1.533-2.74l5.516-10.52zM9 13a1 1 0 112 0 1 1 0 01-2 0zm1-4a1 1 0 00-1 1v2a1 1 0 102 0V9a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>`
+        };
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
         messageDiv.className = 'system-message-bubble';
-        messageDiv.innerHTML = `<div class="system-message">${message}</div>`;
+        messageDiv.innerHTML = `<div class="system-message ${type}">${icons[type] || ''}<span>${message}</span></div>`;
         chatMessages.insertBefore(messageDiv, document.getElementById('typingIndicator'));
         scrollToBottom();
     }
@@ -2350,14 +2453,14 @@
                     </div>
                     <div class="font-bold text-sm" style="color: var(--text-primary);">Wayan AI</div>
                 </div>
-                <div class="pl-11">
+                <div>
                     <div class="ai-message">
                         <div class="markdown-content leading-relaxed text-sm"></div>
                         <div class="suggestions-container mt-3"></div>
                     </div>
                     <div class="flex items-center space-x-3 mt-2 text-gray-500 dark:text-gray-400">
                         <div class="chat-timestamp text-xs">${timeString}</div>
-                        <button onclick="copyToClipboard(this.closest('.pl-11').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" title="Salin Jawaban">
+                        <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" title="Salin Jawaban">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                             </button>
                         <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" title="Baca Jawaban">
@@ -2423,14 +2526,14 @@
                     </div>
                     <div class="font-bold text-sm" style="color: var(--text-primary);">Wayan AI</div>
                 </div>
-                <div class="pl-11">
+                <div>
                     <div class="ai-message">
                         <div class="markdown-content leading-relaxed text-sm">${marked.parse(message)}</div>
                         <div class="suggestions-container mt-3"></div>
                     </div>
                     <div class="flex items-center space-x-3 mt-2 text-gray-500 dark:text-gray-400">
                         ${timeString ? `<div class="chat-timestamp text-xs">${timeString}</div>` : ''}
-                        <button onclick="copyToClipboard(this.closest('.pl-11').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" title="Salin Jawaban">
+                        <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" title="Salin Jawaban">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                             </button>
                         <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" title="Baca Jawaban">
@@ -2561,7 +2664,7 @@
         }
         isReading = false;
         
-        document.querySelectorAll('.ai-message button[title="Baca Jawaban"], #previewElevenLabsVoiceBtn').forEach(btn => {
+        document.querySelectorAll('.message-bubble.ai button[title="Baca Jawaban"], #previewElevenLabsVoiceBtn').forEach(btn => {
             if (btn.id === 'previewElevenLabsVoiceBtn') {
                 btn.innerHTML = `<svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path></svg>`;
             } else {
@@ -2854,7 +2957,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             }
         } catch (error) {
             if (error.name === 'AbortError') {
-                addSystemMessage("Pembuatan respons dihentikan.");
+                addSystemMessage("Pembuatan respons dihentikan.", 'warning');
             } else {
                 console.error("Error in sendMessage:", error);
                 addMessage(`Aduh, Wayan error: ${error.message}. Coba lagi nanti ya!`);
@@ -2913,7 +3016,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             }
         } catch (error) {
             if (error.name === 'AbortError') {
-                addSystemMessage("Analisis gambar dihentikan.");
+                addSystemMessage("Analisis gambar dihentikan.", 'warning');
             } else {
                 console.error("Error in analyzeImageWithQuestion:", error);
                 addMessage(`Aduh, Wayan error saat analisis gambar: ${error.message}. Coba lagi ya!`);
