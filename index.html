@@ -2803,6 +2803,9 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     function listenForUserSpeech() {
         if (!isCallActive || isAiSpeaking) return;
 
+        // [FIX] Mencegah beberapa instance berjalan bersamaan
+        if (window.isListeningNow) return;
+
         if (!('webkitSpeechRecognition' in window)) {
             alert('Maaf, browser Anda tidak mendukung fitur pengenalan suara. Panggilan tidak dapat dilanjutkan.');
             endCall();
@@ -2812,44 +2815,58 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         document.getElementById('callStatusText').textContent = 'Mendengarkan...';
         callRecognition = new webkitSpeechRecognition();
         callRecognition.continuous = false;
-        callRecognition.interimResults = true;
+        callRecognition.interimResults = false; // [FIX for iOS] Lebih stabil di iOS
         callRecognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
 
         let final_transcript = '';
+        window.isListeningNow = true;
 
         callRecognition.onresult = (event) => {
             clearTimeout(silenceTimer);
-            let interim_transcript = '';
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    final_transcript += event.results[i][0].transcript;
-                } else {
-                    interim_transcript += event.results[i][0].transcript;
-                }
+            const transcript = event.results[0][0].transcript;
+            if (transcript) {
+                final_transcript = transcript;
             }
-            silenceTimer = setTimeout(() => {
-                callRecognition.stop();
-            }, 1500);
         };
 
         callRecognition.onerror = (event) => {
+            window.isListeningNow = false;
             console.error('Call speech recognition error:', event.error);
-            if(isCallActive) listenForUserSpeech();
-        };
-
-        callRecognition.onend = () => {
-            clearTimeout(silenceTimer);
-            if (isCallActive && final_transcript.trim()) {
-                processUserTranscript(final_transcript.trim());
+            // [FIX for iOS] Hindari loop error yang cepat. Beri jeda.
+            if (isCallActive && event.error !== 'no-speech' && event.error !== 'aborted') {
+                setTimeout(() => listenForUserSpeech(), 300);
             } else if (isCallActive) {
                 listenForUserSpeech();
             }
         };
 
-        callRecognition.start();
-        silenceTimer = setTimeout(() => {
-            if(callRecognition) callRecognition.stop();
-        }, 5000);
+        callRecognition.onend = () => {
+            window.isListeningNow = false;
+            clearTimeout(silenceTimer);
+            if (isCallActive && final_transcript.trim()) {
+                processUserTranscript(final_transcript.trim());
+            } else if (isCallActive && !isAiSpeaking) {
+                // [FIX for iOS] JANGAN langsung mendengarkan lagi. Ini memutus loop.
+                // AI akan menunggu giliran bicara selanjutnya, yang akan memicu listenForUserSpeech() lagi.
+                document.getElementById('callStatusText').textContent = 'Menunggu giliran...';
+            }
+        };
+
+        try {
+            callRecognition.start();
+            // Timeout untuk menghentikan jika tidak ada suara sama sekali
+            silenceTimer = setTimeout(() => {
+                if(callRecognition && window.isListeningNow) {
+                    callRecognition.stop();
+                }
+            }, 5000);
+        } catch (e) {
+            window.isListeningNow = false;
+            console.error("Gagal memulai speech recognition:", e);
+            if (isCallActive) {
+                setTimeout(() => listenForUserSpeech(), 1000);
+            }
+        }
     }
     
     async function processUserTranscript(transcript) {
