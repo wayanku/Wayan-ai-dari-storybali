@@ -840,10 +840,11 @@
         box-shadow: 0 2px 4px rgba(245, 245, 245, 0.1);
     }
     
-    .markdown-content, .markdown-content strong, .markdown-content p, .markdown-content li { 
+    .markdown-content, .markdown-content p, .markdown-content li {
         color: var(--text-primary); 
         overflow-wrap: break-word; /* [FIX] Mencegah link keluar dari gelembung chat */
         word-wrap: break-word; /* Fallback */
+        font-weight: 500; /* [BARU] Membuat font jawaban AI sedikit lebih tebal agar mudah dibaca */
     }
     .markdown-content p:not(:last-child) { margin-bottom: 0.75rem; }
     .markdown-content ul, .markdown-content ol {
