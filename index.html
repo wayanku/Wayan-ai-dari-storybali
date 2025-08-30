@@ -2464,10 +2464,19 @@
         const stopIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>`;
         const playIcon = button ? button.innerHTML : '';
         
-        if (currentUtterance) speechSynthesis.cancel();
+        // If there's a pending utterance, cancel it. This is a safeguard.
+        if (currentUtterance) {
+            speechSynthesis.cancel();
+        }
+
         currentUtterance = new SpeechSynthesisUtterance(text);
-        const selectedVoice = speechSynthesis.getVoices().find(v => v.voiceURI === settings.voiceURI);
-        currentUtterance.voice = selectedVoice || speechSynthesis.getVoices().find(v => v.lang.startsWith('id'));
+        const voices = speechSynthesis.getVoices();
+        const selectedVoice = voices.find(v => v.voiceURI === settings.voiceURI);
+        
+        // More robust voice finding for Indonesian
+        currentUtterance.voice = selectedVoice || voices.find(v => v.lang === 'id-ID') || voices.find(v => v.lang.startsWith('id'));
+        currentUtterance.lang = 'id-ID'; // Explicitly set lang for better compatibility
+
         if(button) button.innerHTML = stopIcon;
         isReading = true;
         
@@ -2480,6 +2489,10 @@
             };
             currentUtterance.onerror = (e) => {
                 console.error('SpeechSynthesis Error', e);
+                // Provide more helpful error on device, ignore 'canceled' errors
+                if(e.error !== 'canceled') {
+                    alert('Maaf, terjadi kesalahan saat memutar suara: ' + e.error);
+                }
                 if(button) button.innerHTML = playIcon;
                 isReading = false;
                 currentUtterance = null;
@@ -2495,17 +2508,28 @@
             return;
         }
 
-        const message = decodeURIComponent(atob(encodedMessage));
-        const elevenLabsApiKey = localStorage.getItem('elevenLabsApiKey') || DEFAULT_ELEVENLABS_API_KEY;
-
         if (isReading) {
             stopReading();
             return;
         }
         
+        const message = decodeURIComponent(atob(encodedMessage));
+        const elevenLabsApiKey = localStorage.getItem('elevenLabsApiKey') || DEFAULT_ELEVENLABS_API_KEY;
+
         if (elevenLabsApiKey) {
+            // [FIX IPHONE] "Unlock" the AudioContext by playing and pausing.
+            // This must be done in the same synchronous event handler as the user click.
+            elevenLabsAudioPlayer.play().catch(e => console.warn("Audio unlock failed, this is expected on some browsers.", e));
+            elevenLabsAudioPlayer.pause();
+
             await playElevenLabsAudio(message, button, null, elevenLabsAudioPlayer);
         } else {
+            // [FIX IPHONE] For browser's SpeechSynthesis, "warm it up".
+            speechSynthesis.cancel(); // Stop anything currently speaking
+            // Speaking an empty string can prime the engine on iOS.
+            const warmUpUtterance = new SpeechSynthesisUtterance('');
+            speechSynthesis.speak(warmUpUtterance);
+
             await playBrowserAudio(message, button);
         }
     }
@@ -3138,61 +3162,6 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     </div>
 </div>
 <!-- ▲▲▲ AKHIR DARI KODE BARU ▲▲▲ -->
-
-
-<script>
-// ===== Perbaikan Text-to-Speech =====
-function speakText(text) {
-  if ('speechSynthesis' in window) {
-    let utter = new SpeechSynthesisUtterance(text);
-    let voices = speechSynthesis.getVoices();
-    if (voices.length > 0) {
-      let voice = voices.find(v => v.lang.startsWith("id")) || voices[0];
-      utter.voice = voice;
-    }
-    utter.rate = 1;
-    utter.pitch = 1;
-
-    speechSynthesis.cancel();
-    speechSynthesis.speak(utter);
-  } else {
-    alert("Text-to-speech tidak didukung di browser ini");
-  }
-}
-
-// ===== Perbaikan Speech Recognition =====
-function startListening() {
-  const isiInput = document.getElementById("messageInput");
-
-  // Cek apakah webkitSpeechRecognition tersedia (Android Chrome & sebagian iOS)
-  if ('webkitSpeechRecognition' in window) {
-    let recognition = new webkitSpeechRecognition();
-    recognition.lang = "id-ID";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    recognition.onstart = () => {
-      console.log("Mendengarkan...");
-      document.getElementById("voiceStatusText")?.innerText = "Mendengarkan...";
-    };
-
-    recognition.onresult = (event) => {
-      let text = event.results[0][0].transcript;
-      console.log("User berkata:", text);
-      isiInput.value = text;
-    };
-
-    recognition.onerror = (event) => {
-      console.error("Error mic:", event.error);
-      alert("Mic error: " + event.error);
-    };
-
-    recognition.start();
-  } else {
-    alert("Speech recognition tidak didukung di browser ini, gunakan input teks.");
-  }
-}
-</script>
 
 </body>
 </html>
