@@ -419,6 +419,7 @@
 
     .input-area {
         background: var(--bg-primary);
+        border-top: 1px solid var(--border-color);
         padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom)) 1rem;
     }
 
@@ -811,22 +812,6 @@
     }
     .chat-messages::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.3); }
     html.dark .chat-messages::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.3); }
-    
-    /* ▼▼▼ CSS BARU UNTUK FITUR PANGGILAN SUARA ▼▼▼ */
-    #callModal {
-        background-color: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-    }
-    .call-avatar-container {
-        animation: call-pulse 2s infinite;
-    }
-    @keyframes call-pulse {
-        0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
-        70% { box-shadow: 0 0 0 20px rgba(255, 255, 255, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
-    }
-    /* ▲▲▲ AKHIR DARI CSS PANGGILAN SUARA ▲▲▲ */
   </style>
 </head>
 <body>
@@ -860,7 +845,9 @@
                              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
                         </button>
                         <div class="flex items-center space-x-3">
+                            <!-- ▼▼▼ BARIS INI TELAH DIPERBAIKI ▼▼▼ -->
                             <div class="ai-avatar w-12 h-12 flex-shrink-0 flex items-center justify-center overflow-hidden relative cursor-pointer" onclick="showProfileModal()">
+                            <!-- ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲ -->
                                 <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali"
                                      class="w-full h-full object-cover">
                             </div>
@@ -871,13 +858,6 @@
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <!-- ▼▼▼ TOMBOL PANGGILAN SUARA BARU ▼▼▼ -->
-                        <button id="startCallBtn" onclick="startCall()"
-                                class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95"
-                                title="Mulai Panggilan Suara">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                        </button>
-                        <!-- ▲▲▲ AKHIR DARI TOMBOL PANGGILAN SUARA ▲▲▲ -->
                         <button onclick="toggleSettings()"
                                 class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -930,12 +910,22 @@
                     >
 
                     <!-- [REFINED] UI Perekaman Suara -->
-                    <div id="voiceRecordingUI" class="absolute inset-0 items-center justify-start px-4 hidden" style="background-color: var(--bg-tertiary); border-radius: 1.25rem;">
-                        <div class="flex items-center gap-3 min-w-0">
+                    <div id="voiceRecordingUI" class="absolute inset-0 items-center justify-between px-3 hidden" style="background-color: var(--bg-tertiary); border-radius: 1.25rem;">
+                        <!-- ▼▼▼ PERUBAHAN DI SINI ▼▼▼ -->
+                        <div class="flex items-center gap-3 min-w-0"> <!-- Ditambahkan 'min-w-0' -->
+                        <!-- ▲▲▲ AKHIR PERUBAHAN ▲▲▲ -->
                             <div class="voice-wave">
                                 <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
                             </div>
                             <span id="voiceStatusText" class="text-sm text-gray-500 dark:text-gray-400 truncate">Mendengarkan...</span>
+                        </div>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <button id="pauseRecordingBtn" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-300 dark:hover:bg-gray-600" title="Jeda dan Jadikan Teks">
+                                <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z"></path></svg>
+                            </button>
+                            <button id="sendRecordingBtn" class="w-10 h-10 flex items-center justify-center bg-blue-600 rounded-full hover:bg-blue-700" title="Kirim Suara">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                            </button>
                         </div>
                     </div>
                     <!-- Akhir UI Perekaman Suara -->
@@ -974,22 +964,7 @@
     </div>
 </div>
     
-<!-- ▼▼▼ MODAL BARU UNTUK PANGGILAN SUARA ▼▼▼ -->
-<div id="callModal" class="fixed inset-0 z-50 flex-col items-center justify-center hidden" style="background-color: rgba(0,0,0,0.8); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);">
-    <div class="text-center text-white">
-        <div class="call-avatar-container w-32 h-32 rounded-full p-1 mx-auto mb-6" style="border: 3px solid rgba(255,255,255,0.5);">
-            <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI Avatar" class="w-full h-full object-cover rounded-full">
-        </div>
-        <h2 class="text-2xl font-bold">Wayan AI</h2>
-        <p id="callStatusText" class="text-lg mt-2 text-gray-300 transition-all duration-300">Menghubungkan...</p>
-    </div>
-    <button id="endCallBtn" onclick="endCall()" class="absolute bottom-16 w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform">
-        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l-8 8m0-8l8 8"></path></svg>
-    </button>
-</div>
-<!-- ▲▲▲ AKHIR DARI MODAL PANGGILAN SUARA ▲▲▲ -->
-
-<!-- Semua Modal Lainnya (tidak diubah) -->
+<!-- Semua Modal (tidak diubah) -->
 <div id="imagePreviewModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
     <div class="modal-content p-6 max-w-sm w-full" id="imagePreviewContent">
         <div class="text-center relative">
@@ -1149,7 +1124,9 @@
                             <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                             <label class="text-sm font-medium text-gray-700">Mode Gelap</label>
                         </div>
+                        <!-- ▼▼▼ [PERBAIKAN FINAL] onchange ditambahkan di sini ▼▼▼ -->
                         <input type="checkbox" id="darkModeToggle" class="toggle-new" onchange="handleDarkModeToggle()">
+                        <!-- ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲ -->
                     </div>
                 </div>
                 <div class="settings-card">
@@ -1170,31 +1147,12 @@
                     <div class="settings-item">
                         <div class="flex items-center space-x-3">
                             <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-                            <label class="text-sm font-medium text-gray-700">Jenis Suara (Bawaan)</label>
+                            <label class="text-sm font-medium text-gray-700">Jenis Suara</label>
                         </div>
                          <select id="voiceSelect" class="settings-select text-right">
                             <option value="">Memuat suara...</option>
                          </select>
                     </div>
-                    <!-- ▼▼▼ [MODIFIKASI] Pilihan Suara ElevenLabs dengan tombol Pratinjau ▼▼▼ -->
-                    <div class="settings-item flex-col items-start" id="elevenLabsVoiceSettings">
-                        <div class="flex items-center space-x-3 w-full justify-between">
-                            <div class="flex items-center space-x-3">
-                                <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                                <label class="text-sm font-medium text-gray-700">Suara ElevenLabs</label>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <select id="elevenLabsVoiceSelect" class="settings-select text-right w-auto max-w-[120px]">
-                                    <option value="">Masukkan API Key dulu</option>
-                                </select>
-                                <button id="previewElevenLabsVoiceBtn" title="Dengarkan Pratinjau Suara" class="w-8 h-8 flex items-center justify-center rounded-md bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                                    <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path></svg>
-                                </button>
-                            </div>
-                        </div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 px-1">Daftar suara akan muncul di sini setelah Anda menyimpan API Key ElevenLabs di tab "Lanjutan".</p>
-                    </div>
-                    <!-- ▲▲▲ AKHIR DARI KODE MODIFIKASI ▲▲▲ -->
                 </div>
             </div>
             <div id="tab-advanced" class="settings-tab-content space-y-4">
@@ -1217,42 +1175,28 @@
                          </button>
                     </div>
                 </div>
-                
                 <div class="settings-card p-4">
-                    <h4 class="text-sm font-semibold text-gray-800 mb-2">Beri Masukan</h4>
-                    <p class="text-xs text-gray-500 mb-3">Punya ide atau saran? Beri tahu kami!</p>
-                    <textarea id="settingsFeedbackInput" placeholder="Tulis masukan Anda di sini..." class="w-full settings-input text-sm" rows="4"></textarea>
-                    <button id="sendSettingsFeedbackBtn" onclick="sendGeneralFeedback()" class="w-full settings-btn-action bg-green-600 text-white mt-3 hover:bg-green-700">
-                        Kirim Masukan
-                    </button>
-                </div>
-                
-                <div class="settings-card p-4">
-                    <h4 class="text-sm font-semibold text-gray-800 mb-3">API Keys</h4>
+                    <h4 class="text-sm font-semibold text-gray-800 mb-3">API Keys (Gemini)</h4>
                     <div class="space-y-2 text-sm">
                         <div>
-                            <label class="block text-xs text-gray-500 mb-1">API Key Gemini 1 (Utama)</label>
+                            <label class="block text-xs text-gray-500 mb-1">API Key 1 (Utama)</label>
                             <input type="password" id="apiKey1" placeholder="Masukkan API Key" class="settings-input w-full">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-500 mb-1">API Key Gemini 2 (Cadangan)</label>
+                            <label class="block text-xs text-gray-500 mb-1">API Key 2 (Cadangan)</label>
                             <input type="password" id="apiKey2" placeholder="Opsional" class="settings-input w-full">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-500 mb-1">API Key Gemini 3 (Cadangan)</label>
+                            <label class="block text-xs text-gray-500 mb-1">API Key 3 (Cadangan)</label>
                             <input type="password" id="apiKey3" placeholder="Opsional" class="settings-input w-full">
                         </div>
                          <div>
-                            <label class="block text-xs text-gray-500 mb-1">API Key Gemini 4 (Cadangan)</label>
+                            <label class="block text-xs text-gray-500 mb-1">API Key 4 (Cadangan)</label>
                             <input type="password" id="apiKey4" placeholder="Opsional" class="settings-input w-full">
                         </div>
                          <div>
-                            <label class="block text-xs text-gray-500 mb-1">API Key Gemini 5 (Cadangan)</label>
+                            <label class="block text-xs text-gray-500 mb-1">API Key 5 (Cadangan)</label>
                             <input type="password" id="apiKey5" placeholder="Opsional" class="settings-input w-full">
-                        </div>
-                        <div class="pt-2 border-t border-gray-200 dark:border-gray-700 mt-4">
-                            <label class="block text-xs text-gray-500 mb-1">API Key ElevenLabs (Untuk Suara)</label>
-                            <input type="password" id="elevenLabsApiKey" placeholder="masukkan api elevenlabs" class="settings-input w-full">
                         </div>
                         <button onclick="saveApiKeys()" class="w-full settings-btn-action bg-blue-600 text-white mt-4 hover:bg-blue-700">
                             Simpan API Keys
@@ -1272,7 +1216,7 @@
             </div>
         </div>
         <div class="p-3 bg-white border-t border-gray-200 flex-shrink-0 text-center">
-            <p class="text-xs text-gray-500">StoryBali v2.6.0 | © 2024</p>
+            <p class="text-xs text-gray-500">StoryBali v2.5.5 | © 2024</p>
         </div>
     </div>
 </div>
@@ -1292,14 +1236,19 @@
     }
 	
     // ===================================================================================
-    // ▼▼▼ FUNGSI NOTIFIKASI PENGGUNA BARU ▼▼▼
+    // ▼▼▼ KODE BARU UNTUK NOTIFIKASI PENGGUNA ▼▼▼
     // ===================================================================================
     function sendNewUserNotification(ipAddress) {
+      // Cek di browser pengguna apakah notifikasi sudah pernah dikirim
       if (localStorage.getItem('notificationSent')) {
         console.log('Notifikasi untuk pengguna ini sudah pernah dikirim.');
-        return;
+        return; // Hentikan fungsi jika sudah pernah dikirim
       }
+
+      // URL Google Apps Script Anda
       const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCMPCa3374vo347SbP2alsPWfb5MqKcspRHjkuU8ON6ooFLTTQE5h1RC2pxBNYor_Wuw/exec";
+
+      // Kumpulkan semua data yang bisa didapat secara otomatis dari browser
       const payload = {
         ip: ipAddress,
         timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
@@ -1308,113 +1257,19 @@
         browserLanguage: navigator.language,
         connectionType: navigator.connection ? navigator.connection.effectiveType : 'unknown'
       };
+
+      // Kirim semua data ke URL Google Script Anda
       fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify(payload),
-        mode: 'no-cors'
+        mode: 'no-cors' // Penting agar tidak terjadi error CORS
       })
       .then(response => {
         console.log('Notifikasi lengkap pengguna baru berhasil dikirim.');
+        // Simpan penanda di browser pengguna agar tidak mengirim email lagi
         localStorage.setItem('notificationSent', 'true');
       })
       .catch(error => console.error('Gagal mengirim notifikasi:', error));
-    }
-    
-    // ===================================================================================
-    // ▼▼▼ KODE BARU UNTUK RATING & MASUKAN ▼▼▼
-    // ===================================================================================
-    let currentRating = 0;
-
-    function showRatingModal() {
-        currentRating = 0;
-        document.getElementById('ratingFeedbackInput').value = '';
-        renderStars();
-        document.getElementById('ratingModal').classList.remove('hidden');
-    }
-
-    function hideRatingModal() {
-        document.getElementById('ratingModal').classList.add('hidden');
-    }
-    
-    function renderStars() {
-        const container = document.getElementById('starRatingContainer');
-        container.innerHTML = '';
-        for (let i = 1; i <= 5; i++) {
-            const starSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            starSVG.setAttribute('onclick', `handleStarClick(${i})`);
-            starSVG.setAttribute('class', 'w-8 h-8 cursor-pointer star-icon transition-colors ' + (i <= currentRating ? 'text-yellow-400' : 'text-gray-300'));
-            starSVG.setAttribute('fill', 'currentColor');
-            starSVG.setAttribute('viewBox', '0 0 20 20');
-            starSVG.innerHTML = `<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>`;
-            container.appendChild(starSVG);
-        }
-    }
-
-    function handleStarClick(rating) {
-        currentRating = rating;
-        renderStars();
-    }
-
-    function trackUserMessageCount() {
-        if (localStorage.getItem('ratingModalShown')) return;
-        let messageCount = parseInt(localStorage.getItem('userMessageCount') || '0');
-        messageCount++;
-        localStorage.setItem('userMessageCount', messageCount);
-
-        if (messageCount === 3) { // Tampilkan setelah pesan ke-3
-            setTimeout(() => {
-                showRatingModal();
-                localStorage.setItem('ratingModalShown', 'true');
-            }, 2000);
-        }
-    }
-    
-    function submitRating() {
-        if (currentRating === 0) {
-            alert('Mohon pilih setidaknya 1 bintang.');
-            return;
-        }
-        const feedbackText = document.getElementById('ratingFeedbackInput').value.trim();
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCMPCa3374vo347SbP2alsPWfb5MqKcspRHjkuU8ON6ooFLTTQE5h1RC2pxBNYor_Wuw/exec";
-        const payload = {
-            type: 'rating',
-            rating: currentRating,
-            message: feedbackText || 'Tidak ada komentar tambahan.',
-            userIP: currentUserIP || 'tidak diketahui',
-            timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
-        };
-        const button = document.getElementById('submitRatingBtn');
-        button.textContent = 'Mengirim...';
-        button.disabled = true;
-
-        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' })
-        .then(() => { alert('Terima kasih atas penilaian Anda!'); hideRatingModal(); })
-        .catch(error => { console.error('Gagal mengirim rating:', error); alert('Maaf, terjadi kesalahan.'); })
-        .finally(() => { button.textContent = 'Kirim Nilai'; button.disabled = false; });
-    }
-
-    function sendGeneralFeedback() {
-        const input = document.getElementById('settingsFeedbackInput');
-        const feedbackText = input.value.trim();
-        if (!feedbackText) {
-            alert('Mohon tulis masukan Anda terlebih dahulu.');
-            return;
-        }
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCMPCa3374vo347SbP2alsPWfb5MqKcspRHjkuU8ON6ooFLTTQE5h1RC2pxBNYor_Wuw/exec";
-        const payload = {
-            type: 'feedback',
-            message: feedbackText,
-            userIP: currentUserIP || 'tidak diketahui',
-            timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
-        };
-        const button = document.getElementById('sendSettingsFeedbackBtn');
-        button.textContent = 'Mengirim...';
-        button.disabled = true;
-        
-        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' })
-        .then(() => { alert('Terima kasih! Masukan Anda telah terkirim.'); input.value = ''; })
-        .catch(error => { console.error('Gagal mengirim masukan:', error); alert('Maaf, terjadi kesalahan.'); })
-        .finally(() => { button.textContent = 'Kirim Masukan'; button.disabled = false; });
     }
     // ===================================================================================
     // ▲▲▲ AKHIR DARI KODE BARU ▲▲▲
@@ -1451,7 +1306,6 @@
         customAiRolePrompt: '',
         fontSize: 'base',
         voiceURI: '',
-        elevenLabsVoiceId: '21m00Tcm4TlvDq8ikWAM', // ID default suara Adam
         saveHistory: true,
         isSidebarOpen: window.innerWidth > 768,
         darkMode: false,
@@ -1460,26 +1314,12 @@
     let settings = { ...defaultSettings };
     let currentUtterance = null;
     let isReading = false;
-    // [FIX IPHONE] Initialize audio players with silent audio data to "prime" them for iOS.
-    const silentAudioData = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-    let elevenLabsAudioPlayer = new Audio(silentAudioData);
-    let elevenLabsPreviewPlayer = new Audio(silentAudioData);
-
-    // ▼▼▼ VARIABEL BARU UNTUK FITUR PANGGILAN SUARA ▼▼▼
-    let isCallActive = false;
-    let isAiSpeaking = false;
-    let callRecognition = null;
-    let silenceTimer = null;
-    let callHistory = [];
-    // ▲▲▲ AKHIR DARI VARIABEL PANGGILAN SUARA ▲▲▲
 
     const DEFAULT_API_KEY_1 = 'AIzaSyClcqSMaHiXMZI4qYlTySqC3I3hWWg8H9s';
     const DEFAULT_API_KEY_2 = 'AIzaSyB8OPwzNAAyO1nWd9g185rx4YK3WIJy_Fw';
     const DEFAULT_API_KEY_3 = 'AIzaSyAYzvB1mfVdjrBtXY2n4-UUzCH5juQt8rU';
     const DEFAULT_API_KEY_4 = 'AIzaSyCkkekhKcQzFUUjx8ZcuqEYyqRde1ZDJcU';
     const DEFAULT_API_KEY_5 = 'AIzaSyCV-88PX1_tKh5VBjki9VeyY8gAH5bpZ0o';
-    // [BARU] Kunci API ElevenLabs default yang Anda berikan
-    const DEFAULT_ELEVENLABS_API_KEY = '_51cca647c5de2291ff8247aad3561325390e4ef1e3166918';
     
     async function getUserIP() {
         try {
@@ -1567,41 +1407,19 @@
         switchSettingsTab('general');
     }
     function saveApiKeys() {
-        const geminiKeysToSave = Array.from({length: 5}, (_, i) => document.getElementById(`apiKey${i + 1}`).value.trim());
-        localStorage.setItem('storybaliApiKeys', JSON.stringify(geminiKeysToSave));
-        
-        const elevenLabsKey = document.getElementById('elevenLabsApiKey').value.trim();
-        // [MODIFIKASI] Simpan hanya jika pengguna memasukkan sesuatu, jika tidak, biarkan kosong agar default bisa digunakan
-        if (elevenLabsKey) {
-            localStorage.setItem('elevenLabsApiKey', elevenLabsKey);
-        } else {
-            localStorage.removeItem('elevenLabsApiKey');
-        }
-
+        const keysToSave = Array.from({length: 5}, (_, i) => document.getElementById(`apiKey${i + 1}`).value.trim());
+        localStorage.setItem('storybaliApiKeys', JSON.stringify(keysToSave));
         alert('API Keys berhasil disimpan!');
         loadApiKeys();
-        populateElevenLabsVoices();
     }
-
-    // [MODIFIKASI] Fungsi loadApiKeys untuk menangani Kunci Default ElevenLabs
     function loadApiKeys() {
-        const savedGeminiKeys = localStorage.getItem('storybaliApiKeys');
-        const defaultGeminiKeys = [DEFAULT_API_KEY_1, DEFAULT_API_KEY_2, DEFAULT_API_KEY_3, DEFAULT_API_KEY_4, DEFAULT_API_KEY_5];
-        apiKeys = savedGeminiKeys ? JSON.parse(savedGeminiKeys) : defaultGeminiKeys;
+        const savedKeys = localStorage.getItem('storybaliApiKeys');
+        const defaultKeys = [DEFAULT_API_KEY_1, DEFAULT_API_KEY_2, DEFAULT_API_KEY_3, DEFAULT_API_KEY_4, DEFAULT_API_KEY_5];
+        apiKeys = savedKeys ? JSON.parse(savedKeys) : defaultKeys;
         apiKeys.forEach((key, i) => {
             const inputElement = document.getElementById(`apiKey${i + 1}`);
             if (inputElement) inputElement.value = key;
         });
-
-        // Coba ambil kunci dari localStorage dulu
-        const savedElevenLabsKey = localStorage.getItem('elevenLabsApiKey');
-        const elevenLabsInput = document.getElementById('elevenLabsApiKey');
-        if (savedElevenLabsKey) {
-            elevenLabsInput.value = savedElevenLabsKey;
-        } else {
-            // Jika tidak ada di localStorage, gunakan kunci default dari developer
-            elevenLabsInput.value = DEFAULT_ELEVENLABS_API_KEY;
-        }
     }
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
@@ -1814,7 +1632,7 @@
     }
     function toggleVoiceMode() {
         if (isRecording) {
-            stopVoiceRecognition(false);
+            stopVoiceRecognition(true);
         } else {
             startVoiceRecognition();
         }
@@ -1827,34 +1645,25 @@
         finalTranscript = '';
         document.getElementById('messageInput').value = '';
         isRecording = true;
-
-        const micBtn = document.getElementById('micBtn');
-        micBtn.classList.add('send-btn-active'); // Warnai tombol untuk menandakan aktif
-        micBtn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V6a1 1 0 00-1-1H5z" clip-rule="evenodd"></path></svg>`; // Ikon stop
-        micBtn.title = "Hentikan Perekaman";
-
         document.getElementById('messageInput').style.visibility = 'hidden';
+        document.querySelector('.action-buttons').style.display = 'none';
         document.getElementById('voiceRecordingUI').style.display = 'flex';
         document.getElementById('voiceStatusText').textContent = 'Mendengarkan...';
-
         recognition = new webkitSpeechRecognition();
         recognition.continuous = true;
         recognition.interimResults = true;
         recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
         recognition.onresult = (event) => {
             let interim_transcript = '';
-            // Iterate from the last result index to avoid reprocessing old results
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                const transcript = event.results[i][0].transcript;
+            let transcript_builder = '';
+            for (let i = 0; i < event.results.length; ++i) {
                 if (event.results[i].isFinal) {
-                    // Once a part is final, append it to our global final transcript
-                    finalTranscript += transcript;
+                    transcript_builder += event.results[i][0].transcript;
                 } else {
-                    // Otherwise, it's part of the current interim transcript
-                    interim_transcript += transcript;
+                    interim_transcript += event.results[i][0].transcript;
                 }
             }
-            // The display text is the accumulated final transcript plus the current interim part
+            finalTranscript = transcript_builder;
             const displayText = (finalTranscript + interim_transcript).trim();
             document.getElementById('voiceStatusText').textContent = displayText || 'Mendengarkan...';
         };
@@ -1863,11 +1672,11 @@
             if (event.error !== 'aborted') {
                 addSystemMessage(`Error pengenalan suara: ${event.error}`);
             }
-            stopVoiceRecognition(false);
+            stopVoiceRecognition(true);
         };
         recognition.onend = () => {
             if (isRecording) {
-                stopVoiceRecognition(false);
+                stopVoiceRecognition();
             }
         };
         try {
@@ -1875,38 +1684,23 @@
         } catch (e) {
             console.error("Error starting speech recognition:", e);
             addSystemMessage("Tidak dapat memulai pengenalan suara.");
-            stopVoiceRecognition(false);
+            stopVoiceRecognition(true);
         }
     }
     function stopVoiceRecognition(isCancel = false) {
         if (!isRecording) return;
-
-        // [FIX IPHONE] Get the currently displayed text. This is the most reliable source.
-        const currentText = document.getElementById('voiceStatusText').textContent.trim();
-
         isRecording = false;
         if (recognition) {
             recognition.stop();
             recognition = null;
         }
-
-        // Use the captured text if it's not the default "Mendengarkan..."
-        if (!isCancel && currentText && currentText !== 'Mendengarkan...') {
-            document.getElementById('messageInput').value = currentText;
-            finalTranscript = currentText; // Also update finalTranscript for consistency
+        if (!isCancel && finalTranscript.trim()) {
+            document.getElementById('messageInput').value = finalTranscript.trim();
         } else {
             document.getElementById('messageInput').value = '';
-            finalTranscript = ''; // Reset if cancelled or empty
         }
-
-        const micBtn = document.getElementById('micBtn');
-        micBtn.classList.remove('send-btn-active');
-        micBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
-                                </svg>`;
-        micBtn.title = "Mode Suara";
-
         document.getElementById('messageInput').style.visibility = 'visible';
+        document.querySelector('.action-buttons').style.display = 'flex';
         document.getElementById('voiceRecordingUI').style.display = 'none';
         handleInputChange({ target: document.getElementById('messageInput') });
     }
@@ -1953,11 +1747,13 @@
         }
     }
 
+    // ▼▼▼ [FUNGSI BARU] Fungsi ini dipanggil langsung dari HTML ▼▼▼
     function handleDarkModeToggle() {
         const isChecked = document.getElementById('darkModeToggle').checked;
         applyDarkMode(isChecked);
         saveSettings();
     }
+    // ▲▲▲ AKHIR DARI FUNGSI BARU ▲▲▲
 
     function loadSettings() {
         const savedSettings = localStorage.getItem('storybaliSettings');
@@ -1979,7 +1775,6 @@
         settings.soundEnabled = document.getElementById('soundToggle').checked;
         settings.readAiResponseEnabled = document.getElementById('readAiResponseToggle').checked;
         settings.voiceURI = document.getElementById('voiceSelect').value;
-        settings.elevenLabsVoiceId = document.getElementById('elevenLabsVoiceSelect').value;
         settings.saveHistory = document.getElementById('saveHistoryToggle').checked;
         settings.darkMode = document.getElementById('darkModeToggle').checked;
         saveSettings();
@@ -1991,7 +1786,6 @@
         if (confirm('Yakin ingin mereset semua pengaturan? SEMUA riwayat chat dan API Key akan dihapus. Halaman akan dimuat ulang.')) {
             localStorage.removeItem('storybaliSettings');
             localStorage.removeItem('storybaliApiKeys');
-            localStorage.removeItem('elevenLabsApiKey');
             localStorage.removeItem('storybaliChatSessions');
             localStorage.removeItem('onboardingShown');
             alert('Pengaturan telah direset ke default. Halaman akan dimuat ulang.');
@@ -2029,14 +1823,8 @@
         const customRoleContainer = document.getElementById('customRoleContainer');
         customRoleContainer.classList.toggle('hidden', settings.aiRole !== 'kustom');
         if (settings.aiRole === 'kustom') document.getElementById('customRoleInput').value = settings.customAiRolePrompt;
-        
         const voiceSelect = document.getElementById('voiceSelect');
         if (settings.voiceURI && voiceSelect.options.length > 1) voiceSelect.value = settings.voiceURI;
-
-        const elevenLabsSelect = document.getElementById('elevenLabsVoiceSelect');
-        if (settings.elevenLabsVoiceId && elevenLabsSelect.options.length > 1) {
-            elevenLabsSelect.value = settings.elevenLabsVoiceId;
-        }
     }
     function selectChoice(settingName, value, element) {
         settings[settingName] = value;
@@ -2253,7 +2041,6 @@
         messageDiv.className = 'message-bubble flex items-start space-x-3';
         const timeString = timestamp ? getFormattedTime(new Date(timestamp)) : '';
         const imageMatch = message.match(/^\[Gambar: (.*?)\] (.*)/);
-        const callMatch = message.match(/^\[TRANSKRIP PANGGILAN SUARA\]\n([\s\S]*)/);
 
         if (isUser) {
             messageDiv.className += ' flex-row-reverse space-x-reverse user';
@@ -2265,13 +2052,7 @@
                                     <p class="text-xs mb-1 opacity-90">🖼️ ${imageMatch[1]}</p>
                                     <p class="text-sm font-medium">${imageMatch[2]}</p>
                                   </div>`;
-            } else if(callMatch) {
-                 messageContent = `<div class="text-left text-sm">
-                                    <p class="font-bold mb-2">📞 Transkrip Panggilan</p>
-                                    <pre class="whitespace-pre-wrap text-xs bg-black bg-opacity-20 p-2 rounded">${callMatch[1]}</pre>
-                                  </div>`;
-            }
-            else {
+            } else {
                 messageContent = `<div class="leading-relaxed text-sm">${message.replace(/\n/g, '<br>')}</div>`;
             }
 
@@ -2363,199 +2144,24 @@
         if (otherVoices.length > 0) voiceSelect.appendChild(createOptGroup('Bahasa Lain', otherVoices));
         if (settings.voiceURI) voiceSelect.value = settings.voiceURI;
     }
-    
-    // [MODIFIKASI] Fungsi populateElevenLabsVoices dengan penanganan tombol pratinjau
-    async function populateElevenLabsVoices() {
-        const apiKey = localStorage.getItem('elevenLabsApiKey') || DEFAULT_ELEVENLABS_API_KEY;
-        const selectElement = document.getElementById('elevenLabsVoiceSelect');
-        const previewBtn = document.getElementById('previewElevenLabsVoiceBtn');
-        
-        previewBtn.disabled = true; // Nonaktifkan tombol saat memulai
-        if (!apiKey) {
-            selectElement.innerHTML = '<option value="">API Key tidak ada</option>';
-            return;
-        }
-
-        selectElement.innerHTML = '<option value="">Memuat suara...</option>';
-
-        try {
-            const response = await fetch('https://api.elevenlabs.io/v1/voices', {
-                headers: { 'xi-api-key': apiKey }
-            });
-
-            if (!response.ok) {
-                throw new Error('Gagal ambil suara. Periksa API Key.');
-            }
-
-            const data = await response.json();
-            selectElement.innerHTML = ''; 
-
-            data.voices.forEach(voice => {
-                const option = document.createElement('option');
-                option.value = voice.voice_id;
-                option.textContent = `${voice.name}`;
-                selectElement.appendChild(option);
-            });
-
-            if (settings.elevenLabsVoiceId) {
-                selectElement.value = settings.elevenLabsVoiceId;
-            }
-            previewBtn.disabled = false; // Aktifkan tombol setelah suara berhasil dimuat
-
-        } catch (error) {
-            console.error('Error fetching ElevenLabs voices:', error);
-            selectElement.innerHTML = `<option value="">Error</option>`;
-        }
-    }
-
-    // [MODIFIKASI] Fungsi play audio ElevenLabs untuk menangani pemutaran yang sedang berlangsung
-    async function playElevenLabsAudio(text, button, voiceId = null, audioPlayer = elevenLabsAudioPlayer) {
-        const apiKey = localStorage.getItem('elevenLabsApiKey') || DEFAULT_ELEVENLABS_API_KEY;
-        const effectiveVoiceId = voiceId || settings.elevenLabsVoiceId || '21m00Tcm4TlvDq8ikWAM';
-        const modelId = "eleven_multilingual_v2";
-        const apiUrl = `https://api.elevenlabs.io/v1/text-to-speech/${effectiveVoiceId}`;
-
-        const loadingIcon = `<svg class="w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
-        const stopIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>`;
-        const playIcon = button ? button.innerHTML : ''; // Simpan ikon play asli
-
-        if(button) button.innerHTML = loadingIcon;
-        isReading = true;
-
-        try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Accept': 'audio/mpeg', 'Content-Type': 'application/json', 'xi-api-key': apiKey },
-                body: JSON.stringify({
-                    text: text,
-                    model_id: modelId,
-                    voice_settings: { stability: 0.5, similarity_boost: 0.75 }
-                })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`ElevenLabs API error: ${errorData.detail.message}`);
-            }
-
-            const audioBlob = await response.blob();
-            const audioUrl = URL.createObjectURL(audioBlob);
-            
-            audioPlayer.src = audioUrl;
-            audioPlayer.play();
-            if(button) button.innerHTML = stopIcon;
-
-            return new Promise(resolve => {
-                audioPlayer.onended = () => {
-                    if(button) button.innerHTML = playIcon;
-                    isReading = false;
-                    URL.revokeObjectURL(audioUrl);
-                    resolve();
-                };
-            });
-
-        } catch (error) {
-            console.error('Error with ElevenLabs API:', error);
-            if(button) button.innerHTML = playIcon;
-            isReading = false;
-            return playBrowserAudio(text, button);
-        }
-    }
-
-    // [REVISED] for iOS compatibility. This function is now synchronous.
-    function playBrowserAudio(text, button) {
-        const stopIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>`;
-        const playIcon = button ? button.innerHTML : '';
-        
-        // Immediately cancel any ongoing speech. This is crucial for iOS.
-        speechSynthesis.cancel();
-
-        const utterance = new SpeechSynthesisUtterance(text);
-        const voices = speechSynthesis.getVoices();
-        const selectedVoice = voices.find(v => v.voiceURI === settings.voiceURI);
-        
-        // More robust voice finding for Indonesian
-        utterance.voice = selectedVoice || voices.find(v => v.lang === 'id-ID') || voices.find(v => v.lang.startsWith('id'));
-        utterance.lang = 'id-ID'; // Explicitly set lang for better compatibility
-
-        utterance.onstart = () => {
-            isReading = true;
-            if(button) button.innerHTML = stopIcon;
-        };
-
-        utterance.onend = () => {
-            isReading = false;
-            currentUtterance = null;
-            if(button) button.innerHTML = playIcon;
-        };
-
-        utterance.onerror = (e) => {
-            console.error('SpeechSynthesis Error', e);
-            if(e.error !== 'canceled') {
-                alert('Maaf, terjadi kesalahan saat memutar suara: ' + e.error);
-            }
-            isReading = false;
-            currentUtterance = null;
-            if(button) button.innerHTML = playIcon;
-        };
-
-        currentUtterance = utterance;
-        speechSynthesis.speak(utterance);
-    }
-
-    // [REVISED] for iOS compatibility
-    async function readAiResponse(button, encodedMessage) {
-        if (!settings.readAiResponseEnabled) {
-            alert('Fitur pembaca jawaban dinonaktifkan.');
-            return;
-        }
-
-        // Stop any currently playing audio first.
-        if (isReading) {
-            stopReading();
-            return;
-        }
-        
+    function readAiResponse(button, encodedMessage) {
+        if (!settings.readAiResponseEnabled) { alert('Fitur pembaca jawaban dinonaktifkan.'); return; }
         const message = decodeURIComponent(atob(encodedMessage));
-        const elevenLabsApiKey = localStorage.getItem('elevenLabsApiKey') || DEFAULT_ELEVENLABS_API_KEY;
-
-        if (elevenLabsApiKey) {
-            // [FIX IPHONE] "Unlock" the audio context. This must be a direct response to user input.
-            // The audio element now has a silent data URI, so play() is valid.
-            elevenLabsAudioPlayer.play().catch(e => console.warn("Audio unlock failed, this is expected on some browsers.", e));
-            elevenLabsAudioPlayer.pause();
-
-            await playElevenLabsAudio(message, button, null, elevenLabsAudioPlayer);
-        } else {
-            // [FIX IPHONE] For native TTS, call the function synchronously without 'await'.
-            // The function itself will handle state via event listeners.
-            playBrowserAudio(message, button);
-        }
+        const playIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>`;
+        const stopIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>`;
+        if (isReading) { stopReading(); button.innerHTML = playIcon; isReading = false; return; }
+        if (currentUtterance) speechSynthesis.cancel();
+        currentUtterance = new SpeechSynthesisUtterance(message);
+        const selectedVoice = speechSynthesis.getVoices().find(v => v.voiceURI === settings.voiceURI);
+        currentUtterance.voice = selectedVoice || speechSynthesis.getVoices().find(v => v.lang.startsWith('id'));
+        button.innerHTML = stopIcon; isReading = true;
+        currentUtterance.onend = () => { button.innerHTML = playIcon; isReading = false; currentUtterance = null; };
+        currentUtterance.onerror = (e) => { console.error('SpeechSynthesis Error', e); button.innerHTML = playIcon; isReading = false; currentUtterance = null; };
+        speechSynthesis.speak(currentUtterance);
     }
-
-    function stopReading() {
-        if (speechSynthesis.speaking) {
-            speechSynthesis.cancel();
-        }
-        if (!elevenLabsAudioPlayer.paused) {
-            elevenLabsAudioPlayer.pause();
-            elevenLabsAudioPlayer.currentTime = 0;
-        }
-         if (!elevenLabsPreviewPlayer.paused) {
-            elevenLabsPreviewPlayer.pause();
-            elevenLabsPreviewPlayer.currentTime = 0;
-        }
-        isReading = false;
-        document.querySelectorAll('.ai-message button[title="Baca Jawaban"]').forEach(btn => {
-             btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>`;
-        });
-    }
+    function stopReading() { if (speechSynthesis.speaking) speechSynthesis.cancel(); }
     
-    function getSystemPrompt(isCall = false) {
-        if (isCall) {
-            return `Kamu adalah Wayan, asisten AI yang sedang dalam panggilan suara. Berikan respons yang singkat, jelas, dan natural seperti sedang berbicara di telepon. Hindari jawaban yang panjang dan bertele-tele. Jawab dengan 1-2 kalimat saja kecuali jika diminta untuk menjelaskan lebih detail.`;
-        }
-        
+    function getSystemPrompt() {
         const baseInstructions = `Gunakan format Markdown untuk jawabanmu jika diperlukan (list, tebal, kode).
 
 [PENTING: Aturan Pemberian Link]
@@ -2691,7 +2297,6 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         saveChatLimitData({ ...allUserData, [currentUserIP]: userData });
         
         addMessage(message, true);
-        trackUserMessageCount();
         addToConversationHistory('user', message);
         input.value = '';
         handleInputChange({ target: input });
@@ -2803,188 +2408,21 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         }
     }
 
-    // [BARU] Fungsi untuk memutar pratinjau suara ElevenLabs
-    async function previewElevenLabsVoice() {
-        const selectElement = document.getElementById('elevenLabsVoiceSelect');
-        const voiceId = selectElement.value;
-        const button = document.getElementById('previewElevenLabsVoiceBtn');
-        const sampleText = "Halo, ini adalah contoh suara saya.";
-
-        if (!voiceId) {
-            alert("Pilih suara terlebih dahulu.");
-            return;
-        }
-
-        // Hentikan pemutaran pratinjau atau pembacaan lain yang sedang berjalan
-        stopReading(); 
-        
-        // Nonaktifkan tombol lain untuk mencegah konflik
-        button.disabled = true;
-        
-        // Gunakan player terpisah untuk pratinjau
-        await playElevenLabsAudio(sampleText, button, voiceId, elevenLabsPreviewPlayer);
-        
-        // Aktifkan kembali tombol setelah selesai
-        button.disabled = false;
-    }
-
-    async function speakAiResponse(text) {
-        isAiSpeaking = true;
-        document.getElementById('callStatusText').textContent = 'Wayan AI sedang berbicara...';
-        
-        const elevenLabsApiKey = localStorage.getItem('elevenLabsApiKey') || DEFAULT_ELEVENLABS_API_KEY;
-        
-        if (elevenLabsApiKey) {
-            await playElevenLabsAudio(text, null, null, elevenLabsAudioPlayer);
-        } else {
-            await playBrowserAudio(text, null);
-        }
-
-        isAiSpeaking = false;
-        if (isCallActive) {
-            listenForUserSpeech();
-        }
-    }
-
-    function listenForUserSpeech() {
-        if (!isCallActive || isAiSpeaking) return;
-
-        if (!('webkitSpeechRecognition' in window)) {
-            alert('Maaf, browser Anda tidak mendukung fitur pengenalan suara. Panggilan tidak dapat dilanjutkan.');
-            endCall();
-            return;
-        }
-        
-        document.getElementById('callStatusText').textContent = 'Mendengarkan...';
-        callRecognition = new webkitSpeechRecognition();
-        callRecognition.continuous = false;
-        callRecognition.interimResults = true;
-        callRecognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
-
-        let final_transcript = '';
-
-        callRecognition.onresult = (event) => {
-            clearTimeout(silenceTimer);
-            let interim_transcript = '';
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    final_transcript += event.results[i][0].transcript;
-                } else {
-                    interim_transcript += event.results[i][0].transcript;
-                }
-            }
-            silenceTimer = setTimeout(() => {
-                callRecognition.stop();
-            }, 1500);
-        };
-
-        callRecognition.onerror = (event) => {
-            console.error('Call speech recognition error:', event.error);
-            if(isCallActive) listenForUserSpeech();
-        };
-
-        callRecognition.onend = () => {
-            clearTimeout(silenceTimer);
-            if (isCallActive && final_transcript.trim()) {
-                processUserTranscript(final_transcript.trim());
-            } else if (isCallActive) {
-                listenForUserSpeech();
-            }
-        };
-
-        callRecognition.start();
-        silenceTimer = setTimeout(() => {
-            if(callRecognition) callRecognition.stop();
-        }, 5000);
-    }
-    
-    async function processUserTranscript(transcript) {
-        document.getElementById('callStatusText').textContent = 'Wayan sedang berpikir...';
-        callHistory.push({ role: 'user', parts: [{ text: transcript }] });
-
-        try {
-            const contextualHistory = callHistory.slice(-6);
-            
-            const payload = {
-                contents: contextualHistory,
-                systemInstruction: { parts: [{ text: getSystemPrompt(true) }] },
-                generationConfig: { 
-                    temperature: 0.9, 
-                    topK: 1, 
-                    topP: 1, 
-                    maxOutputTokens: 80
-                }
-            };
-
-            const data = await makeApiRequest(payload);
-            let aiResponseText = "Maaf, sepertinya ada gangguan. Bisa ulangi lagi?";
-
-            if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
-                aiResponseText = data.candidates[0].content.parts[0].text.split('[SUGGESTIONS]')[0].trim();
-            }
-            
-            callHistory.push({ role: 'model', parts: [{ text: aiResponseText }] });
-            await speakAiResponse(aiResponseText);
-
-        } catch (error) {
-            console.error("Error processing transcript:", error);
-            const errorMessage = "Aduh, ada sedikit masalah teknis. Coba kita ulangi ya.";
-            callHistory.push({ role: 'model', parts: [{ text: errorMessage }] });
-            await speakAiResponse(errorMessage);
-        }
-    }
-
-    async function startCall() {
-        if (isCallActive) return;
-        isCallActive = true;
-        callHistory = [];
-        document.getElementById('callModal').classList.remove('hidden');
-        document.getElementById('callModal').classList.add('flex');
-        
-        const openingLine = "Halo, ini Wayan. Ada yang bisa dibantu?";
-        callHistory.push({ role: 'model', parts: [{ text: openingLine }] });
-        await speakAiResponse(openingLine);
-    }
-
-    function endCall() {
-        if (!isCallActive) return;
-        isCallActive = false;
-        
-        document.getElementById('callModal').classList.add('hidden');
-        document.getElementById('callModal').classList.remove('flex');
-        document.getElementById('callStatusText').textContent = 'Menghubungkan...';
-
-        stopReading();
-        if (callRecognition) {
-            callRecognition.stop();
-            callRecognition = null;
-        }
-        clearTimeout(silenceTimer);
-
-        if (callHistory.length > 1) {
-            let transcriptText = "[TRANSKRIP PANGGILAN SUARA]\n";
-            callHistory.forEach(turn => {
-                const prefix = turn.role === 'user' ? 'Anda: ' : 'Wayan: ';
-                transcriptText += prefix + turn.parts[0].text + '\n';
-            });
-            addToConversationHistory('user', transcriptText);
-            addOriginalMessage(transcriptText, true, new Date().toISOString());
-            scrollToBottom();
-        }
-    }
-
     window.addEventListener('load', async () => {
         loadApiKeys();
         loadSettings();
         currentUserIP = await getUserIP();
         
+        // ===================================================================================
+        // ▼▼▼ PEMANGGILAN FUNGSI NOTIFIKASI ▼▼▼
+        // ===================================================================================
         if (currentUserIP) {
           sendNewUserNotification(currentUserIP);
         }
+        // ===================================================================================
         
         checkUserStatus();
         populateVoiceList();
-        populateElevenLabsVoices();
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = populateVoiceList;
         }
@@ -3017,11 +2455,6 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             saveSettings();
         });
 
-        document.getElementById('elevenLabsVoiceSelect').addEventListener('change', (e) => {
-            settings.elevenLabsVoiceId = e.target.value;
-            saveSettings();
-        });
-
         document.getElementById('saveHistoryToggle').addEventListener('change', (e) => {
             settings.saveHistory = e.target.checked;
             saveSettings();
@@ -3033,9 +2466,18 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             }
         });
 
-        // [BARU] Event listener untuk tombol pratinjau suara
-        document.getElementById('previewElevenLabsVoiceBtn').addEventListener('click', previewElevenLabsVoice);
+        document.getElementById('pauseRecordingBtn').addEventListener('click', () => {
+            stopVoiceRecognition(); 
+        });
 
+        document.getElementById('sendRecordingBtn').addEventListener('click', () => {
+            stopVoiceRecognition();
+            setTimeout(() => {
+                if(document.getElementById('messageInput').value.trim()){
+                    sendMessage();
+                }
+            }, 100); 
+        });
     });
 
     ['profileModal', 'imagePreviewModal', 'settingsModal'].forEach(id => {
@@ -3138,29 +2580,5 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
 
   gtag('config', 'G-GGGNDKREFK');
 </script>
-
-<!-- ▼▼▼ KODE BARU UNTUK MODAL RATING & MASUKAN ▼▼▼ -->
-<div id="ratingModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
-    <div class="modal-content p-6 max-w-sm w-full" id="ratingModalContent">
-        <div class="text-center">
-            <h3 class="text-lg font-bold text-gray-800 mb-2">Beri Nilai untuk Wayan AI</h3>
-            <p class="text-sm text-gray-600 mb-4">Masukan Anda sangat berarti untuk pengembangan kami.</p>
-            
-            <!-- Bintang Rating -->
-            <div id="starRatingContainer" class="flex justify-center items-center space-x-2 mb-4 text-gray-300">
-                <!-- Bintang akan dibuat oleh JavaScript, biarkan kosong -->
-            </div>
-            
-            <textarea id="ratingFeedbackInput" placeholder="Tulis masukan Anda di sini (opsional)..." class="w-full settings-input text-sm mb-4" rows="4"></textarea>
-            
-            <div class="flex space-x-3">
-                <button onclick="hideRatingModal()" class="flex-1 bg-gray-200 text-gray-800 py-2.5 rounded-xl font-semibold text-sm settings-btn-action">Nanti Saja</button>
-                <button id="submitRatingBtn" onclick="submitRating()" class="flex-1 bg-blue-600 text-white py-2.5 rounded-xl font-semibold text-sm settings-btn-action">Kirim Nilai</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- ▲▲▲ AKHIR DARI KODE BARU ▲▲▲ -->
-
 </body>
 </html>
