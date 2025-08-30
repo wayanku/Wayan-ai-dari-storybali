@@ -825,6 +825,13 @@
         70% { box-shadow: 0 0 0 20px rgba(255, 255, 255, 0); }
         100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
     }
+    /* CSS untuk area transkrip di iPhone */
+    #callTranscriptPreview {
+      background-color: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(5px);
+      max-height: 100px;
+      overflow-y: auto;
+    }
     /* ▲▲▲ AKHIR DARI CSS PANGGILAN SUARA ▲▲▲ */
   </style>
 </head>
@@ -973,27 +980,29 @@
     </div>
 </div>
     
-<!-- ▼▼▼ MODAL BARU UNTUK PANGGILAN SUARA (DENGAN PERUBAHAN) ▼▼▼ -->
+<!-- ▼▼▼ MODAL PANGGILAN SUARA YANG DIROMBAK TOTAL ▼▼▼ -->
 <div id="callModal" class="fixed inset-0 z-50 flex-col items-center justify-center hidden" style="background-color: rgba(0,0,0,0.8); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);">
     <div class="text-center text-white">
-        <div class="call-avatar-container w-32 h-32 rounded-full p-1 mx-auto mb-6" style="border: 3px solid rgba(255,255,255,0.5);">
+        <div class="call-avatar-container w-32 h-32 rounded-full p-1 mx-auto mb-4" style="border: 3px solid rgba(255,255,255,0.5);">
             <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI Avatar" class="w-full h-full object-cover rounded-full">
         </div>
         <h2 class="text-2xl font-bold">Wayan AI</h2>
-        <p id="callStatusText" class="text-lg mt-2 text-gray-300 transition-all duration-300">Menghubungkan...</p>
+        <p id="callStatusText" class="text-lg mt-1 text-gray-300 transition-all duration-300 h-7">Menghubungkan...</p>
+
+        <!-- [BARU] Area untuk menampilkan transkrip di iOS -->
+        <div id="callTranscriptPreview" class="w-full max-w-sm mx-auto mt-2 p-2 rounded-lg text-sm text-white text-left" style="display: none;">
+            <!-- Transkrip akan muncul di sini -->
+        </div>
     </div>
 
     <!-- Wrapper untuk tombol di bagian bawah -->
-    <div class="absolute bottom-16 flex flex-col items-center space-y-6">
-        <!-- ▼▼▼ TOMBOL BARU UNTUK iOS ▼▼▼ -->
-        <!-- Tombol ini hanya akan muncul di iOS saat giliran pengguna berbicara -->
-        <button id="sendVoiceBtn" class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform active:scale-95" title="Kirim Ucapan" style="display: none;">
-            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
-            </svg>
+    <div class="absolute bottom-16 flex items-center space-x-8">
+        <!-- Tombol Aksi Utama (Mikrofon/Kirim) -->
+        <button id="callActionBtn" class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform active:scale-95" title="Mulai Bicara" style="display: none;">
+            <!-- Ikon akan diubah oleh JavaScript -->
         </button>
-        <!-- ▲▲▲ AKHIR DARI TOMBOL BARU ▲▲▲ -->
 
+        <!-- Tombol Akhiri Panggilan -->
         <button id="endCallBtn" onclick="endCall()" class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform">
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l-8 8m0-8l8 8"></path></svg>
         </button>
@@ -1484,11 +1493,14 @@
     let elevenLabsAudioPlayer = new Audio();
     let elevenLabsPreviewPlayer = new Audio();
 
+    // Variabel state untuk panggilan
     let isCallActive = false;
-    let isAiSpeaking = false;
+    let isSpeaking = false; // Gabungan untuk AI dan User
     let callRecognition = null;
     let silenceTimer = null;
     let callHistory = [];
+    let isListeningForCall = false; // Flag untuk status mikrofon
+    let userCallState = 'idle'; // State untuk alur iOS: 'idle', 'listening', 'transcribed'
 
     const DEFAULT_API_KEY_1 = 'AIzaSyClcqSMaHiXMZI4qYlTySqC3I3hWWg8H9s';
     const DEFAULT_API_KEY_2 = 'AIzaSyB8OPwzNAAyO1nWd9g185rx4YK3WIJy_Fw';
@@ -2479,22 +2491,25 @@
     }
 
     function playBrowserAudio(text, button) {
-        const stopIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>`;
-        
-        currentUtterance = new SpeechSynthesisUtterance(text);
-        const selectedVoice = speechSynthesis.getVoices().find(v => v.voiceURI === settings.voiceURI);
-        currentUtterance.voice = selectedVoice || speechSynthesis.getVoices().find(v => v.lang.startsWith('id'));
-        
-        if (button) button.innerHTML = stopIcon;
-        isReading = true;
-        
-        currentUtterance.onend = () => stopReading();
-        currentUtterance.onerror = (e) => {
-            console.error('SpeechSynthesis Error', e);
-            stopReading();
-        };
-        
-        speechSynthesis.speak(currentUtterance);
+       return new Promise((resolve, reject) => {
+            const stopIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>`;
+            
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const selectedVoice = speechSynthesis.getVoices().find(v => v.voiceURI === settings.voiceURI);
+            currentUtterance.voice = selectedVoice || speechSynthesis.getVoices().find(v => v.lang.startsWith('id'));
+            
+            if (button) button.innerHTML = stopIcon;
+            isReading = true;
+            
+            currentUtterance.onend = () => { stopReading(); resolve(); };
+            currentUtterance.onerror = (e) => {
+                console.error('SpeechSynthesis Error', e);
+                stopReading();
+                reject(e);
+            };
+            
+            speechSynthesis.speak(currentUtterance);
+        });
     }
     
     async function readAiResponse(button, encodedMessage) {
@@ -2510,17 +2525,19 @@
 
         const message = decodeURIComponent(atob(encodedMessage));
         
-        if (settings.audioSource === 'elevenlabs') {
-            try {
+        try {
+            if (settings.audioSource === 'elevenlabs') {
                 await playElevenLabsAudio(message, button);
-            } catch (error) {
-                console.warn("Gagal memutar audio ElevenLabs, beralih ke suara browser:", error.message);
-                alert("Gagal memutar suara ElevenLabs. Memeriksa API Key atau beralih ke suara Bawaan Browser di Pengaturan.");
-            } finally {
-                stopReading();
+            } else {
+                await playBrowserAudio(message, button);
             }
-        } else {
-            playBrowserAudio(message, button);
+        } catch (error) {
+             console.warn("Gagal memutar audio:", error.message);
+             if (settings.audioSource === 'elevenlabs') {
+                alert("Gagal memutar suara ElevenLabs. Memeriksa API Key atau beralih ke suara Bawaan Browser di Pengaturan.");
+             }
+        } finally {
+            stopReading();
         }
     }
     
@@ -2803,154 +2820,175 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     }
 
     // ===================================================================================
-    // ▼▼▼ BAGIAN FUNGSI PANGGILAN SUARA YANG DIMODIFIKASI ▼▼▼
+    // ▼▼▼ BAGIAN FUNGSI PANGGILAN SUARA YANG DIROMBAK TOTAL ▼▼▼
     // ===================================================================================
 
-    // FUNGSI BARU UNTUK DETEKSI iOS
     function isIOS() {
         return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     }
 
     async function speakAiResponse(text) {
-        isAiSpeaking = true;
+        isSpeaking = true;
         document.getElementById('callStatusText').textContent = 'Wayan AI sedang berbicara...';
-        
-        // Sembunyikan dan nonaktifkan tombol kirim manual saat AI berbicara
-        const sendBtn = document.getElementById('sendVoiceBtn');
-        sendBtn.style.display = 'none';
-        sendBtn.disabled = true;
+        document.getElementById('callActionBtn').style.display = 'none';
+        document.getElementById('callTranscriptPreview').style.display = 'none';
 
-        await readAiResponse(null, btoa(encodeURIComponent(text)));
+        const onAudioEnd = () => {
+            isSpeaking = false;
+            if (isCallActive) {
+                listenForUserSpeech();
+            }
+        };
 
-        isAiSpeaking = false;
-        if (isCallActive) {
-            listenForUserSpeech();
+        try {
+            if (settings.audioSource === 'elevenlabs') {
+                await playElevenLabsAudio(text, null);
+                onAudioEnd();
+            } else {
+                const utterance = new SpeechSynthesisUtterance(text);
+                const selectedVoice = speechSynthesis.getVoices().find(v => v.voiceURI === settings.voiceURI);
+                utterance.voice = selectedVoice || speechSynthesis.getVoices().find(v => v.lang.startsWith('id'));
+                utterance.onend = onAudioEnd;
+                utterance.onerror = onAudioEnd; // Treat error as end to avoid getting stuck
+                speechSynthesis.speak(utterance);
+            }
+        } catch (error) {
+            console.error("Error playing AI speech:", error);
+            onAudioEnd();
         }
     }
 
     function listenForUserSpeech() {
-        if (!isCallActive || isAiSpeaking) return;
+        if (!isCallActive || isSpeaking || isListeningForCall) return;
 
         if (!('webkitSpeechRecognition' in window)) {
-            alert('Maaf, browser Anda tidak mendukung fitur pengenalan suara. Panggilan tidak dapat dilanjutkan.');
+            alert('Maaf, browser Anda tidak mendukung fitur ini.');
             endCall();
             return;
         }
         
-        document.getElementById('callStatusText').textContent = 'Mendengarkan...';
-        callRecognition = new webkitSpeechRecognition();
-        callRecognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
+        isListeningForCall = true;
+        const callActionBtn = document.getElementById('callActionBtn');
+        const callStatusText = document.getElementById('callStatusText');
+        const transcriptPreview = document.getElementById('callTranscriptPreview');
+        
+        if (isIOS()) {
+            userCallState = 'idle';
+            callActionBtn.style.display = 'flex';
+            callActionBtn.innerHTML = `<svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>`; // Mic Icon
+            callStatusText.textContent = 'Ketuk untuk bicara';
+            
+            callActionBtn.onclick = () => {
+                if (userCallState === 'idle') {
+                    userCallState = 'listening';
+                    callActionBtn.innerHTML = `<svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V6a1 1 0 00-1-1H5z" clip-rule="evenodd"></path></svg>`; // Stop Icon
+                    transcriptPreview.style.display = 'block';
+                    transcriptPreview.textContent = '';
+                    startRecognitionForIOS();
+                } else if (userCallState === 'listening') {
+                    if (callRecognition) callRecognition.stop();
+                }
+            };
+        } else { // Android
+            callStatusText.textContent = 'Mendengarkan...';
+            startRecognitionForAndroid();
+        }
+    }
 
+    function startRecognitionForAndroid() {
         let final_transcript = '';
-
+        callRecognition = new webkitSpeechRecognition();
+        callRecognition.continuous = false;
+        callRecognition.interimResults = true;
+        callRecognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
+        
         callRecognition.onresult = (event) => {
+            clearTimeout(silenceTimer);
             let interim_transcript = '';
-            // Reset final_transcript setiap kali ada hasil baru untuk iOS agar tidak menumpuk
-            if(isIOS()) final_transcript = ''; 
-
             for (let i = event.resultIndex; i < event.results.length; ++i) {
                 if (event.results[i].isFinal) {
                     final_transcript += event.results[i][0].transcript;
-                } else {
-                    interim_transcript += event.results[i][0].transcript;
                 }
+                interim_transcript += event.results[i][0].transcript;
             }
-            
-            // Logika spesifik untuk Android (otomatis)
-            if (!isIOS()) {
-                 clearTimeout(silenceTimer);
-                 silenceTimer = setTimeout(() => {
-                    if(callRecognition) callRecognition.stop();
-                 }, 1500); // Waktu jeda sebelum dianggap selesai
-            }
+            silenceTimer = setTimeout(() => { if(callRecognition) callRecognition.stop(); }, 1500);
         };
-
-        callRecognition.onerror = (event) => {
-            console.error('Call speech recognition error:', event.error);
-            if(isCallActive) listenForUserSpeech(); // Coba dengarkan lagi jika ada error
-        };
-
-        callRecognition.onend = () => {
-            clearTimeout(silenceTimer);
-            // Untuk Android, proses transkrip saat onend
-            if (!isIOS() && isCallActive && final_transcript.trim()) {
-                processUserTranscript(final_transcript.trim());
-            } else if (!isIOS() && isCallActive) {
-                listenForUserSpeech(); // Jika tidak ada hasil, dengarkan lagi
-            }
-            // Untuk iOS, onend hanya terjadi jika tombol kirim ditekan, jadi tidak perlu tindakan di sini
-        };
-
-        // Logika Berbeda untuk iOS dan Android
-        if (isIOS()) {
-            callRecognition.continuous = true; // Terus mendengarkan sampai dihentikan manual
-            callRecognition.interimResults = false; // Cukup hasil final untuk iOS
-            const sendBtn = document.getElementById('sendVoiceBtn');
-            sendBtn.style.display = 'flex'; // Tampilkan tombol kirim
-            sendBtn.disabled = false;
-            
-            sendBtn.onclick = () => {
-                sendBtn.disabled = true;
-                if (callRecognition) {
-                    callRecognition.stop(); // Menghentikan akan memicu onend
-                }
-                // Pastikan ada transkrip sebelum diproses
-                if (final_transcript.trim()) {
-                    processUserTranscript(final_transcript.trim());
-                } else {
-                    // Jika tidak ada ucapan, langsung dengarkan lagi
-                    listenForUserSpeech();
-                }
-            };
-        } else { // Logika untuk Android (tetap otomatis)
-            callRecognition.continuous = false;
-            callRecognition.interimResults = true;
-            silenceTimer = setTimeout(() => {
-                if(callRecognition) callRecognition.stop();
-            }, 5000); // Batas waktu awal jika tidak ada suara sama sekali
-        }
         
+        callRecognition.onend = () => {
+            isListeningForCall = false;
+            if (isCallActive && final_transcript.trim()) {
+                processUserTranscript(final_transcript.trim());
+            } else if (isCallActive) {
+                listenForUserSpeech();
+            }
+        };
+
+        callRecognition.onerror = () => { isListeningForCall = false; if(isCallActive) listenForUserSpeech(); };
         callRecognition.start();
     }
     
+    function startRecognitionForIOS() {
+        let final_transcript = '';
+        callRecognition = new webkitSpeechRecognition();
+        callRecognition.continuous = true;
+        callRecognition.interimResults = true;
+        callRecognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
+        
+        const transcriptPreview = document.getElementById('callTranscriptPreview');
+        const callActionBtn = document.getElementById('callActionBtn');
+
+        callRecognition.onresult = (event) => {
+            let currentTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                currentTranscript += event.results[i][0].transcript;
+            }
+            transcriptPreview.textContent = currentTranscript;
+        };
+
+        callRecognition.onend = () => {
+            isListeningForCall = false;
+            userCallState = 'transcribed';
+            callActionBtn.innerHTML = `<svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>`; // Send Icon
+            
+            callActionBtn.onclick = () => {
+                if (userCallState === 'transcribed') {
+                    const textToSend = transcriptPreview.textContent.trim();
+                    if (textToSend) {
+                        processUserTranscript(textToSend);
+                    } else {
+                        listenForUserSpeech(); // If empty, just go back to listening
+                    }
+                }
+            };
+        };
+        callRecognition.onerror = () => { isListeningForCall = false; if(isCallActive) listenForUserSpeech(); };
+        callRecognition.start();
+    }
+
     async function processUserTranscript(transcript) {
         document.getElementById('callStatusText').textContent = 'Wayan sedang berpikir...';
-        
-        // Sembunyikan tombol kirim setelah digunakan
-        if(isIOS()) {
-            const sendBtn = document.getElementById('sendVoiceBtn');
-            sendBtn.style.display = 'none';
-        }
+        document.getElementById('callActionBtn').style.display = 'none';
+        document.getElementById('callTranscriptPreview').style.display = 'none';
 
         callHistory.push({ role: 'user', parts: [{ text: transcript }] });
 
         try {
-            const contextualHistory = callHistory.slice(-6); // Ambil 6 percakapan terakhir untuk konteks
-            
+            const contextualHistory = callHistory.slice(-6); 
             const payload = {
                 contents: contextualHistory,
                 systemInstruction: { parts: [{ text: getSystemPrompt(true) }] },
-                generationConfig: { 
-                    temperature: 0.9, 
-                    topK: 1, 
-                    topP: 1, 
-                    maxOutputTokens: 80
-                }
+                generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 80 }
             };
-
             const data = await makeApiRequest(payload);
-            let aiResponseText = "Maaf, sepertinya ada gangguan. Bisa ulangi lagi?";
-
-            if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
+            let aiResponseText = "Maaf, ada gangguan. Bisa ulangi lagi?";
+            if (data.candidates && data.candidates[0].content) {
                 aiResponseText = data.candidates[0].content.parts[0].text.split('[SUGGESTIONS]')[0].trim();
             }
-            
             callHistory.push({ role: 'model', parts: [{ text: aiResponseText }] });
             await speakAiResponse(aiResponseText);
-
         } catch (error) {
             console.error("Error processing transcript:", error);
-            const errorMessage = "Aduh, ada sedikit masalah teknis. Coba kita ulangi ya.";
+            const errorMessage = "Aduh, ada masalah teknis. Kita ulangi ya.";
             callHistory.push({ role: 'model', parts: [{ text: errorMessage }] });
             await speakAiResponse(errorMessage);
         }
@@ -2961,7 +2999,6 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         isCallActive = true;
         callHistory = [];
         
-        // Tampilkan modal panggilan
         const callModal = document.getElementById('callModal');
         callModal.classList.remove('hidden');
         callModal.classList.add('flex');
@@ -2974,21 +3011,22 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     function endCall() {
         if (!isCallActive) return;
         isCallActive = false;
+        isListeningForCall = false;
         
-        // Sembunyikan modal dan semua tombol di dalamnya
         document.getElementById('callModal').classList.add('hidden');
         document.getElementById('callModal').classList.remove('flex');
-        document.getElementById('sendVoiceBtn').style.display = 'none'; // Pastikan tombol iOS tersembunyi
         document.getElementById('callStatusText').textContent = 'Menghubungkan...';
-
+        document.getElementById('callActionBtn').style.display = 'none';
+        document.getElementById('callTranscriptPreview').style.display = 'none';
+        
         stopReading();
         if (callRecognition) {
-            callRecognition.abort(); // Gunakan abort untuk menghentikan paksa
+            callRecognition.abort();
             callRecognition = null;
         }
         clearTimeout(silenceTimer);
 
-        if (callHistory.length > 1) { // Hanya simpan jika ada interaksi
+        if (callHistory.length > 1) {
             let transcriptText = "[TRANSKRIP PANGGILAN SUARA]\n";
             callHistory.forEach(turn => {
                 if (turn.parts && turn.parts[0] && turn.parts[0].text) {
@@ -3003,7 +3041,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     }
 
     // ===================================================================================
-    // ▲▲▲ AKHIR DARI BAGIAN FUNGSI PANGGILAN SUARA YANG DIMODIFIKASI ▲▲▲
+    // ▲▲▲ AKHIR DARI BAGIAN FUNGSI PANGGILAN SUARA YANG DIROMBAK TOTAL ▲▲▲
     // ===================================================================================
 
 
