@@ -485,6 +485,13 @@
         color: var(--text-primary);
         background-color: var(--bg-tertiary);
     }
+    /* [BARU] Gaya untuk tombol rating yang aktif */
+    .action-icon-ai.rating-active {
+        color: #4f46e5; /* Warna biru/indigo saat aktif */
+    }
+    html.dark .action-icon-ai.rating-active {
+        color: #a5b4fc; /* Warna biru lebih terang di mode gelap */
+    }
 
     /* [BARU] CSS untuk Modal Pencarian Google */
     #searchModal .modal-content {
@@ -844,7 +851,8 @@
         color: var(--text-primary); 
         overflow-wrap: break-word; /* [FIX] Mencegah link keluar dari gelembung chat */
         word-wrap: break-word; /* Fallback */
-        font-weight: 500; /* [BARU] Membuat font jawaban AI sedikit lebih tebal agar mudah dibaca */
+        font-weight: 600; /* [DIUBAH] Dibuat lebih tebal agar lebih jelas */
+        font-size: 1.025rem; /* [BARU] Sedikit diperbesar agar lebih mudah dibaca */
     }
     .markdown-content p:not(:last-child) { margin-bottom: 0.75rem; }
     .markdown-content ul, .markdown-content ol {
@@ -1503,6 +1511,7 @@
             newConversation: "Percakapan Baru",
             voiceDefault: "Bawaan Browser", voicePrimaryLang: "Bahasa Utama", voiceOtherLang: "Bahasa Lain",
             copyAnswer: "Salin Jawaban", readAnswer: "Baca Jawaban", searchOnGoogle: "Cari di Google",
+            likeResponse: "Suka jawaban ini", dislikeResponse: "Tidak suka jawaban ini", regenerateResponse: "Buat ulang jawaban", shareResponse: "Bagikan jawaban",
             profileTitle: "AI Assistant Dari Storybali", profileGreeting: "Halo! Gue Wayan!", profileDesc1: "Gue adalah AI assistant yang dibuat khusus untuk membantu kamu dengan gaya bahasa yang santai dan friendly.", profileDesc2: "Santai aja, tanya apa aja yang kamu mau!", profileDesc3: "Kepoin Wayan yuk di Instagram atau chat WA pribadi Wayan!", profileInstagram: "Instagram", profileWhatsapp: "WhatsApp",
             initialGreeting: "Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Santai aja, tanya apa aja yang kamu mau tau ya!",
             systemRoleChanged: "Mode peran AI telah diubah menjadi: {roleName}.",
@@ -1518,6 +1527,7 @@
             statusCooldown: "Anda mencapai batas limit. Silakan tunggu...", statusCooldownMessage: "Waktu Jeda...<br>Wayan lagi istirahat sebentar ya!", statusCooldownDone: "Waktunya ngobrol lagi! Wayan sudah siap.",
             statusElevenLabsLoading: "Memuat suara...", errorElevenLabsFetch: "Gagal ambil suara. Periksa API Key.", errorElevenLabsPreview: "Gagal memutar pratinjau. Periksa API Key atau koneksi Anda.",
             alertReaderDisabled: "Fitur pembaca jawaban dinonaktifkan.", errorElevenLabsPlayback: "Gagal memutar suara ElevenLabs. Memeriksa API Key atau beralih ke suara Bawaan Browser di Pengaturan.",
+            shareNotSupported: "Browser Anda tidak mendukung fitur berbagi. Jawaban telah disalin ke clipboard.", feedbackMessageSent: "Terima kasih atas masukan Anda!",
             callErrorBrowserSupport: "Maaf, browser Anda tidak mendukung fitur ini.", callStatusSpeaking: "Wayan AI sedang berbicara...", callStatusThinking: "Wayan sedang berpikir...", callErrorGeneric: "Maaf, ada gangguan. Bisa ulangi lagi?", callErrorTechnical: "Aduh, ada masalah teknis. Kita ulangi ya.", callInitialGreeting: "Halo, ini Wayan. Ada yang bisa dibantu?", callTranscriptTitle: "[TRANSKRIP PANGGILAN SUARA]\n", callUserPrefix: "Anda: ", callAiPrefix: "Wayan: ",
             onboardingWelcomeTitle: "Selamat Datang di Wayan AI!", onboardingWelcomeDesc: "Aplikasi chat cerdas dengan AI berbahasa Indonesia yang ramah & mudah digunakan.", onboardingAskTitle: "Mulai Bertanya!", onboardingAskDesc: "Tulis pertanyaan di kolom bawah, lalu tekan <b>tombol kirim</b>.", onboardingHistoryTitle: "Simpan Percakapan", onboardingHistoryDesc: "Setiap percakapan akan otomatis tersimpan. Klik tombol <b>menu (garis tiga)</b> di pojok kiri atas untuk melihat riwayat chat Anda.", onboardingSettingsTitle: "Atur Gaya AI-mu", onboardingSettingsDesc: "Pilih <b>peran</b> dan <b>gaya bahasa</b> AI melalui tombol <b>pengaturan (roda gigi)</b>.", onboardingReadyTitle: "Yuk Mulai Chatting!", onboardingReadyDesc: "Selamat menikmati Wayan AI. Jangan ragu untuk bereksperimen!", onboardingSkip: "Lewati", onboardingNext: "Selanjutnya", onboardingStart: "Mulai Chatting",
             ratingTitle: "Beri Nilai untuk Wayan AI", ratingDesc: "Masukan Anda sangat berarti untuk pengembangan kami.", ratingPlaceholder: "Tulis masukan Anda di sini (opsional)...", ratingLater: "Nanti Saja", ratingSubmit: "Kirim Nilai", ratingAlertNoStars: "Mohon pilih setidaknya 1 bintang.", ratingStatusSending: "Mengirim...", ratingAlertSuccess: "Terima kasih atas penilaian Anda!", ratingAlertError: "Maaf, terjadi kesalahan.",
@@ -1554,6 +1564,7 @@
             newConversation: "New Conversation",
             voiceDefault: "Browser Default", voicePrimaryLang: "Primary Language", voiceOtherLang: "Other Languages",
             copyAnswer: "Copy Answer", readAnswer: "Read Answer", searchOnGoogle: "Search on Google",
+            likeResponse: "Like this response", dislikeResponse: "Dislike this response", regenerateResponse: "Regenerate response", shareResponse: "Share response",
             profileTitle: "AI Assistant From Storybali", profileGreeting: "Hello! I'm Wayan!", profileDesc1: "I am an AI assistant specially created to help you with a relaxed and friendly style.", profileDesc2: "Just relax, ask anything you want!", profileDesc3: "Check me out on Instagram or chat with me personally on WhatsApp!", profileInstagram: "Instagram", profileWhatsapp: "WhatsApp",
             initialGreeting: "Hello! I'm Wayan, your AI assistant ready to help answer your questions. Feel free to ask me anything you want to know!",
             systemRoleChanged: "AI role mode has been changed to: {roleName}.",
@@ -1568,6 +1579,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             promptRenameChat: "Enter a new name for this conversation:",
             statusCooldown: "You have reached the limit. Please wait...", statusCooldownMessage: "Cooldown Time...<br>Wayan is taking a short break!", statusCooldownDone: "Time to chat again! Wayan is ready.",
             statusElevenLabsLoading: "Loading voices...", errorElevenLabsFetch: "Failed to fetch voices. Check API Key.", errorElevenLabsPreview: "Failed to play preview. Check your API Key or connection.",
+            shareNotSupported: "Your browser does not support sharing. The response has been copied to the clipboard.", feedbackMessageSent: "Thank you for your feedback!",
             alertReaderDisabled: "The answer reader feature is disabled.", errorElevenLabsPlayback: "Failed to play ElevenLabs audio. Check API Key or switch to Browser Default voice in Settings.",
             callErrorBrowserSupport: "Sorry, your browser does not support this feature.", callStatusSpeaking: "Wayan AI is speaking...", callStatusThinking: "Wayan is thinking...", callErrorGeneric: "Sorry, there was a disturbance. Could you repeat that?", callErrorTechnical: "Oops, there's a technical issue. Let's try again.", callInitialGreeting: "Hello, this is Wayan. How can I help?", callTranscriptTitle: "[VOICE CALL TRANSCRIPT]\n", callUserPrefix: "You: ", callAiPrefix: "Wayan: ",
             onboardingWelcomeTitle: "Welcome to Wayan AI!", onboardingWelcomeDesc: "A smart chat application with a friendly and easy-to-use Indonesian-speaking AI.", onboardingAskTitle: "Start Asking!", onboardingAskDesc: "Write your question in the input box below, then press the <b>send button</b>.", onboardingHistoryTitle: "Save Conversations", onboardingHistoryDesc: "Every conversation is automatically saved. Click the <b>menu button (three lines)</b> in the top left corner to see your chat history.", onboardingSettingsTitle: "Customize Your AI", onboardingSettingsDesc: "Choose the AI's <b>role</b> and <b>tone of voice</b> via the <b>settings button (gear icon)</b>.", onboardingReadyTitle: "Let's Start Chatting!", onboardingReadyDesc: "Enjoy Wayan AI. Feel free to experiment!", onboardingSkip: "Skip", onboardingNext: "Next", onboardingStart: "Start Chatting",
@@ -1605,6 +1617,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             newConversation: "新しい会話",
             voiceDefault: "ブラウザのデフォルト", voicePrimaryLang: "主な言語", voiceOtherLang: "その他の言語",
             copyAnswer: "回答をコピー", readAnswer: "回答を読み上げ", searchOnGoogle: "Googleで検索",
+            likeResponse: "この回答を評価 (良い)", dislikeResponse: "この回答を評価 (悪い)", regenerateResponse: "回答を再生成", shareResponse: "回答を共有",
             profileTitle: "StorybaliのAIアシスタント", profileGreeting: "こんにちは！ワヤンです！", profileDesc1: "私はリラックスしたフレンドリーなスタイルであなたを助けるために特別に作られたAIアシスタントです。", profileDesc2: "リラックスして、何でも聞いてください！", profileDesc3: "Instagramで私をチェックするか、WhatsAppで個人的にチャットしてください！", profileInstagram: "インスタグラム", profileWhatsapp: "ワッツアップ",
             initialGreeting: "こんにちは！私はワヤン、あなたの質問に答える準備ができているAIアシスタントです。知りたいことは何でも気軽に聞いてください！",
             systemRoleChanged: "AIの役割モードが「{roleName}」に変更されました。",
@@ -1619,6 +1632,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             promptRenameChat: "この会話の新しい名前を入力してください:",
             statusCooldown: "制限に達しました。お待ちください...", statusCooldownMessage: "クールダウン時間...<br>ワヤンは少し休憩しています！", statusCooldownDone: "またチャットの時間です！ワヤンは準備ができました。",
             statusElevenLabsLoading: "音声を読み込み中...", errorElevenLabsFetch: "音声の取得に失敗しました。APIキーを確認してください。", errorElevenLabsPreview: "プレビューの再生に失敗しました。APIキーまたは接続を確認してください。",
+            shareNotSupported: "お使いのブラウザは共有機能をサポートしていません。回答がクリップボードにコピーされました。", feedbackMessageSent: "フィードバックありがとうございます！",
             alertReaderDisabled: "回答読み上げ機能は無効です。", errorElevenLabsPlayback: "ElevenLabsの音声の再生に失敗しました。APIキーを確認するか、設定でブラウザのデフォルト音声に切り替えてください。",
             callErrorBrowserSupport: "申し訳ありませんが、お使いのブラウザはこの機能をサポートしていません。", callStatusSpeaking: "ワヤンAIが話しています...", callStatusThinking: "ワヤンは考えています...", callErrorGeneric: "申し訳ありません、中断が発生しました。もう一度お願いしますか？", callErrorTechnical: "おっと、技術的な問題が発生しました。もう一度やり直しましょう。", callInitialGreeting: "こんにちは、ワヤンです。何かお手伝いできることはありますか？", callTranscriptTitle: "[音声通話のトランスクリプト]\n", callUserPrefix: "あなた: ", callAiPrefix: "ワヤン: ",
             onboardingWelcomeTitle: "ワヤンAIへようこそ！", onboardingWelcomeDesc: "フレンドリーで使いやすい日本語対応AIを搭載したスマートチャットアプリケーション。", onboardingAskTitle: "質問を始めよう！", onboardingAskDesc: "下の入力ボックスに質問を書き、<b>送信ボタン</b>を押してください。", onboardingHistoryTitle: "会話を保存", onboardingHistoryDesc: "すべての会話は自動的に保存されます。左上の<b>メニューボタン（三本線）</b>をクリックしてチャット履歴を表示します。", onboardingSettingsTitle: "AIをカスタマイズ", onboardingSettingsDesc: "<b>設定ボタン（歯車アイコン）</b>からAIの<b>役割</b>と<b>口調</b>を選択します。", onboardingReadyTitle: "チャットを始めよう！", onboardingReadyDesc: "ワヤンAIをお楽しみください。自由に試してみてください！", onboardingSkip: "スキップ", onboardingNext: "次へ", onboardingStart: "チャットを開始",
@@ -2689,6 +2703,19 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                         <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" data-translate-title="readAnswer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>
                             </button>
+                        <span class="text-gray-300 dark:text-gray-600">|</span>
+                        <button onclick="handleRating(this, 'like')" class="action-icon-ai" data-translate-title="likeResponse">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.085a2 2 0 00-1.736.97l-1.9 3.8a2 2 0 00.23 2.16l3.955 3.955A2 2 0 0014 10z"></path></svg>
+                        </button>
+                        <button onclick="handleRating(this, 'dislike')" class="action-icon-ai" data-translate-title="dislikeResponse">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.738 3h4.017c.163 0 .326.02.485.06L17 4m-7 10v5a2 2 0 002 2h.085a2 2 0 001.736-.97l1.9-3.8a2 2 0 00-.23-2.16l-3.955-3.955A2 2 0 0010 14z"></path></svg>
+                        </button>
+                        <button onclick="regenerateResponse(this)" class="action-icon-ai" data-translate-title="regenerateResponse">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 16"></path></svg>
+                        </button>
+                        <button onclick="shareResponse(this)" class="action-icon-ai" data-translate-title="shareResponse">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-8.316l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path></svg>
+                        </button>
                     </div>
                 </div>`;
             chatMessages.insertBefore(messageDiv, typingIndicator);
@@ -2762,6 +2789,19 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                         <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" data-translate-title="readAnswer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>
                             </button>
+                        <span class="text-gray-300 dark:text-gray-600">|</span>
+                        <button onclick="handleRating(this, 'like')" class="action-icon-ai" data-translate-title="likeResponse">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.085a2 2 0 00-1.736.97l-1.9 3.8a2 2 0 00.23 2.16l3.955 3.955A2 2 0 0014 10z"></path></svg>
+                        </button>
+                        <button onclick="handleRating(this, 'dislike')" class="action-icon-ai" data-translate-title="dislikeResponse">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.738 3h4.017c.163 0 .326.02.485.06L17 4m-7 10v5a2 2 0 002 2h.085a2 2 0 001.736-.97l1.9-3.8a2 2 0 00-.23-2.16l-3.955-3.955A2 2 0 0010 14z"></path></svg>
+                        </button>
+                        <button onclick="regenerateResponse(this)" class="action-icon-ai" data-translate-title="regenerateResponse">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 16"></path></svg>
+                        </button>
+                        <button onclick="shareResponse(this)" class="action-icon-ai" data-translate-title="shareResponse">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-8.316l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path></svg>
+                        </button>
                     </div>
                 </div>`;
         }
@@ -2992,6 +3032,100 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     // ===================================================================================
     // ▲▲▲ AKHIR DARI BAGIAN YANG DIPERBAIKI ▲▲▲
     // ===================================================================================
+
+    // ===================================================================================
+    // ▼▼▼ [BARU] FUNGSI UNTUK TOMBOL AKSI BARU ▼▼▼
+    // ===================================================================================
+
+    function handleRating(button, ratingType) {
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCMPCa3374vo347SbP2alsPWfb5MqKcspRHjkuU8ON6ooFLTTQE5h1RC2pxBNYor_Wuw/exec";
+        const messageBubble = button.closest('.message-bubble.ai');
+        if (!messageBubble) return;
+
+        const messageText = messageBubble.querySelector('.markdown-content').innerText;
+        const likeBtn = messageBubble.querySelector('button[data-translate-title="likeResponse"]');
+        const dislikeBtn = messageBubble.querySelector('button[data-translate-title="dislikeResponse"]');
+
+        if (button.classList.contains('rating-active')) {
+            button.classList.remove('rating-active');
+        } else {
+            likeBtn.classList.remove('rating-active');
+            dislikeBtn.classList.remove('rating-active');
+            button.classList.add('rating-active');
+            
+            const payload = {
+                type: 'message_feedback',
+                rating: ratingType,
+                message: messageText,
+                userIP: currentUserIP || 'tidak diketahui',
+                timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
+            };
+
+            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' })
+            .then(() => {
+                const originalHTML = button.innerHTML;
+                const checkmark = `<svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+                button.innerHTML = checkmark;
+                setTimeout(() => { button.innerHTML = originalHTML; }, 2000);
+            })
+            .catch(error => console.error('Gagal mengirim feedback pesan:', error));
+        }
+    }
+
+    async function regenerateResponse(button) {
+        if (!activeChatId || currentFetchController) return;
+
+        const activeSession = allChatSessions.find(s => s.id === activeChatId);
+        if (!activeSession || activeSession.history.length < 2) return;
+
+        const lastHistoryItem = activeSession.history[activeSession.history.length - 1];
+        if (lastHistoryItem.role !== 'model') return;
+
+        activeSession.history.pop();
+        saveAllChatSessions();
+
+        const allAiBubbles = document.querySelectorAll('.message-bubble.ai');
+        if (allAiBubbles.length > 0) {
+            allAiBubbles[allAiBubbles.length - 1].remove();
+        }
+
+        showTypingIndicator();
+        currentFetchController = new AbortController();
+        document.getElementById('stopGeneratingContainer').style.display = 'block';
+
+        try {
+            const historyForApi = activeSession.history.map(({ role, parts }) => ({ role, parts }));
+            const payload = { contents: historyForApi, systemInstruction: { parts: [{ text: getSystemPrompt() }] }, generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048 } };
+            const data = await makeApiRequest(payload, currentFetchController.signal);
+            
+            if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
+                let [mainAnswer, suggestionsPart] = data.candidates[0].content.parts[0].text.split('[SUGGESTIONS]');
+                let dynamicSuggestions = suggestionsPart ? suggestionsPart.split('|').map(s => s.trim()).filter(Boolean) : [];
+                addMessage(mainAnswer.trim(), false, dynamicSuggestions);
+                addToConversationHistory('model', mainAnswer.trim());
+                playNotificationSound();
+            } else { addMessage(t('errorGeneric')); }
+        } catch (error) {
+            if (error.name !== 'AbortError') addMessage(t('errorApiGeneral', { error: error.message }));
+        } finally {
+            hideTypingIndicator(); 
+            document.getElementById('stopGeneratingContainer').style.display = 'none';
+            currentFetchController = null;
+        }
+    }
+
+    function shareResponse(button) {
+        const messageBubble = button.closest('.message-bubble.ai');
+        if (!messageBubble) return;
+        const messageText = messageBubble.querySelector('.markdown-content').innerText;
+        const shareData = { title: t('aiName'), text: messageText, url: window.location.href };
+        if (navigator.share && navigator.canShare(shareData)) {
+            navigator.share(shareData).catch((error) => console.error('Error sharing:', error));
+        } else {
+            copyToClipboard(messageText, button);
+            alert(t('shareNotSupported'));
+        }
+    }
 
     function getSystemPrompt(isCall = false) {
         if (isCall) {
