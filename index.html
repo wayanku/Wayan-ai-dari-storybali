@@ -1841,15 +1841,18 @@
         recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
         recognition.onresult = (event) => {
             let interim_transcript = '';
-            let transcript_builder = '';
-            for (let i = 0; i < event.results.length; ++i) {
+            // Iterate from the last result index to avoid reprocessing old results
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                const transcript = event.results[i][0].transcript;
                 if (event.results[i].isFinal) {
-                    transcript_builder += event.results[i][0].transcript;
+                    // Once a part is final, append it to our global final transcript
+                    finalTranscript += transcript;
                 } else {
-                    interim_transcript += event.results[i][0].transcript;
+                    // Otherwise, it's part of the current interim transcript
+                    interim_transcript += transcript;
                 }
             }
-            finalTranscript = transcript_builder;
+            // The display text is the accumulated final transcript plus the current interim part
             const displayText = (finalTranscript + interim_transcript).trim();
             document.getElementById('voiceStatusText').textContent = displayText || 'Mendengarkan...';
         };
@@ -1875,15 +1878,23 @@
     }
     function stopVoiceRecognition(isCancel = false) {
         if (!isRecording) return;
+
+        // [FIX IPHONE] Get the currently displayed text. This is the most reliable source.
+        const currentText = document.getElementById('voiceStatusText').textContent.trim();
+
         isRecording = false;
         if (recognition) {
             recognition.stop();
             recognition = null;
         }
-        if (!isCancel && finalTranscript.trim()) {
-            document.getElementById('messageInput').value = finalTranscript.trim();
+
+        // Use the captured text if it's not the default "Mendengarkan..."
+        if (!isCancel && currentText && currentText !== 'Mendengarkan...') {
+            document.getElementById('messageInput').value = currentText;
+            finalTranscript = currentText; // Also update finalTranscript for consistency
         } else {
             document.getElementById('messageInput').value = '';
+            finalTranscript = ''; // Reset if cancelled or empty
         }
 
         const micBtn = document.getElementById('micBtn');
