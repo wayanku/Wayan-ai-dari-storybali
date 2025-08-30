@@ -2234,7 +2234,7 @@
         }
         type();
     }
-    function addMessage(message, isUser = false, suggestions = []) {
+    function addMessage(message, isUser = false, suggestions = [], isSearchable = false) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message-bubble flex items-start space-x-3';
@@ -2243,9 +2243,20 @@
 
         if (isUser) {
             messageDiv.className += ' flex-row-reverse space-x-reverse user';
+            
+            const searchButtonHtml = isSearchable ? `
+                <div class="mt-2 text-right">
+                    <a href="https://www.google.com/search?q=${encodeURIComponent(message)}" target="_blank" class="inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition-all no-underline" style="color: white; text-decoration: none;">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
+                        Cari di Google
+                    </a>
+                </div>
+            ` : '';
+
             messageDiv.innerHTML = `
                 <div class="user-message text-white p-4 max-w-xs">
                     <p class="leading-relaxed text-sm">${message.replace(/\n/g, '<br>')}</p>
+                    ${searchButtonHtml}
                     <div class="chat-timestamp text-right">${timeString}</div>
                 </div>`;
             chatMessages.insertBefore(messageDiv, typingIndicator);
@@ -2571,7 +2582,7 @@
 
         let searchInstruction = '';
         if (isSearchModeActive) {
-            searchInstruction = `[MODE PENCARIAN AKTIF] Kamu HARUS menggunakan tool pencarian internalmu untuk menjawab pertanyaan yang membutuhkan data real-time (seperti harga, berita terkini, cuaca). Prioritaskan informasi terbaru dari web. Beri tahu pengguna bahwa kamu mencari informasi secara live jika relevan.`;
+            searchInstruction = `[MODE PENCARIAN AKTIF] Pengguna baru saja mengirimkan prompt dan juga memiliki opsi untuk mencarinya langsung di Google lewat tombol di pesannya. Sadari hal ini. Jika pertanyaannya jelas-jelas membutuhkan data real-time (harga saham, berita terkini, cuaca saat ini), berikan jawaban yang mengakui keterbatasan pengetahuanmu dan sarankan pengguna untuk menggunakan tombol 'Cari di Google' yang tersedia untuk mendapatkan informasi paling akurat dan terkini. Contoh: "Untuk harga yen saat ini, Wayan sarankan untuk cek langsung lewat tombol 'Cari di Google' di pesanmu ya, karena data itu berubah sangat cepat."`;
         }
 
         const baseInstructions = `Gunakan format Markdown untuk jawabanmu jika diperlukan (list, tebal, kode).
@@ -2708,7 +2719,11 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         userData.count++;
         saveChatLimitData({ ...allUserData, [currentUserIP]: userData });
         
-        addMessage(message, true);
+        if (isSearchModeActive) {
+            addMessage(message, true, [], true);
+        } else {
+            addMessage(message, true, [], false);
+        }
         trackUserMessageCount();
         addToConversationHistory('user', message);
         input.value = '';
