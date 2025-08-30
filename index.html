@@ -1193,17 +1193,17 @@
             <div class="w-20 h-20 mx-auto mb-4 overflow-hidden profile-avatar-border shadow-lg">
                 <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover">
             </div>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">Wayan AI</h2>
-            <p class="text-purple-600 font-semibold mb-4 text-sm">AI Assistant Dari Storybali</p>
+            <h2 class="text-xl font-bold text-gray-800 mb-2" data-translate-key="aiName">Wayan AI</h2>
+            <p class="text-purple-600 font-semibold mb-4 text-sm" data-translate-key="profileTitle">AI Assistant Dari Storybali</p>
             <div class="text-gray-600 text-xs leading-relaxed mb-4 text-left bg-gray-50 p-3 rounded-xl">
-                <p class="mb-2"><strong>Halo! Gue Wayan!</strong></p>
-                <p class="mb-2">Gue adalah AI assistant yang dibuat khusus untuk membantu kamu dengan gaya bahasa yang santai dan friendly.</p>
-                <p>Santai aja, tanya apa aja yang kamu mau!</p>
-                <p>Kepoin Wayan yuk di Instagram atau chat WA pribadi Wayan!</p>
+                <p class="mb-2"><strong data-translate-key="profileGreeting">Halo! Gue Wayan!</strong></p>
+                <p class="mb-2" data-translate-key="profileDesc1">Gue adalah AI assistant yang dibuat khusus untuk membantu kamu dengan gaya bahasa yang santai dan friendly.</p>
+                <p data-translate-key="profileDesc2">Santai aja, tanya apa aja yang kamu mau!</p>
+                <p data-translate-key="profileDesc3">Kepoin Wayan yuk di Instagram atau chat WA pribadi Wayan!</p>
             </div>
             <div class="grid grid-cols-2 gap-2 text-xs">
-                <a href="https://www.instagram.com/sudiarsana_wayan?igsh=MXE4NHFvZzAyOXd6NQ%3D%3D&utm_source=qr" target="_blank" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 py-2 rounded-full settings-btn">Instagram</a>
-                <a href="https://wa.me/message/RNPBCG25N5V2A1" target="_blank" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-2 rounded-full settings-btn">WhatsApp</a>
+                <a href="https://www.instagram.com/sudiarsana_wayan?igsh=MXE4NHFvZzAyOXd6NQ%3D%3D&utm_source=qr" target="_blank" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 py-2 rounded-full settings-btn" data-translate-key="profileInstagram">Instagram</a>
+                <a href="https://wa.me/message/RNPBCG25N5V2A1" target="_blank" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-2 rounded-full settings-btn" data-translate-key="profileWhatsapp">WhatsApp</a>
             </div>
         </div>
     </div>
@@ -1503,6 +1503,25 @@
             newConversation: "Percakapan Baru",
             voiceDefault: "Bawaan Browser", voicePrimaryLang: "Bahasa Utama", voiceOtherLang: "Bahasa Lain",
             copyAnswer: "Salin Jawaban", readAnswer: "Baca Jawaban", searchOnGoogle: "Cari di Google",
+            profileTitle: "AI Assistant Dari Storybali", profileGreeting: "Halo! Gue Wayan!", profileDesc1: "Gue adalah AI assistant yang dibuat khusus untuk membantu kamu dengan gaya bahasa yang santai dan friendly.", profileDesc2: "Santai aja, tanya apa aja yang kamu mau!", profileDesc3: "Kepoin Wayan yuk di Instagram atau chat WA pribadi Wayan!", profileInstagram: "Instagram", profileWhatsapp: "WhatsApp",
+            initialGreeting: "Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Santai aja, tanya apa aja yang kamu mau tau ya!",
+            systemRoleChanged: "Mode peran AI telah diubah menjadi: {roleName}.",
+            systemSearchModeOn: "Mode pencarian internet diaktifkan.", systemSearchModeOff: "Mode pencarian internet dinonaktifkan.",
+            systemNewChat: "Memulai percakapan baru.", systemResponseStopped: "Pembuatan respons dihentikan.", systemImageAnalysisStopped: "Analisis gambar dihentikan.",
+            errorVoiceRecognition: "Maaf, browser Anda tidak mendukung fitur pengenalan suara.", errorSpeechRecog: "Error pengenalan suara: {error}", errorStartSpeechRecog: "Tidak dapat memulai pengenalan suara.",
+            alertSettingsSaved: "Pengaturan berhasil disimpan!", alertResetConfirm: "Yakin ingin mereset semua pengaturan? SEMUA riwayat chat dan API Key akan dihapus. Halaman akan dimuat ulang.", alertResetSuccess: "Pengaturan telah direset ke default. Halaman akan dimuat ulang.",
+            alertExportEmpty: "Belum ada riwayat chat di sesi ini untuk di-export!", alertExportSuccess: "Riwayat chat sesi ini berhasil di-export!",
+            alertClearHistoryConfirm: "Yakin mau hapus SEMUA riwayat percakapan? Tindakan ini tidak bisa dibatalkan.", alertClearHistorySuccess: "Semua riwayat percakapan telah dihapus!",
+            alertApiKeysSaved: "API Keys berhasil disimpan!", alertImageInvalid: "File tidak valid. Silakan pilih file gambar (JPEG, PNG, WEBP, GIF).", alertImageNoQuestion: "Tulis pertanyaan dulu ya!", alertImageNoData: "Terjadi kesalahan, gambar tidak ditemukan. Coba pilih lagi.", alertLimitReached: "Anda telah mencapai batas. Tunggu cooldown selesai.",
+            errorApiResponseInvalid: "Respons API tidak valid:", errorGeneric: "Maaf, Wayan tidak dapat memberikan respons. Coba lagi.", errorImageAnalysis: "Wah, Wayan nggak bisa analisis gambar ini. Coba gambar lain ya.", errorApiGeneral: "Aduh, Wayan error: {error}. Coba lagi nanti ya!", errorImageAnalysisGeneral: "Aduh, Wayan error saat analisis gambar: {error}. Coba lagi ya!",
+            promptRenameChat: "Masukkan nama baru untuk percakapan ini:",
+            statusCooldown: "Anda mencapai batas limit. Silakan tunggu...", statusCooldownMessage: "Waktu Jeda...<br>Wayan lagi istirahat sebentar ya!", statusCooldownDone: "Waktunya ngobrol lagi! Wayan sudah siap.",
+            statusElevenLabsLoading: "Memuat suara...", errorElevenLabsFetch: "Gagal ambil suara. Periksa API Key.", errorElevenLabsPreview: "Gagal memutar pratinjau. Periksa API Key atau koneksi Anda.",
+            alertReaderDisabled: "Fitur pembaca jawaban dinonaktifkan.", errorElevenLabsPlayback: "Gagal memutar suara ElevenLabs. Memeriksa API Key atau beralih ke suara Bawaan Browser di Pengaturan.",
+            callErrorBrowserSupport: "Maaf, browser Anda tidak mendukung fitur ini.", callStatusSpeaking: "Wayan AI sedang berbicara...", callStatusThinking: "Wayan sedang berpikir...", callErrorGeneric: "Maaf, ada gangguan. Bisa ulangi lagi?", callErrorTechnical: "Aduh, ada masalah teknis. Kita ulangi ya.", callInitialGreeting: "Halo, ini Wayan. Ada yang bisa dibantu?", callTranscriptTitle: "[TRANSKRIP PANGGILAN SUARA]\n", callUserPrefix: "Anda: ", callAiPrefix: "Wayan: ",
+            onboardingWelcomeTitle: "Selamat Datang di Wayan AI!", onboardingWelcomeDesc: "Aplikasi chat cerdas dengan AI berbahasa Indonesia yang ramah & mudah digunakan.", onboardingAskTitle: "Mulai Bertanya!", onboardingAskDesc: "Tulis pertanyaan di kolom bawah, lalu tekan <b>tombol kirim</b>.", onboardingHistoryTitle: "Simpan Percakapan", onboardingHistoryDesc: "Setiap percakapan akan otomatis tersimpan. Klik tombol <b>menu (garis tiga)</b> di pojok kiri atas untuk melihat riwayat chat Anda.", onboardingSettingsTitle: "Atur Gaya AI-mu", onboardingSettingsDesc: "Pilih <b>peran</b> dan <b>gaya bahasa</b> AI melalui tombol <b>pengaturan (roda gigi)</b>.", onboardingReadyTitle: "Yuk Mulai Chatting!", onboardingReadyDesc: "Selamat menikmati Wayan AI. Jangan ragu untuk bereksperimen!", onboardingSkip: "Lewati", onboardingNext: "Selanjutnya", onboardingStart: "Mulai Chatting",
+            ratingTitle: "Beri Nilai untuk Wayan AI", ratingDesc: "Masukan Anda sangat berarti untuk pengembangan kami.", ratingPlaceholder: "Tulis masukan Anda di sini (opsional)...", ratingLater: "Nanti Saja", ratingSubmit: "Kirim Nilai", ratingAlertNoStars: "Mohon pilih setidaknya 1 bintang.", ratingStatusSending: "Mengirim...", ratingAlertSuccess: "Terima kasih atas penilaian Anda!", ratingAlertError: "Maaf, terjadi kesalahan.",
+            feedbackAlertEmpty: "Mohon tulis masukan Anda terlebih dahulu.", feedbackStatusSending: "Mengirim...", feedbackAlertSuccess: "Terima kasih! Masukan Anda telah terkirim.", feedbackAlertError: "Maaf, terjadi kesalahan.",
         },
         en: {
             newChat: "New Chat", newChatTitle: "Start a New Conversation", sidebarToggleTitle: "Show/Hide Chat History",
@@ -1535,6 +1554,25 @@
             newConversation: "New Conversation",
             voiceDefault: "Browser Default", voicePrimaryLang: "Primary Language", voiceOtherLang: "Other Languages",
             copyAnswer: "Copy Answer", readAnswer: "Read Answer", searchOnGoogle: "Search on Google",
+            profileTitle: "AI Assistant From Storybali", profileGreeting: "Hello! I'm Wayan!", profileDesc1: "I am an AI assistant specially created to help you with a relaxed and friendly style.", profileDesc2: "Just relax, ask anything you want!", profileDesc3: "Check me out on Instagram or chat with me personally on WhatsApp!", profileInstagram: "Instagram", profileWhatsapp: "WhatsApp",
+            initialGreeting: "Hello! I'm Wayan, your AI assistant ready to help answer your questions. Feel free to ask me anything you want to know!",
+            systemRoleChanged: "AI role mode has been changed to: {roleName}.",
+            systemSearchModeOn: "Internet search mode activated.", systemSearchModeOff: "Internet search mode deactivated.",
+            systemNewChat: "Starting a new conversation.", systemResponseStopped: "Response generation stopped.", systemImageAnalysisStopped: "Image analysis stopped.",
+            errorVoiceRecognition: "Sorry, your browser does not support the voice recognition feature.", errorSpeechRecog: "Speech recognition error: {error}", errorStartSpeechRecog: "Could not start speech recognition.",
+            alertSettingsSaved: "Settings saved successfully!", alertResetConfirm: "Are you sure you want to reset all settings? ALL chat history and API Keys will be deleted. The page will reload.", alertResetSuccess: "Settings have been reset to default. The page will reload.",
+            alertExportEmpty: "There is no chat history in this session to export!", alertExportSuccess: "Chat history for this session has been successfully exported!",
+alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? This action cannot be undone.", alertClearHistorySuccess: "All chat history has been deleted!",
+            alertApiKeysSaved: "API Keys saved successfully!", alertImageInvalid: "Invalid file. Please select an image file (JPEG, PNG, WEBP, GIF).", alertImageNoQuestion: "Please write a question first!", alertImageNoData: "An error occurred, image not found. Please try selecting again.", alertLimitReached: "You have reached the limit. Please wait for the cooldown to finish.",
+            errorApiResponseInvalid: "Invalid API response:", errorGeneric: "Sorry, Wayan couldn't provide a response. Please try again.", errorImageAnalysis: "Oops, Wayan can't analyze this image. Try another one.", errorApiGeneral: "Oops, Wayan encountered an error: {error}. Please try again later!", errorImageAnalysisGeneral: "Oops, Wayan encountered an error during image analysis: {error}. Please try again!",
+            promptRenameChat: "Enter a new name for this conversation:",
+            statusCooldown: "You have reached the limit. Please wait...", statusCooldownMessage: "Cooldown Time...<br>Wayan is taking a short break!", statusCooldownDone: "Time to chat again! Wayan is ready.",
+            statusElevenLabsLoading: "Loading voices...", errorElevenLabsFetch: "Failed to fetch voices. Check API Key.", errorElevenLabsPreview: "Failed to play preview. Check your API Key or connection.",
+            alertReaderDisabled: "The answer reader feature is disabled.", errorElevenLabsPlayback: "Failed to play ElevenLabs audio. Check API Key or switch to Browser Default voice in Settings.",
+            callErrorBrowserSupport: "Sorry, your browser does not support this feature.", callStatusSpeaking: "Wayan AI is speaking...", callStatusThinking: "Wayan is thinking...", callErrorGeneric: "Sorry, there was a disturbance. Could you repeat that?", callErrorTechnical: "Oops, there's a technical issue. Let's try again.", callInitialGreeting: "Hello, this is Wayan. How can I help?", callTranscriptTitle: "[VOICE CALL TRANSCRIPT]\n", callUserPrefix: "You: ", callAiPrefix: "Wayan: ",
+            onboardingWelcomeTitle: "Welcome to Wayan AI!", onboardingWelcomeDesc: "A smart chat application with a friendly and easy-to-use Indonesian-speaking AI.", onboardingAskTitle: "Start Asking!", onboardingAskDesc: "Write your question in the input box below, then press the <b>send button</b>.", onboardingHistoryTitle: "Save Conversations", onboardingHistoryDesc: "Every conversation is automatically saved. Click the <b>menu button (three lines)</b> in the top left corner to see your chat history.", onboardingSettingsTitle: "Customize Your AI", onboardingSettingsDesc: "Choose the AI's <b>role</b> and <b>tone of voice</b> via the <b>settings button (gear icon)</b>.", onboardingReadyTitle: "Let's Start Chatting!", onboardingReadyDesc: "Enjoy Wayan AI. Feel free to experiment!", onboardingSkip: "Skip", onboardingNext: "Next", onboardingStart: "Start Chatting",
+            ratingTitle: "Rate Wayan AI", ratingDesc: "Your feedback is valuable for our development.", ratingPlaceholder: "Write your feedback here (optional)...", ratingLater: "Later", ratingSubmit: "Submit Rating", ratingAlertNoStars: "Please select at least 1 star.", ratingStatusSending: "Sending...", ratingAlertSuccess: "Thank you for your rating!", ratingAlertError: "Sorry, an error occurred.",
+            feedbackAlertEmpty: "Please write your feedback first.", feedbackStatusSending: "Sending...", feedbackAlertSuccess: "Thank you! Your feedback has been sent.", feedbackAlertError: "Sorry, an error occurred.",
         },
         ja: {
             newChat: "新しいチャット", newChatTitle: "新しい会話を始める", sidebarToggleTitle: "チャット履歴の表示/非表示",
@@ -1567,6 +1605,25 @@
             newConversation: "新しい会話",
             voiceDefault: "ブラウザのデフォルト", voicePrimaryLang: "主な言語", voiceOtherLang: "その他の言語",
             copyAnswer: "回答をコピー", readAnswer: "回答を読み上げ", searchOnGoogle: "Googleで検索",
+            profileTitle: "StorybaliのAIアシスタント", profileGreeting: "こんにちは！ワヤンです！", profileDesc1: "私はリラックスしたフレンドリーなスタイルであなたを助けるために特別に作られたAIアシスタントです。", profileDesc2: "リラックスして、何でも聞いてください！", profileDesc3: "Instagramで私をチェックするか、WhatsAppで個人的にチャットしてください！", profileInstagram: "インスタグラム", profileWhatsapp: "ワッツアップ",
+            initialGreeting: "こんにちは！私はワヤン、あなたの質問に答える準備ができているAIアシスタントです。知りたいことは何でも気軽に聞いてください！",
+            systemRoleChanged: "AIの役割モードが「{roleName}」に変更されました。",
+            systemSearchModeOn: "インターネット検索モードが有効になりました。", systemSearchModeOff: "インターネット検索モードが無効になりました。",
+            systemNewChat: "新しい会話を開始しています。", systemResponseStopped: "応答の生成が停止しました。", systemImageAnalysisStopped: "画像分析が停止しました。",
+            errorVoiceRecognition: "申し訳ありませんが、お使いのブラウザは音声認識機能をサポートしていません。", errorSpeechRecog: "音声認識エラー: {error}", errorStartSpeechRecog: "音声認識を開始できませんでした。",
+            alertSettingsSaved: "設定が正常に保存されました！", alertResetConfirm: "すべての設定をリセットしてもよろしいですか？すべてのチャット履歴とAPIキーが削除されます。ページがリロードされます。", alertResetSuccess: "設定がデフォルトにリセットされました。ページがリロードされます。",
+            alertExportEmpty: "このセッションにはエクスポートするチャット履歴がありません！", alertExportSuccess: "このセッションのチャット履歴が正常にエクスポートされました！",
+            alertClearHistoryConfirm: "すべての会話履歴を削除してもよろしいですか？この操作は元に戻せません。", alertClearHistorySuccess: "すべての会話履歴が削除されました！",
+            alertApiKeysSaved: "APIキーが正常に保存されました！", alertImageInvalid: "無効なファイルです。画像ファイル（JPEG、PNG、WEBP、GIF）を選択してください。", alertImageNoQuestion: "まず質問を書いてください！", alertImageNoData: "エラーが発生しました、画像が見つかりません。もう一度選択してみてください。", alertLimitReached: "制限に達しました。クールダウンが終了するまでお待ちください。",
+            errorApiResponseInvalid: "無効なAPI応答:", errorGeneric: "申し訳ありません、ワヤンは応答できませんでした。もう一度お試しください。", errorImageAnalysis: "おっと、ワヤンはこの画像を分析できません。別の画像を試してください。", errorApiGeneral: "おっと、ワヤンでエラーが発生しました: {error}。後でもう一度お試しください！", errorImageAnalysisGeneral: "おっと、画像分析中にワヤンでエラーが発生しました: {error}。もう一度お試しください！",
+            promptRenameChat: "この会話の新しい名前を入力してください:",
+            statusCooldown: "制限に達しました。お待ちください...", statusCooldownMessage: "クールダウン時間...<br>ワヤンは少し休憩しています！", statusCooldownDone: "またチャットの時間です！ワヤンは準備ができました。",
+            statusElevenLabsLoading: "音声を読み込み中...", errorElevenLabsFetch: "音声の取得に失敗しました。APIキーを確認してください。", errorElevenLabsPreview: "プレビューの再生に失敗しました。APIキーまたは接続を確認してください。",
+            alertReaderDisabled: "回答読み上げ機能は無効です。", errorElevenLabsPlayback: "ElevenLabsの音声の再生に失敗しました。APIキーを確認するか、設定でブラウザのデフォルト音声に切り替えてください。",
+            callErrorBrowserSupport: "申し訳ありませんが、お使いのブラウザはこの機能をサポートしていません。", callStatusSpeaking: "ワヤンAIが話しています...", callStatusThinking: "ワヤンは考えています...", callErrorGeneric: "申し訳ありません、中断が発生しました。もう一度お願いしますか？", callErrorTechnical: "おっと、技術的な問題が発生しました。もう一度やり直しましょう。", callInitialGreeting: "こんにちは、ワヤンです。何かお手伝いできることはありますか？", callTranscriptTitle: "[音声通話のトランスクリプト]\n", callUserPrefix: "あなた: ", callAiPrefix: "ワヤン: ",
+            onboardingWelcomeTitle: "ワヤンAIへようこそ！", onboardingWelcomeDesc: "フレンドリーで使いやすい日本語対応AIを搭載したスマートチャットアプリケーション。", onboardingAskTitle: "質問を始めよう！", onboardingAskDesc: "下の入力ボックスに質問を書き、<b>送信ボタン</b>を押してください。", onboardingHistoryTitle: "会話を保存", onboardingHistoryDesc: "すべての会話は自動的に保存されます。左上の<b>メニューボタン（三本線）</b>をクリックしてチャット履歴を表示します。", onboardingSettingsTitle: "AIをカスタマイズ", onboardingSettingsDesc: "<b>設定ボタン（歯車アイコン）</b>からAIの<b>役割</b>と<b>口調</b>を選択します。", onboardingReadyTitle: "チャットを始めよう！", onboardingReadyDesc: "ワヤンAIをお楽しみください。自由に試してみてください！", onboardingSkip: "スキップ", onboardingNext: "次へ", onboardingStart: "チャットを開始",
+            ratingTitle: "ワヤンAIを評価", ratingDesc: "あなたのフィードバックは私たちの開発にとって貴重です。", ratingPlaceholder: "ここにフィードバックを記入してください（任意）...", ratingLater: "後で", ratingSubmit: "評価を送信", ratingAlertNoStars: "少なくとも星を1つ選択してください。", ratingStatusSending: "送信中...", ratingAlertSuccess: "評価ありがとうございます！", ratingAlertError: "申し訳ありません、エラーが発生しました。",
+            feedbackAlertEmpty: "まずフィードバックを記入してください。", feedbackStatusSending: "送信中...", feedbackAlertSuccess: "ありがとうございます！フィードバックが送信されました。", feedbackAlertError: "申し訳ありません、エラーが発生しました。",
         }
     };
 
@@ -1586,6 +1643,15 @@
             if (langPack[key]) el.title = langPack[key];
         });
     }
+
+    const t = (key, replacements = {}) => {
+        const lang = settings.language || 'id';
+        let text = translations[lang]?.[key] || translations.id[key] || key;
+        for (const placeholder in replacements) {
+            text = text.replace(`{${placeholder}}`, replacements[placeholder]);
+        }
+        return text;
+    };
     // ▲▲▲ AKHIR DARI i18n ▲▲▲
 
     function adjustHeightForMobile() {
@@ -1641,14 +1707,14 @@
     
     function renderStars() {
         const container = document.getElementById('starRatingContainer');
-        container.innerHTML = '';
+        container.innerHTML = ''; // Clear existing stars
         for (let i = 1; i <= 5; i++) {
             const starSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
             starSVG.setAttribute('onclick', `handleStarClick(${i})`);
             starSVG.setAttribute('class', 'w-8 h-8 cursor-pointer star-icon transition-colors ' + (i <= currentRating ? 'text-yellow-400' : 'text-gray-300'));
             starSVG.setAttribute('fill', 'currentColor');
             starSVG.setAttribute('viewBox', '0 0 20 20');
-            starSVG.innerHTML = `<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>`;
+            starSVG.innerHTML = `<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>`; // Star path
             container.appendChild(starSVG);
         }
     }
@@ -1674,7 +1740,7 @@
     
     function submitRating() {
         if (currentRating === 0) {
-            alert('Mohon pilih setidaknya 1 bintang.');
+            alert(t('ratingAlertNoStars'));
             return;
         }
         const feedbackText = document.getElementById('ratingFeedbackInput').value.trim();
@@ -1682,25 +1748,25 @@
         const payload = {
             type: 'rating',
             rating: currentRating,
-            message: feedbackText || 'Tidak ada komentar tambahan.',
+            message: feedbackText || 'No additional comment.',
             userIP: currentUserIP || 'tidak diketahui',
             timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
         };
         const button = document.getElementById('submitRatingBtn');
-        button.textContent = 'Mengirim...';
+        button.querySelector('span').textContent = t('ratingStatusSending');
         button.disabled = true;
 
         fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' })
-        .then(() => { alert('Terima kasih atas penilaian Anda!'); hideRatingModal(); })
-        .catch(error => { console.error('Gagal mengirim rating:', error); alert('Maaf, terjadi kesalahan.'); })
-        .finally(() => { button.textContent = 'Kirim Nilai'; button.disabled = false; });
+        .then(() => { alert(t('ratingAlertSuccess')); hideRatingModal(); })
+        .catch(error => { console.error('Gagal mengirim rating:', error); alert(t('ratingAlertError')); })
+        .finally(() => { button.querySelector('span').textContent = t('ratingSubmit'); button.disabled = false; });
     }
 
     function sendGeneralFeedback() {
         const input = document.getElementById('settingsFeedbackInput');
         const feedbackText = input.value.trim();
         if (!feedbackText) {
-            alert('Mohon tulis masukan Anda terlebih dahulu.');
+            alert(t('feedbackAlertEmpty'));
             return;
         }
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCMPCa3374vo347SbP2alsPWfb5MqKcspRHjkuU8ON6ooFLTTQE5h1RC2pxBNYor_Wuw/exec";
@@ -1711,13 +1777,13 @@
             timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
         };
         const button = document.getElementById('sendSettingsFeedbackBtn');
-        button.textContent = 'Mengirim...';
+        button.querySelector('span').textContent = t('feedbackStatusSending');
         button.disabled = true;
         
         fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' })
-        .then(() => { alert('Terima kasih! Masukan Anda telah terkirim.'); input.value = ''; })
-        .catch(error => { console.error('Gagal mengirim masukan:', error); alert('Maaf, terjadi kesalahan.'); })
-        .finally(() => { button.textContent = 'Kirim Masukan'; button.disabled = false; });
+        .then(() => { alert(t('feedbackAlertSuccess')); input.value = ''; })
+        .catch(error => { console.error('Gagal mengirim masukan:', error); alert(t('feedbackAlertError')); })
+        .finally(() => { button.querySelector('span').textContent = t('feedbackSendButton'); button.disabled = false; });
     }
 
     let apiKeys = [];
@@ -1806,7 +1872,7 @@
         }
     }
     function setInputEnabled(enabled, message = "Minta Wayan AI...") {
-        const messageInput = document.getElementById('messageInput');
+        const messageInput = document.getElementById('messageInput'); // Placeholder will be set by applyTranslations
         messageInput.disabled = !enabled;
         messageInput.placeholder = message;
         document.querySelectorAll('.action-btn, .dynamic-icon-btn').forEach(btn => {
@@ -1816,7 +1882,7 @@
         });
     }
     function startCooldown(cooldownEndTime) {
-        setInputEnabled(false, "Anda mencapai batas limit. Silakan tunggu...");
+        setInputEnabled(false, t('statusCooldown'));
         const messageId = `cooldown-timer-${currentUserIP}`;
         if(document.getElementById(messageId)) document.getElementById(messageId).remove();
         const chatMessages = document.getElementById('chatMessages');
@@ -1833,7 +1899,7 @@
                     </svg>
                     <div id="cooldown-text-${currentUserIP}" class="cooldown-time-text">...</div>
                 </div>
-                <div class="cooldown-message-text">Waktu Jeda...<br>Wayan lagi istirahat sebentar ya!</div>
+                <div class="cooldown-message-text">${t('statusCooldownMessage')}</div>
             </div>
         `;
         
@@ -1865,7 +1931,7 @@
         countdownInterval = null;
         const timerMessageElement = document.getElementById(`cooldown-timer-${currentUserIP}`);
         const successIcon = `<svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>`;
-        if (timerMessageElement) timerMessageElement.innerHTML = `<div class="system-message success">${successIcon}<span>Waktunya ngobrol lagi! Wayan sudah siap.</span></div>`;
+        if (timerMessageElement) timerMessageElement.innerHTML = `<div class="system-message success">${successIcon}<span>${t('statusCooldownDone')}</span></div>`;
         const allUserData = getChatLimitData();
         if (allUserData[currentUserIP]) {
             delete allUserData[currentUserIP];
@@ -1885,7 +1951,7 @@
             sendBtn.style.opacity = '0'; sendBtn.style.pointerEvents = 'none';
         }
     }
-    function videoNotAvailable() { alert('Fitur video belum tersedia untuk saat ini.'); }
+    function videoNotAvailable() { alert(t('alertVideoNotAvailable')); }
     function openQuickSettings() {
         if (document.getElementById('settingsModal').classList.contains('hidden')) toggleSettings();
         switchSettingsTab('general');
@@ -1901,7 +1967,7 @@
             localStorage.removeItem('elevenLabsApiKey');
         }
 
-        alert('API Keys berhasil disimpan!');
+        alert(t('alertApiKeysSaved'));
         loadApiKeys();
         populateElevenLabsVoices();
     }
@@ -1940,12 +2006,20 @@
     function renderSidebar() {
         const historyList = document.getElementById('chatHistoryList');
         historyList.innerHTML = '';
+
+        // [BARU] Daftar judul default dalam semua bahasa
+        const defaultTitles = Object.values(translations).map(langPack => langPack.newConversation);
+
         [...allChatSessions].reverse().forEach(session => {
             const item = document.createElement('li');
             item.className = 'chat-history-item';
             item.dataset.chatId = session.id;
+
+            // [BARU] Tampilkan judul yang sudah diterjemahkan jika judulnya adalah default
+            let displayTitle = defaultTitles.includes(session.title) ? t('newConversation') : session.title;
+
             item.innerHTML = `
-                <span class="title">${session.title}</span>
+                <span class="title">${displayTitle}</span>
                 <div class="actions">
                     <button onclick="renameChatSession('${session.id}', event)" class="action-icon" title="Ganti Nama">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
@@ -1974,8 +2048,8 @@
     function renameChatSession(chatId, event) {
         event.stopPropagation();
         const session = allChatSessions.find(s => s.id === chatId);
-        if (!session) return;
-        const newTitle = prompt("Masukkan nama baru untuk percakapan ini:", session.title);
+        if (!session) return; 
+        const newTitle = prompt(t('promptRenameChat'), session.title);
         if (newTitle && newTitle.trim() !== '') {
             session.title = newTitle.trim();
             saveAllChatSessions();
@@ -1984,7 +2058,7 @@
     }
     function deleteChatSession(chatId, event) {
         event.stopPropagation();
-        if (!confirm('Apakah Anda yakin ingin menghapus percakapan ini?')) return;
+        if (!confirm(t('alertClearHistoryConfirm'))) return;
         allChatSessions = allChatSessions.filter(s => s.id !== chatId);
         if (activeChatId === chatId) {
             if (allChatSessions.length > 0) {
@@ -2005,10 +2079,10 @@
         const newChatId = `chat_${new Date().getTime()}`;
         const newSession = {
             id: newChatId,
-            title: translations[settings.language]?.newConversation || translations.id.newConversation, 
+            title: t('newConversation'), 
             history: [{
                 role: 'model',
-                parts: [{ text: 'Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Santai aja, tanya apa aja yang kamu mau tau ya!' }],
+                parts: [{ text: t('initialGreeting') }],
                 timestamp: new Date().toISOString()
             }]
         };
@@ -2016,8 +2090,8 @@
         activeChatId = newChatId;
         saveAllChatSessions();
         renderSidebar();
-        loadChat(activeChatId);
-        addSystemMessage("Memulai percakapan baru.", 'info');
+        loadChat(activeChatId); 
+        addSystemMessage(t('systemNewChat'), 'info');
     }
     function saveAllChatSessions() {
         if (settings.saveHistory) {
@@ -2054,8 +2128,18 @@
         activeChatId = chatId;
         const chatMessages = document.getElementById('chatMessages');
         chatMessages.innerHTML = ''; 
-        session.history.forEach(msg => {
-            addOriginalMessage(msg.parts[0].text, msg.role === 'user', msg.timestamp);
+
+        // [BARU] Logika untuk menerjemahkan sapaan awal secara dinamis
+        const firstMessageText = session.history[0]?.parts[0]?.text;
+        const isDefaultGreeting = firstMessageText && Object.values(translations).some(langPack => langPack.initialGreeting === firstMessageText);
+
+        session.history.forEach((msg, index) => {
+            let messageToRender = msg.parts[0].text;
+            // Jika ini adalah pesan pertama dari AI dan merupakan sapaan standar, ganti dengan terjemahan yang benar.
+            if (index === 0 && msg.role === 'model' && isDefaultGreeting) {
+                messageToRender = t('initialGreeting');
+            }
+            addOriginalMessage(messageToRender, msg.role === 'user', msg.timestamp);
         });
         
         chatMessages.appendChild(document.getElementById('typingIndicator'));
@@ -2080,18 +2164,18 @@
         }
     }
     function clearAllChatHistory() {
-        if (confirm('Yakin mau hapus SEMUA riwayat percakapan? Tindakan ini tidak bisa dibatalkan.')) {
+        if (confirm(t('alertClearHistoryConfirm'))) {
             allChatSessions = [];
             activeChatId = null;
             saveAllChatSessions();
             startNewChat();
-            alert('Semua riwayat percakapan telah dihapus!');
+            alert(t('alertClearHistorySuccess'));
         }
     }
     function exportChatHistory() {
         const activeHistory = getActiveChatHistory();
         if (!activeHistory || activeHistory.length <= 1) { 
-            alert('Belum ada riwayat chat di sesi ini untuk di-export!');
+            alert(t('alertExportEmpty'));
             return;
         }
         let exportText = `=== Wayan AI CHAT HISTORY (Sesi: ${activeChatId}) ===\n\n`;
@@ -2111,7 +2195,7 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        alert('Riwayat chat sesi ini berhasil di-export!');
+        alert(t('alertExportSuccess'));
     }
     function toggleAnimations() {
         const isEnabled = document.getElementById('animationToggle').checked;
@@ -2137,11 +2221,8 @@
         const searchBtn = document.getElementById('toggleSearchModeBtn');
         searchBtn.classList.toggle('active', isSearchModeActive);
         
-        if (isSearchModeActive) {
-            addSystemMessage("Mode pencarian internet diaktifkan.", 'info');
-        } else {
-            addSystemMessage("Mode pencarian internet dinonaktifkan.", 'info');
-        }
+        const messageKey = isSearchModeActive ? 'systemSearchModeOn' : 'systemSearchModeOff';
+        addSystemMessage(t(messageKey), 'info');
     }
     function toggleVoiceMode() {
         if (isRecording) {
@@ -2152,7 +2233,7 @@
     }
     function startVoiceRecognition() {
         if (!('webkitSpeechRecognition' in window)) {
-            alert('Maaf, browser Anda tidak mendukung fitur pengenalan suara.');
+            alert(t('errorVoiceRecognition'));
             return;
         }
         finalTranscript = '';
@@ -2162,11 +2243,11 @@
         const micBtn = document.getElementById('micBtn');
         micBtn.classList.add('send-btn-active');
         micBtn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V6a1 1 0 00-1-1H5z" clip-rule="evenodd"></path></svg>`;
-        micBtn.title = "Hentikan Perekaman";
+        micBtn.title = t('stopGenerating');
 
         document.getElementById('messageInput').style.visibility = 'hidden';
         document.getElementById('voiceRecordingUI').style.display = 'flex';
-        document.getElementById('voiceStatusText').textContent = 'Mendengarkan...';
+        document.getElementById('voiceStatusText').textContent = t('listening');
 
         recognition = new webkitSpeechRecognition();
         recognition.continuous = true;
@@ -2183,12 +2264,12 @@
                 }
             }
             const displayText = (finalTranscript + interim_transcript).trim();
-            document.getElementById('voiceStatusText').textContent = displayText || 'Mendengarkan...';
+            document.getElementById('voiceStatusText').textContent = displayText || t('listening');
         };
         recognition.onerror = (event) => {
             console.error("Speech recognition error:", event.error);
             if (event.error !== 'aborted') {
-                addSystemMessage(`Error pengenalan suara: ${event.error}`, 'warning');
+                addSystemMessage(t('errorSpeechRecog', { error: event.error }), 'warning');
             }
             stopVoiceRecognition(false);
         };
@@ -2201,7 +2282,7 @@
             recognition.start();
         } catch (e) {
             console.error("Error starting speech recognition:", e);
-            addSystemMessage("Tidak dapat memulai pengenalan suara.", 'warning');
+            addSystemMessage(t('errorStartSpeechRecog'), 'warning');
             stopVoiceRecognition(false);
         }
     }
@@ -2215,7 +2296,7 @@
             recognition = null;
         }
 
-        if (!isCancel && currentText && currentText !== 'Mendengarkan...') {
+        if (!isCancel && currentText && currentText !== t('listening')) {
             document.getElementById('messageInput').value = currentText;
             finalTranscript = currentText;
         } else {
@@ -2226,7 +2307,7 @@
         const micBtn = document.getElementById('micBtn');
         micBtn.classList.remove('send-btn-active');
         micBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>`;
-        micBtn.title = "Mode Suara";
+        micBtn.title = t('voiceModeTitle');
 
         document.getElementById('messageInput').style.visibility = 'visible';
         document.getElementById('voiceRecordingUI').style.display = 'none';
@@ -2306,19 +2387,19 @@
         settings.elevenLabsVoiceId = document.getElementById('elevenLabsVoiceSelect').value;
         settings.saveHistory = document.getElementById('saveHistoryToggle').checked;
         settings.darkMode = document.getElementById('darkModeToggle').checked;
-        saveSettings();
-        applySettings();
-        alert('Pengaturan berhasil disimpan!');
+        saveSettings(); 
+        applySettings(); 
+        alert(t('alertSettingsSaved'));
         toggleSettings();
     }
     function resetAllSettings() {
-        if (confirm('Yakin ingin mereset semua pengaturan? SEMUA riwayat chat dan API Key akan dihapus. Halaman akan dimuat ulang.')) {
+        if (confirm(t('alertResetConfirm'))) {
             localStorage.removeItem('storybaliSettings');
             localStorage.removeItem('storybaliApiKeys');
             localStorage.removeItem('elevenLabsApiKey');
             localStorage.removeItem('storybaliChatSessions');
             localStorage.removeItem('onboardingShown');
-            alert('Pengaturan telah direset ke default. Halaman akan dimuat ulang.');
+            alert(t('alertResetSuccess'));
             window.location.reload();
         }
     }
@@ -2372,12 +2453,17 @@
 
         if (settingName === 'aiRole') {
             document.getElementById('customRoleContainer').classList.toggle('hidden', value !== 'kustom');
-            const roleNames = { 'umum': 'Asisten Umum', 'guru_jepang': 'Guru Bahasa Jepang', 'guru_matematika': 'Guru Matematika', 'dokter': 'Dokter Virtual', 'programmer': 'Programmer Senior', 'penerjemah': 'Penerjemah', 'kustom': 'Peran Kustom' };
-            if (roleNames[value]) addSystemMessage(`Mode peran AI telah diubah menjadi: ${roleNames[value]}.`, 'info');
+            const roleKeyMap = { 'umum': 'roleGeneral', 'guru_jepang': 'roleJapaneseTeacher', 'guru_matematika': 'roleMathTeacher', 'dokter': 'roleDoctor', 'programmer': 'roleProgrammer', 'penerjemah': 'roleTranslator', 'kustom': 'roleCustom' };
+            const roleNameKey = roleKeyMap[value];
+            if (roleNameKey) addSystemMessage(t('systemRoleChanged', { roleName: t(roleNameKey) }), 'info');
         }
         if (settingName === 'language') {
             applyTranslations(value);
             populateVoiceList();
+            if (activeChatId) {
+                loadChat(activeChatId); // Muat ulang chat untuk menerapkan terjemahan pada pesan
+            }
+            renderSidebar(); // Muat ulang sidebar untuk menerapkan terjemahan pada judul
         }
     }
     function switchSettingsTab(tabName) {
@@ -2420,8 +2506,8 @@
     function handleImageUpload(event) {
         const file = event.target.files[0];
         if (file) {
-            if (!file.type.startsWith('image/')) {
-                alert('File tidak valid. Silakan pilih file gambar (JPEG, PNG, WEBP, GIF).');
+            if (!file.type.startsWith('image/')) { 
+                alert(t('alertImageInvalid'));
                 event.target.value = '';
                 return;
             }
@@ -2454,19 +2540,19 @@
 
     function sendImageWithQuestion() {
         const question = document.getElementById('imageQuestionInput').value.trim();
-        if (!question) {
-            alert('Tulis pertanyaan dulu ya!');
+        if (!question) { 
+            alert(t('alertImageNoQuestion'));
             return;
         }
-        if (!currentPreviewData.base64) {
-            alert('Terjadi kesalahan, gambar tidak ditemukan. Coba pilih lagi.');
+        if (!currentPreviewData.base64) { 
+            alert(t('alertImageNoData'));
             return;
         }
         
         const allUserData = getChatLimitData();
         const userData = allUserData[currentUserIP] || { count: 0 };
         if (userData.count >= CHAT_LIMIT) {
-            alert('Anda telah mencapai batas. Tunggu cooldown selesai.');
+            alert(t('alertLimitReached'));
             hideImagePreview();
             return;
         }
@@ -2748,13 +2834,13 @@
         const selectElement = document.getElementById('elevenLabsVoiceSelect');
         const previewBtn = document.getElementById('previewElevenLabsVoiceBtn');
         
-        previewBtn.disabled = true;
+        previewBtn.disabled = true; 
         if (!apiKey) {
-            selectElement.innerHTML = `<option value="">${translations[settings.language]?.elevenLabsNeedKey || 'API Key not found'}</option>`;
+            selectElement.innerHTML = `<option value="">${t('elevenLabsNeedKey')}</option>`;
             return;
         }
 
-        selectElement.innerHTML = '<option value="">Memuat suara...</option>';
+        selectElement.innerHTML = `<option value="">${t('statusElevenLabsLoading')}</option>`;
 
         try {
             const response = await fetch('https://api.elevenlabs.io/v1/voices', {
@@ -2762,7 +2848,7 @@
             });
 
             if (!response.ok) {
-                throw new Error('Gagal ambil suara. Periksa API Key.');
+                throw new Error(t('errorElevenLabsFetch'));
             }
 
             const data = await response.json();
@@ -2876,7 +2962,7 @@
     
     async function readAiResponse(button, encodedMessage) {
         if (!settings.readAiResponseEnabled) {
-            alert('Fitur pembaca jawaban dinonaktifkan.');
+            alert(t('alertReaderDisabled'));
             return;
         }
 
@@ -2896,7 +2982,7 @@
         } catch (error) {
              console.warn("Gagal memutar audio:", error.message);
              if (settings.audioSource === 'elevenlabs') {
-                alert("Gagal memutar suara ElevenLabs. Memeriksa API Key atau beralih ke suara Bawaan Browser di Pengaturan.");
+                alert(t('errorElevenLabsPlayback'));
              }
         } finally {
             stopReading();
@@ -3105,13 +3191,13 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             }
         } catch (error) {
             if (error.name === 'AbortError') {
-                addSystemMessage("Pembuatan respons dihentikan.", 'warning');
+                addSystemMessage(t('systemResponseStopped'), 'warning');
             } else {
                 console.error("Error in sendMessage:", error);
-                addMessage(`Aduh, Wayan error: ${error.message}. Coba lagi nanti ya!`);
+                addMessage(t('errorApiGeneral', { error: error.message }));
             }
         } finally {
-            hideTypingIndicator();
+            hideTypingIndicator(); 
             document.getElementById('stopGeneratingContainer').style.display = 'none';
             currentFetchController = null;
         }
@@ -3159,18 +3245,18 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
                 addToConversationHistory('model', mainAnswer.trim());
                 playNotificationSound();
             } else {
-                 console.warn("Respons API tidak valid:", data);
-                addMessage('Wah, Wayan nggak bisa analisis gambar ini. Coba gambar lain ya.');
+                 console.warn(t('errorApiResponseInvalid'), data);
+                addMessage(t('errorImageAnalysis'));
             }
         } catch (error) {
             if (error.name === 'AbortError') {
-                addSystemMessage("Analisis gambar dihentikan.", 'warning');
+                addSystemMessage(t('systemImageAnalysisStopped'), 'warning');
             } else {
                 console.error("Error in analyzeImageWithQuestion:", error);
-                addMessage(`Aduh, Wayan error saat analisis gambar: ${error.message}. Coba lagi ya!`);
+                addMessage(t('errorImageAnalysisGeneral', { error: error.message }));
             }
         } finally {
-            hideImageProcessingIndicator();
+            hideImageProcessingIndicator(); 
             document.getElementById('stopGeneratingContainer').style.display = 'none';
             currentFetchController = null;
         }
@@ -3180,10 +3266,10 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         const selectElement = document.getElementById('elevenLabsVoiceSelect');
         const voiceId = selectElement.value;
         const button = document.getElementById('previewElevenLabsVoiceBtn');
-        const sampleText = "Halo, ini adalah contoh suara saya.";
+        const sampleText = t('initialGreeting');
 
         if (!voiceId) {
-            alert("Pilih suara terlebih dahulu.");
+            alert(t('alertSelectVoiceFirst')); // Anda perlu menambahkan key ini
             return;
         }
         stopReading(); 
@@ -3191,7 +3277,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         try {
             await playElevenLabsAudio(sampleText, button, voiceId, elevenLabsPreviewPlayer);
         } catch(e) {
-            alert("Gagal memutar pratinjau. Periksa API Key atau koneksi Anda.");
+            alert(t('errorElevenLabsPreview'));
         } finally {
             stopReading();
             button.disabled = false;
@@ -3208,7 +3294,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
 
     async function speakAiResponse(text) {
         isSpeaking = true;
-        document.getElementById('callStatusText').textContent = 'Wayan AI sedang berbicara...';
+        document.getElementById('callStatusText').textContent = t('callStatusSpeaking');
         document.getElementById('callActionBtn').style.display = 'none';
         document.getElementById('callTranscriptPreview').style.display = 'none';
 
@@ -3245,7 +3331,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         if (!isCallActive || isSpeaking || isListeningForCall) return;
 
         if (!('webkitSpeechRecognition' in window)) {
-            alert('Maaf, browser Anda tidak mendukung fitur ini.');
+            alert(t('callErrorBrowserSupport'));
             endCall();
             return;
         }
@@ -3258,8 +3344,8 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             userCallState = 'idle';
             callActionBtn.style.display = 'flex';
             callActionBtn.innerHTML = `<svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>`; // Mic Icon
-            callActionBtn.title = "Mulai Merekam Suara";
-            callStatusText.textContent = 'Ketuk untuk bicara';
+            callActionBtn.title = t('callStartSpeaking');
+            callStatusText.textContent = t('profileHint'); // "Ketuk untuk bicara"
             
             callActionBtn.onclick = () => {
                 if (userCallState === 'idle') {
@@ -3277,7 +3363,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             };
         } else { // Android
             callActionBtn.style.display = 'none'; // No button for Android
-            callStatusText.textContent = 'Mendengarkan...';
+            callStatusText.textContent = t('listening');
             startRecognitionForAndroid();
         }
     }
@@ -3323,9 +3409,9 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         const callActionBtn = document.getElementById('callActionBtn');
         
         callActionBtn.innerHTML = `<svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V6a1 1 0 00-1-1H5z" clip-rule="evenodd"></path></svg>`; // Stop Icon
-        callActionBtn.title = "Berhenti Merekam";
+        callActionBtn.title = t('stopGenerating');
         transcriptPreview.style.display = 'block';
-        transcriptPreview.textContent = 'Mendengarkan...';
+        transcriptPreview.textContent = t('listening');
 
         callRecognition = new webkitSpeechRecognition();
         callRecognition.continuous = true;
@@ -3344,7 +3430,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             isListeningForCall = false;
             userCallState = 'transcribed';
             callActionBtn.innerHTML = `<svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>`; // Send Icon
-            callActionBtn.title = "Kirim Teks";
+            callActionBtn.title = t('buttonSend');
         };
         callRecognition.onerror = (e) => { 
             console.error("iOS Recognition Error:", e.error);
@@ -3355,7 +3441,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     }
 
     async function processUserTranscript(transcript) {
-        document.getElementById('callStatusText').textContent = 'Wayan sedang berpikir...';
+        document.getElementById('callStatusText').textContent = t('callStatusThinking');
         document.getElementById('callActionBtn').style.display = 'none';
         document.getElementById('callTranscriptPreview').style.display = 'none';
 
@@ -3369,7 +3455,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
                 generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 80 }
             };
             const data = await makeApiRequest(payload);
-            let aiResponseText = "Maaf, ada gangguan. Bisa ulangi lagi?";
+            let aiResponseText = t('callErrorGeneric');
             if (data.candidates && data.candidates[0].content) {
                 aiResponseText = data.candidates[0].content.parts[0].text.split('[SUGGESTIONS]')[0].trim();
             }
@@ -3377,7 +3463,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             await speakAiResponse(aiResponseText);
         } catch (error) {
             console.error("Error processing transcript:", error);
-            const errorMessage = "Aduh, ada masalah teknis. Kita ulangi ya.";
+            const errorMessage = t('callErrorTechnical');
             callHistory.push({ role: 'model', parts: [{ text: errorMessage }] });
             await speakAiResponse(errorMessage);
         }
@@ -3392,7 +3478,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         callModal.classList.remove('hidden');
         callModal.classList.add('flex');
         
-        const openingLine = "Halo, ini Wayan. Ada yang bisa dibantu?";
+        const openingLine = t('callInitialGreeting');
         callHistory.push({ role: 'model', parts: [{ text: openingLine }] });
         await speakAiResponse(openingLine);
     }
@@ -3404,7 +3490,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         
         document.getElementById('callModal').classList.add('hidden');
         document.getElementById('callModal').classList.remove('flex');
-        document.getElementById('callStatusText').textContent = 'Menghubungkan...';
+        document.getElementById('callStatusText').textContent = t('callConnecting');
         document.getElementById('callActionBtn').style.display = 'none';
         document.getElementById('callTranscriptPreview').style.display = 'none';
         
@@ -3416,10 +3502,10 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         clearTimeout(silenceTimer);
 
         if (callHistory.length > 1) {
-            let transcriptText = "[TRANSKRIP PANGGILAN SUARA]\n";
+            let transcriptText = t('callTranscriptTitle');
             callHistory.forEach(turn => {
                 if (turn.parts && turn.parts[0] && turn.parts[0].text) {
-                    const prefix = turn.role === 'user' ? 'Anda: ' : 'Wayan: ';
+                    const prefix = turn.role === 'user' ? t('callUserPrefix') : t('callAiPrefix');
                     transcriptText += prefix + turn.parts[0].text + '\n';
                 }
             });
@@ -3514,37 +3600,11 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
 <!-- Onboarding Modal & Script (tidak diubah) -->
 <div id="onboardingModal" class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center transition-all duration-300 hidden">
   <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-0 overflow-hidden border border-gray-200 relative animate-fadein">
-    <div id="onboardingSlides" class="w-full">
-      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:block">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f44b.png" alt="Hi" class="w-16 h-16 mb-3 mx-auto animate-bounce" />
-        <h2 class="text-xl font-bold mb-2 text-blue-700">Selamat Datang di Wayan AI!</h2>
-        <p class="text-gray-700 text-base mb-4">Aplikasi chat cerdas dengan AI berbahasa Indonesia yang ramah &amp; mudah digunakan.</p>
-      </div>
-      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4ac.png" alt="Chat" class="w-16 h-16 mb-3 mx-auto animate-pulse" />
-        <h2 class="text-lg font-semibold mb-2 text-blue-700">Mulai Bertanya!</h2>
-        <p class="text-gray-700 text-base mb-4">Tulis pertanyaan di kolom bawah, lalu tekan <b>tombol kirim</b>.</p>
-      </div>
-       <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f5c3.png" alt="New Chat" class="w-16 h-16 mb-3 mx-auto" />
-        <h2 class="text-lg font-semibold mb-2 text-blue-700">Simpan Percakapan</h2>
-        <p class="text-gray-700 text-base mb-4">Setiap percakapan akan otomatis tersimpan. Klik tombol <b>menu (garis tiga)</b> di pojok kiri atas untuk melihat riwayat chat Anda.</p>
-      </div>
-      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f527.png" alt="Settings" class="w-16 h-16 mb-3 mx-auto animate-spin-slow" />
-        <h2 class="text-lg font-semibold mb-2 text-blue-700">Atur Gaya AI-mu</h2>
-        <p class="text-gray-700 text-base mb-4">Pilih <b>peran</b> dan <b>gaya bahasa</b> AI melalui tombol <b>pengaturan (roda gigi)</b>.</p>
-      </div>
-      <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
-        <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f389.png" alt="Lets Go" class="w-16 h-16 mb-3 mx-auto animate-bounce" />
-        <h2 class="text-lg font-semibold mb-2 text-blue-700">Yuk Mulai Chatting!</h2>
-        <p class="text-gray-700 text-base mb-4">Selamat menikmati Wayan AI. Jangan ragu untuk bereksperimen!</p>
-      </div>
-    </div>
+    <div id="onboardingSlides" class="w-full"></div>
     <div class="flex items-center justify-between px-5 pb-4 pt-2 bg-gray-50 border-t border-gray-200">
-      <button id="skipOnboardingBtn" class="text-xs text-gray-400 hover:text-blue-500 font-medium">Lewati</button>
+      <button id="skipOnboardingBtn" class="text-xs text-gray-400 hover:text-blue-500 font-medium" data-translate-key="onboardingSkip">Lewati</button>
       <div class="flex space-x-1" id="onboardingDots"></div>
-      <button id="nextOnboardingBtn" class="text-sm bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-1.5 rounded-lg shadow">Selanjutnya</button>
+      <button id="nextOnboardingBtn" class="text-sm bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-1.5 rounded-lg shadow" data-translate-key="onboardingNext">Selanjutnya</button>
     </div>
   </div>
 </div>
@@ -3554,30 +3614,52 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
 </style>
 <script>
 (function() {
-  const slides = document.querySelectorAll('#onboardingSlides .onboarding-slide');
+  const slidesContainer = document.getElementById('onboardingSlides');
   const modal = document.getElementById('onboardingModal');
   const btnNext = document.getElementById('nextOnboardingBtn');
   const btnSkip = document.getElementById('skipOnboardingBtn');
   const dotsContainer = document.getElementById('onboardingDots');
   let currSlide = 0;
+  let slidesData = [];
+
+  function setupOnboardingSlides() {
+      slidesData = [
+          { img: '1f44b', titleKey: 'onboardingWelcomeTitle', descKey: 'onboardingWelcomeDesc' },
+          { img: '1f4ac', titleKey: 'onboardingAskTitle', descKey: 'onboardingAskDesc' },
+          { img: '1f5c3', titleKey: 'onboardingHistoryTitle', descKey: 'onboardingHistoryDesc' },
+          { img: '1f527', titleKey: 'onboardingSettingsTitle', descKey: 'onboardingSettingsDesc' },
+          { img: '1f389', titleKey: 'onboardingReadyTitle', descKey: 'onboardingReadyDesc' }
+      ];
+      slidesContainer.innerHTML = slidesData.map(slide => `
+          <div class="onboarding-slide px-7 py-8 flex flex-col items-center text-center" style="display:none">
+              <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/${slide.img}.png" alt="Icon" class="w-16 h-16 mb-3 mx-auto" />
+              <h2 class="text-xl font-bold mb-2 text-blue-700" data-translate-key="${slide.titleKey}"></h2>
+              <p class="text-gray-700 text-base mb-4" data-translate-key="${slide.descKey}"></p>
+          </div>
+      `).join('');
+  }
+
   function showModalIfFirstTime() {
     if (!localStorage.getItem('onboardingShown')) {
+      setupOnboardingSlides();
+      applyTranslations(settings.language || 'id');
       modal.classList.remove('hidden');
       renderDots();
       showSlide(0);
     }
   }
   function showSlide(idx) {
-    slides.forEach((slide, i) => slide.style.display = i === idx ? 'block' : 'none');
+    slidesContainer.querySelectorAll('.onboarding-slide').forEach((slide, i) => slide.style.display = i === idx ? 'block' : 'none');
     currSlide = idx;
     updateDots();
-    btnNext.textContent = (currSlide === slides.length - 1) ? "Mulai Chatting" : "Selanjutnya";
+    const btnTextKey = (currSlide === slidesData.length - 1) ? 'onboardingStart' : 'onboardingNext';
+    btnNext.textContent = t(btnTextKey);
   }
-  function nextSlide() { (currSlide < slides.length - 1) ? showSlide(currSlide + 1) : closeModal(); }
+  function nextSlide() { (currSlide < slidesData.length - 1) ? showSlide(currSlide + 1) : closeModal(); }
   function closeModal() { modal.classList.add('hidden'); localStorage.setItem('onboardingShown', 'true'); }
   function renderDots() {
     dotsContainer.innerHTML = '';
-    slides.forEach((_, i) => {
+    slidesData.forEach((_, i) => {
         const dot = document.createElement('span');
         dot.className = "inline-block w-2.5 h-2.5 mx-0.5 rounded-full transition-all duration-200 cursor-pointer bg-gray-300";
         dot.onclick = () => showSlide(i);
@@ -3587,7 +3669,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
   function updateDots() { Array.from(dotsContainer.children).forEach((dot, i) => {
       dot.className = dot.className.replace(/bg-\w+-\d+/, i === currSlide ? "bg-blue-600" : "bg-gray-300");
   }); }
-  document.addEventListener('DOMContentLoaded', () => { showModalIfFirstTime(); btnNext.onclick = nextSlide; btnSkip.onclick = closeModal; });
+  window.addEventListener('load', () => { showModalIfFirstTime(); btnNext.onclick = nextSlide; btnSkip.onclick = closeModal; });
 })();
 </script>
   <!-- Google tag (gtag.js) -->
@@ -3603,20 +3685,20 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
 <!-- ▼▼▼ KODE BARU UNTUK MODAL RATING & MASUKAN ▼▼▼ -->
 <div id="ratingModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
     <div class="modal-content p-6 max-w-sm w-full" id="ratingModalContent">
-        <div class="text-center">
-            <h3 class="text-lg font-bold text-gray-800 mb-2">Beri Nilai untuk Wayan AI</h3>
-            <p class="text-sm text-gray-600 mb-4">Masukan Anda sangat berarti untuk pengembangan kami.</p>
+        <div class="text-center"> 
+            <h3 class="text-lg font-bold text-gray-800 mb-2" data-translate-key="ratingTitle">Beri Nilai untuk Wayan AI</h3>
+            <p class="text-sm text-gray-600 mb-4" data-translate-key="ratingDesc">Masukan Anda sangat berarti untuk pengembangan kami.</p>
             
             <!-- Bintang Rating -->
             <div id="starRatingContainer" class="flex justify-center items-center space-x-2 mb-4 text-gray-300">
                 <!-- Bintang akan dibuat oleh JavaScript, biarkan kosong -->
             </div>
             
-            <textarea id="ratingFeedbackInput" placeholder="Tulis masukan Anda di sini (opsional)..." class="w-full settings-input text-sm mb-4" rows="4"></textarea>
+            <textarea id="ratingFeedbackInput" data-translate-placeholder="ratingPlaceholder" class="w-full settings-input text-sm mb-4" rows="4"></textarea>
             
             <div class="flex space-x-3">
-                <button onclick="hideRatingModal()" class="flex-1 bg-gray-200 text-gray-800 py-2.5 rounded-xl font-semibold text-sm settings-btn-action">Nanti Saja</button>
-                <button id="submitRatingBtn" onclick="submitRating()" class="flex-1 bg-blue-600 text-white py-2.5 rounded-xl font-semibold text-sm settings-btn-action">Kirim Nilai</button>
+                <button onclick="hideRatingModal()" class="flex-1 bg-gray-200 text-gray-800 py-2.5 rounded-xl font-semibold text-sm settings-btn-action"><span data-translate-key="ratingLater">Nanti Saja</span></button>
+                <button id="submitRatingBtn" onclick="submitRating()" class="flex-1 bg-blue-600 text-white py-2.5 rounded-xl font-semibold text-sm settings-btn-action"><span data-translate-key="ratingSubmit">Kirim Nilai</span></button>
             </div>
         </div>
     </div>
