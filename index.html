@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -694,11 +695,20 @@
     }
     html.dark .modal-content { border: 1px solid var(--border-color); }
     #settingsModal .modal-content {
+        /* [DIUBAH] Mengubah modal pengaturan menjadi layar penuh */
         background: var(--bg-secondary);
         padding: 0; overflow: hidden;
+        border-radius: 0;
+        box-shadow: none;
+        transform: none !important; /* Menghapus animasi scale */
+        max-width: 100%;
+        max-height: 100%;
+        transition: opacity 0.3s ease; /* Hanya animasi fade */
     }
     .modal-overlay.hidden { opacity: 0; pointer-events: none; }
     .modal-overlay:not(.hidden) .modal-content { opacity: 1; transform: scale(1); }
+    /* [BARU] Memastikan animasi scale tidak berlaku untuk modal pengaturan */
+    .modal-overlay:not(.hidden) #settingsModal .modal-content { transform: none !important; }
     .modal-close-btn {
         background: #ef4444; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
         transition: all 0.2s ease-in-out; border-radius: 9999px !important;
@@ -1147,7 +1157,7 @@
                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
-        <iframe id="searchFrame" src="about:blank"></iframe>
+        <iframe id="searchFrame" src="about:blank" sandbox="allow-forms allow-scripts allow-popups allow-same-origin allow-popups-to-escape-sandbox"></iframe>
     </div>
 </div>
 <!-- ▲▲▲ AKHIR DARI MODAL PENCARIAN GOOGLE ▲▲▲ -->
@@ -1198,8 +1208,9 @@
         </div>
     </div>
 </div>
-<div id="settingsModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
-    <div class="modal-content max-w-sm w-full max-h-[90vh] overflow-hidden flex flex-col" id="settingsModalContent">
+<!-- [DIUBAH] Menghapus padding (p-4) dan mengubah ukuran modal pengaturan menjadi layar penuh -->
+<div id="settingsModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden">
+    <div class="modal-content w-full h-full overflow-hidden flex flex-col" id="settingsModalContent">
         <div class="p-4 flex items-center justify-between flex-shrink-0 bg-white border-b border-gray-200">
             <h3 class="text-lg font-bold text-gray-800">Pengaturan</h3>
             <button onclick="toggleSettings()" class="w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn" title="Tutup Pengaturan">
@@ -2455,7 +2466,7 @@
                 </div>
                 <div>
                     <div class="ai-message">
-                        <div class="markdown-content leading-relaxed text-sm"></div>
+                        <div class="markdown-content leading-relaxed text-base"></div>
                         <div class="suggestions-container mt-3"></div>
                     </div>
                     <div class="flex items-center space-x-3 mt-2 text-gray-500 dark:text-gray-400">
@@ -2528,7 +2539,7 @@
                 </div>
                 <div>
                     <div class="ai-message">
-                        <div class="markdown-content leading-relaxed text-sm">${marked.parse(message)}</div>
+                        <div class="markdown-content leading-relaxed text-base">${marked.parse(message)}</div>
                         <div class="suggestions-container mt-3"></div>
                     </div>
                     <div class="flex items-center space-x-3 mt-2 text-gray-500 dark:text-gray-400">
