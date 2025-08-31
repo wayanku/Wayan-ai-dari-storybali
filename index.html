@@ -60,6 +60,7 @@
       --shadow-color: rgba(0, 0, 0, 0.05);
       --bg-primary-rgba: 255, 255, 255;
       --bg-secondary-rgba: 247, 248, 252;
+      --bg-tertiary-rgba: 241, 245, 249; /* [BARU] RGBA untuk efek kaca di input box */
     }
 
     html.dark {
@@ -77,6 +78,7 @@
       --shadow-color: rgba(0, 0, 0, 0.3);
       --bg-primary-rgba: 18, 18, 18;
       --bg-secondary-rgba: 30, 30, 30;
+      --bg-tertiary-rgba: 42, 42, 42; /* [BARU] RGBA untuk efek kaca di input box */
     }
     /* === AKHIR DARI CSS VARIABLES === */
     
@@ -298,24 +300,24 @@
     }
 
     .header-gradient {
-        /* [DIUBAH] Diberi latar semi-transparan agar menyatu dengan background kustom */
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-        position: relative;
-        overflow: hidden;
-        padding-top: calc(1rem + env(safe-area-inset-top)); /* [BARU] Menambahkan padding atas untuk safe area di iPhone (notch) */
+        /* ▼▼▼ [PERMINTAAN] Efek Kaca/Glassmorphism untuk Header ▼▼▼ */
+        position: absolute; /* Diubah dari relative agar "melayang" */
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        
+        /* Efek kaca dengan warna semi-transparan dan blur */
+        background-color: rgba(var(--bg-secondary-rgba), 0.5); /* [DIUBAH] Dibuat lebih tembus pandang */
+        backdrop-filter: blur(6px); /* [DIUBAH] Blur dikurangi lagi */
+        -webkit-backdrop-filter: blur(6px);
+        border-bottom: 1px solid var(--border-color);
+
+        padding-top: calc(1rem + env(safe-area-inset-top)); /* Padding untuk safe area iPhone */
+        /* ▲▲▲ AKHIR DARI PERUBAHAN HEADER ▲▲▲ */
     }
     html.dark .header-gradient {
-        background: #222222 !important; /* Black/White header for dark mode */
-    }
-
-    .header-gradient::before {
-        content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-        animation: shimmer 3s infinite;
-    }
-    @keyframes shimmer {
-        0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-        100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        background-color: rgba(var(--bg-secondary-rgba), 0.7) !important; /* [DIUBAH] Dibuat lebih transparan di mode gelap */
     }
 
     .ai-avatar {
@@ -554,8 +556,8 @@
     }
 
     .input-area {
-        /* [DIUBAH] Diberi latar semi-transparan agar menyatu dengan background kustom */
-        background: var(--bg-primary);
+        /* [DIUBAH] Efek kaca dipindahkan ke .input-box, area ini menjadi transparan dan tanpa garis atas */
+        background: transparent;
         padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom)) 1rem;
     }
 
@@ -563,7 +565,10 @@
         display: flex;
         flex-direction: column;
         width: 100%;
-        background-color: var(--bg-tertiary);
+        /* ▼▼▼ [PERMINTAAN] Efek kaca diterapkan di sini, bukan di .input-area ▼▼▼ */
+        background-color: rgba(var(--bg-tertiary-rgba), 0.8);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
         border-radius: 1.25rem;
         padding: 0.5rem 0.75rem;
         border: 1px solid var(--border-color);
@@ -994,6 +999,12 @@
         }
     }
     
+    #chatMessages {
+        /* [DIUBAH] Menambahkan padding atas & bawah agar chat tidak tertutup header/footer */
+        padding-top: 8rem !important;
+        padding-bottom: 9rem !important; /* [BARU] Padding bawah untuk footer transparan */
+    }
+
     .chat-messages::-webkit-scrollbar { width: 8px; }
     .chat-messages { background-color: var(--bg-primary); }
     .chat-messages::-webkit-scrollbar-track { background: transparent; }
@@ -1053,7 +1064,7 @@
 
     <div class="chat-container">
         <div class="chat-window flex flex-col">
-            <div class="header-gradient p-4 text-white relative flex-shrink-0">
+            <div class="header-gradient p-4 text-white flex-shrink-0">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
                         <button onclick="toggleSidebar()" 
