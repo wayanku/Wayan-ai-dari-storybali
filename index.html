@@ -352,8 +352,9 @@
     .message-bubble.ai { max-width: 100%; }
 
     /* [DIUBAH] Gaya gelembung AI dihapus agar mirip ChatGPT/Gemini */
+    /* [DIUBAH] Diberi max-width agar teks tidak terlalu melebar dan lebih mudah dibaca */
     .ai-message {
-        max-width: 100%;
+        max-width: 48rem; /* 768px */
         position: relative;
     }
     /* [BARU] Gelembung khusus untuk indikator "mengetik" */
@@ -853,8 +854,9 @@
         word-wrap: break-word; /* Fallback */
         font-weight: 600; /* [DIUBAH] Dibuat lebih tebal agar lebih jelas */
         font-size: 1.025rem; /* [BARU] Sedikit diperbesar agar lebih mudah dibaca */
+        line-height: 1.6; /* [BARU] Menambah jarak antar baris agar lebih nyaman dibaca */
     }
-    .markdown-content p:not(:last-child) { margin-bottom: 0.75rem; }
+    .markdown-content p:not(:last-child) { margin-bottom: 1rem; } /* [DIUBAH] Menambah jarak antar paragraf */
     .markdown-content ul, .markdown-content ol {
         list-style-position: inside;
         padding-left: 0.5rem;
