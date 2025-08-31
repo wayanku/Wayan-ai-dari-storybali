@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -306,9 +309,9 @@
         z-index: 10;
         
         /* Efek kaca dengan warna semi-transparan dan blur */
-        background-color: rgba(var(--bg-secondary-rgba), 0.5); /* [DIUBAH] Dibuat lebih tembus pandang */
-        backdrop-filter: blur(6px); /* [DIUBAH] Blur dikurangi lagi */
-        -webkit-backdrop-filter: blur(6px);
+        background-color: rgba(var(--bg-secondary-rgba), 0.45); /* [DIUBAH] Dibuat lebih transparan lagi */
+        backdrop-filter: blur(5px); /* [DIUBAH] Blur dikurangi lagi */
+        -webkit-backdrop-filter: blur(5px);
         border-bottom: 1px solid var(--border-color);
 
         /* [DIUBAH] Padding dipindahkan dari kelas p-4 ke sini untuk menangani safe area iPhone */
@@ -319,7 +322,7 @@
         /* ▲▲▲ AKHIR DARI PERUBAHAN HEADER ▲▲▲ */
     }
     html.dark .header-gradient {
-        background-color: rgba(var(--bg-secondary-rgba), 0.7) !important; /* [DIUBAH] Dibuat lebih transparan di mode gelap */
+        background-color: rgba(var(--bg-secondary-rgba), 0.65) !important; /* [DIUBAH] Dibuat lebih transparan lagi di mode gelap */
     }
 
     .ai-avatar {
@@ -570,15 +573,20 @@
         left: 0;
         right: 0;
         z-index: 10;
+        /* ▼▼▼ [PERBAIKAN ESTETIKA] Efek blur diterapkan ke seluruh footer ▼▼▼ */
+        /* untuk mencakup area aman di bagian bawah (safe area). */
+        background-color: rgba(var(--bg-primary-rgba), 0.5); /* [DIUBAH] Dibuat lebih transparan lagi */
+        backdrop-filter: blur(5px); /* [DIUBAH] Blur dikurangi lagi agar konsisten dengan header */
+        -webkit-backdrop-filter: blur(5px);
+        /* ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲ */
     }
 
     .input-box {
         display: flex;
         flex-direction: column;
         width: 100%;
+        /* [PERBAIKAN ESTETIKA] Backdrop-filter dihapus dari sini karena sudah ditangani oleh .chat-footer */
         background-color: rgba(var(--bg-tertiary-rgba), 0.4);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
         border-radius: 1.25rem;
         padding: 0.5rem 0.75rem;
         border: 1px solid var(--border-color);
