@@ -297,27 +297,6 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
-    .header-gradient {
-        /* [DIUBAH] Diberi latar semi-transparan agar menyatu dengan background kustom */
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-        position: relative;
-        overflow: hidden;
-        padding-top: calc(1rem + env(safe-area-inset-top)); /* [BARU] Menambahkan padding atas untuk safe area di iPhone (notch) */
-    }
-    html.dark .header-gradient {
-        background: #222222 !important; /* Black/White header for dark mode */
-    }
-
-    .header-gradient::before {
-        content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-        animation: shimmer 3s infinite;
-    }
-    @keyframes shimmer {
-        0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-        100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-    }
-
     .ai-avatar {
         background: linear-gradient(135deg, #667eea, #764ba2);
         animation: avatarPulse 2s infinite; position: relative;
@@ -671,11 +650,10 @@
 
 
     .quick-actions {
-        display: flex; gap: 0.5rem; padding: 0.75rem 1rem;
+        display: flex; gap: 0.5rem; padding: 0 1rem 0.75rem 1rem;
         background: var(--bg-primary);
-        border-top: 1px solid var(--border-color);
         overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
-        box-shadow: inset 0 -2px 5px var(--shadow-color);
+        /* border-top dan box-shadow dihapus untuk posisi baru */
     }
     .quick-actions::-webkit-scrollbar { display: none; }
     .quick-action-btn {
@@ -1048,55 +1026,39 @@
                  <ul id="chatHistoryList">
                  </ul>
             </div>
+            <!-- [BARU] Profile dipindahkan ke bawah sidebar seperti di ChatGPT -->
+            <div class="mt-auto flex-shrink-0 border-t pt-3" style="border-color: var(--border-color);">
+                <div onclick="showProfileModal()" class="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-[var(--bg-tertiary)] transition-colors">
+                    <div class="ai-avatar w-8 h-8 flex-shrink-0 flex items-center justify-center overflow-hidden relative">
+                        <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h1 class="text-sm font-bold" style="color: var(--text-primary);" data-translate-key="aiName">Wayan AI</h1>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="chat-container">
         <div class="chat-window flex flex-col">
-            <div class="header-gradient p-4 text-white relative flex-shrink-0">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <button onclick="toggleSidebar()" 
-                                class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95" 
-                                data-translate-title="sidebarToggleTitle">
-                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-                        </button>
-                        <div class="flex items-center space-x-3">
-                            <div class="ai-avatar w-12 h-12 flex-shrink-0 flex items-center justify-center overflow-hidden relative cursor-pointer" onclick="showProfileModal()">
-                                <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali"
-                                     class="w-full h-full object-cover">
-                            </div>
-                            <div>
-                                <h1 class="text-xl font-bold" data-translate-key="aiName">Wayan AI</h1>
-                                <p class="text-blue-100 text-sm opacity-90" data-translate-key="profileHint">Klik untuk lihat profil</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button id="startCallBtn" onclick="startCall()"
-                                class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95"
-                                data-translate-title="voiceCallTitle">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                        </button>
-                        <button onclick="toggleSettings()"
-                                class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95"
-                                data-translate-title="settingsTitle">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+            <!-- [DIUBAH] Header disederhanakan, hanya berisi tombol menu dan pengaturan -->
+            <div class="p-4 relative flex items-center justify-between flex-shrink-0" style="padding-top: calc(1rem + env(safe-area-inset-top));">
+                <button onclick="toggleSidebar()" 
+                        class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" 
+                        data-translate-title="sidebarToggleTitle">
+                     <svg class="w-6 h-6" style="color: var(--text-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                </button>
+                <button onclick="toggleSettings()"
+                        class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                        data-translate-title="settingsTitle">
+                    <svg class="w-6 h-6" style="color: var(--text-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </button>
             </div>
-            <div class="quick-actions flex-shrink-0">
-                <button class="quick-action-btn" onclick="sendQuickMessage('Halo Wayan!')" data-translate-key="quickHello">Halo</button>
-                <button class="quick-action-btn" onclick="sendQuickMessage('Apa kabar hari ini?')" data-translate-key="quickHowAreYou">Apa kabar?</button>
-                <button class="quick-action-btn" onclick="sendQuickMessage('Ceritakan joke lucu dong!')" data-translate-key="quickJoke">Joke</button>
-                <button class="quick-action-btn" onclick="sendQuickMessage('Kasih tips produktif dong!')" data-translate-key="quickProductive">Tips Produktif</button>
-                <button class="quick-action-btn" onclick="sendQuickMessage('Rekomendasi film bagus dong!')" data-translate-key="quickMovie">Film</button>
-                <button class="quick-action-btn" onclick="sendQuickMessage('Ajarin coding dong!')" data-translate-key="quickCoding">Coding</button>
-            </div>
+
             <div id="chatMessages" class="flex-1 overflow-y-auto p-4 chat-messages">
                  <!-- Typing Indicator will be added here by JS -->
                  <div id="typingIndicator" class="typing-indicator items-start space-x-3">
@@ -1118,6 +1080,16 @@
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1zm4 0a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
                     <span data-translate-key="stopGenerating">Hentikan</span>
                 </button>
+            </div>
+
+            <!-- [DIUBAH] Quick actions dipindahkan ke atas input area dan dikontrol oleh JS -->
+            <div id="quickActionsContainer" class="quick-actions flex-shrink-0" style="display: none;">
+                <button class="quick-action-btn" onclick="sendQuickMessage('Halo Wayan!')" data-translate-key="quickHello">Halo</button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('Apa kabar hari ini?')" data-translate-key="quickHowAreYou">Apa kabar?</button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('Ceritakan joke lucu dong!')" data-translate-key="quickJoke">Joke</button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('Kasih tips produktif dong!')" data-translate-key="quickProductive">Tips Produktif</button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('Rekomendasi film bagus dong!')" data-translate-key="quickMovie">Film</button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('Ajarin coding dong!')" data-translate-key="quickCoding">Coding</button>
             </div>
             
             <div class="input-area flex-shrink-0">
@@ -1147,6 +1119,10 @@
                         <div class="left-actions">
                             <button onclick="triggerImageUpload()" class="action-btn" data-translate-title="uploadImageTitle">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            </button>
+                            <!-- [BARU] Tombol panggil suara dipindahkan ke sini -->
+                            <button id="startCallBtn" onclick="startCall()" class="action-btn" data-translate-title="voiceCallTitle">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                             </button>
                             <!-- Tombol Video dihapus dan diganti dengan Tombol Pencarian Internet -->
                             <button id="toggleSearchModeBtn" onclick="toggleSearchMode()" class="action-btn" data-translate-title="searchModeTitle">
@@ -2189,6 +2165,11 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         saveAllChatSessions();
         renderSidebar();
         loadChat(activeChatId); 
+        // [BARU] Pastikan saran terlihat untuk chat baru
+        const quickActions = document.getElementById('quickActionsContainer');
+        if (quickActions) {
+            quickActions.style.display = 'flex';
+        }
         addSystemMessage(t('systemNewChat'), 'info');
     }
     function saveAllChatSessions() {
@@ -2226,6 +2207,17 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         activeChatId = chatId;
         const chatMessages = document.getElementById('chatMessages');
         chatMessages.innerHTML = ''; 
+
+        // [BARU] Tampilkan/sembunyikan saran berdasarkan riwayat chat
+        const quickActions = document.getElementById('quickActionsContainer');
+        if (quickActions) {
+            // Tampilkan saran hanya jika ini adalah chat baru (hanya berisi sapaan awal dari AI)
+            if (session.history.length <= 1) {
+                quickActions.style.display = 'flex';
+            } else {
+                quickActions.style.display = 'none';
+            }
+        }
 
         // [BARU] Logika untuk menerjemahkan sapaan awal secara dinamis
         const firstMessageText = session.history[0]?.parts[0]?.text;
@@ -2429,7 +2421,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             green: {from: '#10b981', to: '#059669'},
             pink: {from: '#ec4899', to: '#dc2626'}
         }[themeName];
-        document.querySelector('.header-gradient').style.background = `linear-gradient(135deg, ${colors.from}, ${colors.to})`;
         document.getElementById('sendBtn').style.backgroundColor = colors.from;
         document.querySelectorAll('.ai-avatar').forEach(avatar => avatar.style.background = `linear-gradient(135deg, ${colors.from}, ${colors.to})`);
         document.querySelector('.profile-avatar-border').style.borderImage = `linear-gradient(135deg, ${colors.from}, ${colors.to}, #f093fb) 1`;
@@ -2440,7 +2431,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         settings.darkMode = isDark;
         const themeOptionsContainer = document.getElementById('themeOptionsContainer');
         const themeDisabledMessage = document.getElementById('themeDisabledMessage');
-        const header = document.querySelector('.header-gradient');
         const sendBtn = document.getElementById('sendBtn');
         const aiAvatars = document.querySelectorAll('.ai-avatar');
         const profileAvatarBorder = document.querySelector('.profile-avatar-border');
@@ -2448,7 +2438,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             themeOptionsContainer.style.opacity = '0.5';
             themeOptionsContainer.style.pointerEvents = 'none';
             themeDisabledMessage.classList.remove('hidden');
-            if (header) header.style.background = '#222222';
             if (sendBtn) sendBtn.style.backgroundColor = '';
             if (profileAvatarBorder) profileAvatarBorder.style.borderImage = '';
             aiAvatars.forEach(avatar => { avatar.style.background = ''; });
@@ -2526,7 +2515,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             sidebar.classList.toggle('collapsed', !settings.isSidebarOpen);
         }
         applyTranslations(settings.language);
-        document.querySelector('.header-gradient h1').textContent = 'Wayan AI';
         document.getElementById('aiNameInput').value = 'Wayan';
         if (!settings.darkMode) {
             changeTheme(settings.theme);
@@ -2843,11 +2831,11 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             messageDiv.className += ' ai';
             // [DIUBAH] Struktur HTML pesan AI dirombak total
             messageDiv.innerHTML = `
-                <div class="flex items-center space-x-3 mb-2">
+                <div class="flex items-center space-x-3 mb-2 cursor-pointer" onclick="showProfileModal()">
                     <div class="ai-avatar w-8 h-8 flex-shrink-0 flex items-center justify-center overflow-hidden">
                         <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
                     </div>
-                    <div class="font-bold text-sm" style="color: var(--text-primary);">Wayan AI</div>
+                    <div class="font-bold text-sm" style="color: var(--text-primary);" data-translate-key="aiName">Wayan AI</div>
                 </div>
                 <div>
                     <div class="ai-message">
@@ -2924,11 +2912,11 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             messageDiv.className += ' ai';
             // [DIUBAH] Struktur HTML pesan AI dirombak total
             messageDiv.innerHTML = `
-                <div class="flex items-center space-x-3 mb-2">
+                <div class="flex items-center space-x-3 mb-2 cursor-pointer" onclick="showProfileModal()">
                     <div class="ai-avatar w-8 h-8 flex-shrink-0 flex items-center justify-center overflow-hidden">
                         <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
                     </div>
-                    <div class="font-bold text-sm" style="color: var(--text-primary);">Wayan AI</div>
+                    <div class="font-bold text-sm" style="color: var(--text-primary);" data-translate-key="aiName">Wayan AI</div>
                 </div>
                 <div>
                     <div class="ai-message">
@@ -3520,6 +3508,12 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
             userData.cooldownUntil = cooldownEndTime;
             saveChatLimitData({ ...allUserData, [currentUserIP]: userData });
             setTimeout(() => startCooldown(cooldownEndTime), 1000);
+        }
+
+        // [BARU] Sembunyikan saran setelah pesan pertama dikirim
+        const quickActions = document.getElementById('quickActionsContainer');
+        if (quickActions) {
+            quickActions.style.display = 'none';
         }
 
         currentFetchController = new AbortController();
