@@ -334,9 +334,9 @@
         z-index: 10;
         
         /* Efek kaca dengan warna semi-transparan dan blur */
-        background-color: rgba(var(--bg-secondary-rgba), 0.35); /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan lagi */
-        backdrop-filter: blur(4px); /* [PERMINTAAN PENGGUNA] Blur dikurangi lagi */
-        -webkit-backdrop-filter: blur(4px);
+        background-color: rgba(var(--bg-secondary-rgba), 0.25); /* Dibuat lebih transparan untuk efek blur yang lebih kuat */
+        backdrop-filter: blur(16px); /* [DIUBAH] Blur ditingkatkan lagi */
+        -webkit-backdrop-filter: blur(16px);
         border-bottom: 1px solid var(--border-color);
 
         /* [DIUBAH] Padding dipindahkan dari kelas p-4 ke sini untuk menangani safe area iPhone */
@@ -641,9 +641,9 @@
         z-index: 10;
         /* ▼▼▼ [PERBAIKAN ESTETIKA] Efek blur diterapkan ke seluruh footer ▼▼▼ */
         /* untuk mencakup area aman di bagian bawah (safe area). */
-        background-color: rgba(var(--bg-primary-rgba), 0.4); /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan lagi */
-        backdrop-filter: blur(4px); /* [PERMINTAAN PENGGUNA] Blur dikurangi lagi */
-        -webkit-backdrop-filter: blur(4px);
+        background-color: rgba(var(--bg-primary-rgba), 0.30); /* Dibuat lebih transparan untuk efek blur yang lebih kuat */
+        backdrop-filter: blur(16px); /* [DIUBAH] Blur ditingkatkan lagi */
+        -webkit-backdrop-filter: blur(16px);
         /* ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲ */
     }
 
