@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -314,7 +311,11 @@
         -webkit-backdrop-filter: blur(6px);
         border-bottom: 1px solid var(--border-color);
 
-        padding-top: calc(1rem + env(safe-area-inset-top)); /* Padding untuk safe area iPhone */
+        /* [DIUBAH] Padding dipindahkan dari kelas p-4 ke sini untuk menangani safe area iPhone */
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-bottom: 1rem;
+        padding-top: calc(1rem + env(safe-area-inset-top));
         /* ▲▲▲ AKHIR DARI PERUBAHAN HEADER ▲▲▲ */
     }
     html.dark .header-gradient {
@@ -1073,7 +1074,7 @@
 
     <div class="chat-container">
         <div class="chat-window flex flex-col">
-            <div class="header-gradient p-4 text-white flex-shrink-0">
+            <div class="header-gradient text-white flex-shrink-0">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
                         <button onclick="toggleSidebar()" 
