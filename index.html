@@ -3522,12 +3522,15 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             return callPrompt;
         }
 
-        let searchInstruction = '';
-        if (isSearchModeActive) {
-            searchInstruction = `[MODE PENCARIAN AKTIF] Pengguna baru saja mengirimkan prompt dan juga memiliki opsi untuk mencarinya langsung di Google lewat tombol di pesannya. Sadari hal ini. Jika pertanyaannya jelas-jelas membutuhkan data real-time (harga saham, berita terkini, cuaca saat ini), berikan jawaban yang mengakui keterbatasan pengetahuanmu dan sarankan pengguna untuk menggunakan tombol 'Cari di Google' yang tersedia untuk mendapatkan informasi paling akurat dan terkini. Contoh: "Untuk harga yen saat ini, Wayan sarankan untuk cek langsung lewat tombol 'Cari di Google' di pesanmu ya, karena data itu berubah sangat cepat."`;
-        }
+        const searchInstruction = isSearchModeActive 
+            ? `[MODE PENCARIAN AKTIF] Pengguna baru saja mengirimkan prompt dan juga memiliki opsi untuk mencarinya langsung di Google lewat tombol di pesannya. Sadari hal ini. Jika pertanyaannya jelas-jelas membutuhkan data real-time (harga saham, berita terkini, cuaca saat ini), berikan jawaban yang mengakui keterbatasan pengetahuanmu dan sarankan pengguna untuk menggunakan tombol 'Cari di Google' yang tersedia untuk mendapatkan informasi paling akurat dan terkini. Contoh: "Untuk harga yen saat ini, Wayan sarankan untuk cek langsung lewat tombol 'Cari di Google' di pesanmu ya, karena data itu berubah sangat cepat."`
+            : '';
 
-        const baseInstructions = `Gunakan format Markdown untuk jawabanmu jika diperlukan (list, tebal, kode).
+        // [DIUBAH] Instruksi dasar diperkaya untuk format yang lebih rapi
+        const baseInstructions = `[ATURAN FORMAT PENULISAN]
+1.  **Struktur dan Paragraf**: Selalu pecah jawabanmu menjadi paragraf-paragraf pendek dan ringkas agar mudah dibaca. Hindari blok teks yang panjang dan padat. Gunakan spasi antar paragraf.
+2.  **Gunakan Markdown**: Manfaatkan Markdown secara ekstensif untuk memperjelas informasi. Gunakan **tebal** untuk penekanan, *miring* untuk istilah atau judul, dan \`list\` (daftar) bernomor atau poin untuk menjelaskan langkah-langkah, beberapa item, atau ringkasan. Gunakan \`code\` untuk potongan kode.
+3.  **Gunakan Emoji (jika sesuai)**: Untuk kepribadian 'santai' atau 'lucu', gunakan emoji yang relevan secara wajar untuk membuat teks lebih hidup dan tidak monoton. Contoh: 😊, 🤔, ✨, 👍. Jangan berlebihan.
 
 [PENTING: Aturan Pemberian Link]
 Jika pertanyaan pengguna memerlukan informasi yang sangat baru, data spesifik, atau referensi eksternal untuk mendukung jawabanmu, sertakan 2-3 link relevan yang valid dari ingatanmu.
