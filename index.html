@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -37,10 +38,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Library untuk memformat Markdown -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <!-- [BARU] Library untuk Drag and Drop -->
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-  <!-- [BARU] Library untuk kompresi data (untuk fitur share) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
@@ -188,28 +185,6 @@
         border-color: #777;
         color: var(--text-primary);
     }
-    
-    /* ▼▼▼ [BARU] CSS UNTUK KOLOM PENCARIAN CHAT ▼▼▼ */
-    .search-input-container {
-        position: relative;
-        margin-bottom: 1rem;
-    }
-    #chatSearchInput {
-        width: 100%;
-        padding: 0.6rem 1rem 0.6rem 2.5rem; /* Padding kiri untuk ikon */
-        border-radius: 0.75rem;
-        border: 1px solid var(--border-color);
-        background-color: var(--bg-primary);
-        color: var(--text-primary);
-        font-size: 0.875rem;
-    }
-    .search-input-container svg {
-        position: absolute;
-        left: 0.85rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-light);
-    }
 
     #chatHistoryList {
         list-style: none;
@@ -274,69 +249,6 @@
         background-color: rgba(0,0,0,0.3);
     }
     
-    /* ▼▼▼ [BARU] CSS UNTUK FOLDER CHAT ▼▼▼ */
-    .folder-item {
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-        border-radius: 0.5rem;
-        margin: 0.25rem 0.5rem;
-    }
-    .folder-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-weight: 600;
-        font-size: 0.8rem;
-        color: var(--text-secondary);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    .folder-header .folder-arrow {
-        transition: transform 0.2s ease-in-out;
-    }
-    .folder-item.collapsed .folder-arrow {
-        transform: rotate(-90deg);
-    }
-    .folder-content {
-        max-height: 1000px; /* Set a large max-height for transition */
-        overflow: hidden;
-        transition: max-height 0.4s ease-in-out, padding-top 0.4s ease-in-out;
-        padding-top: 0.25rem;
-    }
-    .folder-item.collapsed .folder-content {
-        max-height: 0;
-        padding-top: 0;
-    }
-    .chat-history-item {
-        padding-left: 1.75rem; /* Indent chat items inside folders */
-    }
-    /* [BARU] Styling untuk Drag & Drop */
-    .sortable-ghost {
-        background-color: var(--bg-accent);
-        opacity: 0.5;
-    }
-    .sortable-drag {
-        opacity: 0.9;
-        box-shadow: 0 5px 15px var(--shadow-color);
-        transform: scale(1.02);
-    }
-    /* ▲▲▲ AKHIR DARI CSS FOLDER CHAT ▲▲▲ */
-
-    /* ▼▼▼ [BARU] CSS UNTUK FITUR BERBAGI CHAT ▼▼▼ */
-    body.shared-view-mode #sidebar,
-    body.shared-view-mode .input-area,
-    body.shared-view-mode .quick-actions,
-    body.shared-view-mode .header-gradient .flex.items-center.space-x-2, /* Tombol settings & call */
-    body.shared-view-mode .header-gradient button[onclick="toggleSidebar()"],
-    body.shared-view-mode #promptLibraryModal,
-    body.shared-view-mode button[onclick="showPromptLibraryModal()"] {
-        display: none !important;
-    }
-
-    body.shared-view-mode .header-gradient {
-        padding-top: 3.5rem; /* Beri ruang untuk banner */
-    }
-
     /* === CSS UNTUK OVERLAY MOBILE === */
     #sidebarOverlay {
         position: fixed;
@@ -1124,23 +1036,14 @@
 
     <div id="sidebar">
         <div class="p-4 flex flex-col h-full">
-            <div class="search-input-container flex-shrink-0">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                <input type="text" id="chatSearchInput" data-translate-placeholder="searchHistoryPlaceholder">
-            </div>
-            <div class="mb-4 flex-shrink-0 flex items-center gap-2">
-                <button onclick="startNewChat()" class="new-chat-btn group flex-grow" data-translate-title="newChatTitle">
-                    <span data-translate-key="newChat">Chat Baru</span>
+            <div class="mb-4 flex-shrink-0">
+                <button onclick="startNewChat()" class="new-chat-btn group" data-translate-title="newChatTitle">
+                    <span data-translate-key="newChat">Mulai Chat Baru</span>
                     <svg class="w-5 h-5 text-gray-400 group-hover:text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                </button>
-                <button onclick="createNewFolder()" class="p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg hover:border-indigo-300 dark:hover:border-gray-500 transition-colors" data-translate-title="newFolderTitle">
-                    <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h5l2 3h9a2 2 0 012 2v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
-                    </svg>
                 </button>
             </div>
             <div class="flex-grow overflow-y-auto -mr-2 pr-2">
-                 <ul id="chatHistoryList" class="chat-list-container">
+                 <ul id="chatHistoryList">
                  </ul>
             </div>
         </div>
@@ -1275,12 +1178,6 @@
     </div>
 </div>
     
-<!-- [BARU] Banner untuk mode tampilan berbagi -->
-<div id="sharedViewBanner" class="hidden fixed top-0 left-0 right-0 bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 p-2 text-center text-sm z-50 shadow">
-    <span data-translate-key="sharedViewNotice">Anda sedang melihat percakapan yang dibagikan (mode baca-saja).</span>
-    <a href="?" class="ml-2 font-bold underline" data-translate-key="sharedViewGoToApp">Buka Aplikasi Utama</a>
-</div>
-
 <!-- ▼▼▼ MODAL PANGGILAN SUARA YANG DIROMBAK TOTAL ▼▼▼ -->
 <div id="callModal" class="fixed inset-0 z-50 flex-col items-center justify-center hidden" style="background-color: rgba(0,0,0,0.8); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);">
     <div class="text-center text-white">
@@ -1563,22 +1460,10 @@
                             <span data-translate-key="exportHistory">Export Riwayat Chat Ini</span>
                          </button>
                          <button onclick="clearAllChatHistory()" class="settings-btn-action bg-red-100 text-red-700 hover:bg-red-200">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg> 
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             <span data-translate-key="clearAllHistory">Hapus SEMUA Percakapan</span>
                          </button>
                     </div>
-                </div>
-                <!-- [BARU] Fitur Export/Import Semua Data -->
-                <div class="settings-card p-2 space-y-2">
-                    <button onclick="exportAllData()" class="settings-btn-action bg-blue-100 text-blue-700 hover:bg-blue-200">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293zM21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span data-translate-key="exportAllData">Export Semua Data</span>
-                    </button>
-                    <input type="file" id="importFileInput" class="hidden" accept=".json" onchange="importAllData(event)">
-                    <button onclick="document.getElementById('importFileInput').click()" class="settings-btn-action bg-purple-100 text-purple-700 hover:bg-purple-200">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13l-3 3m0 0l-3-3m3 3V8m0 13a9 9 0 110-18 9 9 0 010 18z"></path></svg>
-                        <span data-translate-key="importAllData">Import Data</span>
-                    </button>
                 </div>
                 
                 <div class="settings-card p-4">
@@ -1662,8 +1547,7 @@
     // ▼▼▼ [BARU] Sistem Internasionalisasi (i18n) ▼▼▼
     const translations = {
         id: {
-            newChat: "Chat Baru", newChatTitle: "Mulai Obrolan Baru", newFolderTitle: "Buat Folder Baru", sidebarToggleTitle: "Tampilkan/Sembunyikan Riwayat Obrolan",
-            searchHistoryPlaceholder: "Cari di riwayat...", noSearchResults: "Tidak ada hasil ditemukan.",
+            newChat: "Mulai Chat Baru", newChatTitle: "Mulai Obrolan Baru", sidebarToggleTitle: "Tampilkan/Sembunyikan Riwayat Obrolan",
             aiName: "Wayan AI", profileHint: "Klik untuk lihat profil", voiceCallTitle: "Mulai Panggilan Suara", settingsTitle: "Buka Pengaturan",
             quickHello: "Halo", quickHowAreYou: "Apa kabar?", quickJoke: "Joke", quickProductive: "Tips Produktif", quickMovie: "Film", quickCoding: "Coding",
             inputPlaceholder: "Minta Wayan AI...", imageProcessing: "Menganalisis gambar...", stopGenerating: "Hentikan",
@@ -1689,7 +1573,6 @@
             settingSaveHistory: "Simpan Riwayat", exportHistory: "Export Riwayat Chat Ini", clearAllHistory: "Hapus SEMUA Percakapan",
             feedbackTitle: "Beri Masukan", feedbackSubtitle: "Punya ide atau saran? Beri tahu kami!", feedbackPlaceholder: "Tulis masukan Anda di sini...", feedbackSendButton: "Kirim Masukan",
             apiKeysTitle: "API Keys", saveApiKeysButton: "Simpan API Keys",
-            exportAllData: "Export Semua Data", importAllData: "Import Data", confirmImport: "Ini akan menimpa semua chat, folder, dan pengaturan Anda saat ini. Lanjutkan?",
             resetSettings: "Reset", saveAndClose: "Simpan & Tutup", footerText: "StoryBali v2.6.2 | © 2024",
             newConversation: "Percakapan Baru",
             voiceDefault: "Bawaan Browser", voicePrimaryLang: "Bahasa Utama", voiceOtherLang: "Bahasa Lain",
@@ -1704,7 +1587,6 @@
             confirmDeleteSingleTitle: "Hapus Percakapan?", confirmDeleteSingleMsg: "Tindakan ini tidak dapat dibatalkan.", confirmDeleteSingleBtn: "Hapus",
             confirmDeleteAllTitle: "Hapus Semua Riwayat?", confirmResetTitle: "Reset Pengaturan?", confirmResetBtn: "Ya, Reset",
             errorVoiceRecognition: "Maaf, browser Anda tidak mendukung fitur pengenalan suara.", errorSpeechRecog: "Error pengenalan suara: {error}", errorStartSpeechRecog: "Tidak dapat memulai pengenalan suara.",
-            promptNewFolder: "Masukkan nama untuk folder baru:", promptRenameFolder: "Masukkan nama baru untuk folder:", confirmDeleteFolder: "Yakin ingin menghapus folder ini? Semua chat di dalamnya akan dipindahkan keluar.",
             alertSettingsSaved: "Pengaturan berhasil disimpan!", alertResetConfirm: "Yakin ingin mereset semua pengaturan? SEMUA riwayat chat dan API Key akan dihapus. Halaman akan dimuat ulang.", alertResetSuccess: "Pengaturan telah direset ke default. Halaman akan dimuat ulang.",
             alertExportEmpty: "Belum ada riwayat chat di sesi ini untuk di-export!", alertExportSuccess: "Riwayat chat sesi ini berhasil di-export!",
             alertClearHistoryConfirm: "Yakin mau hapus SEMUA riwayat percakapan? Tindakan ini tidak bisa dibatalkan.", alertClearHistorySuccess: "Semua riwayat percakapan telah dihapus!",
@@ -1721,8 +1603,7 @@
             feedbackAlertEmpty: "Mohon tulis masukan Anda terlebih dahulu.", feedbackStatusSending: "Mengirim...", feedbackAlertSuccess: "Terima kasih! Masukan Anda telah terkirim.", feedbackAlertError: "Maaf, terjadi kesalahan.",
         },
         en: {
-            newChat: "New Chat", newChatTitle: "Start a New Conversation", newFolderTitle: "Create New Folder", sidebarToggleTitle: "Show/Hide Chat History",
-            searchHistoryPlaceholder: "Search in history...", noSearchResults: "No results found.",
+            newChat: "New Chat", newChatTitle: "Start a New Conversation", sidebarToggleTitle: "Show/Hide Chat History",
             aiName: "Wayan AI", profileHint: "Click to see profile", voiceCallTitle: "Start Voice Call", settingsTitle: "Open Settings",
             quickHello: "Hello", quickHowAreYou: "How are you?", quickJoke: "Joke", quickProductive: "Productivity Tips", quickMovie: "Movie", quickCoding: "Coding",
             inputPlaceholder: "Ask Wayan AI...", imageProcessing: "Analyzing image...", stopGenerating: "Stop",
@@ -1748,7 +1629,6 @@
             settingSaveHistory: "Save History", exportHistory: "Export This Chat History", clearAllHistory: "Delete ALL Conversations",
             feedbackTitle: "Give Feedback", feedbackSubtitle: "Have ideas or suggestions? Let us know!", feedbackPlaceholder: "Write your feedback here...", feedbackSendButton: "Send Feedback",
             apiKeysTitle: "API Keys", saveApiKeysButton: "Save API Keys",
-            exportAllData: "Export All Data", importAllData: "Import Data", confirmImport: "This will overwrite all your current chats, folders, and settings. Continue?",
             resetSettings: "Reset", saveAndClose: "Save & Close", footerText: "StoryBali v2.6.2 | © 2024",
             newConversation: "New Conversation",
             voiceDefault: "Browser Default", voicePrimaryLang: "Primary Language", voiceOtherLang: "Other Languages",
@@ -1763,7 +1643,6 @@
             confirmDeleteSingleTitle: "Delete Conversation?", confirmDeleteSingleMsg: "This action cannot be undone.", confirmDeleteSingleBtn: "Delete",
             confirmDeleteAllTitle: "Delete All History?", confirmResetTitle: "Reset Settings?", confirmResetBtn: "Yes, Reset",
             errorVoiceRecognition: "Sorry, your browser does not support the voice recognition feature.", errorSpeechRecog: "Speech recognition error: {error}", errorStartSpeechRecog: "Could not start speech recognition.",
-            promptNewFolder: "Enter a name for the new folder:", promptRenameFolder: "Enter a new name for the folder:", confirmDeleteFolder: "Are you sure you want to delete this folder? All chats inside will be moved out.",
             alertSettingsSaved: "Settings saved successfully!", alertResetConfirm: "Are you sure you want to reset all settings? ALL chat history and API Keys will be deleted. The page will reload.", alertResetSuccess: "Settings have been reset to default. The page will reload.",
             alertExportEmpty: "There is no chat history in this session to export!", alertExportSuccess: "Chat history for this session has been successfully exported!",
 alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? This action cannot be undone.", alertClearHistorySuccess: "All chat history has been deleted!",
@@ -1780,8 +1659,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             feedbackAlertEmpty: "Please write your feedback first.", feedbackStatusSending: "Sending...", feedbackAlertSuccess: "Thank you! Your feedback has been sent.", feedbackAlertError: "Sorry, an error occurred.",
         },
         ja: {
-            newChat: "新しいチャット", newChatTitle: "新しい会話を始める", newFolderTitle: "新しいフォルダを作成", sidebarToggleTitle: "チャット履歴の表示/非表示",
-            searchHistoryPlaceholder: "履歴を検索...", noSearchResults: "結果が見つかりません。",
+            newChat: "新しいチャット", newChatTitle: "新しい会話を始める", sidebarToggleTitle: "チャット履歴の表示/非表示",
             aiName: "ワヤンAI", profileHint: "プロフィールを見る", voiceCallTitle: "音声通話を開始", settingsTitle: "設定を開く",
             quickHello: "こんにちは", quickHowAreYou: "元気ですか？", quickJoke: "冗談", quickProductive: "生産性のヒント", quickMovie: "映画", quickCoding: "コーディング",
             inputPlaceholder: "ワヤンAIに質問...", imageProcessing: "画像を分析中...", stopGenerating: "停止",
@@ -1807,7 +1685,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             settingSaveHistory: "履歴を保存", exportHistory: "このチャット履歴をエクスポート", clearAllHistory: "すべての会話を削除",
             feedbackTitle: "フィードバックを送信", feedbackSubtitle: "アイデアや提案がありますか？お知らせください！", feedbackPlaceholder: "ここにフィードバックを記入してください...", feedbackSendButton: "フィードバックを送信",
             apiKeysTitle: "APIキー", saveApiKeysButton: "APIキーを保存",
-            exportAllData: "すべてのデータをエクスポート", importAllData: "データをインポート", confirmImport: "これにより、現在のすべてのチャット、フォルダ、設定が上書きされます。続行しますか？",
             resetSettings: "リセット", saveAndClose: "保存して閉じる", footerText: "StoryBali v2.6.2 | © 2024",
             newConversation: "新しい会話",
             voiceDefault: "ブラウザのデフォルト", voicePrimaryLang: "主な言語", voiceOtherLang: "その他の言語",
@@ -1822,7 +1699,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             confirmDeleteSingleTitle: "会話を削除しますか？", confirmDeleteSingleMsg: "この操作は元に戻せません。", confirmDeleteSingleBtn: "削除",
             confirmDeleteAllTitle: "すべての履歴を削除しますか？", confirmResetTitle: "設定をリセットしますか？", confirmResetBtn: "はい、リセット",
             errorVoiceRecognition: "申し訳ありませんが、お使いのブラウザは音声認識機能をサポートしていません。", errorSpeechRecog: "音声認識エラー: {error}", errorStartSpeechRecog: "音声認識を開始できませんでした。",
-            promptNewFolder: "新しいフォルダの名前を入力してください:", promptRenameFolder: "フォルダの新しい名前を入力してください:", confirmDeleteFolder: "このフォルダを削除してもよろしいですか？中のすべてのチャットは外に移動されます。",
             alertSettingsSaved: "設定が正常に保存されました！", alertResetConfirm: "すべての設定をリセットしてもよろしいですか？すべてのチャット履歴とAPIキーが削除されます。ページがリロードされます。", alertResetSuccess: "設定がデフォルトにリセットされました。ページがリロードされます。",
             alertExportEmpty: "このセッションにはエクスポートするチャット履歴がありません！", alertExportSuccess: "このセッションのチャット履歴が正常にエクスポートされました！",
             alertClearHistoryConfirm: "すべての会話履歴を削除してもよろしいですか？この操作は元に戻せません。", alertClearHistorySuccess: "すべての会話履歴が削除されました！",
@@ -2001,7 +1877,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
 
     let apiKeys = [];
     let allChatSessions = [];
-    let chatFolders = []; // [BARU]
     let activeChatId = null;
     let recognition = null;
     const CHAT_LIMIT = 4;
@@ -2037,7 +1912,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         saveHistory: true,
         isSidebarOpen: window.innerWidth > 768,
         darkMode: false,
-        foldersState: {} // [BARU] Untuk menyimpan status collapsed/expanded folder
     };
     
     let settings = { ...defaultSettings };
@@ -2215,241 +2089,47 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             overlay.classList.toggle('active', isOpen);
         } else {
             const isCollapsed = sidebar.classList.toggle('collapsed');
-            tempSettings.isSidebarOpen = !isCollapsed;
-            // Tidak langsung save, biarkan user save manual via settings modal
+            settings.isSidebarOpen = !isCollapsed;
+            saveSettings();
         }
     }
-    // [DIUBAH] Fungsi diubah untuk menerima daftar sesi opsional
-    function renderSidebar(sessionsToRender = null) {
+    function renderSidebar() {
         const historyList = document.getElementById('chatHistoryList');
         historyList.innerHTML = '';
-        const isSearching = sessionsToRender !== null;
-        const sessions = isSearching ? sessionsToRender : allChatSessions;
 
-        if (isSearching && sessions.length === 0) {
-            historyList.innerHTML = `<li class="p-4 text-center text-sm text-gray-500 dark:text-gray-400" data-translate-key="noSearchResults">${t('noSearchResults')}</li>`;
-            return;
-        }
-
+        // [BARU] Daftar judul default dalam semua bahasa
         const defaultTitles = Object.values(translations).map(langPack => langPack.newConversation);
 
-        
+        [...allChatSessions].reverse().forEach(session => {
+            const item = document.createElement('li');
+            item.className = 'chat-history-item';
+            item.dataset.chatId = session.id;
 
-        const createChatListItem = (session) => {
-             const item = document.createElement('li');
-             item.className = 'chat-history-item';
-             item.dataset.chatId = session.id;
-             let displayTitle = defaultTitles.includes(session.title) ? t('newConversation') : session.title;
-             item.innerHTML = `
-                 <span class="title">${displayTitle}</span>
-                 <div class="actions">
-                     <button onclick="shareChatSession('${session.id}', event)" class="action-icon" data-translate-title="shareChatTitle"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6.002l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.368a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path></svg></button>
-                     <button onclick="renameChatSession('${session.id}', event)" class="action-icon" title="Ganti Nama"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
-                     <button onclick="deleteChatSession('${session.id}', event)" class="action-icon" title="Hapus Chat"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
-                 </div>`;
-             item.addEventListener('click', () => {
-                 if(activeChatId !== session.id) loadChat(session.id);
-                 if (window.innerWidth <= 768) toggleSidebar();
-             });
-             return item;
-        };
+            // [BARU] Tampilkan judul yang sudah diterjemahkan jika judulnya adalah default
+            let displayTitle = defaultTitles.includes(session.title) ? t('newConversation') : session.title;
 
-        if (isSearching) {
-            // Tampilkan hasil pencarian sebagai daftar datar
-            [...sessions].reverse().forEach(session => {
-                const item = createChatListItem(session);
-                item.style.paddingLeft = '1rem'; // Reset indent
-                historyList.appendChild(item);
+            item.innerHTML = `
+                <span class="title">${displayTitle}</span>
+                <div class="actions">
+                    <button onclick="renameChatSession('${session.id}', event)" class="action-icon" title="Ganti Nama">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
+                    </button>
+                    <button onclick="deleteChatSession('${session.id}', event)" class="action-icon" title="Hapus Chat">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </div>`;
+            item.addEventListener('click', () => {
+                if(activeChatId !== session.id) {
+                    loadChat(session.id);
+                }
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
             });
-        } else {
-            // Tampilkan tampilan normal dengan folder
-            chatFolders.forEach(folder => {
-                const folderLi = document.createElement('li');
-                const isCollapsed = settings.foldersState[folder.id];
-                folderLi.className = `folder-item ${isCollapsed ? 'collapsed' : ''}`;
-                folderLi.innerHTML = `
-                    <div class="folder-header" onclick="toggleFolder('${folder.id}')">
-                        <span>${folder.name}</span>
-                        <div class="flex items-center gap-2">
-                            <button onclick="renameFolder('${folder.id}', event)" class="action-icon opacity-0" title="Ganti Nama Folder"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
-                            <button onclick="deleteFolder('${folder.id}', event)" class="action-icon opacity-0" title="Hapus Folder"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
-                            <svg class="w-4 h-4 folder-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                    </div>
-                    <ul class="folder-content"></ul>`;
-                
-                folderLi.querySelector('.folder-header').addEventListener('mouseover', (e) => e.currentTarget.querySelectorAll('.action-icon').forEach(b => b.style.opacity = 1));
-                folderLi.querySelector('.folder-header').addEventListener('mouseout', (e) => e.currentTarget.querySelectorAll('.action-icon').forEach(b => b.style.opacity = 0));
-
-                const folderContentUl = folderLi.querySelector('.folder-content');
-                folderContentUl.dataset.folderId = folder.id;
-                const chatsInFolder = sessions.filter(s => s.folderId === folder.id); 
-                [...chatsInFolder].reverse().forEach(session => {
-                    folderContentUl.appendChild(createChatListItem(session));
-                });
-                historyList.appendChild(folderLi);
-            });
-
-            // Render chats not in any folder
-            const chatsOutsideFolders = sessions.filter(s => !s.folderId);
-            [...chatsOutsideFolders].reverse().forEach(session => {
-                const item = createChatListItem(session);
-                item.style.paddingLeft = '1rem'; // Reset indent
-                historyList.appendChild(item);
-            });
-        }
-
+            historyList.appendChild(item);
+        });
         updateSidebarActiveState();
-        if (!isSearching) {
-            initializeDragAndDrop();
-        }
     }
-    // ▼▼▼ [BARU] FUNGSI-FUNGSI UNTUK FOLDER ▼▼▼
-    function createNewFolder() {
-        const folderName = prompt(t('promptNewFolder'));
-        if (folderName && folderName.trim()) {
-            const newFolder = {
-                id: `folder_${new Date().getTime()}`,
-                name: folderName.trim()
-            };
-            chatFolders.push(newFolder);
-            saveAllData();
-            renderSidebar();
-        }
-    }
-    function renameFolder(folderId, event) {
-        event.stopPropagation();
-        const folder = chatFolders.find(f => f.id === folderId);
-        if (!folder) return;
-        const newName = prompt(t('promptRenameFolder'), folder.name);
-        if (newName && newName.trim()) {
-            folder.name = newName.trim();
-            saveAllData();
-            renderSidebar();
-        }
-    }
-    async function deleteFolder(folderId, event) {
-        event.stopPropagation();
-        const confirmed = await showConfirmModal({
-            title: t('confirmDeleteSingleTitle'),
-            message: t('confirmDeleteFolder'),
-            confirmText: t('confirmDeleteSingleBtn'),
-            cancelText: t('buttonCancel')
-        });
-        if (confirmed) {
-            allChatSessions.forEach(session => {
-                if (session.folderId === folderId) {
-                    session.folderId = null;
-                }
-            });
-            chatFolders = chatFolders.filter(f => f.id !== folderId);
-            saveAllData();
-            renderSidebar();
-        }
-    }
-    function toggleFolder(folderId) {
-        const folderItem = document.querySelector(`.folder-item .folder-header[onclick="toggleFolder('${folderId}')"]`).parentElement;
-        const isCollapsed = folderItem.classList.toggle('collapsed');
-        settings.foldersState[folderId] = isCollapsed;
-        saveSettings();
-    }
-    // ▼▼▼ [BARU] FUNGSI UNTUK BERBAGI CHAT ▼▼▼
-    async function shareChatSession(chatId, event) {
-        event.stopPropagation();
-        const session = allChatSessions.find(s => s.id === chatId);
-        if (!session) return;
-
-        try {
-            const dataToShare = {
-                title: session.title,
-                history: session.history
-            };
-            const jsonString = JSON.stringify(dataToShare);
-            const compressed = pako.gzip(jsonString, { to: 'string' });
-            const base64 = btoa(compressed);
-            const urlSafeBase64 = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-            const shareUrl = `${window.location.origin}${window.location.pathname}#share=${urlSafeBase64}`;
-            
-            await navigator.clipboard.writeText(shareUrl);
-            alert(t('alertShareLinkCopied'));
-
-        } catch (error) {
-            console.error("Error creating share link:", error);
-            alert(t('alertShareLinkFailed'));
-        }
-    }
-
-    function renderSharedView(sharedData) {
-        document.body.classList.add('shared-view-mode');
-        document.getElementById('sharedViewBanner').classList.remove('hidden');
-        
-        const headerTitle = document.querySelector('.header-gradient h1');
-        if (headerTitle) {
-            headerTitle.textContent = sharedData.title;
-        }
-        document.title = `${sharedData.title} - ${t('aiName')}`;
-
-        const chatMessages = document.getElementById('chatMessages');
-        chatMessages.innerHTML = '';
-        
-        sharedData.history.forEach(msg => {
-            if (msg.parts && msg.parts[0] && msg.parts[0].text) {
-                addOriginalMessage(msg.parts[0].text, msg.role === 'user', msg.timestamp);
-            }
-        });
-        
-        scrollToBottom();
-    }
-    // ▲▲▲ AKHIR DARI FUNGSI BERBAGI CHAT ▲▲▲
-
-    // [BARU] Fungsi untuk pencarian chat
-    function handleChatSearch(event) {
-        const query = event.target.value.toLowerCase().trim();
-        if (!query) {
-            renderSidebar(); // Tampilkan tampilan normal jika pencarian kosong
-            return;
-        }
-
-        const matchingSessions = allChatSessions.filter(session => {
-            // Cek judul
-            if (session.title.toLowerCase().includes(query)) {
-                return true;
-            }
-            // Cek konten pesan
-            return session.history.some(message => 
-                message.parts[0]?.text?.toLowerCase().includes(query)
-            );
-        });
-        renderSidebar(matchingSessions); // Tampilkan hasil pencarian
-    }
-    // [BARU] Fungsi untuk inisialisasi Drag and Drop
-    function initializeDragAndDrop() {
-        const mainList = document.getElementById('chatHistoryList');
-        const folderContents = document.querySelectorAll('.folder-content');
-
-        const sortableOptions = {
-            group: 'chat-sessions',
-            animation: 150,
-            ghostClass: 'sortable-ghost',
-            dragClass: 'sortable-drag',
-            onEnd: (evt) => {
-                const chatId = evt.item.dataset.chatId;
-                const newFolderId = evt.to.dataset.folderId || null;
-                
-                const chatSession = allChatSessions.find(s => s.id === chatId);
-                if (chatSession) {
-                    chatSession.folderId = newFolderId;
-                    saveAllData();
-                    // Tidak perlu render ulang, SortableJS sudah menangani DOM
-                }
-            }
-        };
-
-        new Sortable(mainList, sortableOptions);
-        folderContents.forEach(folder => new Sortable(folder, sortableOptions));
-    }
-    // ▲▲▲ AKHIR DARI FUNGSI FOLDER ▲▲▲
-
     function updateSidebarActiveState() {
         document.querySelectorAll('.chat-history-item').forEach(item => {
             item.classList.toggle('active', item.dataset.chatId === activeChatId);
@@ -2462,7 +2142,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         const newTitle = prompt(t('promptRenameChat'), session.title);
         if (newTitle && newTitle.trim()) {
             session.title = newTitle.trim();
-            saveAllData();
+            saveAllChatSessions();
             renderSidebar();
         }
     }
@@ -2483,7 +2163,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                 startNewChat();
             }
         }
-        saveAllData();
+        saveAllChatSessions();
         renderSidebar();
     }
     function getActiveChatHistory() {
@@ -2500,12 +2180,11 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                 role: 'model',
                 parts: [{ text: t('initialGreeting') }],
                 timestamp: new Date().toISOString()
-            }],
-            folderId: null // [BARU]
+            }]
         };
         allChatSessions.push(newSession);
         activeChatId = newChatId;
-        saveAllData();
+        saveAllChatSessions();
         renderSidebar();
         loadChat(activeChatId); 
         addSystemMessage(t('systemNewChat'), 'info');
@@ -2514,25 +2193,20 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         if (settings.saveHistory) {
             const dataToSave = {
                 sessions: allChatSessions,
-                activeId: activeChatId,
-                folders: chatFolders // [BARU]
+                activeId: activeChatId
             };
             localStorage.setItem('storybaliChatSessions', JSON.stringify(dataToSave));
         }
     }
-    // [DIUBAH] Nama fungsi diubah agar lebih deskriptif
-    function loadAllData() {
+    function loadAllChatSessions() {
         if (!settings.saveHistory) {
             startNewChat();
             return;
         }
         const savedData = localStorage.getItem('storybaliChatSessions');
         if (savedData) {
-            const parsedData = JSON.parse(savedData); 
+            const parsedData = JSON.parse(savedData);
             allChatSessions = parsedData.sessions || [];
-            // [BARU] Pastikan setiap sesi memiliki folderId
-            allChatSessions.forEach(s => { if (s.folderId === undefined) s.folderId = null; });
-            chatFolders = parsedData.folders || [];
             activeChatId = parsedData.activeId || null;
             if (allChatSessions.length === 0 || !activeChatId || !allChatSessions.find(s => s.id === activeChatId)) {
                 startNewChat();
@@ -2561,7 +2235,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             if (index === 0 && msg.role === 'model' && isDefaultGreeting) {
                 messageToRender = t('initialGreeting');
             }
-            addOriginalMessage(messageToRender, msg.role === 'user', msg.timestamp, false);
+            addOriginalMessage(messageToRender, msg.role === 'user', msg.timestamp);
         });
         
         chatMessages.appendChild(document.getElementById('typingIndicator'));
@@ -2582,7 +2256,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             if (activeSession.history.length > 20) {
                 activeSession.history.splice(1, 2); 
             }
-            saveAllData();
+            saveAllChatSessions();
         }
     }
     async function clearAllChatHistory() {
@@ -2595,7 +2269,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         if (confirmed) {
             allChatSessions = [];
             activeChatId = null;
-            saveAllData();
+            saveAllChatSessions();
             startNewChat();
             alert(t('alertClearHistorySuccess'));
         }
@@ -2625,60 +2299,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         URL.revokeObjectURL(url);
         alert(t('alertExportSuccess'));
     }
-
-    // ▼▼▼ [BARU] FUNGSI UNTUK EXPORT DAN IMPORT SEMUA DATA ▼▼▼
-    function exportAllData() {
-        const allData = {
-            version: '1.0',
-            timestamp: new Date().toISOString(),
-            settings: settings,
-            chatSessions: allChatSessions,
-            chatFolders: chatFolders,
-            apiKeys: apiKeys,
-            elevenLabsApiKey: localStorage.getItem('elevenLabsApiKey') || ''
-        };
-
-        const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `wayan-ai-backup-${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-
-    async function importAllData(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const confirmed = await showConfirmModal({
-            title: t('importAllData'),
-            message: t('confirmImport'),
-            confirmText: t('importAllData'),
-            cancelText: t('buttonCancel'),
-            confirmClass: 'bg-purple-600 hover:bg-purple-700 text-white'
-        });
-
-        if (confirmed) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const data = JSON.parse(e.target.result);
-                // Cukup simpan ke localStorage dan reload.
-                localStorage.setItem('storybaliSettings', JSON.stringify(data.settings));
-                localStorage.setItem('storybaliChatSessions', JSON.stringify({ sessions: data.chatSessions, folders: data.chatFolders, activeId: data.chatSessions[0]?.id || null }));
-                localStorage.setItem('storybaliApiKeys', JSON.stringify(data.apiKeys));
-                localStorage.setItem('elevenLabsApiKey', data.elevenLabsApiKey);
-                window.location.reload();
-            };
-            reader.readAsText(file);
-        }
-        // Reset input file agar bisa import file yang sama lagi
-        event.target.value = '';
-    }
-    // ▲▲▲ AKHIR DARI FUNGSI EXPORT/IMPORT ▲▲▲
-
     function toggleAnimations() {
         const isEnabled = document.getElementById('animationToggle').checked;
         settings.animationsEnabled = isEnabled;
@@ -2870,7 +2490,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         settings.darkMode = document.getElementById('darkModeToggle').checked;
         
         saveSettings(); 
-        saveAllData(); // [BARU] Simpan juga data chat jika ada perubahan
         applySettings(); 
         alert(t('alertSettingsSaved'));
         toggleSettings();
@@ -2887,7 +2506,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             localStorage.removeItem('storybaliApiKeys');
             localStorage.removeItem('elevenLabsApiKey');
             localStorage.removeItem('storybaliChatSessions');
-            localStorage.removeItem('storybaliFolders'); // [DIHAPUS] Tidak perlu lagi, sudah digabung
             localStorage.removeItem('onboardingShown');
             alert(t('alertResetSuccess'));
             window.location.reload();
@@ -3265,7 +2883,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         }
         scrollToBottom();
     }
-    function addOriginalMessage(message, isUser = false, timestamp, isSharedView = false) {
+    function addOriginalMessage(message, isUser = false, timestamp) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message-bubble';
@@ -3300,37 +2918,9 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                     ${timeHtml}
                 </div>`;
         } else {
-            const [mainAnswer, suggestionsPart] = message.split('[SUGGESTIONS]');
-            const trimmedAnswer = mainAnswer.trim();
-            const encodedMessage = btoa(encodeURIComponent(trimmedAnswer));
+            const encodedMessage = btoa(encodeURIComponent(message));
             messageDiv.className += ' ai';
-
-            const actionsHtml = isSharedView ? 
-                (timeString ? `<div class="flex items-center space-x-2 mt-2 text-gray-500 dark:text-gray-400"><div class="chat-timestamp text-xs">${timeString}</div></div>` : '') :
-                `<div class="flex items-center space-x-2 mt-2 text-gray-500 dark:text-gray-400">
-                    ${timeString ? `<div class="chat-timestamp text-xs">${timeString}</div>` : ''}
-                    <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" data-translate-title="copyAnswer">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg>
-                        </button>
-                    <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" data-translate-title="readAnswer">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>
-                        </button>
-                    <button onclick="handleRating(this, 'like')" class="action-icon-ai" data-translate-title="likeResponse">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>
-                    </button>
-                    <button onclick="handleRating(this, 'dislike')" class="action-icon-ai" data-translate-title="dislikeResponse">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
-                    </button>
-                    <button onclick="regenerateResponse(this)" class="action-icon-ai" data-translate-title="regenerateResponse">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
-                    </button>
-                    <button onclick="shareResponse(this)" class="action-icon-ai" data-translate-title="shareResponse">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3z"></path></svg>
-                    </button>
-                </div>`;
-            
-            const suggestionsHtml = (isSharedView || !suggestionsPart) ? '' : renderSuggestions(suggestionsPart.split('|').map(s => s.trim()).filter(Boolean));
-
+            // [DIUBAH] Struktur HTML pesan AI dirombak total
             messageDiv.innerHTML = `
                 <div class="flex items-center space-x-3 mb-2">
                     <div class="ai-avatar w-8 h-8 flex-shrink-0 flex items-center justify-center overflow-hidden">
@@ -3340,10 +2930,30 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                 </div>
                 <div>
                     <div class="ai-message">
-                        <div class="markdown-content leading-relaxed text-base">${marked.parse(trimmedAnswer)}</div>
-                        <div class="suggestions-container mt-3">${suggestionsHtml}</div>
+                        <div class="markdown-content leading-relaxed text-base">${marked.parse(message)}</div>
+                        <div class="suggestions-container mt-3"></div>
                     </div>
-                    ${actionsHtml}
+                    <div class="flex items-center space-x-2 mt-2 text-gray-500 dark:text-gray-400">
+                        ${timeString ? `<div class="chat-timestamp text-xs">${timeString}</div>` : ''}
+                        <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" data-translate-title="copyAnswer">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg>
+                            </button>
+                        <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" data-translate-title="readAnswer">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>
+                            </button>
+                        <button onclick="handleRating(this, 'like')" class="action-icon-ai" data-translate-title="likeResponse">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>
+                        </button>
+                        <button onclick="handleRating(this, 'dislike')" class="action-icon-ai" data-translate-title="dislikeResponse">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
+                        </button>
+                        <button onclick="regenerateResponse(this)" class="action-icon-ai" data-translate-title="regenerateResponse">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
+                        </button>
+                        <button onclick="shareResponse(this)" class="action-icon-ai" data-translate-title="shareResponse">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3z"></path></svg>
+                        </button>
+                    </div>
                 </div>`;
         }
         chatMessages.appendChild(messageDiv);
@@ -3747,19 +3357,22 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             ? `[MODE PENCARIAN AKTIF] Pengguna baru saja mengirimkan prompt dan juga memiliki opsi untuk mencarinya langsung di Google lewat tombol di pesannya. Sadari hal ini. Jika pertanyaannya jelas-jelas membutuhkan data real-time (harga saham, berita terkini, cuaca saat ini), berikan jawaban yang mengakui keterbatasan pengetahuanmu dan sarankan pengguna untuk menggunakan tombol 'Cari di Google' yang tersedia untuk mendapatkan informasi paling akurat dan terkini. Contoh: "Untuk harga yen saat ini, Wayan sarankan untuk cek langsung lewat tombol 'Cari di Google' di pesanmu ya, karena data itu berubah sangat cepat."`
             : '';
 
-        // [DIUBAH] Instruksi dasar diperkaya untuk format yang lebih rapi
-        const baseInstructions = `[ATURAN FORMAT PENULISAN]
-1.  **Struktur dan Paragraf**: Selalu pecah jawabanmu menjadi paragraf-paragraf pendek dan ringkas agar mudah dibaca. Hindari blok teks yang panjang dan padat. Gunakan spasi antar paragraf.
-2.  **Gunakan Markdown**: Manfaatkan Markdown secara ekstensif untuk memperjelas informasi. Gunakan **tebal** untuk penekanan, *miring* untuk istilah atau judul, dan \`list\` (daftar) bernomor atau poin untuk menjelaskan langkah-langkah, beberapa item, atau ringkasan. Gunakan \`code\` untuk potongan kode.
-3.  **Gunakan Emoji (jika sesuai)**: Untuk kepribadian 'santai' atau 'lucu', gunakan emoji yang relevan secara wajar untuk membuat teks lebih hidup dan tidak monoton. Contoh: 😊, 🤔, ✨, 👍. Jangan berlebihan.
+        const baseInstructions = `[ATURAN FORMAT JAWABAN - SANGAT PENTING]
+1.  **Gaya Bahasa & Emoji**: Gunakan emoji yang relevan secara alami di dalam kalimat untuk membuat jawaban lebih hidup dan bersahabat, sesuai dengan kepribadianmu. Contoh: "Tentu saja! Ini dia resep nasi goreng spesial untukmu 🍳. Dijamin enak!"
+2.  **Struktur & Keterbacaan**:
+    *   **Paragraf**: Pecah jawaban yang panjang menjadi beberapa paragraf pendek agar mudah dibaca. Gunakan baris kosong (enter dua kali) untuk memisahkan paragraf.
+    *   **List/Daftar**: Gunakan bullet points (*) atau numbered lists (1., 2.) untuk menyajikan informasi berurutan atau poin-poin penting. Ini membuat jawaban terlihat rapi dan mudah dicerna.
+    *   **Penekanan**: Gunakan cetak tebal (**teks tebal**) untuk menyorot kata kunci atau konsep penting.
+    *   **Blok Kode**: Jika memberikan contoh kode, selalu bungkus dalam blok kode Markdown dengan penanda bahasa. Contoh: \`\`\`javascript\\n// kodemu di sini\\n\`\`\`.
 
-[PENTING: Aturan Pemberian Link]
-Jika pertanyaan pengguna memerlukan informasi yang sangat baru, data spesifik, atau referensi eksternal untuk mendukung jawabanmu, sertakan 2-3 link relevan yang valid dari ingatanmu.
-- Format link harus menggunakan Markdown, contoh: [Judul Artikel](https://contoh.com).
-- Jangan hanya menempelkan URL mentah. Selalu berikan judul yang deskriptif untuk link tersebut.
-- Jika kamu memberikan link, berikan disclaimer singkat seperti: "Berikut beberapa referensi yang mungkin bisa membantu:", karena kamu tidak bisa memverifikasi link secara real-time. Hindari mengarang atau membuat link palsu.
+[ATURAN PEMBERIAN LINK]
+Jika pertanyaan pengguna memerlukan informasi yang sangat baru, data spesifik, atau referensi eksternal, sertakan 2-3 link relevan yang valid dari ingatanmu.
+- Format link harus menggunakan Markdown: Judul Artikel.
+- Jangan menempelkan URL mentah. Selalu berikan judul yang deskriptif.
+- Beri disclaimer singkat seperti: "Berikut beberapa referensi yang mungkin bisa membantu:", karena kamu tidak bisa memverifikasi link secara real-time. Hindari mengarang link palsu.
 
-Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang relevan. Format saran: pisahkan jawaban utama dan saran dengan '[SUGGESTIONS]', dan pisahkan setiap saran dengan tanda pipa '|'.`;
+[ATURAN SARAN PERTANYAAN]
+Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang relevan. Format: pisahkan jawaban utama dan saran dengan '[SUGGESTIONS]', dan pisahkan setiap saran dengan tanda pipa '|'. Contoh: ...jawaban utama selesai.[SUGGESTIONS]Ceritakan tentang sejarah Bali|Apa saja makanan khas Bali?`;
         
         const rolePrompts = {
             guru_jepang: `Kamu adalah guru Bahasa Jepang bernama Wayan-sensei. Gaya bicaramu sabar dan ramah. Sapa dengan "Konnichiwa, gakusei-san!".`,
@@ -4315,62 +3928,69 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     // ===================================================================================
 
 
-    // [DIUBAH] Logika startup aplikasi dirombak untuk menangani mode berbagi
-    async function initializeApp() {
-        if (window.location.hash.startsWith('#share=')) {
-            const encodedData = window.location.hash.substring(7);
-            try {
-                let base64 = encodedData.replace(/-/g, '+').replace(/_/g, '/');
-                while (base64.length % 4) { base64 += '='; }
-                
-                const compressed = atob(base64);
-                const jsonString = pako.ungzip(compressed, { to: 'string' });
-                const sharedData = JSON.parse(jsonString);
-                
-                loadSettingsData();
-                applyTranslations(settings.language);
-                renderSharedView(sharedData);
-
-            } catch (error) {
-                console.error("Gagal memuat chat yang dibagikan:", error);
-                loadNormalApp();
-            }
-        } else {
-            loadNormalApp();
-        }
-    }
-
-    async function loadNormalApp() {
+    window.addEventListener('load', async () => {
         loadApiKeys();
         loadSettingsData();
         applySettings();
         currentUserIP = await getUserIP();
-        if (currentUserIP) { sendNewUserNotification(currentUserIP); }
+        
+        if (currentUserIP) {
+          sendNewUserNotification(currentUserIP);
+        }
+        
         checkUserStatus();
         populateVoiceList();
         populateElevenLabsVoices();
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = populateVoiceList;
         }
-        loadAllData();
+        loadAllChatSessions();
         hideTypingIndicator();
         hideImageProcessingIndicator();
         
-        // Setup event listeners
-        document.getElementById('fontSizeSelect').addEventListener('change', (e) => { settings.fontSize = e.target.value; saveSettings(); });
-        document.getElementById('animationToggle').addEventListener('change', () => { toggleAnimations(); saveSettings(); });
-        document.getElementById('soundToggle').addEventListener('change', (e) => { settings.soundEnabled = e.target.checked; saveSettings(); });
-        document.getElementById('readAiResponseToggle').addEventListener('change', (e) => { settings.readAiResponseEnabled = e.target.checked; saveSettings(); });
-        document.getElementById('voiceSelect').addEventListener('change', (e) => { settings.voiceURI = e.target.value; saveSettings(); });
-        document.getElementById('elevenLabsVoiceSelect').addEventListener('change', (e) => { settings.elevenLabsVoiceId = e.target.value; saveSettings(); });
-        document.getElementById('saveHistoryToggle').addEventListener('change', (e) => { settings.saveHistory = e.target.checked; saveSettings(); });
-        document.getElementById('stopBtn').addEventListener('click', () => { if (currentFetchController) { currentFetchController.abort(); } });
-        document.getElementById('previewElevenLabsVoiceBtn').addEventListener('click', previewElevenLabsVoice);
-        document.getElementById('chatSearchInput').addEventListener('input', handleChatSearch);
-        document.getElementById('messageInput').addEventListener('keydown', handlePromptSuggestionsKeydown);
-    }
+        document.getElementById('fontSizeSelect').addEventListener('change', (e) => {
+            settings.fontSize = e.target.value;
+            saveSettings();
+        });
 
-    window.addEventListener('load', initializeApp);
+        document.getElementById('animationToggle').addEventListener('change', () => {
+            toggleAnimations();
+            saveSettings();
+        });
+
+        document.getElementById('soundToggle').addEventListener('change', (e) => {
+            settings.soundEnabled = e.target.checked;
+            saveSettings();
+        });
+
+        document.getElementById('readAiResponseToggle').addEventListener('change', (e) => {
+            settings.readAiResponseEnabled = e.target.checked;
+            saveSettings();
+        });
+
+        document.getElementById('voiceSelect').addEventListener('change', (e) => {
+            settings.voiceURI = e.target.value;
+            saveSettings();
+        });
+
+        document.getElementById('elevenLabsVoiceSelect').addEventListener('change', (e) => {
+            settings.elevenLabsVoiceId = e.target.value;
+            saveSettings();
+        });
+
+        document.getElementById('saveHistoryToggle').addEventListener('change', (e) => {
+            settings.saveHistory = e.target.checked;
+            saveSettings();
+        });
+        
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            if (currentFetchController) {
+                currentFetchController.abort();
+            }
+        });
+
+        document.getElementById('previewElevenLabsVoiceBtn').addEventListener('click', previewElevenLabsVoice);
+    });
 
     ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal'].forEach(id => {
         document.getElementById(id).addEventListener('click', e => {
