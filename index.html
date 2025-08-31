@@ -61,6 +61,7 @@
       --shadow-color: rgba(0, 0, 0, 0.05);
       --bg-primary-rgba: 255, 255, 255;
       --bg-secondary-rgba: 247, 248, 252;
+      --text-primary-rgba: 30, 41, 59;
       --bg-tertiary-rgba: 241, 245, 249; /* [BARU] RGBA untuk efek kaca di input box */
     }
 
@@ -79,6 +80,7 @@
       --shadow-color: rgba(0, 0, 0, 0.3);
       --bg-primary-rgba: 18, 18, 18;
       --bg-secondary-rgba: 30, 30, 30;
+      --text-primary-rgba: 245, 245, 245;
       --bg-tertiary-rgba: 42, 42, 42; /* [BARU] RGBA untuk efek kaca di input box */
     }
     /* === AKHIR DARI CSS VARIABLES === */
@@ -175,6 +177,19 @@
         border-right: none;
     }
     /* [PERMINTAAN PENGGUNA] Perbaikan padding atas sidebar untuk poni iPhone */
+    /* [BARU] Gaya untuk custom background */
+    #appContainer.custom-background {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        transition: background-image 0.5s ease-in-out;
+    }
+    /* [FIX] Membuat area chat transparan saat ada background kustom */
+    #appContainer.custom-background .chat-container,
+    #appContainer.custom-background .chat-window {
+        background: transparent !important;
+    }
+
     #sidebar > .p-4 {
         padding-top: calc(1rem + env(safe-area-inset-top));
     }
@@ -383,8 +398,19 @@
     /* [DIUBAH] Gaya gelembung AI dihapus agar mirip ChatGPT/Gemini */
     /* [DIUBAH] Diberi max-width agar teks tidak terlalu melebar dan lebih mudah dibaca */
     .ai-message {
-        max-width: 48rem; /* 768px */
+        max-width: 48rem;
         position: relative;
+        /* [PERMINTAAN PENGGUNA] Efek kaca untuk gelembung AI */
+        background-color: rgba(var(--bg-tertiary-rgba), 0.7);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(var(--text-primary-rgba), 0.08);
+        padding: 0.75rem 1rem;
+        border-radius: 1.25rem;
+        border-top-left-radius: 0.375rem;
+    }
+    html.dark .ai-message {
+        background-color: rgba(var(--bg-tertiary-rgba), 0.6);
     }
     /* [BARU] Gelembung khusus untuk indikator "mengetik" */
     .typing-bubble {
@@ -395,15 +421,21 @@
     }
 
     .user-message {
-        background: linear-gradient(135deg, #10b981, #059669);
-        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); color: white;
+        /* [PERMINTAAN PENGGUNA] Efek kaca untuk gelembung Pengguna */
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.8), rgba(5, 150, 105, 0.8));
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: none;
+        color: white;
         border-radius: 1.25rem; border-top-right-radius: 0.375rem;
         padding: 1rem; max-width: 85%;
     }
     html.dark .user-message {
-        background: #333333;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        background: rgba(51, 51, 51, 0.7);
+        box-shadow: none;
         color: var(--text-primary);
+        border-color: rgba(var(--text-primary-rgba), 0.1);
     }
 
     /* ▼▼▼ CSS UNTUK WAKTU CHAT ▼▼▼ */
@@ -521,6 +553,29 @@
     }
     html.dark .action-icon-ai.rating-active {
         color: #a5b4fc; /* Warna biru lebih terang di mode gelap */
+    }
+
+    /* [FIX] Memindahkan footer pesan AI ke dalam gelembung agar terlihat dengan latar kustom */
+    .ai-message-footer {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid rgba(var(--text-primary-rgba), 0.1);
+    }
+    .ai-message-footer .chat-timestamp {
+        color: var(--text-light);
+        margin-top: 0; /* Reset margin */
+    }
+    .ai-message-footer .action-icon-ai {
+        color: var(--text-light);
+    }
+    .ai-message-footer .action-icon-ai:hover {
+        background-color: rgba(var(--bg-primary-rgba), 0.5);
+    }
+    html.dark .ai-message-footer .action-icon-ai:hover {
+        background-color: rgba(var(--bg-primary-rgba), 0.2);
     }
 
     /* [BARU] CSS untuk Modal Pencarian Google */
@@ -771,12 +826,12 @@
 
     /* [PERMINTAAN PENGGUNA] Efek Kaca/Glassmorphism untuk Modal Profil */
     #profileModal .modal-content {
-        background-color: rgba(var(--bg-secondary-rgba), 0.6);
+        background-color: rgba(var(--bg-secondary-rgba), 0.25);
         backdrop-filter: blur(6px);
         -webkit-backdrop-filter: blur(6px);
     }
     html.dark #profileModal .modal-content {
-        background-color: rgba(var(--bg-secondary-rgba), 0.55);
+        background-color: rgba(var(--bg-secondary-rgba), 0.2);
     }
 
     /* ▼▼▼ [BARU] Perbaikan Tampilan Modal Pengaturan di Desktop ▼▼▼ */
@@ -1052,7 +1107,7 @@
     }
 
     .chat-messages::-webkit-scrollbar { width: 8px; }
-    .chat-messages { background-color: var(--bg-primary); }
+    .chat-messages { background-color: transparent; }
     .chat-messages::-webkit-scrollbar-track { background: transparent; }
     .chat-messages::-webkit-scrollbar-thumb {
       background-color: rgba(0, 0, 0, 0.2); border-radius: 20px;
@@ -1443,6 +1498,22 @@
                         <p id="themeDisabledMessage" class="text-xs text-center text-gray-500 mt-2 hidden" data-translate-key="themeDisabled">Ubah tema hanya tersedia di mode terang.</p>
                     </div>
                 </div>
+                <!-- [DIUBAH] Kartu untuk Latar Belakang Kustom (Upload File) -->
+                <div class="settings-card">
+                    <div class="settings-item flex-col">
+                        <div class="w-full flex items-center space-x-3">
+                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l-1-1a2 2 0 010-2.828l1-1a2 2 0 012.828 0l2 2a2 2 0 010 2.828l-2 2a2 2 0 01-2.828 0l-1-1z"></path></svg>
+                            <label for="backgroundFileInput" class="text-sm font-medium text-gray-700" data-translate-key="settingBackground">Gambar Latar</label>
+                        </div>
+                        <div class="w-full pt-2 space-y-2">
+                            <input type="file" id="backgroundFileInput" onchange="handleBackgroundUpload(event)" class="settings-input w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100" accept="image/*">
+                            <p id="backgroundFileName" class="text-xs text-gray-500 pl-1"></p>
+                            <button onclick="removeCustomBackground()" class="settings-btn-action bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm py-2">
+                                <span data-translate-key="removeBackground">Hapus Latar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <div class="settings-card">
                     <div class="settings-item">
                         <div class="flex items-center space-x-3">
@@ -1649,6 +1720,7 @@
             customRoleLabel: "Definisikan peran kustom AI:", customRolePlaceholder: "Contoh: Kamu adalah seorang ahli sejarah...",
             settingTheme: "Tema Warna", themeDisabled: "Ubah tema hanya tersedia di mode terang.",
             settingFontSize: "Ukuran Font", fontSmall: "Kecil", fontNormal: "Normal", fontLarge: "Besar",
+            settingBackground: "Gambar Latar", removeBackground: "Hapus Latar",
             settingAnimations: "Efek Animasi", settingDarkMode: "Mode Gelap", settingSound: "Suara Notifikasi", settingVoiceReader: "Pembaca Jawaban",
             settingAudioSource: "Sumber Audio", audioSourceBrowser: "Bawaan Browser", audioSourceElevenLabs: "ElevenLabs",
             settingVoiceType: "Jenis Suara (Bawaan)", settingElevenLabsVoice: "Suara ElevenLabs", elevenLabsNeedKey: "Masukkan API Key dulu", elevenLabsPreviewTitle: "Dengarkan Pratinjau Suara",
@@ -1656,6 +1728,7 @@
             settingSaveHistory: "Simpan Riwayat", exportHistory: "Export Riwayat Chat Ini", clearAllHistory: "Hapus SEMUA Percakapan",
             feedbackTitle: "Beri Masukan", feedbackSubtitle: "Punya ide atau saran? Beri tahu kami!", feedbackPlaceholder: "Tulis masukan Anda di sini...", feedbackSendButton: "Kirim Masukan",
             apiKeysTitle: "API Keys", saveApiKeysButton: "Simpan API Keys",
+            backgroundFileSet: "Latar belakang kustom telah diatur.",
             resetSettings: "Reset", saveAndClose: "Simpan & Tutup", footerText: "StoryBali v2.6.2 | © 2024",
             newConversation: "Percakapan Baru",
             voiceDefault: "Bawaan Browser", voicePrimaryLang: "Bahasa Utama", voiceOtherLang: "Bahasa Lain",
@@ -1705,6 +1778,7 @@
             customRoleLabel: "Define custom AI role:", customRolePlaceholder: "Example: You are a history expert...",
             settingTheme: "Color Theme", themeDisabled: "Theme change is only available in light mode.",
             settingFontSize: "Font Size", fontSmall: "Small", fontNormal: "Normal", fontLarge: "Large",
+            settingBackground: "Background Image", removeBackground: "Remove Background",
             settingAnimations: "Animations", settingDarkMode: "Dark Mode", settingSound: "Notification Sound", settingVoiceReader: "Answer Reader",
             settingAudioSource: "Audio Source", audioSourceBrowser: "Browser Default", audioSourceElevenLabs: "ElevenLabs",
             settingVoiceType: "Voice Type (Default)", settingElevenLabsVoice: "ElevenLabs Voice", elevenLabsNeedKey: "Enter API Key first", elevenLabsPreviewTitle: "Preview Voice",
@@ -1712,6 +1786,7 @@
             settingSaveHistory: "Save History", exportHistory: "Export This Chat History", clearAllHistory: "Delete ALL Conversations",
             feedbackTitle: "Give Feedback", feedbackSubtitle: "Have ideas or suggestions? Let us know!", feedbackPlaceholder: "Write your feedback here...", feedbackSendButton: "Send Feedback",
             apiKeysTitle: "API Keys", saveApiKeysButton: "Save API Keys",
+            backgroundFileSet: "Custom background is set.",
             resetSettings: "Reset", saveAndClose: "Save & Close", footerText: "StoryBali v2.6.2 | © 2024",
             newConversation: "New Conversation",
             voiceDefault: "Browser Default", voicePrimaryLang: "Primary Language", voiceOtherLang: "Other Languages",
@@ -1761,6 +1836,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             customRoleLabel: "カスタムAIの役割を定義:", customRolePlaceholder: "例: あなたは歴史の専門家です...",
             settingTheme: "カラーテーマ", themeDisabled: "テーマの変更はライトモードでのみ利用可能です。",
             settingFontSize: "フォントサイズ", fontSmall: "小", fontNormal: "標準", fontLarge: "大",
+            settingBackground: "背景画像", removeBackground: "背景を削除",
             settingAnimations: "アニメーション効果", settingDarkMode: "ダークモード", settingSound: "通知音", settingVoiceReader: "回答読み上げ",
             settingAudioSource: "音声ソース", audioSourceBrowser: "ブラウザのデフォルト", audioSourceElevenLabs: "ElevenLabs",
             settingVoiceType: "声の種類 (デフォルト)", settingElevenLabsVoice: "ElevenLabsの声", elevenLabsNeedKey: "先にAPIキーを入力", elevenLabsPreviewTitle: "音声をプレビュー",
@@ -1768,6 +1844,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             settingSaveHistory: "履歴を保存", exportHistory: "このチャット履歴をエクスポート", clearAllHistory: "すべての会話を削除",
             feedbackTitle: "フィードバックを送信", feedbackSubtitle: "アイデアや提案がありますか？お知らせください！", feedbackPlaceholder: "ここにフィードバックを記入してください...", feedbackSendButton: "フィードバックを送信",
             apiKeysTitle: "APIキー", saveApiKeysButton: "APIキーを保存",
+            backgroundFileSet: "カスタム背景が設定されています。",
             resetSettings: "リセット", saveAndClose: "保存して閉じる", footerText: "StoryBali v2.6.2 | © 2024",
             newConversation: "新しい会話",
             voiceDefault: "ブラウザのデフォルト", voicePrimaryLang: "主な言語", voiceOtherLang: "その他の言語",
@@ -1995,6 +2072,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         saveHistory: true,
         isSidebarOpen: window.innerWidth > 768,
         darkMode: false,
+        backgroundUrl: '',
     };
     
     let settings = { ...defaultSettings };
@@ -2562,6 +2640,45 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         saveSettings();
     }
 
+    function applyCustomBackground(imageDataUrl) {
+        const appContainer = document.getElementById('appContainer');
+        if (imageDataUrl) {
+            appContainer.style.backgroundImage = `url('${imageDataUrl}')`;
+            appContainer.classList.add('custom-background');
+        } else {
+            appContainer.style.backgroundImage = '';
+            appContainer.classList.remove('custom-background');
+        }
+    }
+
+    function handleBackgroundUpload(event) {
+        const file = event.target.files[0];
+        const fileNameDisplay = document.getElementById('backgroundFileName');
+        if (file) {
+            if (!file.type.startsWith('image/')) {
+                alert(t('alertImageInvalid'));
+                event.target.value = '';
+                fileNameDisplay.textContent = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = e => {
+                const base64Image = e.target.result;
+                tempSettings.backgroundUrl = base64Image; // [FIX] Apply to temp settings for preview
+                applyCustomBackground(base64Image);
+                fileNameDisplay.textContent = file.name;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function removeCustomBackground() {
+        tempSettings.backgroundUrl = ''; // [FIX] Apply to temp settings for preview
+        applyCustomBackground(null);
+        document.getElementById('backgroundFileInput').value = '';
+        document.getElementById('backgroundFileName').textContent = '';
+    }
+
     function loadSettingsData() {
         const savedSettings = localStorage.getItem('storybaliSettings');
         if (savedSettings) {
@@ -2587,6 +2704,8 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         settings.saveHistory = document.getElementById('saveHistoryToggle').checked;
         settings.darkMode = document.getElementById('darkModeToggle').checked;
         
+        settings.backgroundUrl = tempSettings.backgroundUrl; // [FIX] Commit background change on save
+
         saveSettings(); 
         applySettings(); 
         alert(t('alertSettingsSaved'));
@@ -2652,6 +2771,8 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             elevenLabsSelect.value = settings.elevenLabsVoiceId;
         }
         
+        applyCustomBackground(settings.backgroundUrl);
+        
     }
 
     function populateSettingsForm() {
@@ -2684,6 +2805,13 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         // Handle theme buttons state
         document.querySelectorAll('.theme-option-new').forEach(btn => btn.classList.remove('active'));
         document.getElementById(`theme${tempSettings.theme.charAt(0).toUpperCase() + tempSettings.theme.slice(1)}`)?.classList.add('active');
+
+        // [FIX] Show background file status from tempSettings when modal is open
+        const fileNameDisplay = document.getElementById('backgroundFileName');
+        if (fileNameDisplay) {
+            fileNameDisplay.textContent = tempSettings.backgroundUrl ? t('backgroundFileSet') : '';
+        }
+        document.getElementById('backgroundFileInput').value = ''; // Reset file input
     }
 
     function selectChoice(settingName, value, element) {
@@ -2720,6 +2848,8 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             modal.classList.remove('hidden');
         } else {
             modal.classList.add('hidden');
+            // [FIX] Revert visual changes if settings are not saved
+            applyCustomBackground(settings.backgroundUrl);
         }
     }
     function showProfileModal() { document.getElementById('profileModal').classList.remove('hidden'); }
@@ -2949,27 +3079,28 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                     <div class="ai-message">
                         <div class="markdown-content leading-relaxed text-base"></div>
                         <div class="suggestions-container mt-3"></div>
-                    </div>
-                    <div class="flex items-center space-x-2 mt-2 text-gray-500 dark:text-gray-400">
-                        <div class="chat-timestamp text-xs">${timeString}</div>
-                        <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" data-translate-title="copyAnswer">
+                        <!-- [FIX] Tombol aksi dipindahkan ke dalam gelembung -->
+                        <div class="ai-message-footer">
+                            <div class="chat-timestamp text-xs">${timeString}</div>
+                            <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" data-translate-title="copyAnswer">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg>
                             </button>
-                        <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" data-translate-title="readAnswer">
+                            <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" data-translate-title="readAnswer">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>
                             </button>
-                        <button onclick="handleRating(this, 'like')" class="action-icon-ai" data-translate-title="likeResponse">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>
-                        </button>
-                        <button onclick="handleRating(this, 'dislike')" class="action-icon-ai" data-translate-title="dislikeResponse">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
-                        </button>
-                        <button onclick="regenerateResponse(this)" class="action-icon-ai" data-translate-title="regenerateResponse">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
-                        </button>
-                        <button onclick="shareResponse(this)" class="action-icon-ai" data-translate-title="shareResponse">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3z"></path></svg>
-                        </button>
+                            <button onclick="handleRating(this, 'like')" class="action-icon-ai" data-translate-title="likeResponse">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>
+                            </button>
+                            <button onclick="handleRating(this, 'dislike')" class="action-icon-ai" data-translate-title="dislikeResponse">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14-.47-.14-.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41-.17-.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
+                            </button>
+                            <button onclick="regenerateResponse(this)" class="action-icon-ai" data-translate-title="regenerateResponse">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
+                            </button>
+                            <button onclick="shareResponse(this)" class="action-icon-ai" data-translate-title="shareResponse">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3z"></path></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>`;
             chatMessages.insertBefore(messageDiv, typingIndicator);
@@ -3030,27 +3161,28 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                     <div class="ai-message">
                         <div class="markdown-content leading-relaxed text-base">${marked.parse(message)}</div>
                         <div class="suggestions-container mt-3"></div>
-                    </div>
-                    <div class="flex items-center space-x-2 mt-2 text-gray-500 dark:text-gray-400">
-                        ${timeString ? `<div class="chat-timestamp text-xs">${timeString}</div>` : ''}
-                        <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" data-translate-title="copyAnswer">
+                        <!-- [FIX] Tombol aksi dipindahkan ke dalam gelembung -->
+                        <div class="ai-message-footer">
+                            ${timeString ? `<div class="chat-timestamp text-xs">${timeString}</div>` : ''}
+                            <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" data-translate-title="copyAnswer">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg>
                             </button>
-                        <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" data-translate-title="readAnswer">
+                            <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" data-translate-title="readAnswer">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>
                             </button>
-                        <button onclick="handleRating(this, 'like')" class="action-icon-ai" data-translate-title="likeResponse">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>
-                        </button>
-                        <button onclick="handleRating(this, 'dislike')" class="action-icon-ai" data-translate-title="dislikeResponse">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
-                        </button>
-                        <button onclick="regenerateResponse(this)" class="action-icon-ai" data-translate-title="regenerateResponse">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
-                        </button>
-                        <button onclick="shareResponse(this)" class="action-icon-ai" data-translate-title="shareResponse">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3z"></path></svg>
-                        </button>
+                            <button onclick="handleRating(this, 'like')" class="action-icon-ai" data-translate-title="likeResponse">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>
+                            </button>
+                            <button onclick="handleRating(this, 'dislike')" class="action-icon-ai" data-translate-title="dislikeResponse">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09-.23-.14-.47-.14-.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41-.17-.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
+                            </button>
+                            <button onclick="regenerateResponse(this)" class="action-icon-ai" data-translate-title="regenerateResponse">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
+                            </button>
+                            <button onclick="shareResponse(this)" class="action-icon-ai" data-translate-title="shareResponse">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3z"></path></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>`;
         }
