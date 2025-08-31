@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -561,14 +562,22 @@
         padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom)) 1rem;
     }
 
+    /* [BARU] CSS untuk membuat footer melayang di atas konten chat */
+    .chat-footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+    }
+
     .input-box {
         display: flex;
         flex-direction: column;
         width: 100%;
-        /* ▼▼▼ [PERMINTAAN] Efek kaca diterapkan di sini, bukan di .input-area ▼▼▼ */
-        background-color: rgba(var(--bg-tertiary-rgba), 0.8);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
+        background-color: rgba(var(--bg-tertiary-rgba), 0.4);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
         border-radius: 1.25rem;
         padding: 0.5rem 0.75rem;
         border: 1px solid var(--border-color);
@@ -1118,20 +1127,22 @@
                 </button>
             </div>
             
-            <!-- [DIPINDAHKAN] Tombol saran cepat sekarang di atas area input -->
-            <div class="quick-actions flex-shrink-0">
-                <button class="quick-action-btn" onclick="sendQuickMessage('Halo Wayan!')" data-translate-key="quickHello">Halo</button>
-                <button class="quick-action-btn" onclick="sendQuickMessage('Apa kabar hari ini?')" data-translate-key="quickHowAreYou">Apa kabar?</button>
-                <button class="quick-action-btn" onclick="sendQuickMessage('Ceritakan joke lucu dong!')" data-translate-key="quickJoke">Joke</button>
-                <button class="quick-action-btn" onclick="sendQuickMessage('Kasih tips produktif dong!')" data-translate-key="quickProductive">Tips Produktif</button>
-                <button class="quick-action-btn" onclick="sendQuickMessage('Rekomendasi film bagus dong!')" data-translate-key="quickMovie">Film</button>
-                <button class="quick-action-btn" onclick="sendQuickMessage('Ajarin coding dong!')" data-translate-key="quickCoding">Coding</button>
-            </div>
+            <!-- [BARU] Wrapper untuk footer yang melayang agar efek transparan berfungsi -->
+            <div class="chat-footer">
+                <!-- Tombol saran cepat -->
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Halo Wayan!')" data-translate-key="quickHello">Halo</button>
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Apa kabar hari ini?')" data-translate-key="quickHowAreYou">Apa kabar?</button>
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Ceritakan joke lucu dong!')" data-translate-key="quickJoke">Joke</button>
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Kasih tips produktif dong!')" data-translate-key="quickProductive">Tips Produktif</button>
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Rekomendasi film bagus dong!')" data-translate-key="quickMovie">Film</button>
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Ajarin coding dong!')" data-translate-key="quickCoding">Coding</button>
+                </div>
 
-            <div class="input-area flex-shrink-0">
-                <div class="input-box">
-                    <input
-                        type="text"
+                <div class="input-area">
+                    <div class="input-box">
+                        <input
+                            type="text"
                         id="messageInput"
                         data-translate-placeholder="inputPlaceholder"
                         onkeypress="handleKeyPress(event)"
@@ -1187,6 +1198,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     </div>
