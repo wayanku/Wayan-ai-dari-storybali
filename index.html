@@ -1006,7 +1006,9 @@
             transform: translateX(0);
         }
         
-        .message-bubble.ai, .user-message { max-width: 90%; }
+        /* [PERMINTAAN PENGGUNA] Memanjangkan bubble AI ke kanan di mobile */
+        .message-bubble.ai { max-width: 100%; } 
+        .user-message { max-width: 90%; }
         .user-message { padding: 0.8rem 1.2rem; }
         .quick-actions { padding: 0.6rem 0.8rem; }
         .quick-action-btn { padding: 0.4rem 0.8rem; font-size: 0.7rem; }
@@ -1975,6 +1977,12 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     let isReading = false;
     let elevenLabsAudioPlayer = new Audio();
     let elevenLabsPreviewPlayer = new Audio();
+
+    // [FIX] Variabel global untuk menampung daftar suara dan promise untuk menandakan kesiapan
+    let availableVoices = [];
+    let voicesReadyPromiseResolver;
+    const voicesReadyPromise = new Promise(resolve => { voicesReadyPromiseResolver = resolve; });
+
 
     // Variabel state untuk panggilan
     let isCallActive = false;
@@ -3086,14 +3094,25 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         }
     }
     function populateVoiceList() {
-        const voices = speechSynthesis.getVoices();
+        const voices = speechSynthesis.getVoices(); // Coba dapatkan daftar suara
+        if (voices.length === 0) {
+            // Jika daftar suara belum siap, event listener 'onvoiceschanged' akan memanggil fungsi ini lagi.
+            // Event listener ini diatur saat window.onload.
+            return;
+        }
+
+        availableVoices = voices; // Simpan daftar suara ke variabel global
+        if (voicesReadyPromiseResolver) {
+            voicesReadyPromiseResolver(); // Selesaikan promise, menandakan suara sudah siap
+            voicesReadyPromiseResolver = null; // Cegah agar tidak dipanggil lagi
+        }
+
         const voiceSelect = document.getElementById('voiceSelect');
         voiceSelect.innerHTML = `<option value="">${translations[settings.language]?.voiceDefault || 'Default Browser'}</option>`;
-        if (voices.length === 0) return;
 
         const langCode = settings.language === 'ja' ? 'ja-JP' : (settings.language === 'en' ? 'en' : 'id-ID');
-        const primaryVoices = voices.filter(v => v.lang.startsWith(langCode.substring(0, 2)));
-        const otherVoices = voices.filter(v => !v.lang.startsWith(langCode.substring(0, 2)));
+        const primaryVoices = availableVoices.filter(v => v.lang.startsWith(langCode.substring(0, 2)));
+        const otherVoices = availableVoices.filter(v => !v.lang.startsWith(langCode.substring(0, 2)));
 
         const createOptGroup = (label, voiceList) => {
             const group = document.createElement('optgroup');
@@ -3226,8 +3245,11 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             const stopIcon = `<svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 00-1 1v2a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>`;
             
             currentUtterance = new SpeechSynthesisUtterance(text);
-            const selectedVoice = speechSynthesis.getVoices().find(v => v.voiceURI === settings.voiceURI);
-            currentUtterance.voice = selectedVoice || speechSynthesis.getVoices().find(v => v.lang.startsWith('id'));
+            // [FIX UTAMA] Gunakan `availableVoices` yang sudah dijamin terisi, bukan memanggil `getVoices()` lagi.
+            // Juga, gunakan prefix bahasa yang benar untuk suara cadangan.
+            const langPrefix = settings.language === 'ja' ? 'ja' : (settings.language === 'en' ? 'en' : 'id');
+            const selectedVoice = availableVoices.find(v => v.voiceURI === settings.voiceURI);
+            currentUtterance.voice = selectedVoice || availableVoices.find(v => v.lang.startsWith(langPrefix));
             
             if (button) button.innerHTML = stopIcon;
             isReading = true;
@@ -3248,6 +3270,14 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             return;
         }
 
+        // [FIX] Pre-emptively cancel any stuck speech from a previous state.
+        // This can help resolve issues on some browsers where the speech engine gets stuck on page load.
+        if (speechSynthesis.speaking || speechSynthesis.pending) {
+            speechSynthesis.cancel();
+        }
+
+        await voicesReadyPromise; // [FIX] Tunggu hingga daftar suara benar-benar siap
+
         if (isReading) {
             stopReading();
             return;
@@ -3256,10 +3286,10 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         const message = decodeURIComponent(atob(encodedMessage));
         
         try {
-            if (settings.audioSource === 'elevenlabs') {
-                await playElevenLabsAudio(message, button);
-            } else {
+            if (settings.audioSource === 'browser') {
                 await playBrowserAudio(message, button);
+            } else {
+                await playElevenLabsAudio(message, button);
             }
         } catch (error) {
              console.warn("Gagal memutar audio:", error.message);
@@ -4009,11 +4039,12 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
         }
         
         checkUserStatus();
-        populateVoiceList();
-        populateElevenLabsVoices();
+        populateVoiceList(); // Panggilan awal. Jika suara belum siap, fungsi akan return.
         if (speechSynthesis.onvoiceschanged !== undefined) {
+            // Event listener ini akan memanggil populateVoiceList() lagi ketika daftar suara sudah dimuat oleh browser.
             speechSynthesis.onvoiceschanged = populateVoiceList;
         }
+        populateElevenLabsVoices();
         loadAllChatSessions();
         hideTypingIndicator();
         hideImageProcessingIndicator();
