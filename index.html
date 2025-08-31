@@ -55,6 +55,8 @@
       --modal-bg: rgba(255, 255, 255, 0.98);
       --settings-card-bg: #ffffff;
       --shadow-color: rgba(0, 0, 0, 0.05);
+      --bg-primary-rgba: 255, 255, 255;
+      --bg-secondary-rgba: 247, 248, 252;
     }
 
     html.dark {
@@ -70,6 +72,8 @@
       --modal-bg: rgba(20, 20, 20, 0.95);
       --settings-card-bg: #1e1e1e;
       --shadow-color: rgba(0, 0, 0, 0.3);
+      --bg-primary-rgba: 18, 18, 18;
+      --bg-secondary-rgba: 30, 30, 30;
     }
     /* === AKHIR DARI CSS VARIABLES === */
     
@@ -100,11 +104,13 @@
     }
 
     /* ▼▼▼ [FIX BARU] Membuat tombol footer modal pengaturan menjadi gelap ▼▼▼ */
-    html.dark #settingsModal .settings-btn-action.bg-gray-200 {
+    html.dark #settingsModal .settings-btn-action.bg-gray-200,
+    html.dark #confirmModal .settings-btn-action.bg-gray-200 {
         background-color: var(--bg-tertiary) !important;
         color: var(--text-primary) !important;
     }
-    html.dark #settingsModal .settings-btn-action.bg-gray-200:hover {
+    html.dark #settingsModal .settings-btn-action.bg-gray-200:hover,
+    html.dark #confirmModal .settings-btn-action.bg-gray-200:hover {
         background-color: var(--bg-accent) !important;
     }
     html.dark #settingsModal .settings-btn-action.bg-blue-600:hover {
@@ -289,9 +295,11 @@
     }
 
     .header-gradient {
+        /* [DIUBAH] Diberi latar semi-transparan agar menyatu dengan background kustom */
         background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
         position: relative;
         overflow: hidden;
+        padding-top: calc(1rem + env(safe-area-inset-top)); /* [BARU] Menambahkan padding atas untuk safe area di iPhone (notch) */
     }
     html.dark .header-gradient {
         background: #222222 !important; /* Black/White header for dark mode */
@@ -543,6 +551,7 @@
     }
 
     .input-area {
+        /* [DIUBAH] Diberi latar semi-transparan agar menyatu dengan background kustom */
         background: var(--bg-primary);
         padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom)) 1rem;
     }
@@ -717,6 +726,25 @@
     .modal-overlay:not(.hidden) .modal-content { opacity: 1; transform: scale(1); }
     /* [BARU] Memastikan animasi scale tidak berlaku untuk modal pengaturan */
     .modal-overlay:not(.hidden) #settingsModal .modal-content { transform: none !important; }
+
+    /* ▼▼▼ [BARU] Perbaikan Tampilan Modal Pengaturan di Desktop ▼▼▼ */
+    @media (min-width: 769px) {
+        #settingsModal .modal-content {
+            width: auto;
+            height: auto;
+            max-width: 640px; /* Lebar modal di desktop */
+            max-height: 90vh; /* Tinggi maksimal modal di desktop */
+            border-radius: 1.5rem; /* Sudut melengkung */
+            box-shadow: 0 15px 40px var(--shadow-color); /* Bayangan */
+            transform: scale(0.95) !important; /* Animasi scale masuk */
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+        }
+
+        .modal-overlay:not(.hidden) #settingsModal .modal-content {
+            transform: scale(1) !important; /* Animasi scale selesai */
+        }
+    }
+    /* ▲▲▲ AKHIR DARI PERBAIKAN TAMPILAN DESKTOP ▲▲▲ */
     .modal-close-btn {
         background: #ef4444; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
         transition: all 0.2s ease-in-out; border-radius: 9999px !important;
@@ -872,6 +900,7 @@
         font-family: 'Courier New', Courier, monospace;
     }
     .markdown-content pre {
+        position: relative; /* [BARU] Diperlukan untuk memposisikan tombol salin */
         background-color: #1e293b;
         color: #e2e8f0;
         padding: 0.75rem;
@@ -879,6 +908,24 @@
         overflow-x: auto;
         margin-bottom: 0.75rem;
         font-size: 0.85em;
+    }
+    /* [BARU] Tombol untuk menyalin kode */
+    .copy-code-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background-color: #374151; /* gray-700 */
+        color: #d1d5db; /* gray-300 */
+        border: none;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+    }
+    .markdown-content pre:hover .copy-code-btn {
+        opacity: 1;
     }
     html.dark .markdown-content pre { background-color: #0c0c0c; }
     .markdown-content pre code {
@@ -945,6 +992,7 @@
     }
     
     .chat-messages::-webkit-scrollbar { width: 8px; }
+    .chat-messages { background-color: var(--bg-primary); }
     .chat-messages::-webkit-scrollbar-track { background: transparent; }
     .chat-messages::-webkit-scrollbar-thumb {
       background-color: rgba(0, 0, 0, 0.2); border-radius: 20px;
@@ -1476,6 +1524,20 @@
     </div>
 </div>
 
+<!-- ▼▼▼ [BARU] MODAL KONFIRMASI KUSTOM ▼▼▼ -->
+<div id="confirmModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
+    <div class="modal-content p-6 max-w-sm w-full">
+        <div class="text-center">
+            <h3 id="confirmModalTitle" class="text-lg font-bold text-gray-800 mb-2" style="color: var(--text-primary);">Konfirmasi</h3>
+            <p id="confirmModalMessage" class="text-sm text-gray-600 mb-6" style="color: var(--text-secondary);">Apakah Anda yakin?</p>
+            <div class="grid grid-cols-2 gap-3">
+                <button id="confirmModalCancelBtn" onclick="handleConfirm(false)" class="settings-btn-action bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm py-2">Batal</button>
+                <button id="confirmModalConfirmBtn" onclick="handleConfirm(true)" class="settings-btn-action bg-red-600 text-white hover:bg-red-700 text-sm py-2">Konfirmasi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     // ===================================================================================
     // KODE SCRIPT UTAMA (VERSI GABUNGAN DENGAN PERBAIKAN FINAL)
@@ -1517,9 +1579,12 @@
             likeResponse: "Suka jawaban ini", dislikeResponse: "Tidak suka jawaban ini", regenerateResponse: "Buat ulang jawaban", shareResponse: "Bagikan jawaban",
             profileTitle: "AI Assistant Dari Storybali", profileGreeting: "Halo! Gue Wayan!", profileDesc1: "Gue adalah AI assistant yang dibuat khusus untuk membantu kamu dengan gaya bahasa yang santai dan friendly.", profileDesc2: "Santai aja, tanya apa aja yang kamu mau!", profileDesc3: "Kepoin Wayan yuk di Instagram atau chat WA pribadi Wayan!", profileInstagram: "Instagram", profileWhatsapp: "WhatsApp",
             initialGreeting: "Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Santai aja, tanya apa aja yang kamu mau tau ya!",
+            copyCode: "Salin", copied: "Disalin!",
             systemRoleChanged: "Mode peran AI telah diubah menjadi: {roleName}.",
             systemSearchModeOn: "Mode pencarian internet diaktifkan.", systemSearchModeOff: "Mode pencarian internet dinonaktifkan.",
             systemNewChat: "Memulai percakapan baru.", systemResponseStopped: "Pembuatan respons dihentikan.", systemImageAnalysisStopped: "Analisis gambar dihentikan.",
+            confirmDeleteSingleTitle: "Hapus Percakapan?", confirmDeleteSingleMsg: "Tindakan ini tidak dapat dibatalkan.", confirmDeleteSingleBtn: "Hapus",
+            confirmDeleteAllTitle: "Hapus Semua Riwayat?", confirmResetTitle: "Reset Pengaturan?", confirmResetBtn: "Ya, Reset",
             errorVoiceRecognition: "Maaf, browser Anda tidak mendukung fitur pengenalan suara.", errorSpeechRecog: "Error pengenalan suara: {error}", errorStartSpeechRecog: "Tidak dapat memulai pengenalan suara.",
             alertSettingsSaved: "Pengaturan berhasil disimpan!", alertResetConfirm: "Yakin ingin mereset semua pengaturan? SEMUA riwayat chat dan API Key akan dihapus. Halaman akan dimuat ulang.", alertResetSuccess: "Pengaturan telah direset ke default. Halaman akan dimuat ulang.",
             alertExportEmpty: "Belum ada riwayat chat di sesi ini untuk di-export!", alertExportSuccess: "Riwayat chat sesi ini berhasil di-export!",
@@ -1570,9 +1635,12 @@
             likeResponse: "Like this response", dislikeResponse: "Dislike this response", regenerateResponse: "Regenerate response", shareResponse: "Share response",
             profileTitle: "AI Assistant From Storybali", profileGreeting: "Hello! I'm Wayan!", profileDesc1: "I am an AI assistant specially created to help you with a relaxed and friendly style.", profileDesc2: "Just relax, ask anything you want!", profileDesc3: "Check me out on Instagram or chat with me personally on WhatsApp!", profileInstagram: "Instagram", profileWhatsapp: "WhatsApp",
             initialGreeting: "Hello! I'm Wayan, your AI assistant ready to help answer your questions. Feel free to ask me anything you want to know!",
+            copyCode: "Copy", copied: "Copied!",
             systemRoleChanged: "AI role mode has been changed to: {roleName}.",
             systemSearchModeOn: "Internet search mode activated.", systemSearchModeOff: "Internet search mode deactivated.",
             systemNewChat: "Starting a new conversation.", systemResponseStopped: "Response generation stopped.", systemImageAnalysisStopped: "Image analysis stopped.",
+            confirmDeleteSingleTitle: "Delete Conversation?", confirmDeleteSingleMsg: "This action cannot be undone.", confirmDeleteSingleBtn: "Delete",
+            confirmDeleteAllTitle: "Delete All History?", confirmResetTitle: "Reset Settings?", confirmResetBtn: "Yes, Reset",
             errorVoiceRecognition: "Sorry, your browser does not support the voice recognition feature.", errorSpeechRecog: "Speech recognition error: {error}", errorStartSpeechRecog: "Could not start speech recognition.",
             alertSettingsSaved: "Settings saved successfully!", alertResetConfirm: "Are you sure you want to reset all settings? ALL chat history and API Keys will be deleted. The page will reload.", alertResetSuccess: "Settings have been reset to default. The page will reload.",
             alertExportEmpty: "There is no chat history in this session to export!", alertExportSuccess: "Chat history for this session has been successfully exported!",
@@ -1623,9 +1691,12 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             likeResponse: "この回答を評価 (良い)", dislikeResponse: "この回答を評価 (悪い)", regenerateResponse: "回答を再生成", shareResponse: "回答を共有",
             profileTitle: "StorybaliのAIアシスタント", profileGreeting: "こんにちは！ワヤンです！", profileDesc1: "私はリラックスしたフレンドリーなスタイルであなたを助けるために特別に作られたAIアシスタントです。", profileDesc2: "リラックスして、何でも聞いてください！", profileDesc3: "Instagramで私をチェックするか、WhatsAppで個人的にチャットしてください！", profileInstagram: "インスタグラム", profileWhatsapp: "ワッツアップ",
             initialGreeting: "こんにちは！私はワヤン、あなたの質問に答える準備ができているAIアシスタントです。知りたいことは何でも気軽に聞いてください！",
+            copyCode: "コピー", copied: "コピー済み!",
             systemRoleChanged: "AIの役割モードが「{roleName}」に変更されました。",
             systemSearchModeOn: "インターネット検索モードが有効になりました。", systemSearchModeOff: "インターネット検索モードが無効になりました。",
             systemNewChat: "新しい会話を開始しています。", systemResponseStopped: "応答の生成が停止しました。", systemImageAnalysisStopped: "画像分析が停止しました。",
+            confirmDeleteSingleTitle: "会話を削除しますか？", confirmDeleteSingleMsg: "この操作は元に戻せません。", confirmDeleteSingleBtn: "削除",
+            confirmDeleteAllTitle: "すべての履歴を削除しますか？", confirmResetTitle: "設定をリセットしますか？", confirmResetBtn: "はい、リセット",
             errorVoiceRecognition: "申し訳ありませんが、お使いのブラウザは音声認識機能をサポートしていません。", errorSpeechRecog: "音声認識エラー: {error}", errorStartSpeechRecog: "音声認識を開始できませんでした。",
             alertSettingsSaved: "設定が正常に保存されました！", alertResetConfirm: "すべての設定をリセットしてもよろしいですか？すべてのチャット履歴とAPIキーが削除されます。ページがリロードされます。", alertResetSuccess: "設定がデフォルトにリセットされました。ページがリロードされます。",
             alertExportEmpty: "このセッションにはエクスポートするチャット履歴がありません！", alertExportSuccess: "このセッションのチャット履歴が正常にエクスポートされました！",
@@ -1843,6 +1914,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     };
     
     let settings = { ...defaultSettings };
+    let tempSettings = {}; // [DIUBAH] Variabel untuk pratinjau pengaturan
     let currentUtterance = null;
     let isReading = false;
     let elevenLabsAudioPlayer = new Audio();
@@ -2062,20 +2134,26 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             item.classList.toggle('active', item.dataset.chatId === activeChatId);
         });
     }
-    function renameChatSession(chatId, event) {
+    async function renameChatSession(chatId, event) {
         event.stopPropagation();
         const session = allChatSessions.find(s => s.id === chatId);
         if (!session) return; 
         const newTitle = prompt(t('promptRenameChat'), session.title);
-        if (newTitle && newTitle.trim() !== '') {
+        if (newTitle && newTitle.trim()) {
             session.title = newTitle.trim();
             saveAllChatSessions();
             renderSidebar();
         }
     }
-    function deleteChatSession(chatId, event) {
+    async function deleteChatSession(chatId, event) {
         event.stopPropagation();
-        if (!confirm(t('alertClearHistoryConfirm'))) return;
+        const confirmed = await showConfirmModal({
+            title: t('confirmDeleteSingleTitle'),
+            message: t('confirmDeleteSingleMsg'),
+            confirmText: t('confirmDeleteSingleBtn'),
+            cancelText: t('buttonCancel')
+        });
+        if (!confirmed) return;
         allChatSessions = allChatSessions.filter(s => s.id !== chatId);
         if (activeChatId === chatId) {
             if (allChatSessions.length > 0) {
@@ -2180,8 +2258,14 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             saveAllChatSessions();
         }
     }
-    function clearAllChatHistory() {
-        if (confirm(t('alertClearHistoryConfirm'))) {
+    async function clearAllChatHistory() {
+        const confirmed = await showConfirmModal({
+            title: t('confirmDeleteAllTitle'),
+            message: t('alertClearHistoryConfirm'),
+            confirmText: t('confirmDeleteSingleBtn'),
+            cancelText: t('buttonCancel')
+        });
+        if (confirmed) {
             allChatSessions = [];
             activeChatId = null;
             saveAllChatSessions();
@@ -2379,7 +2463,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         saveSettings();
     }
 
-    function loadSettings() {
+    function loadSettingsData() {
         const savedSettings = localStorage.getItem('storybaliSettings');
         if (savedSettings) {
              settings = { ...defaultSettings, ...JSON.parse(savedSettings) };
@@ -2388,7 +2472,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             settings = { ...defaultSettings, darkMode: prefersDark };
         }
-        applySettings();
     }
     function saveSettings() {
         localStorage.setItem('storybaliSettings', JSON.stringify(settings));
@@ -2404,13 +2487,20 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         settings.elevenLabsVoiceId = document.getElementById('elevenLabsVoiceSelect').value;
         settings.saveHistory = document.getElementById('saveHistoryToggle').checked;
         settings.darkMode = document.getElementById('darkModeToggle').checked;
+        
         saveSettings(); 
         applySettings(); 
         alert(t('alertSettingsSaved'));
         toggleSettings();
     }
-    function resetAllSettings() {
-        if (confirm(t('alertResetConfirm'))) {
+    async function resetAllSettings() {
+        const confirmed = await showConfirmModal({
+            title: t('confirmResetTitle'),
+            message: t('alertResetConfirm'),
+            confirmText: t('confirmResetBtn'),
+            cancelText: t('buttonCancel')
+        });
+        if (confirmed) {
             localStorage.removeItem('storybaliSettings');
             localStorage.removeItem('storybaliApiKeys');
             localStorage.removeItem('elevenLabsApiKey');
@@ -2462,7 +2552,41 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         if (settings.elevenLabsVoiceId && elevenLabsSelect.options.length > 1) {
             elevenLabsSelect.value = settings.elevenLabsVoiceId;
         }
+        
     }
+
+    function populateSettingsForm() {
+        // Populate form controls from tempSettings
+        document.querySelectorAll('.choice-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`language-${tempSettings.language || 'id'}`)?.classList.add('active');
+        document.getElementById(`personality-${tempSettings.personality}`)?.classList.add('active');
+        document.getElementById(`aiRole-${tempSettings.aiRole}`)?.classList.add('active');
+        document.getElementById(`audioSource-${tempSettings.audioSource}`)?.classList.add('active');
+        
+        const customRoleContainer = document.getElementById('customRoleContainer');
+        customRoleContainer.classList.toggle('hidden', tempSettings.aiRole !== 'kustom');
+        if (tempSettings.aiRole === 'kustom') {
+            document.getElementById('customRoleInput').value = tempSettings.customAiRolePrompt;
+        }
+
+        document.getElementById('fontSizeSelect').value = tempSettings.fontSize;
+        document.getElementById('animationToggle').checked = tempSettings.animationsEnabled;
+        document.getElementById('darkModeToggle').checked = tempSettings.darkMode;
+        document.getElementById('soundToggle').checked = tempSettings.soundEnabled;
+        document.getElementById('readAiResponseToggle').checked = tempSettings.readAiResponseEnabled;
+        document.getElementById('saveHistoryToggle').checked = tempSettings.saveHistory;
+
+        const voiceSelect = document.getElementById('voiceSelect');
+        if (tempSettings.voiceURI) voiceSelect.value = tempSettings.voiceURI;
+
+        const elevenLabsSelect = document.getElementById('elevenLabsVoiceSelect');
+        if (tempSettings.elevenLabsVoiceId) elevenLabsSelect.value = tempSettings.elevenLabsVoiceId;
+
+        // Handle theme buttons state
+        document.querySelectorAll('.theme-option-new').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`theme${tempSettings.theme.charAt(0).toUpperCase() + tempSettings.theme.slice(1)}`)?.classList.add('active');
+    }
+
     function selectChoice(settingName, value, element) {
         settings[settingName] = value;
         Array.from(element.parentElement.children).forEach(child => child.classList.remove('active'));
@@ -2491,7 +2615,8 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     function toggleSettings() {
         const modal = document.getElementById('settingsModal');
         if (modal.classList.contains('hidden')) {
-            loadSettings();
+            tempSettings = JSON.parse(JSON.stringify(settings)); // Deep copy
+            populateSettingsForm();
             switchSettingsTab('general');
             modal.classList.remove('hidden');
         } else {
@@ -2501,6 +2626,34 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     function showProfileModal() { document.getElementById('profileModal').classList.remove('hidden'); }
     function hideProfileModal() { document.getElementById('profileModal').classList.add('hidden'); }
 
+    // ▼▼▼ [BARU] FUNGSI UNTUK MODAL KONFIRMASI KUSTOM ▼▼▼
+    let confirmModalResolver = null;
+
+    function showConfirmModal({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', confirmClass = 'bg-red-600 hover:bg-red-700 text-white' }) {
+        return new Promise(resolve => {
+            confirmModalResolver = resolve;
+
+            document.getElementById('confirmModalTitle').textContent = title;
+            document.getElementById('confirmModalMessage').innerHTML = message;
+
+            const confirmBtn = document.getElementById('confirmModalConfirmBtn');
+            confirmBtn.textContent = confirmText;
+            confirmBtn.className = `settings-btn-action text-sm py-2 ${confirmClass}`;
+
+            const cancelBtn = document.getElementById('confirmModalCancelBtn');
+            cancelBtn.textContent = cancelText;
+
+            document.getElementById('confirmModal').classList.remove('hidden');
+        });
+    }
+
+    function handleConfirm(confirmed) {
+        if (confirmModalResolver) {
+            confirmModalResolver(confirmed);
+        }
+        document.getElementById('confirmModal').classList.add('hidden');
+        confirmModalResolver = null;
+    }
     function showSearchModal(query) {
         const modal = document.getElementById('searchModal');
         const title = document.getElementById('searchModalTitle');
@@ -2698,39 +2851,34 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                         <div class="markdown-content leading-relaxed text-base"></div>
                         <div class="suggestions-container mt-3"></div>
                     </div>
-                    <div class="flex items-center space-x-3 mt-2 text-gray-500 dark:text-gray-400">
+                    <div class="flex items-center space-x-2 mt-2 text-gray-500 dark:text-gray-400">
                         <div class="chat-timestamp text-xs">${timeString}</div>
                         <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" data-translate-title="copyAnswer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg>
                             </button>
                         <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" data-translate-title="readAnswer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>
                             </button>
-                        <span class="text-gray-300 dark:text-gray-600">|</span>
                         <button onclick="handleRating(this, 'like')" class="action-icon-ai" data-translate-title="likeResponse">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.085a2 2 0 00-1.736.97l-1.9 3.8a2 2 0 00.23 2.16l3.955 3.955A2 2 0 0014 10z"></path></svg>
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>
                         </button>
                         <button onclick="handleRating(this, 'dislike')" class="action-icon-ai" data-translate-title="dislikeResponse">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.738 3h4.017c.163 0 .326.02.485.06L17 4m-7 10v5a2 2 0 002 2h.085a2 2 0 001.736-.97l1.9-3.8a2 2 0 00-.23-2.16l-3.955-3.955A2 2 0 0010 14z"></path></svg>
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
                         </button>
                         <button onclick="regenerateResponse(this)" class="action-icon-ai" data-translate-title="regenerateResponse">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 16"></path></svg>
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
                         </button>
                         <button onclick="shareResponse(this)" class="action-icon-ai" data-translate-title="shareResponse">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-8.316l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path></svg>
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3z"></path></svg>
                         </button>
                     </div>
                 </div>`;
             chatMessages.insertBefore(messageDiv, typingIndicator);
-            const markdownContentElement = messageDiv.querySelector('.markdown-content');
-            typewriterEffect(markdownContentElement, message, () => {
-                markdownContentElement.innerHTML = marked.parse(message);
-                const suggestionsContainer = messageDiv.querySelector('.suggestions-container');
-                if (suggestionsContainer) {
-                   suggestionsContainer.innerHTML = renderSuggestions(suggestions);
-                }
-                scrollToBottom();
-            });
+            // [DIUBAH] Kembalikan elemen untuk diisi oleh proses streaming
+            return {
+                contentEl: messageDiv.querySelector('.markdown-content'),
+                suggestionsEl: messageDiv.querySelector('.suggestions-container')
+            };
         }
         scrollToBottom();
     }
@@ -2784,31 +2932,35 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                         <div class="markdown-content leading-relaxed text-base">${marked.parse(message)}</div>
                         <div class="suggestions-container mt-3"></div>
                     </div>
-                    <div class="flex items-center space-x-3 mt-2 text-gray-500 dark:text-gray-400">
+                    <div class="flex items-center space-x-2 mt-2 text-gray-500 dark:text-gray-400">
                         ${timeString ? `<div class="chat-timestamp text-xs">${timeString}</div>` : ''}
                         <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" data-translate-title="copyAnswer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg>
                             </button>
                         <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" data-translate-title="readAnswer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>
                             </button>
-                        <span class="text-gray-300 dark:text-gray-600">|</span>
                         <button onclick="handleRating(this, 'like')" class="action-icon-ai" data-translate-title="likeResponse">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.085a2 2 0 00-1.736.97l-1.9 3.8a2 2 0 00.23 2.16l3.955 3.955A2 2 0 0014 10z"></path></svg>
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>
                         </button>
                         <button onclick="handleRating(this, 'dislike')" class="action-icon-ai" data-translate-title="dislikeResponse">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.738 3h4.017c.163 0 .326.02.485.06L17 4m-7 10v5a2 2 0 002 2h.085a2 2 0 001.736-.97l1.9-3.8a2 2 0 00-.23-2.16l-3.955-3.955A2 2 0 0010 14z"></path></svg>
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
                         </button>
                         <button onclick="regenerateResponse(this)" class="action-icon-ai" data-translate-title="regenerateResponse">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 16"></path></svg>
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
                         </button>
                         <button onclick="shareResponse(this)" class="action-icon-ai" data-translate-title="shareResponse">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-8.316l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path></svg>
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3z"></path></svg>
                         </button>
                     </div>
                 </div>`;
         }
         chatMessages.appendChild(messageDiv);
+        // [BARU] Tambahkan tombol salin ke blok kode dari riwayat
+        const markdownContent = messageDiv.querySelector('.markdown-content');
+        if (markdownContent) {
+            enhanceCodeBlocks(markdownContent);
+        }
     }
     function renderSuggestions(suggestionsArray) {
         if (suggestionsArray && suggestionsArray.length > 0) {
@@ -2845,6 +2997,28 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             button.innerHTML = `<svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
             setTimeout(() => button.innerHTML = originalHTML, 2000);
         });
+    }
+    // [BARU] Fungsi untuk menambahkan tombol salin ke semua blok kode
+    function enhanceCodeBlocks(container) {
+        const codeBlocks = container.querySelectorAll('pre');
+        codeBlocks.forEach(pre => {
+            const copyButton = document.createElement('button');
+            copyButton.className = 'copy-code-btn';
+            copyButton.textContent = t('copyCode');
+            copyButton.onclick = () => copyCode(copyButton);
+            pre.appendChild(copyButton);
+        });
+    }
+
+    // [BARU] Fungsi yang menangani aksi klik tombol salin kode
+    function copyCode(button) {
+        const pre = button.parentElement;
+        const code = pre.querySelector('code');
+        if (code) {
+            navigator.clipboard.writeText(code.innerText);
+            button.textContent = t('copied');
+            setTimeout(() => { button.textContent = t('copyCode'); }, 2000);
+        }
     }
     function populateVoiceList() {
         const voices = speechSynthesis.getVoices();
@@ -2933,11 +3107,12 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         }
         isReading = false;
         
-        document.querySelectorAll('.message-bubble.ai button[title="Baca Jawaban"], #previewElevenLabsVoiceBtn').forEach(btn => {
+        // [DIUBAH] Selector diubah agar lebih andal (tidak bergantung pada bahasa) dan memastikan semua ikon kembali ke bentuk semula.
+        document.querySelectorAll('.message-bubble.ai button[data-translate-title="readAnswer"], #previewElevenLabsVoiceBtn').forEach(btn => {
             if (btn.id === 'previewElevenLabsVoiceBtn') {
                 btn.innerHTML = `<svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path></svg>`;
             } else {
-                btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>`;
+                btn.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>`;
             }
         });
     }
@@ -2947,7 +3122,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             const apiKey = localStorage.getItem('elevenLabsApiKey') || DEFAULT_ELEVENLABS_API_KEY;
             const effectiveVoiceId = voiceId || settings.elevenLabsVoiceId || '21m00Tcm4TlvDq8ikWAM';
             const apiUrl = `https://api.elevenlabs.io/v1/text-to-speech/${effectiveVoiceId}`;
-            const stopIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>`;
+            const stopIcon = `<svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 00-1 1v2a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>`;
             
             if (button) button.innerHTML = stopIcon;
             isReading = true;
@@ -2983,7 +3158,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
 
     function playBrowserAudio(text, button) {
        return new Promise((resolve, reject) => {
-            const stopIcon = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>`;
+            const stopIcon = `<svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 00-1 1v2a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>`;
             
             currentUtterance = new SpeechSynthesisUtterance(text);
             const selectedVoice = speechSynthesis.getVoices().find(v => v.voiceURI === settings.voiceURI);
@@ -2992,11 +3167,10 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             if (button) button.innerHTML = stopIcon;
             isReading = true;
             
-            currentUtterance.onend = () => { stopReading(); resolve(); };
+            currentUtterance.onend = () => { resolve(); }; // [DIUBAH] stopReading() akan dipanggil oleh 'finally' block di readAiResponse
             currentUtterance.onerror = (e) => {
                 console.error('SpeechSynthesis Error', e);
-                stopReading();
-                reject(e);
+                reject(e); // [DIUBAH] stopReading() akan dipanggil oleh 'finally' block
             };
             
             speechSynthesis.speak(currentUtterance);
@@ -3096,20 +3270,57 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         currentFetchController = new AbortController();
         document.getElementById('stopGeneratingContainer').style.display = 'block';
 
+        let contentEl, suggestionsEl;
+
         try {
+            const bubbleElements = addMessage(null, false);
+            contentEl = bubbleElements.contentEl;
+            suggestionsEl = bubbleElements.suggestionsEl;
             const historyForApi = activeSession.history.map(({ role, parts }) => ({ role, parts }));
             const payload = { contents: historyForApi, systemInstruction: { parts: [{ text: getSystemPrompt() }] }, generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048 } };
-            const data = await makeApiRequest(payload, currentFetchController.signal);
-            
-            if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
-                let [mainAnswer, suggestionsPart] = data.candidates[0].content.parts[0].text.split('[SUGGESTIONS]');
-                let dynamicSuggestions = suggestionsPart ? suggestionsPart.split('|').map(s => s.trim()).filter(Boolean) : [];
-                addMessage(mainAnswer.trim(), false, dynamicSuggestions);
-                addToConversationHistory('model', mainAnswer.trim());
-                playNotificationSound();
-            } else { addMessage(t('errorGeneric')); }
+            const response = await makeApiRequest(payload, currentFetchController.signal);
+            if (!response.body) throw new Error("Response body is null");
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullResponseText = "";
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = chunk.split('\n');
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        try {
+                            const data = JSON.parse(line.substring(6));
+                            if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+                                const textPart = data.candidates[0].content.parts[0].text;
+                                fullResponseText += textPart;
+                                contentEl.innerHTML = marked.parse(fullResponseText + '█');
+                                scrollToBottom();
+                            }
+                        } catch (e) {}
+                    }
+                }
+            }
+
+            contentEl.innerHTML = marked.parse(fullResponseText);
+            enhanceCodeBlocks(contentEl);
+            let [mainAnswer, suggestionsPart] = fullResponseText.split('[SUGGESTIONS]');
+            if (suggestionsEl && suggestionsPart) {
+                suggestionsEl.innerHTML = renderSuggestions(suggestionsPart.split('|').map(s => s.trim()).filter(Boolean));
+            }
+            addToConversationHistory('model', mainAnswer.trim());
+            playNotificationSound();
         } catch (error) {
-            if (error.name !== 'AbortError') addMessage(t('errorApiGeneral', { error: error.message }));
+            if (error.name !== 'AbortError') {
+                if (contentEl) {
+                    contentEl.innerHTML = marked.parse(t('errorApiGeneral', { error: error.message }));
+                } else {
+                    addOriginalMessage(t('errorApiGeneral', { error: error.message }), false, new Date().toISOString());
+                }
+            }
         } finally {
             hideTypingIndicator(); 
             document.getElementById('stopGeneratingContainer').style.display = 'none';
@@ -3222,7 +3433,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         for (let i = 0; i < validApiKeys.length; i++) {
             const currentIndex = (startingIndex + i) % validApiKeys.length;
             const currentApiKey = validApiKeys[currentIndex];
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${currentApiKey}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:streamGenerateContent?key=${currentApiKey}&alt=sse`;
             
             console.log(`Mencoba API Key urutan ke-${currentIndex + 1}...`);
 
@@ -3241,7 +3452,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
                 if (response.ok) {
                     console.log(`Berhasil menggunakan API Key urutan ke-${currentIndex + 1}`);
                     localStorage.setItem('lastKeyIndex', currentIndex);
-                    return await response.json();
+                    return response; // [DIUBAH] Kembalikan stream response, bukan JSON
                 }
 
                 if (response.status === 429) {
@@ -3303,35 +3514,74 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         currentFetchController = new AbortController();
         document.getElementById('stopGeneratingContainer').style.display = 'block';
 
+        let contentEl, suggestionsEl;
+
         try {
+            // 1. Buat bubble chat AI yang kosong dan dapatkan elemennya
+            const bubbleElements = addMessage(null, false);
+            contentEl = bubbleElements.contentEl;
+            suggestionsEl = bubbleElements.suggestionsEl;
             const fullHistory = getActiveChatHistory();
             const historyForApi = fullHistory.map(({ role, parts }) => ({ role, parts }));
-            
             const payload = {
                 contents: historyForApi,
                 systemInstruction: { parts: [{ text: getSystemPrompt() }] },
                 generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048 }
             };
 
-            const data = await makeApiRequest(payload, currentFetchController.signal);
-            
-            if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
-                let aiResponseText = data.candidates[0].content.parts[0].text;
-                let [mainAnswer, suggestionsPart] = aiResponseText.split('[SUGGESTIONS]');
-                let dynamicSuggestions = suggestionsPart ? suggestionsPart.split('|').map(s => s.trim()).filter(Boolean) : [];
-                addMessage(mainAnswer.trim(), false, dynamicSuggestions);
-                addToConversationHistory('model', mainAnswer.trim());
-                playNotificationSound();
-            } else {
-                console.warn("Respons API tidak valid:", data);
-                addMessage('Maaf, Wayan tidak dapat memberikan respons. Coba lagi.');
+            // 2. Lakukan request dan dapatkan stream
+            const response = await makeApiRequest(payload, currentFetchController.signal);
+            if (!response.body) throw new Error("Response body is null");
+
+            // 3. Baca stream
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullResponseText = "";
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = chunk.split('\n');
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const jsonStr = line.substring(6);
+                        try {
+                            const data = JSON.parse(jsonStr);
+                            if (data.candidates && data.candidates[0].content.parts[0].text) {
+                                const textPart = data.candidates[0].content.parts[0].text;
+                                fullResponseText += textPart;
+                                contentEl.innerHTML = marked.parse(fullResponseText + '█'); // Tambahkan kursor berkedip
+                                scrollToBottom();
+                            }
+                        } catch (e) { /* Abaikan error parsing JSON yang tidak lengkap */ }
+                    }
+                }
             }
+
+            // 4. Finalisasi setelah stream selesai
+            contentEl.innerHTML = marked.parse(fullResponseText);
+            enhanceCodeBlocks(contentEl);
+            let [mainAnswer, suggestionsPart] = fullResponseText.split('[SUGGESTIONS]');
+            if (suggestionsEl && suggestionsPart) {
+                let dynamicSuggestions = suggestionsPart.split('|').map(s => s.trim()).filter(Boolean);
+                suggestionsEl.innerHTML = renderSuggestions(dynamicSuggestions);
+            }
+            addToConversationHistory('model', mainAnswer.trim());
+            playNotificationSound();
         } catch (error) {
             if (error.name === 'AbortError') {
                 addSystemMessage(t('systemResponseStopped'), 'warning');
             } else {
                 console.error("Error in sendMessage:", error);
-                addMessage(t('errorApiGeneral', { error: error.message }));
+                if (contentEl) {
+                    contentEl.innerHTML = marked.parse(t('errorApiGeneral', { error: error.message }));
+                } else {
+                    // Fallback jika bubble gagal dibuat
+                    addOriginalMessage(t('errorApiGeneral', { error: error.message }), false, new Date().toISOString());
+                }
             }
         } finally {
             hideTypingIndicator(); 
@@ -3343,54 +3593,68 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
     async function analyzeImageWithQuestion(base64Image, userQuestion, mimeType) {
         currentFetchController = new AbortController();
         document.getElementById('stopGeneratingContainer').style.display = 'block';
-        
+
+        let contentEl, suggestionsEl;
+
         try {
+            const bubbleElements = addMessage(null, false);
+            contentEl = bubbleElements.contentEl;
+            suggestionsEl = bubbleElements.suggestionsEl;
             const imageData = base64Image.split(',')[1];
-            
             const payload = {
                 contents: [{
-                    parts: [
-                        { text: userQuestion },
-                        {
-                            inline_data: {
-                                mime_type: mimeType,
-                                data: imageData
-                            }
-                        }
-                    ]
+                    parts: [{ text: userQuestion }, { inline_data: { mime_type: mimeType, data: imageData } }]
                 }],
-                systemInstruction: {
-                    parts: [{
-                        text: getSystemPrompt()
-                    }]
-                },
-                generationConfig: {
-                    temperature: 0.9,
-                    topK: 32,
-                    topP: 1,
-                    maxOutputTokens: 2048
-                }
+                systemInstruction: { parts: [{ text: getSystemPrompt() }] },
+                generationConfig: { temperature: 0.9, topK: 32, topP: 1, maxOutputTokens: 2048 }
             };
 
-            const data = await makeApiRequest(payload, currentFetchController.signal);
-            
-            if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
-                let aiResponseText = data.candidates[0].content.parts[0].text;
-                let [mainAnswer, suggestionsPart] = aiResponseText.split('[SUGGESTIONS]');
-                let dynamicSuggestions = suggestionsPart ? suggestionsPart.split('|').map(s => s.trim()).filter(Boolean) : [];
-                addMessage(mainAnswer.trim(), false, dynamicSuggestions);
-                addToConversationHistory('model', mainAnswer.trim());
-                playNotificationSound();
-            } else {
-                 console.warn(t('errorApiResponseInvalid'), data);
-                addMessage(t('errorImageAnalysis'));
+            const response = await makeApiRequest(payload, currentFetchController.signal);
+            if (!response.body) throw new Error("Response body is null");
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullResponseText = "";
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = chunk.split('\n');
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        try {
+                            const data = JSON.parse(line.substring(6));
+                            if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+                                const textPart = data.candidates[0].content.parts[0].text;
+                                fullResponseText += textPart;
+                                contentEl.innerHTML = marked.parse(fullResponseText + '█');
+                                scrollToBottom();
+                            }
+                        } catch (e) {}
+                    }
+                }
             }
+
+            contentEl.innerHTML = marked.parse(fullResponseText);
+            enhanceCodeBlocks(contentEl);
+            let [mainAnswer, suggestionsPart] = fullResponseText.split('[SUGGESTIONS]');
+            if (suggestionsEl && suggestionsPart) {
+                suggestionsEl.innerHTML = renderSuggestions(suggestionsPart.split('|').map(s => s.trim()).filter(Boolean));
+            }
+            addToConversationHistory('model', mainAnswer.trim());
+            playNotificationSound();
         } catch (error) {
             if (error.name === 'AbortError') {
                 addSystemMessage(t('systemImageAnalysisStopped'), 'warning');
             } else {
                 console.error("Error in analyzeImageWithQuestion:", error);
-                addMessage(t('errorImageAnalysisGeneral', { error: error.message }));
+                if (contentEl) {
+                    contentEl.innerHTML = marked.parse(t('errorImageAnalysisGeneral', { error: error.message }));
+                } else {
+                    // Fallback jika bubble gagal dibuat
+                    addOriginalMessage(t('errorImageAnalysisGeneral', { error: error.message }), false, new Date().toISOString());
+                }
             }
         } finally {
             hideImageProcessingIndicator(); 
@@ -3659,7 +3923,8 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
 
     window.addEventListener('load', async () => {
         loadApiKeys();
-        loadSettings();
+        loadSettingsData();
+        applySettings();
         currentUserIP = await getUserIP();
         
         if (currentUserIP) {
@@ -3718,7 +3983,6 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
         });
 
         document.getElementById('previewElevenLabsVoiceBtn').addEventListener('click', previewElevenLabsVoice);
-
     });
 
     ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal'].forEach(id => {
@@ -3728,6 +3992,7 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
                 else if (id === 'imagePreviewModal') hideImagePreview();
                 else if (id === 'settingsModal') toggleSettings();
                 else if (id === 'searchModal') hideSearchModal();
+                else if (id === 'confirmModal') handleConfirm(false);
             }
         });
     });
