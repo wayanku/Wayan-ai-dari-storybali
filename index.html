@@ -334,9 +334,9 @@
         z-index: 10;
         
         /* Efek kaca dengan warna semi-transparan dan blur */
-        background-color: rgba(var(--bg-secondary-rgba), 0.25); /* Dibuat lebih transparan untuk efek blur yang lebih kuat */
-        backdrop-filter: blur(16px); /* [DIUBAH] Blur ditingkatkan lagi */
-        -webkit-backdrop-filter: blur(16px);
+        background-color: rgba(var(--bg-secondary-rgba), 0.45); /* [DIUBAH] Dibuat lebih gelap lagi */
+        backdrop-filter: blur(32px); /* [DIUBAH] Blur ditingkatkan lagi */
+        -webkit-backdrop-filter: blur(32px);
         border-bottom: 1px solid var(--border-color);
 
         /* [DIUBAH] Padding dipindahkan dari kelas p-4 ke sini untuk menangani safe area iPhone */
@@ -347,7 +347,7 @@
         /* ▲▲▲ AKHIR DARI PERUBAHAN HEADER ▲▲▲ */
     }
     html.dark .header-gradient {
-        background-color: rgba(var(--bg-secondary-rgba), 0.4) !important; /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan lagi */
+        background-color: rgba(var(--bg-secondary-rgba), 0.6) !important; /* [DIUBAH] Dibuat lebih gelap lagi */
     }
 
     .ai-avatar {
@@ -401,16 +401,16 @@
         max-width: 48rem;
         position: relative;
         /* [PERMINTAAN PENGGUNA] Efek kaca untuk gelembung AI */
-        background-color: rgba(var(--bg-tertiary-rgba), 0.8);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        background-color: rgba(var(--bg-tertiary-rgba), 0.9); /* [DIUBAH] Dibuat lebih gelap */
+        backdrop-filter: blur(18px); /* [DIUBAH] Dibuat lebih buram */
+        -webkit-backdrop-filter: blur(18px);
         border: 1px solid rgba(var(--text-primary-rgba), 0.08);
         padding: 0.75rem 1rem;
         border-radius: 1.25rem;
         border-top-left-radius: 0.375rem;
     }
     html.dark .ai-message {
-        background-color: rgba(var(--bg-tertiary-rgba), 0.75);
+        background-color: rgba(var(--bg-tertiary-rgba), 0.85); /* [DIUBAH] Dibuat lebih gelap */
     }
     /* [BARU] Gelembung khusus untuk indikator "mengetik" */
     .typing-bubble {
@@ -641,9 +641,9 @@
         z-index: 10;
         /* ▼▼▼ [PERBAIKAN ESTETIKA] Efek blur diterapkan ke seluruh footer ▼▼▼ */
         /* untuk mencakup area aman di bagian bawah (safe area). */
-        background-color: rgba(var(--bg-primary-rgba), 0.30); /* Dibuat lebih transparan untuk efek blur yang lebih kuat */
-        backdrop-filter: blur(16px); /* [DIUBAH] Blur ditingkatkan lagi */
-        -webkit-backdrop-filter: blur(16px);
+        background-color: rgba(var(--bg-primary-rgba), 0.50); /* [DIUBAH] Dibuat lebih gelap lagi */
+        backdrop-filter: blur(32px); /* [DIUBAH] Blur ditingkatkan lagi */
+        -webkit-backdrop-filter: blur(32px);
         /* ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲ */
     }
 
@@ -827,12 +827,12 @@
 
     /* [PERMINTAAN PENGGUNA] Efek Kaca/Glassmorphism untuk Modal Profil */
     #profileModal .modal-content {
-        background-color: rgba(var(--bg-secondary-rgba), 0.25);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
+        background-color: rgba(var(--bg-secondary-rgba), 0.85); /* [DIUBAH] Dibuat lebih pekat agar teks terbaca di mode terang */
+        backdrop-filter: blur(8px); /* [DIUBAH] Blur sedikit ditingkatkan */
+        -webkit-backdrop-filter: blur(8px);
     }
     html.dark #profileModal .modal-content {
-        background-color: rgba(var(--bg-secondary-rgba), 0.2);
+        background-color: rgba(var(--bg-secondary-rgba), 0.5); /* [DIUBAH] Dibuat lebih pekat agar konsisten */
     }
 
     /* ▼▼▼ [BARU] Perbaikan Tampilan Modal Pengaturan di Desktop ▼▼▼ */
