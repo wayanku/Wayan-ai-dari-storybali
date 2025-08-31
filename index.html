@@ -3305,9 +3305,9 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                 }
             }
 
-            contentEl.innerHTML = marked.parse(fullResponseText);
-            enhanceCodeBlocks(contentEl);
             let [mainAnswer, suggestionsPart] = fullResponseText.split('[SUGGESTIONS]');
+            contentEl.innerHTML = marked.parse(mainAnswer.trim());
+            enhanceCodeBlocks(contentEl);
             if (suggestionsEl && suggestionsPart) {
                 suggestionsEl.innerHTML = renderSuggestions(suggestionsPart.split('|').map(s => s.trim()).filter(Boolean));
             }
@@ -3562,9 +3562,9 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
             }
 
             // 4. Finalisasi setelah stream selesai
-            contentEl.innerHTML = marked.parse(fullResponseText);
-            enhanceCodeBlocks(contentEl);
             let [mainAnswer, suggestionsPart] = fullResponseText.split('[SUGGESTIONS]');
+            contentEl.innerHTML = marked.parse(mainAnswer.trim());
+            enhanceCodeBlocks(contentEl);
             if (suggestionsEl && suggestionsPart) {
                 let dynamicSuggestions = suggestionsPart.split('|').map(s => s.trim()).filter(Boolean);
                 suggestionsEl.innerHTML = renderSuggestions(dynamicSuggestions);
@@ -3636,9 +3636,9 @@ Setelah jawaban utama (dan link, jika ada) selesai, berikan 2 atau 3 saran perta
                 }
             }
 
-            contentEl.innerHTML = marked.parse(fullResponseText);
-            enhanceCodeBlocks(contentEl);
             let [mainAnswer, suggestionsPart] = fullResponseText.split('[SUGGESTIONS]');
+            contentEl.innerHTML = marked.parse(mainAnswer.trim());
+            enhanceCodeBlocks(contentEl);
             if (suggestionsEl && suggestionsPart) {
                 suggestionsEl.innerHTML = renderSuggestions(suggestionsPart.split('|').map(s => s.trim()).filter(Boolean));
             }
