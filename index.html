@@ -155,9 +155,9 @@
     #sidebar {
         width: 260px;
         /* [PERMINTAAN PENGGUNA] Efek Kaca/Glassmorphism untuk Sidebar */
-        background-color: rgba(var(--bg-secondary-rgba), 0.6); /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan */
-        backdrop-filter: blur(8px); /* [PERMINTAAN PENGGUNA] Blur dikurangi */
-        -webkit-backdrop-filter: blur(8px);
+        background-color: rgba(var(--bg-secondary-rgba), 0.5); /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan lagi */
+        backdrop-filter: blur(6px); /* [PERMINTAAN PENGGUNA] Blur dikurangi lagi */
+        -webkit-backdrop-filter: blur(6px);
         border-right: 1px solid var(--border-color);
         display: flex;
         flex-direction: column;
@@ -165,7 +165,7 @@
         flex-shrink: 0;
     }
     html.dark #sidebar {
-        background-color: rgba(var(--bg-secondary-rgba), 0.55); /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan */
+        background-color: rgba(var(--bg-secondary-rgba), 0.45); /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan lagi */
     }
     #sidebar.collapsed {
         min-width: 0px;
@@ -319,9 +319,9 @@
         z-index: 10;
         
         /* Efek kaca dengan warna semi-transparan dan blur */
-        background-color: rgba(var(--bg-secondary-rgba), 0.45); /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan */
-        backdrop-filter: blur(5px); /* [PERMINTAAN PENGGUNA] Blur dikurangi */
-        -webkit-backdrop-filter: blur(5px);
+        background-color: rgba(var(--bg-secondary-rgba), 0.35); /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan lagi */
+        backdrop-filter: blur(4px); /* [PERMINTAAN PENGGUNA] Blur dikurangi lagi */
+        -webkit-backdrop-filter: blur(4px);
         border-bottom: 1px solid var(--border-color);
 
         /* [DIUBAH] Padding dipindahkan dari kelas p-4 ke sini untuk menangani safe area iPhone */
@@ -332,7 +332,7 @@
         /* ▲▲▲ AKHIR DARI PERUBAHAN HEADER ▲▲▲ */
     }
     html.dark .header-gradient {
-        background-color: rgba(var(--bg-secondary-rgba), 0.5) !important; /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan */
+        background-color: rgba(var(--bg-secondary-rgba), 0.4) !important; /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan lagi */
     }
 
     .ai-avatar {
@@ -585,9 +585,9 @@
         z-index: 10;
         /* ▼▼▼ [PERBAIKAN ESTETIKA] Efek blur diterapkan ke seluruh footer ▼▼▼ */
         /* untuk mencakup area aman di bagian bawah (safe area). */
-        background-color: rgba(var(--bg-primary-rgba), 0.5); /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan */
-        backdrop-filter: blur(5px); /* [PERMINTAAN PENGGUNA] Blur dikurangi */
-        -webkit-backdrop-filter: blur(5px);
+        background-color: rgba(var(--bg-primary-rgba), 0.4); /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan lagi */
+        backdrop-filter: blur(4px); /* [PERMINTAAN PENGGUNA] Blur dikurangi lagi */
+        -webkit-backdrop-filter: blur(4px);
         /* ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲ */
     }
 
@@ -749,7 +749,10 @@
     html.dark .modal-content { border: 1px solid var(--border-color); }
     #settingsModal .modal-content {
         /* [DIUBAH] Mengubah modal pengaturan menjadi layar penuh */
-        background: var(--bg-secondary);
+        /* [PERMINTAAN PENGGUNA] Efek Kaca/Glassmorphism untuk Modal Pengaturan */
+        background-color: rgba(var(--bg-secondary-rgba), 0.6); /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan lagi */
+        backdrop-filter: blur(6px); /* [PERMINTAAN PENGGUNA] Blur dikurangi lagi */
+        -webkit-backdrop-filter: blur(6px);
         padding: 0; overflow: hidden;
         border-radius: 0;
         box-shadow: none;
@@ -758,10 +761,23 @@
         max-height: 100%;
         transition: opacity 0.3s ease; /* Hanya animasi fade */
     }
+    html.dark #settingsModal .modal-content {
+        background-color: rgba(var(--bg-secondary-rgba), 0.55); /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan lagi */
+    }
     .modal-overlay.hidden { opacity: 0; pointer-events: none; }
     .modal-overlay:not(.hidden) .modal-content { opacity: 1; transform: scale(1); }
     /* [BARU] Memastikan animasi scale tidak berlaku untuk modal pengaturan */
     .modal-overlay:not(.hidden) #settingsModal .modal-content { transform: none !important; }
+
+    /* [PERMINTAAN PENGGUNA] Efek Kaca/Glassmorphism untuk Modal Profil */
+    #profileModal .modal-content {
+        background-color: rgba(var(--bg-secondary-rgba), 0.6);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+    html.dark #profileModal .modal-content {
+        background-color: rgba(var(--bg-secondary-rgba), 0.55);
+    }
 
     /* ▼▼▼ [BARU] Perbaikan Tampilan Modal Pengaturan di Desktop ▼▼▼ */
     @media (min-width: 769px) {
