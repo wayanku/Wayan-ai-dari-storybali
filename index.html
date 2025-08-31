@@ -3418,17 +3418,17 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
         return `${searchInstruction} ${roleInstruction} ${personaRule} ${baseInstructions}`;
     }
 
-    async function makeApiRequest(payload, signal = null) {
+    async function makeApiRequest(payload, signal = null, streaming = true) {
         if (apiKeys.length === 0) loadApiKeys();
         const validApiKeys = apiKeys.filter(key => key && key.trim() !== '');
         
         if (validApiKeys.length === 0) {
             throw new Error("Tidak ada API Key yang valid yang dikonfigurasi.");
         }
-
+    
         let startingIndex;
         const lastKeyIndexStr = localStorage.getItem('lastKeyIndex');
-
+    
         if (lastKeyIndexStr === null) {
             console.log("Pengguna baru terdeteksi. Memilih API Key awal secara acak.");
             startingIndex = Math.floor(Math.random() * validApiKeys.length);
@@ -3436,11 +3436,13 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
             const lastKeyIndex = parseInt(lastKeyIndexStr);
             startingIndex = (lastKeyIndex + 1) % validApiKeys.length;
         }
-
+    
         for (let i = 0; i < validApiKeys.length; i++) {
             const currentIndex = (startingIndex + i) % validApiKeys.length;
             const currentApiKey = validApiKeys[currentIndex];
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:streamGenerateContent?key=${currentApiKey}&alt=sse`;
+            const apiAction = streaming ? 'streamGenerateContent' : 'generateContent';
+            const sseParam = streaming ? '&alt=sse' : '';
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:${apiAction}?key=${currentApiKey}${sseParam}`;
             
             console.log(`Mencoba API Key urutan ke-${currentIndex + 1}...`);
 
@@ -3453,15 +3455,15 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
                 if (signal) {
                     fetchOptions.signal = signal;
                 }
-
+    
                 const response = await fetch(apiUrl, fetchOptions);
-
+    
                 if (response.ok) {
                     console.log(`Berhasil menggunakan API Key urutan ke-${currentIndex + 1}`);
                     localStorage.setItem('lastKeyIndex', currentIndex);
-                    return response; // [DIUBAH] Kembalikan stream response, bukan JSON
+                    return response;
                 }
-
+    
                 if (response.status === 429) {
                     console.warn(`API Key urutan ke-${currentIndex + 1} telah mencapai limit. Mencoba kunci berikutnya...`);
                 } else {
@@ -3469,7 +3471,7 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
                     console.error("API Error Body:", errorBody);
                     throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
                 }
-
+    
             } catch (error) {
                 if (error.name === 'AbortError') throw error; 
                 console.error(`Gagal dengan API Key urutan ke-${currentIndex + 1}:`, error.message);
@@ -3478,7 +3480,7 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
                 }
             }
         }
-
+    
         throw new Error("Semua API Key yang tersedia telah mencapai limit atau gagal merespons.");
     }
 
@@ -3862,9 +3864,10 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
                 systemInstruction: { parts: [{ text: getSystemPrompt(true) }] },
                 generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 80 }
             };
-            const data = await makeApiRequest(payload);
+            const response = await makeApiRequest(payload, null, false); // Use non-streaming
+            const data = await response.json();
             let aiResponseText = t('callErrorGeneric');
-            if (data.candidates && data.candidates[0].content) {
+            if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
                 aiResponseText = data.candidates[0].content.parts[0].text.split('[SUGGESTIONS]')[0].trim();
             }
             callHistory.push({ role: 'model', parts: [{ text: aiResponseText }] });
