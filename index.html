@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -472,78 +473,6 @@
         color: var(--text-primary);
         border-color: rgba(var(--text-primary-rgba), 0.1);
     }
-    
-    /* ▼▼▼ [BARU] CSS UNTUK PESAN SUARA PENGGUNA ▼▼▼ */
-    .user-voice-message audio {
-        width: 100%;
-        margin-top: 0.5rem;
-        height: 40px;
-    }
-    .user-voice-message audio::-webkit-media-controls-panel {
-        background-color: rgba(255, 255, 255, 0.2);
-    }
-    html.dark .user-voice-message audio::-webkit-media-controls-panel {
-        background-color: rgba(0, 0, 0, 0.3);
-    }
-    .user-voice-message p {
-        padding-top: 0.5rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.3);
-        margin-top: 0.75rem;
-    }
-    html.dark .user-voice-message p {
-        border-top-color: rgba(var(--text-primary-rgba), 0.2);
-    }
-    /* ▲▲▲ AKHIR DARI CSS PESAN SUARA PENGGUNA ▲▲▲ */
-
-
-    /* ▼▼▼ [BARU] CSS UNTUK PEMUTAR AUDIO JAWABAN AI ▼▼▼ */
-    .ai-audio-player {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    .ai-audio-player .play-pause-btn {
-        width: 40px;
-        height: 40px;
-        flex-shrink: 0;
-        border-radius: 50%;
-        background-color: #4f46e5;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: transform 0.2s ease, background-color 0.2s ease;
-    }
-    html.dark .ai-audio-player .play-pause-btn {
-        background-color: var(--text-primary);
-        color: var(--bg-primary);
-    }
-    .ai-audio-player .play-pause-btn:hover {
-        transform: scale(1.1);
-    }
-    .ai-audio-player .play-pause-btn svg {
-        width: 20px;
-        height: 20px;
-    }
-    .ai-audio-player .toggle-text-btn {
-        background: none;
-        border: none;
-        color: var(--text-secondary);
-        cursor: pointer;
-        padding: 0.25rem;
-    }
-    .ai-audio-player .toggle-text-btn:hover {
-        color: var(--text-primary);
-    }
-    .ai-response-text-content {
-      display: none; /* Sembunyikan teks secara default */
-      margin-top: 0.75rem;
-      padding-top: 0.75rem;
-      border-top: 1px solid rgba(var(--text-primary-rgba), 0.1);
-    }
-    /* ▲▲▲ AKHIR DARI CSS PEMUTAR AUDIO AI ▲▲▲ */
-
 
     /* ▼▼▼ CSS UNTUK WAKTU CHAT ▼▼▼ */
     .chat-timestamp {
@@ -2272,12 +2201,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     let isSearchModeActive = false;
     let finalTranscript = '';
     
-    // ▼▼▼ [MODIFIKASI] Variabel untuk Perekaman Suara ▼▼▼
-    let mediaRecorder;
-    let audioChunks = [];
-    // ▲▲▲ AKHIR MODIFIKASI ▲▲▲
-
-
     let currentPreviewData = {
         base64: null,
         fileName: null,
@@ -2733,136 +2656,96 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         const messageKey = isSearchModeActive ? 'systemSearchModeOn' : 'systemSearchModeOff';
         addSystemMessage(t(messageKey), 'info');
     }
-    
-    // ▼▼▼ [MODIFIKASI] Fungsi toggleVoiceMode, startVoiceRecognition, dan stopVoiceRecognition ▼▼▼
     function toggleVoiceMode() {
         if (isRecording) {
-            stopVoiceRecognition(); // Tidak perlu parameter lagi
+            stopVoiceRecognition(false);
         } else {
             startVoiceRecognition();
         }
     }
-
     function startVoiceRecognition() {
-        if (!('webkitSpeechRecognition' in window) || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        if (!('webkitSpeechRecognition' in window)) {
             alert(t('errorVoiceRecognition'));
             return;
         }
+        finalTranscript = '';
+        document.getElementById('messageInput').value = '';
+        isRecording = true;
 
-        navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(stream => {
-                // --- Mulai Merekam Audio ---
-                mediaRecorder = new MediaRecorder(stream);
-                audioChunks = [];
-                mediaRecorder.ondataavailable = event => {
-                    audioChunks.push(event.data);
-                };
-                mediaRecorder.start();
+        const micBtn = document.getElementById('micBtn');
+        micBtn.classList.add('send-btn-active');
+        micBtn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V6a1 1 0 00-1-1H5z" clip-rule="evenodd"></path></svg>`;
+        micBtn.title = t('stopGenerating');
 
-                // --- Mulai Transkripsi Teks ---
-                finalTranscript = '';
-                document.getElementById('messageInput').value = '';
-                isRecording = true;
+        document.getElementById('messageInput').style.visibility = 'hidden';
+        document.getElementById('voiceRecordingUI').style.display = 'flex';
+        document.getElementById('voiceStatusText').textContent = t('listening');
 
-                const micBtn = document.getElementById('micBtn');
-                micBtn.classList.add('send-btn-active');
-                micBtn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V6a1 1 0 00-1-1H5z" clip-rule="evenodd"></path></svg>`;
-                micBtn.title = t('stopGenerating');
-
-                document.getElementById('messageInput').style.visibility = 'hidden';
-                document.getElementById('voiceRecordingUI').style.display = 'flex';
-                document.getElementById('voiceStatusText').textContent = t('listening');
-
-                recognition = new webkitSpeechRecognition();
-                recognition.continuous = true;
-                recognition.interimResults = true;
-                recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
-                recognition.onresult = (event) => {
-                    let interim_transcript = '';
-                    for (let i = event.resultIndex; i < event.results.length; ++i) {
-                        const transcript = event.results[i][0].transcript;
-                        if (event.results[i].isFinal) {
-                            finalTranscript += transcript;
-                        } else {
-                            interim_transcript += transcript;
-                        }
-                    }
-                    const displayText = (finalTranscript + interim_transcript).trim();
-                    document.getElementById('voiceStatusText').textContent = displayText || t('listening');
-                };
-                recognition.onerror = (event) => {
-                    console.error("Speech recognition error:", event.error);
-                    if (event.error !== 'aborted') {
-                        addSystemMessage(t('errorSpeechRecog', { error: event.error }), 'warning');
-                    }
-                    stopVoiceRecognition();
-                };
-                recognition.onend = () => {
-                    if (isRecording) {
-                        stopVoiceRecognition();
-                    }
-                };
-
-                try {
-                    recognition.start();
-                } catch (e) {
-                    console.error("Error starting speech recognition:", e);
-                    addSystemMessage(t('errorStartSpeechRecog'), 'warning');
-                    stopVoiceRecognition();
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
+        recognition.onresult = (event) => {
+            let interim_transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                const transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    finalTranscript += transcript;
+                } else {
+                    interim_transcript += transcript;
                 }
-
-            })
-            .catch(err => {
-                console.error("Error getting microphone access:", err);
-                alert("Gagal mengakses mikrofon. Pastikan Anda memberikan izin.");
-            });
+            }
+            const displayText = (finalTranscript + interim_transcript).trim();
+            document.getElementById('voiceStatusText').textContent = displayText || t('listening');
+        };
+        recognition.onerror = (event) => {
+            console.error("Speech recognition error:", event.error);
+            if (event.error !== 'aborted') {
+                addSystemMessage(t('errorSpeechRecog', { error: event.error }), 'warning');
+            }
+            stopVoiceRecognition(false);
+        };
+        recognition.onend = () => {
+            if (isRecording) {
+                stopVoiceRecognition(false);
+            }
+        };
+        try {
+            recognition.start();
+        } catch (e) {
+            console.error("Error starting speech recognition:", e);
+            addSystemMessage(t('errorStartSpeechRecog'), 'warning');
+            stopVoiceRecognition(false);
+        }
     }
-
-    function stopVoiceRecognition() {
+    function stopVoiceRecognition(isCancel = false) {
         if (!isRecording) return;
         
         const currentText = document.getElementById('voiceStatusText').textContent.trim();
         isRecording = false;
-
-        // Hentikan speech recognition dulu
         if (recognition) {
             recognition.stop();
             recognition = null;
         }
 
-        // Hentikan media recorder, lalu proses hasilnya
-        if (mediaRecorder && mediaRecorder.state === "recording") {
-            mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                const audioUrl = URL.createObjectURL(audioBlob);
-                const finalUserText = currentText || finalTranscript;
-
-                if (finalUserText && finalUserText !== t('listening')) {
-                    // Kirim pesan suara ke UI dan ke AI
-                    addMessage(finalUserText, true, { isVoice: true, audioURL: audioUrl });
-                    sendMessage(finalUserText, { isVoiceRequest: true });
-                }
-                
-                // Reset untuk rekaman berikutnya
-                audioChunks = [];
-            };
-            mediaRecorder.stop();
+        if (!isCancel && currentText && currentText !== t('listening')) {
+            document.getElementById('messageInput').value = currentText;
+            finalTranscript = currentText;
+        } else {
+            document.getElementById('messageInput').value = '';
+            finalTranscript = '';
         }
 
-        // Reset UI
         const micBtn = document.getElementById('micBtn');
         micBtn.classList.remove('send-btn-active');
         micBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>`;
         micBtn.title = t('voiceModeTitle');
 
-        document.getElementById('messageInput').value = '';
         document.getElementById('messageInput').style.visibility = 'visible';
         document.getElementById('voiceRecordingUI').style.display = 'none';
         handleInputChange({ target: document.getElementById('messageInput') });
     }
-    // ▲▲▲ AKHIR MODIFIKASI ▲▲▲
-
-
+    
     function applyDarkMode(isDark) {
         document.documentElement.classList.toggle('dark', isDark);
         settings.darkMode = isDark;
@@ -3372,9 +3255,31 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         chatMessages.insertBefore(messageDiv, document.getElementById('typingIndicator'));
         scrollToBottom();
     }
-
-    // ▼▼▼ [MODIFIKASI] Fungsi addMessage untuk menangani pesan suara ▼▼▼
-    function addMessage(message, isUser = false, options = {}) {
+    function typewriterEffect(element, text, callback) {
+        let i = 0;
+        element.innerHTML = "";
+        function type() {
+            if (i < text.length) {
+                let char = text.charAt(i);
+                let nextChunk = char;
+                if (text.substring(i, i + 3) === '```') {
+                    let endBlock = text.indexOf('```', i + 3);
+                    if (endBlock !== -1) { nextChunk = text.substring(i, endBlock + 3); i = endBlock + 2; }
+                } else if (char === '*' && text.charAt(i + 1) === '*') {
+                     let endBold = text.indexOf('**', i + 2);
+                     if(endBold !== -1) { nextChunk = text.substring(i, endBold + 2); i = endBold + 1; }
+                }
+                element.innerHTML += nextChunk.replace(/\n/g, '<br>');
+                i++;
+                if (i % 10 === 0) scrollToBottom();
+                setTimeout(type, 20);
+            } else if (callback) {
+                callback();
+            }
+        }
+        type();
+    }
+    function addMessage(message, isUser = false, suggestions = [], isSearchable = false) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message-bubble';
@@ -3382,42 +3287,29 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         const timeString = getFormattedTime(new Date());
 
         if (isUser) {
+            // [DIUBAH] Flex ditambahkan di sini khusus untuk user
             messageDiv.className += ' flex items-start space-x-3 flex-row-reverse space-x-reverse user';
-
-            let contentHtml = '';
-            if (options.isVoice && options.audioURL) {
-                // Tampilan untuk pesan suara pengguna
-                contentHtml = `
-                    <div class="user-voice-message">
-                        <audio controls src="${options.audioURL}"></audio>
-                        <p class="leading-relaxed text-sm">${message.replace(/\n/g, '<br>')}</p>
-                    </div>
-                `;
-            } else {
-                // Tampilan untuk pesan teks biasa
-                const searchButtonHtml = options.isSearchable ? `
-                    <div class="mt-2 text-right">
-                        <button onclick="showSearchModal('${message.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')" class="inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition-all no-underline" style="color: white; text-decoration: none; cursor: pointer; border: none;">
-                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
-                            <span data-translate-key="searchOnGoogle">Cari di Google</span>
-                        </button>
-                    </div>
-                ` : '';
-                contentHtml = `
-                    <p class="leading-relaxed text-sm">${message.replace(/\n/g, '<br>')}</p>
-                    ${searchButtonHtml}
-                `;
-            }
+            
+            const searchButtonHtml = isSearchable ? `
+                <div class="mt-2 text-right">
+                    <button onclick="showSearchModal('${message.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')" class="inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition-all no-underline" style="color: white; text-decoration: none; cursor: pointer; border: none;">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
+                        <span data-translate-key="searchOnGoogle">Cari di Google</span>
+                    </button>
+                </div>
+            ` : '';
 
             messageDiv.innerHTML = `
                 <div class="user-message text-white p-4 max-w-xs">
-                    ${contentHtml}
+                    <p class="leading-relaxed text-sm">${message.replace(/\n/g, '<br>')}</p>
+                    ${searchButtonHtml}
                     <div class="chat-timestamp text-right">${timeString}</div>
                 </div>`;
             chatMessages.insertBefore(messageDiv, typingIndicator);
         } else {
-            const encodedMessage = btoa(encodeURIComponent(message || ""));
+            const encodedMessage = btoa(encodeURIComponent(message));
             messageDiv.className += ' ai';
+            // [DIUBAH] Struktur HTML pesan AI dirombak total
             messageDiv.innerHTML = `
                 <div class="flex items-center space-x-3 mb-2">
                     <div onclick="showProfileModal()" class="ai-avatar w-8 h-8 flex-shrink-0 flex items-center justify-center overflow-hidden cursor-pointer">
@@ -3429,9 +3321,10 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                     <div class="ai-message">
                         <div class="markdown-content leading-relaxed text-base"></div>
                         <div class="suggestions-container mt-3"></div>
+                        <!-- [FIX] Tombol aksi dipindahkan ke dalam gelembung -->
                         <div class="ai-message-footer">
                             <div class="chat-timestamp text-xs">${timeString}</div>
-                             <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" data-translate-title="copyAnswer">
+                            <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" data-translate-title="copyAnswer">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg>
                             </button>
                             <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" data-translate-title="readAnswer">
@@ -3453,16 +3346,14 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                     </div>
                 </div>`;
             chatMessages.insertBefore(messageDiv, typingIndicator);
+            // [DIUBAH] Kembalikan elemen untuk diisi oleh proses streaming
             return {
-                bubbleEl: messageDiv,
                 contentEl: messageDiv.querySelector('.markdown-content'),
                 suggestionsEl: messageDiv.querySelector('.suggestions-container')
             };
         }
         scrollToBottom();
     }
-    // ▲▲▲ AKHIR MODIFIKASI ▲▲▲
-
     function addOriginalMessage(message, isUser = false, timestamp) {
         const chatMessages = document.getElementById('chatMessages');
         const messageDiv = document.createElement('div');
@@ -3531,7 +3422,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
                             </button>
                             <button onclick="shareResponse(this)" class="action-icon-ai" data-translate-title="shareResponse">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.3-1.34-3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3z"></path></svg>
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3z"></path></svg>
                             </button>
                         </div>
                     </div>
@@ -3700,18 +3591,12 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         }
         isReading = false;
         
-        const playIcon = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>`;
-        const playIconPlayer = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>`;
-
-
         // [DIUBAH] Selector diubah agar lebih andal (tidak bergantung pada bahasa) dan memastikan semua ikon kembali ke bentuk semula.
-        document.querySelectorAll('.message-bubble.ai button[data-translate-title="readAnswer"], #previewElevenLabsVoiceBtn, .ai-audio-player .play-pause-btn').forEach(btn => {
+        document.querySelectorAll('.message-bubble.ai button[data-translate-title="readAnswer"], #previewElevenLabsVoiceBtn').forEach(btn => {
             if (btn.id === 'previewElevenLabsVoiceBtn') {
                 btn.innerHTML = `<svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path></svg>`;
-            } else if (btn.classList.contains('play-pause-btn')) {
-                 btn.innerHTML = playIconPlayer;
             } else {
-                btn.innerHTML = playIcon;
+                btn.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>`;
             }
         });
     }
@@ -3722,12 +3607,8 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             const effectiveVoiceId = voiceId || settings.elevenLabsVoiceId || '21m00Tcm4TlvDq8ikWAM';
             const apiUrl = `https://api.elevenlabs.io/v1/text-to-speech/${effectiveVoiceId}`;
             const stopIcon = `<svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 00-1 1v2a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>`;
-            const stopIconPlayer = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>`;
-
             
-            if (button) {
-                button.innerHTML = button.classList.contains('play-pause-btn') ? stopIconPlayer : stopIcon;
-            }
+            if (button) button.innerHTML = stopIcon;
             isReading = true;
 
             try {
@@ -3762,7 +3643,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     function playBrowserAudio(text, button) {
        return new Promise((resolve, reject) => {
             const stopIcon = `<svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 00-1 1v2a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>`;
-            const stopIconPlayer = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>`;
             
             currentUtterance = new SpeechSynthesisUtterance(text);
             // [FIX UTAMA] Gunakan `availableVoices` yang sudah dijamin terisi, bukan memanggil `getVoices()` lagi.
@@ -3771,9 +3651,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             const selectedVoice = availableVoices.find(v => v.voiceURI === settings.voiceURI);
             currentUtterance.voice = selectedVoice || availableVoices.find(v => v.lang.startsWith(langPrefix));
             
-            if (button) {
-                button.innerHTML = button.classList.contains('play-pause-btn') ? stopIconPlayer : stopIcon;
-            }
+            if (button) button.innerHTML = stopIcon;
             isReading = true;
             
             currentUtterance.onend = () => { resolve(); }; // [DIUBAH] stopReading() akan dipanggil oleh 'finally' block di readAiResponse
@@ -4100,15 +3978,14 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
         throw new Error("Semua API Key yang tersedia telah mencapai limit atau gagal merespons.");
     }
 
-    // ▼▼▼ [MODIFIKASI] Fungsi sendMessage untuk menangani pesan suara dan teks ▼▼▼
-    async function sendMessage(messageFromVoice = null, options = {}) {
+    async function sendMessage() {
         const input = document.getElementById('messageInput');
-        const message = messageFromVoice || input.value.trim();
+        const message = input.value.trim();
         if (!message || !currentUserIP || currentFetchController) return;
         
         const activeSession = allChatSessions.find(s => s.id === activeChatId);
         if (!activeSession) return;
-        if(activeSession.title === t('newConversation') && activeSession.history.length === 1) {
+        if(activeSession.title === 'Percakapan Baru' && activeSession.history.length === 1) {
             activeSession.title = message.substring(0, 30) + (message.length > 30 ? '...' : '');
             renderSidebar();
         }
@@ -4119,13 +3996,14 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
         userData.count++;
         saveChatLimitData({ ...allUserData, [currentUserIP]: userData });
         
-        // Pesan pengguna ditambahkan ke UI oleh pemanggil fungsi (baik stopVoiceRecognition atau event keypress)
-        // Hanya tambahkan di sini jika itu adalah pesan teks dari input.
-        if (!options.isVoiceRequest) {
-            addMessage(message, true, { isSearchable: isSearchModeActive });
+        if (isSearchModeActive) {
+            addMessage(message, true, [], true);
+        } else {
+            addMessage(message, true, [], false);
         }
-    
-        document.querySelector('.quick-actions').style.display = 'none';
+    // [BARU] Sembunyikan saran cepat setelah pesan pertama dikirim
+    document.querySelector('.quick-actions').style.display = 'none';
+
         trackUserMessageCount();
         addToConversationHistory('user', message);
         input.value = '';
@@ -4142,14 +4020,13 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
         currentFetchController = new AbortController();
         document.getElementById('stopGeneratingContainer').style.display = 'block';
 
-        let contentEl, suggestionsEl, bubbleEl;
+        let contentEl, suggestionsEl;
 
         try {
+            // 1. Buat bubble chat AI yang kosong dan dapatkan elemennya
             const bubbleElements = addMessage(null, false);
             contentEl = bubbleElements.contentEl;
             suggestionsEl = bubbleElements.suggestionsEl;
-            bubbleEl = bubbleElements.bubbleEl;
-
             const fullHistory = getActiveChatHistory();
             const historyForApi = fullHistory.map(({ role, parts }) => ({ role, parts }));
             const payload = {
@@ -4158,9 +4035,11 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
                 generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048 }
             };
 
+            // 2. Lakukan request dan dapatkan stream
             const response = await makeApiRequest(payload, currentFetchController.signal);
             if (!response.body) throw new Error("Response body is null");
 
+            // 3. Baca stream
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let fullResponseText = "";
@@ -4180,44 +4059,33 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
                             if (data.candidates && data.candidates[0].content.parts[0].text) {
                                 const textPart = data.candidates[0].content.parts[0].text;
                                 fullResponseText += textPart;
-                                if (!options.isVoiceRequest) { // Hanya update UI teks jika bukan permintaan suara
-                                    contentEl.innerHTML = marked.parse(fullResponseText + '█');
-                                    scrollToBottom();
-                                }
+                                contentEl.innerHTML = marked.parse(fullResponseText + '█'); // Tambahkan kursor berkedip
+                                scrollToBottom();
                             }
-                        } catch (e) { /* Abaikan */ }
+                        } catch (e) { /* Abaikan error parsing JSON yang tidak lengkap */ }
                     }
                 }
             }
 
+            // 4. Finalisasi setelah stream selesai
             let [mainAnswer, suggestionsPart] = fullResponseText.split('[SUGGESTIONS]');
-            mainAnswer = mainAnswer.trim();
-
-            if (options.isVoiceRequest) {
-                // Untuk permintaan suara, ganti bubble placeholder dengan pemutar audio
-                const { playBtn } = addAiAudioMessageUI(mainAnswer, bubbleEl);
-                // Otomatis putar audio
-                readAiResponse(playBtn, btoa(encodeURIComponent(mainAnswer)));
-            } else {
-                // Untuk permintaan teks, finalisasi konten teks
-                contentEl.innerHTML = marked.parse(mainAnswer);
-                enhanceCodeBlocks(contentEl);
-                if (suggestionsEl && suggestionsPart) {
-                    let dynamicSuggestions = suggestionsPart.split('|').map(s => s.trim()).filter(Boolean);
-                    suggestionsEl.innerHTML = renderSuggestions(dynamicSuggestions);
-                }
+            contentEl.innerHTML = marked.parse(mainAnswer.trim());
+            enhanceCodeBlocks(contentEl);
+            if (suggestionsEl && suggestionsPart) {
+                let dynamicSuggestions = suggestionsPart.split('|').map(s => s.trim()).filter(Boolean);
+                suggestionsEl.innerHTML = renderSuggestions(dynamicSuggestions);
             }
-
-            addToConversationHistory('model', mainAnswer);
+            addToConversationHistory('model', mainAnswer.trim());
             playNotificationSound();
         } catch (error) {
-             if (error.name === 'AbortError') {
+            if (error.name === 'AbortError') {
                 addSystemMessage(t('systemResponseStopped'), 'warning');
             } else {
                 console.error("Error in sendMessage:", error);
                 if (contentEl) {
                     contentEl.innerHTML = marked.parse(t('errorApiGeneral', { error: error.message }));
                 } else {
+                    // Fallback jika bubble gagal dibuat
                     addOriginalMessage(t('errorApiGeneral', { error: error.message }), false, new Date().toISOString());
                 }
             }
@@ -4228,47 +4096,6 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
         }
     }
     
-    // ▼▼▼ [BARU] Fungsi untuk membuat UI pemutar audio AI ▼▼▼
-    function addAiAudioMessageUI(text, existingBubbleElement) {
-        const timeString = getFormattedTime(new Date());
-        const messageId = `ai-audio-${Date.now()}`;
-        const encodedMessage = btoa(encodeURIComponent(text));
-
-        // Ganti konten dari .ai-message yang sudah ada
-        const aiMessageContainer = existingBubbleElement.querySelector('.ai-message');
-        aiMessageContainer.innerHTML = `
-            <div class="ai-audio-player">
-                <button id="play-btn-${messageId}" class="play-pause-btn">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
-                </button>
-                <div class="flex-grow text-sm text-gray-500">Wayan AI Voice Note</div>
-                <button id="text-btn-${messageId}" class="toggle-text-btn" title="Tampilkan Teks">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-                </button>
-            </div>
-            <div id="text-content-${messageId}" class="ai-response-text-content">
-                <div class="markdown-content">${marked.parse(text)}</div>
-            </div>
-            <div class="ai-message-footer">
-                <div class="chat-timestamp text-xs">${timeString}</div>
-                <!-- Anda bisa menambahkan ikon aksi lain di sini jika perlu -->
-            </div>
-        `;
-
-        const playBtn = document.getElementById(`play-btn-${messageId}`);
-        const textBtn = document.getElementById(`text-btn-${messageId}`);
-        const textContent = document.getElementById(`text-content-${messageId}`);
-        
-        playBtn.onclick = () => readAiResponse(playBtn, encodedMessage);
-        textBtn.onclick = () => {
-            const isHidden = textContent.style.display === 'none' || textContent.style.display === '';
-            textContent.style.display = isHidden ? 'block' : 'none';
-        };
-
-        return { playBtn };
-    }
-
-
     async function analyzeImageWithQuestion(base64Image, userQuestion, mimeType) {
         currentFetchController = new AbortController();
         document.getElementById('stopGeneratingContainer').style.display = 'block';
