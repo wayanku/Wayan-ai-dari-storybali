@@ -136,7 +136,9 @@
         width: 100%;
         margin: 0;
         padding: 0;
-        overflow: hidden;
+        overflow: hidden; /* Mencegah body memiliki scrollbar sendiri */
+        /* [DIUBAH] Diterapkan ke html & body untuk mengunci viewport secara total di iOS (PWA) */
+        overscroll-behavior: none;
     }
 
     body {
@@ -1198,6 +1200,8 @@
         /* [DIUBAH] Menambahkan padding atas & bawah agar chat tidak tertutup header/footer */
         padding-top: 8rem !important;
         padding-bottom: 9rem !important; /* [BARU] Padding bawah untuk footer transparan */
+        /* [BARU] Mencegah scroll 'bocor' ke body di iOS (PWA) */
+        overscroll-behavior-y: contain;
     }
 
     .chat-messages::-webkit-scrollbar { width: 8px; }
@@ -1259,13 +1263,13 @@
 
     <div class="chat-container">
         <div class="chat-window flex flex-col">
-            <div class="header-gradient text-white flex-shrink-0">
+            <div class="header-gradient flex-shrink-0">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
                         <button onclick="toggleSidebar()" 
                                 class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95" 
                                 data-translate-title="sidebarToggleTitle">
-                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                             <svg class="w-6 h-6 text-slate-800 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
                         </button>
                         <div class="flex items-center space-x-3">
                             <div class="ai-avatar w-12 h-12 flex-shrink-0 flex items-center justify-center overflow-hidden relative cursor-pointer" onclick="showProfileModal()">
@@ -1273,8 +1277,8 @@
                                      class="w-full h-full object-cover">
                             </div>
                             <div>
-                                <h1 class="text-xl font-bold" data-translate-key="aiName">Wayan AI</h1>
-                                <p class="text-blue-100 text-sm opacity-90" data-translate-key="profileHint">Klik untuk lihat profil</p>
+                                <h1 class="text-xl font-bold text-slate-800 dark:text-white" data-translate-key="aiName">Wayan AI</h1>
+                                <p class="text-sm opacity-90 text-slate-600 dark:text-blue-100" data-translate-key="profileHint">Klik untuk lihat profil</p>
                             </div>
                         </div>
                     </div>
@@ -1282,7 +1286,7 @@
                         <button onclick="toggleSettings()"
                                 class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95"
                                 data-translate-title="settingsTitle">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <svg class="w-6 h-6 text-slate-800 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
@@ -1573,6 +1577,33 @@
             </div>
             <div id="tab-appearance" class="settings-tab-content space-y-4">
                 <!-- [DIHAPUS] Kartu Tema Warna telah dihapus dari sini -->
+                <div class="settings-card">
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-3">
+                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <label class="text-sm font-medium text-gray-700" data-translate-key="settingFontSize">Ukuran Font</label>
+                        </div>
+                        <select id="fontSizeSelect" class="settings-select text-right w-auto">
+                            <option value="sm" data-translate-key="fontSmall">Kecil</option>
+                            <option value="base" selected data-translate-key="fontNormal">Normal</option>
+                            <option value="lg" data-translate-key="fontLarge">Besar</option>
+                        </select>
+                    </div>
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-3">
+                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            <label class="text-sm font-medium text-gray-700" data-translate-key="settingAnimations">Efek Animasi</label>
+                        </div>
+                        <input type="checkbox" id="animationToggle" class="toggle-new" checked>
+                    </div>
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-3">
+                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                            <label class="text-sm font-medium text-gray-700" data-translate-key="settingDarkMode">Mode Gelap</label>
+                        </div>
+                        <input type="checkbox" id="darkModeToggle" class="toggle-new" onchange="handleDarkModeToggle()">
+                    </div>
+                </div>
                 <!-- [DIUBAH] Kartu untuk Latar Belakang Kustom (Upload File) -->
                 <div class="settings-card">
                     <div class="settings-item flex-col">
@@ -1638,33 +1669,6 @@
                                 <span data-translate-key="removeBackground">Hapus Latar</span>
                             </button>
                         </div>
-                    </div>
-                </div>
-                <div class="settings-card">
-                    <div class="settings-item">
-                        <div class="flex items-center space-x-3">
-                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                            <label class="text-sm font-medium text-gray-700" data-translate-key="settingFontSize">Ukuran Font</label>
-                        </div>
-                        <select id="fontSizeSelect" class="settings-select text-right w-auto">
-                            <option value="sm" data-translate-key="fontSmall">Kecil</option>
-                            <option value="base" selected data-translate-key="fontNormal">Normal</option>
-                            <option value="lg" data-translate-key="fontLarge">Besar</option>
-                        </select>
-                    </div>
-                    <div class="settings-item">
-                        <div class="flex items-center space-x-3">
-                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            <label class="text-sm font-medium text-gray-700" data-translate-key="settingAnimations">Efek Animasi</label>
-                        </div>
-                        <input type="checkbox" id="animationToggle" class="toggle-new" checked>
-                    </div>
-                    <div class="settings-item">
-                        <div class="flex items-center space-x-3">
-                            <svg class="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                            <label class="text-sm font-medium text-gray-700" data-translate-key="settingDarkMode">Mode Gelap</label>
-                        </div>
-                        <input type="checkbox" id="darkModeToggle" class="toggle-new" onchange="handleDarkModeToggle()">
                     </div>
                 </div>
                 <div class="settings-card">
