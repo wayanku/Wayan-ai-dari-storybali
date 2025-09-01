@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -1249,107 +1248,6 @@
       overflow-y: auto;
     }
     /* ▲▲▲ AKHIR DARI CSS PANGGILAN SUARA ▲▲▲ */
-
-    /* ▼▼▼ [BARU] GAYA UNTUK PESAN SUARA ▼▼▼ */
-    .voice-message-player {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        min-width: 200px;
-    }
-
-    .voice-message-player .play-pause-btn {
-        width: 2.25rem;
-        height: 2.25rem;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        cursor: pointer;
-        background-color: #4f46e5;
-        color: white;
-        border: none;
-    }
-
-    .user-message .voice-message-player .play-pause-btn {
-      background-color: rgba(255,255,255,0.2);
-    }
-
-    .voice-message-player .play-pause-btn:hover {
-        opacity: 0.8;
-    }
-
-    .voice-message-player .progress-bar-container {
-        flex-grow: 1;
-        position: relative;
-        height: 4px;
-        background-color: rgba(0, 0, 0, 0.1);
-        border-radius: 2px;
-        cursor: pointer;
-    }
-    .user-message .voice-message-player .progress-bar-container {
-      background-color: rgba(255,255,255,0.3);
-    }
-    html.dark .user-message .voice-message-player .progress-bar-container {
-      background-color: rgba(0,0,0,0.3);
-    }
-
-
-    .voice-message-player .progress-bar {
-        position: absolute;
-        left: 0;
-        top: 0;
-        height: 100%;
-        width: 0%; /* Diatur oleh JS */
-        background-color: #4f46e5;
-        border-radius: 2px;
-    }
-    .user-message .voice-message-player .progress-bar {
-        background-color: white;
-    }
-
-    .voice-message-player .duration {
-        font-size: 0.75rem;
-        font-variant-numeric: tabular-nums;
-        color: var(--text-secondary);
-    }
-    .user-message .voice-message-player .duration {
-        color: rgba(255,255,255,0.8);
-    }
-
-    .transcript-toggle-btn {
-        font-size: 0.75rem;
-        font-weight: 500;
-        color: var(--text-secondary);
-        cursor: pointer;
-        margin-top: 0.5rem;
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-    }
-    .transcript-toggle-btn:hover {
-        background-color: var(--bg-tertiary);
-    }
-    html.dark .transcript-toggle-btn {
-      color: var(--text-light);
-    }
-    html.dark .transcript-toggle-btn:hover {
-      background-color: var(--bg-accent);
-    }
-
-    .transcript-content {
-        margin-top: 0.5rem;
-        font-size: 0.8rem;
-        color: var(--text-secondary);
-        border-top: 1px dashed var(--border-color);
-        padding-top: 0.5rem;
-        white-space: pre-wrap;
-    }
-
-    [hidden] {
-        display: none !important;
-    }
-    /* ▲▲▲ AKHIR GAYA PESAN SUARA ▲▲▲ */
   </style>
 </head>
 <body>
@@ -1451,17 +1349,13 @@
                     >
 
                     <!-- [REFINED] UI Perekaman Suara -->
-                    <div id="voiceRecordingUI" class="absolute inset-0 items-center justify-between px-4 hidden" style="background-color: var(--bg-tertiary); border-radius: 1.25rem;">
-                         <div class="flex items-center gap-3 min-w-0">
-                            <button id="cancelRecordingBtn" class="w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-full">
-                               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                            </button>
+                    <div id="voiceRecordingUI" class="absolute inset-0 items-center justify-start px-4 hidden" style="background-color: var(--bg-tertiary); border-radius: 1.25rem;">
+                        <div class="flex items-center gap-3 min-w-0">
                             <div class="voice-wave">
                                 <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
                             </div>
                             <span id="voiceStatusText" class="text-sm text-gray-500 dark:text-gray-400 truncate" data-translate-key="listening">Mendengarkan...</span>
                         </div>
-                        <div id="recordingTimer" class="text-sm font-mono text-red-500">00:00</div>
                     </div>
                     <!-- Akhir UI Perekaman Suara -->
 
@@ -1612,7 +1506,7 @@
                 <a href="https://wa.me/message/RNPBCG25N5V2A1" target="_blank" 
                    class="flex items-center justify-center w-full px-4 py-3 rounded-xl font-semibold text-sm text-white bg-[#25D366] hover:bg-[#128C7E] transition-all duration-200 ease-in-out transform hover:scale-105"
                    data-translate-key="profileWhatsapp">
-                    <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.31 20.62C8.75 21.41 10.36 21.85 12.04 21.85C17.5 21.85 21.95 17.4 21.95 11.94C21.95 6.48 17.5 2 2.04 2M12.04 3.67C16.56 3.67 20.28 7.38 20.28 11.93C20.28 16.48 16.56 20.19 12.04 20.19C10.46 20.19 8.96 19.78 7.65 19.05L7.28 18.83L4.93 19.58L5.7 17.26L5.47 16.89C4.68 15.53 4.26 13.96 4.26 12.3C4.26 7.75 7.97 4.04 12.42 4.04H12.04M16.54 14.8C16.34 15.25 15.53 15.68 15.15 15.78C14.77 15.87 14.22 15.96 12.63 15.33C10.73 14.58 9.25 12.8 9.06 12.55C8.86 12.3 7.96 11.04 7.96 10.14C7.96 9.24 8.55 8.68 8.75 8.48C8.94 8.29 9.24 8.24 9.41 8.24C9.58 8.24 9.71 8.24 9.84 8.24C9.98 8.24 10.13 8.26 10.31 8.64C10.51 9 11.03 10.19 11.13 10.34C11.23 10.49 11.28 10.69 11.18 10.89C11.08 11.09 11.03 11.19 10.88 11.36C10.73 11.54 10.58 11.66 10.46 11.79C10.33 11.91 10.19 12.06 10.34 12.31C10.49 12.56 11.01 13.34 11.71 13.96C12.54 14.73 13.26 15.01 13.51 15.13C13.76 15.26 13.91 15.23 14.06 15.08C14.24 14.91 14.51 14.51 14.78 14.16C15 13.86 15.28 13.78 15.58 13.88C15.88 13.98 16.91 14.53 17.11 14.73C17.31 14.93 17.31 15.03 17.21 15.13C17.11 15.23 16.74 14.35 16.54 14.8Z" /></svg>
+                    <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.31 20.62C8.75 21.41 10.36 21.85 12.04 21.85C17.5 21.85 21.95 17.4 21.95 11.94C21.95 6.48 17.5 2 12.04 2M12.04 3.67C16.56 3.67 20.28 7.38 20.28 11.93C20.28 16.48 16.56 20.19 12.04 20.19C10.46 20.19 8.96 19.78 7.65 19.05L7.28 18.83L4.93 19.58L5.7 17.26L5.47 16.89C4.68 15.53 4.26 13.96 4.26 12.3C4.26 7.75 7.97 4.04 12.42 4.04H12.04M16.54 14.8C16.34 15.25 15.53 15.68 15.15 15.78C14.77 15.87 14.22 15.96 12.63 15.33C10.73 14.58 9.25 12.8 9.06 12.55C8.86 12.3 7.96 11.04 7.96 10.14C7.96 9.24 8.55 8.68 8.75 8.48C8.94 8.29 9.24 8.24 9.41 8.24C9.58 8.24 9.71 8.24 9.84 8.24C9.98 8.24 10.13 8.26 10.31 8.64C10.51 9 11.03 10.19 11.13 10.34C11.23 10.49 11.28 10.69 11.18 10.89C11.08 11.09 11.03 11.19 10.88 11.36C10.73 11.54 10.58 11.66 10.46 11.79C10.33 11.91 10.19 12.06 10.34 12.31C10.49 12.56 11.01 13.34 11.71 13.96C12.54 14.73 13.26 15.01 13.51 15.13C13.76 15.26 13.91 15.23 14.06 15.08C14.24 14.91 14.51 14.51 14.78 14.16C15 13.86 15.28 13.78 15.58 13.88C15.88 13.98 16.91 14.53 17.11 14.73C17.31 14.93 17.31 15.03 17.21 15.13C17.11 15.23 16.74 14.35 16.54 14.8Z" /></svg>
                     WhatsApp
                 </a>
             </div>
@@ -1984,7 +1878,7 @@
             copyAnswer: "Salin Jawaban", readAnswer: "Baca Jawaban", searchOnGoogle: "Cari di Google",
             likeResponse: "Suka jawaban ini", dislikeResponse: "Tidak suka jawaban ini", regenerateResponse: "Buat ulang jawaban", shareResponse: "Bagikan jawaban",
             profileTitle: "AI Assistant Dari Storybali", profileGreeting: "Halo! Gue Wayan!", profileDesc1: "Gue adalah AI assistant yang dibuat khusus untuk membantu kamu dengan gaya bahasa yang santai dan friendly.", profileDesc2: "Santai aja, tanya apa aja yang kamu mau!", profileDesc3: "Kepoin Wayan yuk di Instagram atau chat WA pribadi Wayan!", profileInstagram: "Instagram", profileWhatsapp: "WhatsApp",
-            initialGreeting: "Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Feel free to ask me anything you want to know!",
+            initialGreeting: "Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Santai aja, tanya apa aja yang kamu mau tau ya!",
             copyCode: "Salin", copied: "Disalin!",
             systemRoleChanged: "Mode peran AI telah diubah menjadi: {roleName}.",
             systemSearchModeOn: "Mode pencarian internet diaktifkan.", systemSearchModeOff: "Mode pencarian internet dinonaktifkan.",
@@ -2000,17 +1894,12 @@
             promptRenameChat: "Masukkan nama baru untuk percakapan ini:",
             statusCooldown: "Anda mencapai batas limit. Silakan tunggu...", statusCooldownMessage: "Waktu Jeda...<br>Wayan lagi istirahat sebentar ya!", statusCooldownDone: "Waktunya ngobrol lagi! Wayan sudah siap.",
             statusElevenLabsLoading: "Memuat suara...", errorElevenLabsFetch: "Gagal ambil suara. Periksa API Key.", errorElevenLabsPreview: "Gagal memutar pratinjau. Periksa API Key atau koneksi Anda.",
-            shareNotSupported: "Browser Anda tidak mendukung fitur berbagi. Jawaban telah disalin ke clipboard.", feedbackMessageSent: "Terima kasih atas masukan Anda!",
             alertReaderDisabled: "Fitur pembaca jawaban dinonaktifkan.", errorElevenLabsPlayback: "Gagal memutar suara ElevenLabs. Memeriksa API Key atau beralih ke suara Bawaan Browser di Pengaturan.",
+            shareNotSupported: "Browser Anda tidak mendukung fitur berbagi. Jawaban telah disalin ke clipboard.", feedbackMessageSent: "Terima kasih atas masukan Anda!",
             callErrorBrowserSupport: "Maaf, browser Anda tidak mendukung fitur ini.", callStatusSpeaking: "Wayan AI sedang berbicara...", callStatusThinking: "Wayan sedang berpikir...", callErrorGeneric: "Maaf, ada gangguan. Bisa ulangi lagi?", callErrorTechnical: "Aduh, ada masalah teknis. Kita ulangi ya.", callInitialGreeting: "Halo, ini Wayan. Ada yang bisa dibantu?", callTranscriptTitle: "[TRANSKRIP PANGGILAN SUARA]\n", callUserPrefix: "Anda: ", callAiPrefix: "Wayan: ",
             onboardingWelcomeTitle: "Selamat Datang di Wayan AI!", onboardingWelcomeDesc: "Aplikasi chat cerdas dengan AI berbahasa Indonesia yang ramah dan mudah digunakan.", onboardingAskTitle: "Mulai Bertanya!", onboardingAskDesc: "Tulis pertanyaan di kolom bawah, lalu tekan <b>tombol kirim</b>.", onboardingHistoryTitle: "Simpan Percakapan", onboardingHistoryDesc: "Setiap percakapan akan otomatis tersimpan. Klik tombol <b>menu (garis tiga)</b> di pojok kiri atas untuk melihat riwayat chat Anda.", onboardingSettingsTitle: "Atur Gaya AI-mu", onboardingSettingsDesc: "Pilih <b>peran</b> dan <b>gaya bahasa</b> AI melalui tombol <b>pengaturan (roda gigi)</b>.", onboardingReadyTitle: "Yuk Mulai Chatting!", onboardingReadyDesc: "Selamat menikmati Wayan AI. Jangan ragu untuk bereksperimen!", onboardingSkip: "Lewati", onboardingNext: "Selanjutnya", onboardingStart: "Mulai Chatting",
             ratingTitle: "Beri Nilai untuk Wayan AI", ratingDesc: "Masukan Anda sangat berarti untuk pengembangan kami.", ratingPlaceholder: "Tulis masukan Anda di sini (opsional)...", ratingLater: "Nanti Saja", ratingSubmit: "Kirim Nilai", ratingAlertNoStars: "Mohon pilih setidaknya 1 bintang.", ratingStatusSending: "Mengirim...", ratingAlertSuccess: "Terima kasih atas penilaian Anda!", ratingAlertError: "Maaf, terjadi kesalahan.",
             feedbackAlertEmpty: "Mohon tulis masukan Anda terlebih dahulu.", feedbackStatusSending: "Mengirim...", feedbackAlertSuccess: "Terima kasih! Masukan Anda telah terkirim.", feedbackAlertError: "Maaf, terjadi kesalahan.",
-            voiceMessage: "Pesan Suara",
-            showTranscript: "Tampilkan Teks",
-            hideTranscript: "Sembunyikan Teks",
-            voiceMessageError: "Gagal merekam suara. Coba lagi.",
-            voiceMessageSending: "Mengirim pesan suara...",
         },
         en: {
             newChat: "New Chat", newChatTitle: "Start a New Conversation", sidebarToggleTitle: "Show/Hide Chat History",
@@ -2061,7 +1950,7 @@
             errorVoiceRecognition: "Sorry, your browser does not support the voice recognition feature.", errorSpeechRecog: "Speech recognition error: {error}", errorStartSpeechRecog: "Could not start speech recognition.",
             alertSettingsSaved: "Settings saved successfully!", alertResetConfirm: "Are you sure you want to reset all settings? ALL chat history and API Keys will be deleted. The page will reload.", alertResetSuccess: "Settings have been reset to default. The page will reload.",
             alertExportEmpty: "There is no chat history in this session to export!", alertExportSuccess: "Chat history for this session has been successfully exported!",
-            alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? This action cannot be undone.", alertClearHistorySuccess: "All chat history has been deleted!",
+alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? This action cannot be undone.", alertClearHistorySuccess: "All chat history has been deleted!",
             alertApiKeysSaved: "API Keys saved successfully!", alertImageInvalid: "Invalid file. Please select an image file (JPEG, PNG, WEBP, GIF).", alertImageNoQuestion: "Please write a question first!", alertImageNoData: "An error occurred, image not found. Please try selecting again.", alertLimitReached: "You have reached the limit. Please wait for the cooldown to finish.",
             errorApiResponseInvalid: "Invalid API response:", errorGeneric: "Sorry, Wayan couldn't provide a response. Please try again.", errorImageAnalysis: "Oops, Wayan can't analyze this image. Try another one.", errorApiGeneral: "Oops, Wayan encountered an error: {error}. Please try again later!", errorImageAnalysisGeneral: "Oops, Wayan encountered an error during image analysis: {error}. Please try again!",
             promptRenameChat: "Enter a new name for this conversation:",
@@ -2073,11 +1962,6 @@
             onboardingWelcomeTitle: "Welcome to Wayan AI!", onboardingWelcomeDesc: "A smart chat application with a friendly and easy-to-use Indonesian-speaking AI.", onboardingAskTitle: "Start Asking!", onboardingAskDesc: "Write your question in the input box below, then press the <b>send button</b>.", onboardingHistoryTitle: "Save Conversations", onboardingHistoryDesc: "Every conversation is automatically saved. Click the <b>menu button (three lines)</b> in the top left corner to see your chat history.", onboardingSettingsTitle: "Customize Your AI", onboardingSettingsDesc: "Choose the AI's <b>role</b> and <b>tone of voice</b> via the <b>settings button (gear icon)</b>.", onboardingReadyTitle: "Let's Start Chatting!", onboardingReadyDesc: "Enjoy Wayan AI. Feel free to experiment!", onboardingSkip: "Skip", onboardingNext: "Next", onboardingStart: "Start Chatting",
             ratingTitle: "Rate Wayan AI", ratingDesc: "Your feedback is valuable for our development.", ratingPlaceholder: "Write your feedback here (optional)...", ratingLater: "Later", ratingSubmit: "Submit Rating", ratingAlertNoStars: "Please select at least 1 star.", ratingStatusSending: "Sending...", ratingAlertSuccess: "Thank you for your rating!", ratingAlertError: "Sorry, an error occurred.",
             feedbackAlertEmpty: "Please write your feedback first.", feedbackStatusSending: "Sending...", feedbackAlertSuccess: "Thank you! Your feedback has been sent.", feedbackAlertError: "Sorry, an error occurred.",
-            voiceMessage: "Voice Message",
-            showTranscript: "Show Transcript",
-            hideTranscript: "Hide Transcript",
-            voiceMessageError: "Failed to record voice. Please try again.",
-            voiceMessageSending: "Sending voice message...",
         },
         ja: {
             newChat: "新しいチャット", newChatTitle: "新しい会話を始める", sidebarToggleTitle: "チャット履歴の表示/非表示",
@@ -2140,11 +2024,6 @@
             onboardingWelcomeTitle: "ワヤンAIへようこそ！", onboardingWelcomeDesc: "フレンドリーで使いやすい日本語対応AIを搭載したスマートチャットアプリケーション。", onboardingAskTitle: "質問を始めよう！", onboardingAskDesc: "下の入力ボックスに質問を書き、<b>送信ボタン</b>を押してください。", onboardingHistoryTitle: "会話を保存", onboardingHistoryDesc: "すべての会話は自動的に保存されます。左上の<b>メニューボタン（三本線）</b>をクリックしてチャット履歴を表示します。", onboardingSettingsTitle: "AIをカスタマイズ", onboardingSettingsDesc: "<b>設定ボタン（歯車アイコン）</b>からAIの<b>役割</b>と<b>口調</b>を選択します。", onboardingReadyTitle: "チャットを始めよう！", onboardingReadyDesc: "ワヤンAIをお楽しみください。自由に試してみてください！", onboardingSkip: "スキップ", onboardingNext: "次へ", onboardingStart: "チャットを開始",
             ratingTitle: "ワヤンAIを評価", ratingDesc: "あなたのフィードバックは私たちの開発にとって貴重です。", ratingPlaceholder: "ここにフィードバックを記入してください（任意）...", ratingLater: "後で", ratingSubmit: "評価を送信", ratingAlertNoStars: "少なくとも星を1つ選択してください。", ratingStatusSending: "送信中...", ratingAlertSuccess: "評価ありがとうございます！", ratingAlertError: "申し訳ありません、エラーが発生しました。",
             feedbackAlertEmpty: "まずフィードバックを記入してください。", feedbackStatusSending: "送信中...", feedbackAlertSuccess: "ありがとうございます！フィードバックが送信されました。", feedbackAlertError: "申し訳ありません、エラーが発生しました。",
-            voiceMessage: "ボイスメッセージ",
-            showTranscript: "テキストを表示",
-            hideTranscript: "テキストを隠す",
-            voiceMessageError: "音声の録音に失敗しました。もう一度お試しください。",
-            voiceMessageSending: "ボイスメッセージを送信中...",
         }
     };
 
@@ -2235,7 +2114,7 @@
             starSVG.setAttribute('class', 'w-8 h-8 cursor-pointer star-icon transition-colors ' + (i <= currentRating ? 'text-yellow-400' : 'text-gray-300'));
             starSVG.setAttribute('fill', 'currentColor');
             starSVG.setAttribute('viewBox', '0 0 20 20');
-            starSVG.innerHTML = `<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-.181h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>`; // Star path
+            starSVG.innerHTML = `<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>`; // Star path
             container.appendChild(starSVG);
         }
     }
@@ -2370,12 +2249,6 @@
     let callHistory = [];
     let isListeningForCall = false; // Flag untuk status mikrofon
     let userCallState = 'idle'; // State untuk alur iOS: 'idle', 'listening', 'transcribed'
-
-    // [BARU] Variabel untuk Perekaman Pesan Suara
-    let mediaRecorder;
-    let audioChunks = [];
-    let recordingTimerInterval;
-
 
     const DEFAULT_API_KEY_1 = 'AIzaSyClcqSMaHiXMZI4qYlTySqC3I3hWWg8H9s';
     const DEFAULT_API_KEY_2 = 'AIzaSyB8OPwzNAAyO1nWd9g185rx4YK3WIJy_Fw';
@@ -2616,7 +2489,7 @@
     function getActiveChatHistory() {
         if (!activeChatId) return null;
         const activeSession = allChatSessions.find(session => session.id === activeChatId);
-        return activeSession ? session.history : null;
+        return activeSession ? activeSession.history : null;
     }
     function startNewChat() {
         const newChatId = `chat_${new Date().getTime()}`;
@@ -2691,13 +2564,7 @@
             if (index === 0 && msg.role === 'model' && isDefaultGreeting) {
                 messageToRender = t('initialGreeting');
             }
-             // [BARU] Cek apakah ini pesan suara
-            const isVoiceMessage = msg.parts[0].audioDataUrl;
-            if (isVoiceMessage) {
-                addVoiceMessage(msg.role, msg.parts[0].audioDataUrl, msg.parts[0].text, msg.timestamp);
-            } else {
-                addOriginalMessage(messageToRender, msg.role === 'user', msg.timestamp);
-            }
+            addOriginalMessage(messageToRender, msg.role === 'user', msg.timestamp);
         });
         
         chatMessages.appendChild(document.getElementById('typingIndicator'));
@@ -2707,12 +2574,12 @@
         updateSidebarActiveState();
     }
     
-    function addToConversationHistory(role, parts) {
+    function addToConversationHistory(role, message) {
         const activeSession = allChatSessions.find(s => s.id === activeChatId);
         if (activeSession) {
             activeSession.history.push({
                 role: role,
-                parts: [parts],
+                parts: [{text: message}],
                 timestamp: new Date().toISOString()
             });
             if (activeSession.history.length > 20) {
@@ -2788,95 +2655,95 @@
         const messageKey = isSearchModeActive ? 'systemSearchModeOn' : 'systemSearchModeOff';
         addSystemMessage(t(messageKey), 'info');
     }
-    
-    // ▼▼▼ [REVISED] FUNGSI PESAN SUARA ▼▼▼
-    async function toggleVoiceMode() {
+    function toggleVoiceMode() {
         if (isRecording) {
-            stopVoiceRecognition(true); // Stop and send
+            stopVoiceRecognition(false);
         } else {
-            await startVoiceRecognition();
+            startVoiceRecognition();
         }
     }
-
-    async function startVoiceRecognition() {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    function startVoiceRecognition() {
+        if (!('webkitSpeechRecognition' in window)) {
             alert(t('errorVoiceRecognition'));
             return;
         }
-        
+        finalTranscript = '';
+        document.getElementById('messageInput').value = '';
         isRecording = true;
-        audioChunks = [];
 
-        // Update UI to recording state
-        document.getElementById('messageInput').style.display = 'none';
+        const micBtn = document.getElementById('micBtn');
+        micBtn.classList.add('send-btn-active');
+        micBtn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V6a1 1 0 00-1-1H5z" clip-rule="evenodd"></path></svg>`;
+        micBtn.title = t('stopGenerating');
+
+        document.getElementById('messageInput').style.visibility = 'hidden';
         document.getElementById('voiceRecordingUI').style.display = 'flex';
-        document.getElementById('dynamic-icon-container').style.display = 'none'; // Sembunyikan mic/send
-        
-        document.getElementById('cancelRecordingBtn').onclick = () => stopVoiceRecognition(false);
-        const sendRecordingBtn = document.createElement('button');
-        sendRecordingBtn.id = 'sendRecordingBtn';
-        sendRecordingBtn.className = 'w-10 h-10 flex items-center justify-center bg-green-500 text-white rounded-full';
-        sendRecordingBtn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>`;
-        sendRecordingBtn.onclick = () => stopVoiceRecognition(true);
-        document.getElementById('voiceRecordingUI').appendChild(sendRecordingBtn);
+        document.getElementById('voiceStatusText').textContent = t('listening');
 
-        // Start timer
-        let startTime = Date.now();
-        const timerEl = document.getElementById('recordingTimer');
-        recordingTimerInterval = setInterval(() => {
-            const elapsed = Math.floor((Date.now() - startTime) / 1000);
-            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
-            const seconds = (elapsed % 60).toString().padStart(2, '0');
-            timerEl.textContent = `${minutes}:${seconds}`;
-        }, 1000);
-
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
+        recognition.onresult = (event) => {
+            let interim_transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                const transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    finalTranscript += transcript;
+                } else {
+                    interim_transcript += transcript;
+                }
+            }
+            const displayText = (finalTranscript + interim_transcript).trim();
+            document.getElementById('voiceStatusText').textContent = displayText || t('listening');
+        };
+        recognition.onerror = (event) => {
+            console.error("Speech recognition error:", event.error);
+            if (event.error !== 'aborted') {
+                addSystemMessage(t('errorSpeechRecog', { error: event.error }), 'warning');
+            }
+            stopVoiceRecognition(false);
+        };
+        recognition.onend = () => {
+            if (isRecording) {
+                stopVoiceRecognition(false);
+            }
+        };
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.ondataavailable = event => {
-                audioChunks.push(event.data);
-            };
-            mediaRecorder.onstop = () => {
-                stream.getTracks().forEach(track => track.stop());
-            };
-            mediaRecorder.start();
-        } catch (err) {
-            console.error("Error accessing microphone:", err);
-            alert(t('errorVoiceRecognition'));
+            recognition.start();
+        } catch (e) {
+            console.error("Error starting speech recognition:", e);
+            addSystemMessage(t('errorStartSpeechRecog'), 'warning');
             stopVoiceRecognition(false);
         }
     }
-
-    function stopVoiceRecognition(shouldSend) {
+    function stopVoiceRecognition(isCancel = false) {
         if (!isRecording) return;
         
-        // Stop recorder and timer
-        if (mediaRecorder && mediaRecorder.state === 'recording') {
-            mediaRecorder.stop();
-        }
-        clearInterval(recordingTimerInterval);
+        const currentText = document.getElementById('voiceStatusText').textContent.trim();
         isRecording = false;
-
-        if (shouldSend && audioChunks.length > 0) {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-            const audioUrl = URL.createObjectURL(audioBlob);
-            const reader = new FileReader();
-            reader.onload = () => {
-                const base64Audio = reader.result;
-                sendVoiceMessage(base64Audio); // Kirim sebagai base64
-            };
-            reader.readAsDataURL(audioBlob);
+        if (recognition) {
+            recognition.stop();
+            recognition = null;
         }
 
-        // Reset UI
-        document.getElementById('messageInput').style.display = 'block';
+        if (!isCancel && currentText && currentText !== t('listening')) {
+            document.getElementById('messageInput').value = currentText;
+            finalTranscript = currentText;
+        } else {
+            document.getElementById('messageInput').value = '';
+            finalTranscript = '';
+        }
+
+        const micBtn = document.getElementById('micBtn');
+        micBtn.classList.remove('send-btn-active');
+        micBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>`;
+        micBtn.title = t('voiceModeTitle');
+
+        document.getElementById('messageInput').style.visibility = 'visible';
         document.getElementById('voiceRecordingUI').style.display = 'none';
-        document.getElementById('dynamic-icon-container').style.display = 'block';
-        const sendBtn = document.getElementById('sendRecordingBtn');
-        if (sendBtn) sendBtn.remove();
-        document.getElementById('recordingTimer').textContent = "00:00";
+        handleInputChange({ target: document.getElementById('messageInput') });
     }
-    // ▲▲▲ AKHIR DARI FUNGSI PESAN SUARA ▼▼▼
     
     function applyDarkMode(isDark) {
         document.documentElement.classList.toggle('dark', isDark);
@@ -3356,7 +3223,7 @@
                     <div class="chat-timestamp text-right">${timeString}</div>
                 </div>`;
 
-            const messageForHistory = {text: `[Gambar: ${fileName}] ${question}`};
+            const messageForHistory = `[Gambar: ${fileName}] ${question}`;
             addToConversationHistory('user', messageForHistory);
 
             const allUserData = getChatLimitData();
@@ -3399,7 +3266,7 @@
                     if (endBlock !== -1) { nextChunk = text.substring(i, endBlock + 3); i = endBlock + 2; }
                 } else if (char === '*' && text.charAt(i + 1) === '*') {
                      let endBold = text.indexOf('**', i + 2);
-                     if(endBold !== -1) { nextChunk = text.substring(i, endBlock + 2); i = endBlock + 1; }
+                     if(endBold !== -1) { nextChunk = text.substring(i, endBold + 2); i = endBold + 1; }
                 }
                 element.innerHTML += nextChunk.replace(/\n/g, '<br>');
                 i++;
@@ -3424,7 +3291,7 @@
             
             const searchButtonHtml = isSearchable ? `
                 <div class="mt-2 text-right">
-                    <button onclick="showSearchModal('${message.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')" class="inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition-all no-underline" style="color: white; text-decoration: none; cursor: none; border: none;">
+                    <button onclick="showSearchModal('${message.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')" class="inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition-all no-underline" style="color: white; text-decoration: none; cursor: pointer; border: none;">
                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
                         <span data-translate-key="searchOnGoogle">Cari di Google</span>
                     </button>
@@ -3445,7 +3312,7 @@
             messageDiv.innerHTML = `
                 <div class="flex items-center space-x-3 mb-2">
                     <div onclick="showProfileModal()" class="ai-avatar w-8 h-8 flex-shrink-0 flex items-center justify-center overflow-hidden cursor-pointer">
-                        <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover">
+                        <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
                     </div>
                     <div class="font-bold text-sm" style="color: var(--text-primary);">Wayan AI</div>
                 </div>
@@ -3495,6 +3362,7 @@
         const callMatch = message.match(/^\[TRANSKRIP PANGGILAN SUARA\]\n([\s\S]*)/);
 
         if (isUser) {
+            // [DIUBAH] Flex ditambahkan di sini khusus untuk user
             messageDiv.className += ' flex items-start space-x-3 flex-row-reverse space-x-reverse user';
             const timeHtml= timeString ? `<div class="chat-timestamp text-right">${timeString}</div>` : '';
             
@@ -3522,10 +3390,11 @@
         } else {
             const encodedMessage = btoa(encodeURIComponent(message));
             messageDiv.className += ' ai';
+            // [DIUBAH] Struktur HTML pesan AI dirombak total
             messageDiv.innerHTML = `
-                <div class="flex items-start space-x-3 mb-2">
+                <div class="flex items-center space-x-3 mb-2">
                     <div onclick="showProfileModal()" class="ai-avatar w-8 h-8 flex-shrink-0 flex items-center justify-center overflow-hidden cursor-pointer">
-                        <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="StoryBali" class="w-full h-full object-cover">
+                        <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI" class="w-full h-full object-cover">
                     </div>
                     <div class="font-bold text-sm" style="color: var(--text-primary);">Wayan AI</div>
                 </div>
@@ -3533,6 +3402,7 @@
                     <div class="ai-message">
                         <div class="markdown-content leading-relaxed text-base">${marked.parse(message)}</div>
                         <div class="suggestions-container mt-3"></div>
+                        <!-- [FIX] Tombol aksi dipindahkan ke dalam gelembung -->
                         <div class="ai-message-footer">
                             ${timeString ? `<div class="chat-timestamp text-xs">${timeString}</div>` : ''}
                             <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" data-translate-title="copyAnswer">
@@ -3558,6 +3428,7 @@
                 </div>`;
         }
         chatMessages.appendChild(messageDiv);
+        // [BARU] Tambahkan tombol salin ke blok kode dari riwayat
         const markdownContent = messageDiv.querySelector('.markdown-content');
         if (markdownContent) {
             enhanceCodeBlocks(markdownContent);
@@ -3599,6 +3470,7 @@
             setTimeout(() => button.innerHTML = originalHTML, 2000);
         });
     }
+    // [BARU] Fungsi untuk menambahkan tombol salin ke semua blok kode
     function enhanceCodeBlocks(container) {
         const codeBlocks = container.querySelectorAll('pre');
         codeBlocks.forEach(pre => {
@@ -3610,6 +3482,7 @@
         });
     }
 
+    // [BARU] Fungsi yang menangani aksi klik tombol salin kode
     function copyCode(button) {
         const pre = button.parentElement;
         const code = pre.querySelector('code');
@@ -3620,15 +3493,17 @@
         }
     }
     function populateVoiceList() {
-        const voices = speechSynthesis.getVoices(); 
+        const voices = speechSynthesis.getVoices(); // Coba dapatkan daftar suara
         if (voices.length === 0) {
+            // Jika daftar suara belum siap, event listener 'onvoiceschanged' akan memanggil fungsi ini lagi.
+            // Event listener ini diatur saat window.onload.
             return;
         }
 
-        availableVoices = voices; 
+        availableVoices = voices; // Simpan daftar suara ke variabel global
         if (voicesReadyPromiseResolver) {
-            voicesReadyPromiseResolver(); 
-            voicesReadyPromiseResolver = null; 
+            voicesReadyPromiseResolver(); // Selesaikan promise, menandakan suara sudah siap
+            voicesReadyPromiseResolver = null; // Cegah agar tidak dipanggil lagi
         }
 
         const voiceSelect = document.getElementById('voiceSelect');
@@ -3715,6 +3590,7 @@
         }
         isReading = false;
         
+        // [DIUBAH] Selector diubah agar lebih andal (tidak bergantung pada bahasa) dan memastikan semua ikon kembali ke bentuk semula.
         document.querySelectorAll('.message-bubble.ai button[data-translate-title="readAnswer"], #previewElevenLabsVoiceBtn').forEach(btn => {
             if (btn.id === 'previewElevenLabsVoiceBtn') {
                 btn.innerHTML = `<svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path></svg>`;
@@ -3768,6 +3644,8 @@
             const stopIcon = `<svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 00-1 1v2a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>`;
             
             currentUtterance = new SpeechSynthesisUtterance(text);
+            // [FIX UTAMA] Gunakan `availableVoices` yang sudah dijamin terisi, bukan memanggil `getVoices()` lagi.
+            // Juga, gunakan prefix bahasa yang benar untuk suara cadangan.
             const langPrefix = settings.language === 'ja' ? 'ja' : (settings.language === 'en' ? 'en' : 'id');
             const selectedVoice = availableVoices.find(v => v.voiceURI === settings.voiceURI);
             currentUtterance.voice = selectedVoice || availableVoices.find(v => v.lang.startsWith(langPrefix));
@@ -3775,10 +3653,10 @@
             if (button) button.innerHTML = stopIcon;
             isReading = true;
             
-            currentUtterance.onend = () => { resolve(); };
+            currentUtterance.onend = () => { resolve(); }; // [DIUBAH] stopReading() akan dipanggil oleh 'finally' block di readAiResponse
             currentUtterance.onerror = (e) => {
                 console.error('SpeechSynthesis Error', e);
-                reject(e); 
+                reject(e); // [DIUBAH] stopReading() akan dipanggil oleh 'finally' block
             };
             
             speechSynthesis.speak(currentUtterance);
@@ -3791,11 +3669,13 @@
             return;
         }
 
+        // [FIX] Pre-emptively cancel any stuck speech from a previous state.
+        // This can help resolve issues on some browsers where the speech engine gets stuck on page load.
         if (speechSynthesis.speaking || speechSynthesis.pending) {
             speechSynthesis.cancel();
         }
 
-        await voicesReadyPromise;
+        await voicesReadyPromise; // [FIX] Tunggu hingga daftar suara benar-benar siap
 
         if (isReading) {
             stopReading();
@@ -3925,7 +3805,7 @@
             if (suggestionsEl && suggestionsPart) {
                 suggestionsEl.innerHTML = renderSuggestions(suggestionsPart.split('|').map(s => s.trim()).filter(Boolean));
             }
-            addToConversationHistory('model', {text: mainAnswer.trim()});
+            addToConversationHistory('model', mainAnswer.trim());
             playNotificationSound();
         } catch (error) {
             if (error.name !== 'AbortError') {
@@ -4120,10 +4000,11 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
         } else {
             addMessage(message, true, [], false);
         }
+    // [BARU] Sembunyikan saran cepat setelah pesan pertama dikirim
     document.querySelector('.quick-actions').style.display = 'none';
 
         trackUserMessageCount();
-        addToConversationHistory('user', {text: message});
+        addToConversationHistory('user', message);
         input.value = '';
         handleInputChange({ target: input });
         showTypingIndicator();
@@ -4141,6 +4022,7 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
         let contentEl, suggestionsEl;
 
         try {
+            // 1. Buat bubble chat AI yang kosong dan dapatkan elemennya
             const bubbleElements = addMessage(null, false);
             contentEl = bubbleElements.contentEl;
             suggestionsEl = bubbleElements.suggestionsEl;
@@ -4152,9 +4034,11 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
                 generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048 }
             };
 
+            // 2. Lakukan request dan dapatkan stream
             const response = await makeApiRequest(payload, currentFetchController.signal);
             if (!response.body) throw new Error("Response body is null");
 
+            // 3. Baca stream
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let fullResponseText = "";
@@ -4182,6 +4066,7 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
                 }
             }
 
+            // 4. Finalisasi setelah stream selesai
             let [mainAnswer, suggestionsPart] = fullResponseText.split('[SUGGESTIONS]');
             contentEl.innerHTML = marked.parse(mainAnswer.trim());
             enhanceCodeBlocks(contentEl);
@@ -4189,7 +4074,7 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
                 let dynamicSuggestions = suggestionsPart.split('|').map(s => s.trim()).filter(Boolean);
                 suggestionsEl.innerHTML = renderSuggestions(dynamicSuggestions);
             }
-            addToConversationHistory('model', {text: mainAnswer.trim()});
+            addToConversationHistory('model', mainAnswer.trim());
             playNotificationSound();
         } catch (error) {
             if (error.name === 'AbortError') {
@@ -4199,6 +4084,7 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
                 if (contentEl) {
                     contentEl.innerHTML = marked.parse(t('errorApiGeneral', { error: error.message }));
                 } else {
+                    // Fallback jika bubble gagal dibuat
                     addOriginalMessage(t('errorApiGeneral', { error: error.message }), false, new Date().toISOString());
                 }
             }
@@ -4261,7 +4147,7 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
             if (suggestionsEl && suggestionsPart) {
                 suggestionsEl.innerHTML = renderSuggestions(suggestionsPart.split('|').map(s => s.trim()).filter(Boolean));
             }
-            addToConversationHistory('model', {text: mainAnswer.trim()});
+            addToConversationHistory('model', mainAnswer.trim());
             playNotificationSound();
         } catch (error) {
             if (error.name === 'AbortError') {
@@ -4271,6 +4157,7 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
                 if (contentEl) {
                     contentEl.innerHTML = marked.parse(t('errorImageAnalysisGeneral', { error: error.message }));
                 } else {
+                    // Fallback jika bubble gagal dibuat
                     addOriginalMessage(t('errorImageAnalysisGeneral', { error: error.message }), false, new Date().toISOString());
                 }
             }
@@ -4288,7 +4175,7 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
         const sampleText = t('initialGreeting');
 
         if (!voiceId) {
-            alert(t('alertSelectVoiceFirst')); 
+            alert(t('alertSelectVoiceFirst')); // Anda perlu menambahkan key ini
             return;
         }
         stopReading(); 
@@ -4327,6 +4214,7 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
         try {
             if (settings.audioSource === 'elevenlabs') {
                 await playElevenLabsAudio(text, null);
+                // For ElevenLabs, onended event on the audio player handles this.
                 elevenLabsAudioPlayer.onended = onAudioEnd;
             } else {
                 const utterance = new SpeechSynthesisUtterance(text);
@@ -4528,146 +4416,16 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
                     transcriptText += prefix + turn.parts[0].text + '\n';
                 }
             });
-            addToConversationHistory('user', {text: transcriptText});
+            addToConversationHistory('user', transcriptText);
             addOriginalMessage(transcriptText, true, new Date().toISOString());
             scrollToBottom();
         }
     }
-     // ▼▼▼ [BARU] Fungsi Pesan Suara ▼▼▼
 
-    function createAudioPlayer(audioUrl, duration) {
-        const playerId = `player_${Date.now()}`;
-        const player = new Audio(audioUrl);
-        let isPlaying = false;
-
-        const container = document.createElement('div');
-        container.className = 'voice-message-player';
-        container.innerHTML = `
-            <button class="play-pause-btn">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path></svg>
-            </button>
-            <div class="progress-bar-container">
-                <div class="progress-bar"></div>
-            </div>
-            <span class="duration">${formatDuration(duration)}</span>
-        `;
-
-        const playBtn = container.querySelector('.play-pause-btn');
-        const progressBar = container.querySelector('.progress-bar');
-        const durationEl = container.querySelector('.duration');
-        
-        playBtn.onclick = () => {
-            if (isPlaying) {
-                player.pause();
-            } else {
-                player.play();
-            }
-        };
-
-        player.onplay = () => {
-            isPlaying = true;
-            playBtn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 00-1 1v2a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>`;
-        };
-        player.onpause = () => {
-            isPlaying = false;
-            playBtn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path></svg>`;
-        };
-        player.ontimeupdate = () => {
-            const progress = (player.currentTime / player.duration) * 100;
-            progressBar.style.width = `${progress}%`;
-            durationEl.textContent = formatDuration(player.duration - player.currentTime);
-        };
-        player.onended = () => {
-          durationEl.textContent = formatDuration(duration);
-        }
-
-        return container;
-    }
-
-    function formatDuration(seconds) {
-        if (isNaN(seconds) || seconds < 0) return "00:00";
-        const minutes = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    function toggleTranscript(button) {
-        const transcriptContent = button.nextElementSibling;
-        const isHidden = transcriptContent.hidden;
-        transcriptContent.hidden = !isHidden;
-        button.textContent = isHidden ? t('hideTranscript') : t('showTranscript');
-    }
-
-    function addVoiceMessage(role, audioDataUrl, transcript, timestamp) {
-        const chatMessages = document.getElementById('chatMessages');
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message-bubble';
-        const timeString = timestamp ? getFormattedTime(new Date(timestamp)) : getFormattedTime();
-
-        const audioEl = new Audio(audioDataUrl);
-        audioEl.onloadedmetadata = () => {
-            const playerUI = createAudioPlayer(audioUrl, audioEl.duration);
-            const transcriptId = `transcript_${Date.now()}`;
-            
-            const messageContent = `
-                ${playerUI.outerHTML}
-                <button class="transcript-toggle-btn" onclick="toggleTranscript(this)">${t('showTranscript')}</button>
-                <div class="transcript-content" hidden>${transcript || t('voiceMessage')}</div>
-            `;
-            
-            if (role === 'user') {
-                messageDiv.className += ' flex items-start space-x-3 flex-row-reverse space-x-reverse user';
-                messageDiv.innerHTML = `<div class="user-message p-2">${messageContent}<div class="chat-timestamp text-right pr-2">${timeString}</div></div>`;
-            } else {
-                messageDiv.className += ' ai';
-                messageDiv.innerHTML = `
-                    <div class="flex items-start space-x-3 mb-2">
-                        <div class="ai-avatar w-8 h-8 flex-shrink-0"><img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" class="w-full h-full object-cover"></div>
-                        <div class="font-bold text-sm">${settings.aiName}</div>
-                    </div>
-                    <div class="ai-message p-2">${messageContent}<div class="ai-message-footer pt-1 mt-1"><div class="chat-timestamp">${timeString}</div></div></div>`;
-            }
-            chatMessages.insertBefore(messageDiv, document.getElementById('typingIndicator'));
-            scrollToBottom();
-        };
-    }
-    
-    async function sendVoiceMessage(audioDataUrl) {
-       addSystemMessage(t('voiceMessageSending'), 'info');
-
-        addToConversationHistory('user', {
-            text: `[Pesan Suara]`, 
-            audioDataUrl: audioDataUrl
-        });
-
-        addVoiceMessage('user', audioDataUrl, `[Pesan Suara]`);
-
-        // Di sini Anda akan mengirim audioDataUrl ke API Speech-to-Text dan kemudian ke Gemini.
-        // Untuk saat ini, kita akan simulasikan respons AI.
-        setTimeout(async () => {
-            const aiTranscript = "Ini adalah contoh balasan suara dari AI. Tentu, saya akan bantu.";
-            
-            // Simulasikan pembuatan audio dari ElevenLabs/Browser TTS
-            const dummyAudioUrl = await getDummyAudioResponse(aiTranscript);
-
-            addToConversationHistory('model', { 
-                text: aiTranscript,
-                audioDataUrl: dummyAudioUrl
-            });
-            addVoiceMessage('model', dummyAudioUrl, aiTranscript);
-
-        }, 2000);
-    }
-
-    // Fungsi dummy untuk simulasi pembuatan audio balasan
-    async function getDummyAudioResponse(text) {
-        // Ini HANYA untuk demonstrasi. Di implementasi nyata, Anda akan memanggil API TTS.
-        const silentAudio = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
-        return silentAudio;
-    }
     // ===================================================================================
-    // ▲▲▲ AKHIR DARI FUNGSI PESAN SUARA BARU ▲▲▲
+    // ▲▲▲ AKHIR DARI BAGIAN FUNGSI PANGGILAN SUARA YANG DIROMBAK TOTAL ▲▲▲
     // ===================================================================================
+
 
     window.addEventListener('load', async () => {
         loadApiKeys();
@@ -4680,8 +4438,9 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
         }
         
         checkUserStatus();
-        populateVoiceList();
+        populateVoiceList(); // Panggilan awal. Jika suara belum siap, fungsi akan return.
         if (speechSynthesis.onvoiceschanged !== undefined) {
+            // Event listener ini akan memanggil populateVoiceList() lagi ketika daftar suara sudah dimuat oleh browser.
             speechSynthesis.onvoiceschanged = populateVoiceList;
         }
         populateElevenLabsVoices();
@@ -4861,7 +4620,7 @@ html.dark .onboarding-slide .icon-wrapper svg {
             titleKey: 'onboardingHistoryTitle', descKey: 'onboardingHistoryDesc' 
           },
           { 
-            svg: `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0h9.75"></path></svg>`, 
+            svg: `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"></path></svg>`, 
             titleKey: 'onboardingSettingsTitle', descKey: 'onboardingSettingsDesc' 
           },
           { 
