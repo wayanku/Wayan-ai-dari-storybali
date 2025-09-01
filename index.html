@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -358,8 +355,9 @@
         right: 0;
         z-index: 10;
         
-        /* Efek kaca dengan warna semi-transparan dan blur */
-        background-color: rgba(var(--bg-secondary-rgba), 0.45); /* [DIUBAH] Dibuat lebih gelap lagi */
+        /* [DIUBAH] Efek kaca disamakan dengan footer untuk konsistensi */
+        background-color: rgba(var(--bg-primary-rgba), 0.50);
+        background-image: none; /* Menghapus gradien di tema terang */
         backdrop-filter: blur(32px); /* [DIUBAH] Blur ditingkatkan lagi */
         -webkit-backdrop-filter: blur(32px);
         border-bottom: 1px solid var(--border-color);
@@ -372,6 +370,7 @@
         /* ▲▲▲ AKHIR DARI PERUBAHAN HEADER ▲▲▲ */
     }
     html.dark .header-gradient {
+        background-image: none; /* [DIUBAH] Hapus gradien di mode gelap */
         background-color: rgba(var(--bg-secondary-rgba), 0.6) !important; /* [DIUBAH] Dibuat lebih gelap lagi */
     }
 
@@ -878,6 +877,15 @@
         }
     }
     /* ▲▲▲ AKHIR DARI PERBAIKAN TAMPILAN DESKTOP ▲▲▲ */
+
+    /* ▼▼▼ [BARU] Perbaikan untuk poni & home bar iPhone di modal pengaturan ▼▼▼ */
+    #settingsModal .modal-content > div:first-child {
+        padding-top: calc(1rem + env(safe-area-inset-top));
+    }
+    #settingsModal .modal-content > div:last-child {
+        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    }
+    /* ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲ */
     .modal-close-btn {
         background: #ef4444; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
         transition: all 0.2s ease-in-out; border-radius: 9999px !important;
@@ -1564,26 +1572,7 @@
                 </div>
             </div>
             <div id="tab-appearance" class="settings-tab-content space-y-4">
-                <div class="settings-card">
-                    <div class="p-2">
-                        <h4 class="text-sm font-medium text-gray-700 mb-3" data-translate-key="settingTheme">Tema Warna</h4>
-                        <div id="themeOptionsContainer" class="grid grid-cols-3 gap-3">
-                            <div onclick="changeTheme('blue')" id="themeBlue" class="theme-option-new active">
-                                <div class="theme-swatch bg-gradient-to-r from-blue-500 to-purple-500"></div>
-                                <span class="text-xs font-medium text-gray-600">Biru</span>
-                            </div>
-                            <div onclick="changeTheme('green')" id="themeGreen" class="theme-option-new">
-                                <div class="theme-swatch bg-gradient-to-r from-green-500 to-teal-500"></div>
-                                <span class="text-xs font-medium text-gray-600">Hijau</span>
-                            </div>
-                            <div onclick="changeTheme('pink')" id="themePink" class="theme-option-new">
-                                <div class="theme-swatch bg-gradient-to-r from-pink-500 to-red-500"></div>
-                                <span class="text-xs font-medium text-gray-600">Pink</span>
-                            </div>
-                        </div>
-                        <p id="themeDisabledMessage" class="text-xs text-center text-gray-500 mt-2 hidden" data-translate-key="themeDisabled">Ubah tema hanya tersedia di mode terang.</p>
-                    </div>
-                </div>
+                <!-- [DIHAPUS] Kartu Tema Warna telah dihapus dari sini -->
                 <!-- [DIUBAH] Kartu untuk Latar Belakang Kustom (Upload File) -->
                 <div class="settings-card">
                     <div class="settings-item flex-col">
@@ -2205,7 +2194,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     };
 
     const defaultSettings = {
-        theme: 'blue',
         soundEnabled: true,
         animationsEnabled: true,
         readAiResponseEnabled: true,
@@ -2743,46 +2731,25 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.getElementById('voiceRecordingUI').style.display = 'none';
         handleInputChange({ target: document.getElementById('messageInput') });
     }
-    function changeTheme(themeName) {
-        if (document.documentElement.classList.contains('dark')) {
-            return;
-        }
-        settings.theme = themeName;
-        document.querySelectorAll('.theme-option-new').forEach(btn => btn.classList.remove('active'));
-        document.getElementById(`theme${themeName.charAt(0).toUpperCase() + themeName.slice(1)}`)?.classList.add('active');
-        const colors = {
-            blue: {from: '#667eea', to: '#764ba2'},
-            green: {from: '#10b981', to: '#059669'},
-            pink: {from: '#ec4899', to: '#dc2626'}
-        }[themeName];
-        document.querySelector('.header-gradient').style.background = `linear-gradient(135deg, ${colors.from}, ${colors.to})`;
-        document.getElementById('sendBtn').style.backgroundColor = colors.from;
-        document.querySelectorAll('.ai-avatar').forEach(avatar => avatar.style.background = `linear-gradient(135deg, ${colors.from}, ${colors.to})`);
-        document.querySelector('.profile-avatar-border').style.borderImage = `linear-gradient(135deg, ${colors.from}, ${colors.to}, #f093fb) 1`;
-        saveSettings();
-    }
+    
     function applyDarkMode(isDark) {
         document.documentElement.classList.toggle('dark', isDark);
         settings.darkMode = isDark;
-        const themeOptionsContainer = document.getElementById('themeOptionsContainer');
-        const themeDisabledMessage = document.getElementById('themeDisabledMessage');
         const header = document.querySelector('.header-gradient');
         const sendBtn = document.getElementById('sendBtn');
         const aiAvatars = document.querySelectorAll('.ai-avatar');
         const profileAvatarBorder = document.querySelector('.profile-avatar-border');
         if (isDark) {
-            themeOptionsContainer.style.opacity = '0.5';
-            themeOptionsContainer.style.pointerEvents = 'none';
-            themeDisabledMessage.classList.remove('hidden');
-            if (header) header.style.background = '#222222';
+            if (header) {
+                header.style.background = ''; // Hapus style inline agar style CSS mode gelap berlaku
+            }
             if (sendBtn) sendBtn.style.backgroundColor = '';
             if (profileAvatarBorder) profileAvatarBorder.style.borderImage = '';
             aiAvatars.forEach(avatar => { avatar.style.background = ''; });
         } else {
-            themeOptionsContainer.style.opacity = '1';
-            themeOptionsContainer.style.pointerEvents = 'auto';
-            themeDisabledMessage.classList.add('hidden');
-            changeTheme(settings.theme);
+            // Saat kembali ke mode terang, style dari CSS akan otomatis berlaku
+            // karena tidak ada lagi fungsi changeTheme yang memberikan style inline
+            // Pastikan style default (biru) sudah ada di CSS
         }
     }
 
@@ -2933,9 +2900,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         applyTranslations(settings.language);
         document.querySelector('.header-gradient h1').textContent = 'Wayan AI';
         document.getElementById('aiNameInput').value = 'Wayan';
-        if (!settings.darkMode) {
-            changeTheme(settings.theme);
-        }
+        
         document.getElementById('fontSizeSelect').value = settings.fontSize;
         document.getElementById('animationToggle').checked = settings.animationsEnabled;
         toggleAnimations();
@@ -2990,10 +2955,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
 
         const elevenLabsSelect = document.getElementById('elevenLabsVoiceSelect');
         if (tempSettings.elevenLabsVoiceId) elevenLabsSelect.value = tempSettings.elevenLabsVoiceId;
-
-        // Handle theme buttons state
-        document.querySelectorAll('.theme-option-new').forEach(btn => btn.classList.remove('active'));
-        document.getElementById(`theme${tempSettings.theme.charAt(0).toUpperCase() + tempSettings.theme.slice(1)}`)?.classList.add('active');
 
         // [FIX] Show background file status from tempSettings when modal is open
         const fileNameDisplay = document.getElementById('backgroundFileName');
@@ -3441,7 +3402,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>
                             </button>
                             <button onclick="handleRating(this, 'dislike')" class="action-icon-ai" data-translate-title="dislikeResponse">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09-.23-.14-.47-.14-.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41-.17-.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14-.47-.14-.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41-.17-.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
                             </button>
                             <button onclick="regenerateResponse(this)" class="action-icon-ai" data-translate-title="regenerateResponse">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
