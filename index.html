@@ -1010,7 +1010,7 @@
         box-shadow: 0 2px 4px rgba(245, 245, 245, 0.1);
     }
 
-    /* ▼▼▼ [BARU] Gaya untuk Pratinjau Latar Belakang Realistis ▼▼▼ */
+    /* ▼▼▼ [DIUBAH] Gaya untuk Pratinjau Latar Belakang Realistis ▼▼▼ */
     .preview-pane {
         position: relative;
         overflow: hidden;
@@ -1018,97 +1018,57 @@
         background-color: var(--bg-primary);
         transition: border-color 0.3s ease;
     }
-    .preview-pane.mobile-view { width: 140px; aspect-ratio: 9 / 19.5; border-radius: 1.25rem; }
-    .preview-pane.desktop-view { flex-grow: 1; max-width: 240px; aspect-ratio: 16 / 10; border-radius: 0.75rem; }
+    .preview-pane.mobile-view { width: 140px; aspect-ratio: 9 / 19.5; border-radius: 1.25rem; flex-shrink: 0; }
+    .preview-pane.desktop-view { width: 100%; max-width: 240px; aspect-ratio: 16 / 10; border-radius: 0.75rem; }
     .preview-background { position: absolute; inset: 0; z-index: 1; transition: all 0.3s ease; }
-    .preview-header, .preview-footer { position: absolute; left: 0; right: 0; z-index: 2; background-color: rgba(var(--bg-secondary-rgba), 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-    .preview-header { top: 0; height: 12%; border-bottom: 1px solid var(--border-color); }
-    .preview-footer { bottom: 0; height: 15%; border-top: 1px solid var(--border-color); }
-    .preview-bubble { position: absolute; z-index: 2; border-radius: 0.5rem; }
-    .preview-bubble.ai { top: 18%; left: 5%; width: 70%; height: 10%; background-color: rgba(var(--bg-tertiary-rgba), 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top-left-radius: 0.2rem; }
-    .preview-bubble.user { top: 32%; right: 5%; width: 60%; height: 8%; background: linear-gradient(135deg, rgba(16, 185, 129, 0.8), rgba(5, 150, 105, 0.8)); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top-right-radius: 0.2rem; }
-    /* ▲▲▲ AKHIR DARI GAYA PRATINJAU ▲▲▲ */
-
-    .choice-btn {
-        width: 100%;
-        padding: 0.5rem;
-        background: var(--bg-tertiary);
-        border: 1px solid var(--border-color);
-        border-radius: 0.5rem;
-        font-size: 0.8rem;
-        font-weight: 500;
-        color: var(--text-secondary);
-        transition: all 0.2s ease-in-out;
-        text-align: center;
-        cursor: pointer;
-    }
-    .choice-btn:hover {
-        background: var(--bg-accent);
-        border-color: #cbd5e1;
-    }
-    html.dark .choice-btn:hover { border-color: #555; }
-    .choice-btn.active {
-        background: var(--bg-accent);
-        border-color: #6366f1;
-        color: #4f46e5;
-        font-weight: 600;
-        box-shadow: 0 2px 4px rgba(99, 102, 241, 0.1);
-    }
-    html.dark .choice-btn.active { 
-        border-color: #f5f5f5;
-        color: var(--text-primary);
-        box-shadow: 0 2px 4px rgba(245, 245, 245, 0.1);
-    }
-
-    /* ▼▼▼ [BARU] Gaya untuk Pratinjau Latar Belakang Realistis ▼▼▼ */
-    .preview-pane {
-        position: relative;
+    .preview-header, .preview-footer { position: absolute; left: 0; right: 0; z-index: 2; background-color: rgba(var(--bg-secondary-rgba), 0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .preview-header { top: 0; height: 12%; border-bottom: 1px solid rgba(var(--text-primary-rgba), 0.1); }
+    .preview-footer { bottom: 0; height: 15%; border-top: 1px solid rgba(var(--text-primary-rgba), 0.1); }
+    .preview-bubble { 
+        position: absolute; 
+        z-index: 2; 
+        border-radius: 0.5rem; 
+        padding: 5%; /* Padding untuk teks di dalam */
+        display: flex;
+        gap: 5%;
+        align-items: flex-start;
+        font-size: 0.4rem; /* Ukuran font sangat kecil untuk simulasi */
+        line-height: 1.4;
         overflow: hidden;
-        border: 4px solid var(--border-color);
-        background-color: var(--bg-primary);
-        transition: border-color 0.3s ease;
     }
-    .preview-pane.mobile-view { width: 140px; aspect-ratio: 9 / 19.5; border-radius: 1.25rem; }
-    .preview-pane.desktop-view { flex-grow: 1; max-width: 240px; aspect-ratio: 16 / 10; border-radius: 0.75rem; }
-    .preview-background { position: absolute; inset: 0; z-index: 1; transition: all 0.3s ease; }
-    .preview-header, .preview-footer { position: absolute; left: 0; right: 0; z-index: 2; background-color: rgba(var(--bg-secondary-rgba), 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-    .preview-header { top: 0; height: 12%; border-bottom: 1px solid var(--border-color); }
-    .preview-footer { bottom: 0; height: 15%; border-top: 1px solid var(--border-color); }
-    .preview-bubble { position: absolute; z-index: 2; border-radius: 0.5rem; }
-    .preview-bubble.ai { top: 18%; left: 5%; width: 70%; height: 10%; background-color: rgba(var(--bg-tertiary-rgba), 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top-left-radius: 0.2rem; }
-    .preview-bubble.user { top: 32%; right: 5%; width: 60%; height: 8%; background: linear-gradient(135deg, rgba(16, 185, 129, 0.8), rgba(5, 150, 105, 0.8)); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top-right-radius: 0.2rem; }
-    /* ▲▲▲ AKHIR DARI GAYA PRATINJAU ▲▲▲ */
-
-    .choice-btn {
-        width: 100%;
-        padding: 0.5rem;
-        background: var(--bg-tertiary);
-        border: 1px solid var(--border-color);
-        border-radius: 0.5rem;
-        font-size: 0.8rem;
-        font-weight: 500;
-        color: var(--text-secondary);
-        transition: all 0.2s ease-in-out;
-        text-align: center;
-        cursor: pointer;
-    }
-    .choice-btn:hover {
-        background: var(--bg-accent);
-        border-color: #cbd5e1;
-    }
-    html.dark .choice-btn:hover { border-color: #555; }
-    .choice-btn.active {
-        background: var(--bg-accent);
-        border-color: #6366f1;
-        color: #4f46e5;
-        font-weight: 600;
-        box-shadow: 0 2px 4px rgba(99, 102, 241, 0.1);
-    }
-    html.dark .choice-btn.active { 
-        border-color: #f5f5f5;
+    .preview-bubble.ai { 
+        top: 18%; left: 5%; width: 80%; /* Sedikit lebih lebar */
+        background-color: rgba(var(--bg-tertiary-rgba), 0.8); 
+        backdrop-filter: blur(10px); 
+        -webkit-backdrop-filter: blur(10px); 
+        border-top-left-radius: 0.2rem; 
         color: var(--text-primary);
-        box-shadow: 0 2px 4px rgba(245, 245, 245, 0.1);
     }
+    .preview-bubble.user { 
+        top: 40%; right: 5%; width: 50%; 
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.8), rgba(5, 150, 105, 0.8)); 
+        backdrop-filter: blur(10px); 
+        -webkit-backdrop-filter: blur(10px); 
+        border-top-right-radius: 0.2rem;
+        color: white;
+        justify-content: flex-end;
+    }
+    .preview-avatar {
+        width: 15%;
+        aspect-ratio: 1 / 1;
+        border-radius: 50%;
+        background-image: url('https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg');
+        background-size: cover;
+        flex-shrink: 0;
+    }
+    .preview-text-content {
+        flex-grow: 1;
+    }
+    .preview-name {
+        font-weight: 600;
+        margin-bottom: 2%;
+    }
+    /* ▲▲▲ AKHIR DARI GAYA PRATINJAU ▲▲▲ */
     
     .markdown-content, .markdown-content p, .markdown-content li {
         color: var(--text-primary); 
@@ -1636,12 +1596,34 @@
                             <p id="backgroundFileName" class="text-xs text-gray-500 pl-1 truncate"></p>
                             
                             <!-- [DIUBAH] Area Pratinjau dan Kontrol Latar Belakang Baru -->
-                            <div id="backgroundPreviewWrapper" class="mt-3 p-2 border border-dashed rounded-lg hidden" style="border-color: var(--border-color);">
-                                <div class="flex justify-center items-start gap-4 w-full">
+                            <div id="backgroundPreviewWrapper" class="mt-3 p-2 border-t border-dashed hidden" style="border-color: var(--border-color);">
+                                <div class="flex justify-center items-end gap-4 w-full">
                                     <!-- Pratinjau Mobile -->
-                                    <div class="preview-pane mobile-view"><div class="preview-background"></div><div class="preview-header"></div><div class="preview-bubble ai"></div><div class="preview-bubble user"></div><div class="preview-footer"></div></div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="preview-pane mobile-view">
+                                            <div class="preview-background"></div><div class="preview-header"></div>
+                                            <div class="preview-bubble ai">
+                                                <div class="preview-avatar"></div>
+                                                <div class="preview-text-content">
+                                                    <div class="preview-name">Wayan AI</div>
+                                                    <p>Halo! Gue Wayan nih, AI assistant yang siap bantu...</p>
+                                                </div>
+                                            </div>
+                                            <div class="preview-bubble user"><div class="preview-text-content"><p>Apa kabar?</p></div></div>
+                                            <div class="preview-footer"></div>
+                                        </div>
+                                        <p class="text-xs mt-2" style="color: var(--text-secondary);" data-translate-key="previewMobile">Tampilan Handphone</p>
+                                    </div>
                                     <!-- Pratinjau Desktop -->
-                                    <div class="preview-pane desktop-view"><div class="preview-background"></div><div class="preview-header"></div><div class="preview-bubble ai"></div><div class="preview-bubble user"></div><div class="preview-footer"></div></div>
+                                    <div class="flex flex-col items-center flex-grow min-w-0">
+                                        <div class="preview-pane desktop-view">
+                                            <div class="preview-background"></div><div class="preview-header"></div>
+                                            <div class="preview-bubble ai"><div class="preview-avatar"></div><div class="preview-text-content"><div class="preview-name">Wayan AI</div><p>Halo! Gue Wayan nih, AI assistant yang siap bantu...</p></div></div>
+                                            <div class="preview-bubble user"><div class="preview-text-content"><p>Apa kabar?</p></div></div>
+                                            <div class="preview-footer"></div>
+                                        </div>
+                                        <p class="text-xs mt-2" style="color: var(--text-secondary);" data-translate-key="previewDesktop">Tampilan Desktop</p>
+                                    </div>
                                 </div>
                                 <div class="w-full max-w-xs mx-auto space-y-3 mt-4">
                                     <div>
@@ -1879,7 +1861,7 @@
             // [BARU] Terjemahan untuk kontrol pratinjau baru
             previewEffectLabel: "Efek Blur", previewEffectNone: "Mati", previewEffectLight: "Ringan", previewEffectStrong: "Kuat",
             previewSizeLabel: "Ukuran Gambar", previewSizeCover: "Penuh", previewSizeContain: "Utuh",
-            previewHeader: "Pratinjau Latar",
+            previewHeader: "Pratinjau Latar", previewMobile: "Tampilan Handphone", previewDesktop: "Tampilan Desktop",
             settingAnimations: "Efek Animasi", settingDarkMode: "Mode Gelap", settingSound: "Suara Notifikasi", settingVoiceReader: "Pembaca Jawaban",
             settingAudioSource: "Sumber Audio", audioSourceBrowser: "Bawaan Browser", audioSourceElevenLabs: "ElevenLabs",
             settingVoiceType: "Jenis Suara (Bawaan)", settingElevenLabsVoice: "Suara ElevenLabs", elevenLabsNeedKey: "Masukkan API Key dulu", elevenLabsPreviewTitle: "Dengarkan Pratinjau Suara",
@@ -1941,7 +1923,7 @@
             // [BARU] Terjemahan untuk kontrol pratinjau baru
             previewEffectLabel: "Blur Effect", previewEffectNone: "Off", previewEffectLight: "Light", previewEffectStrong: "Strong",
             previewSizeLabel: "Image Size", previewSizeCover: "Fill", previewSizeContain: "Fit",
-            previewHeader: "Background Preview",
+            previewHeader: "Background Preview", previewMobile: "Mobile View", previewDesktop: "Desktop View",
             settingAnimations: "Animations", settingDarkMode: "Dark Mode", settingSound: "Notification Sound", settingVoiceReader: "Answer Reader",
             settingAudioSource: "Audio Source", audioSourceBrowser: "Browser Default", audioSourceElevenLabs: "ElevenLabs",
             settingVoiceType: "Voice Type (Default)", settingElevenLabsVoice: "ElevenLabs Voice", elevenLabsNeedKey: "Enter API Key first", elevenLabsPreviewTitle: "Preview Voice",
@@ -2003,7 +1985,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             // [BARU] Terjemahan untuk kontrol pratinjau baru
             previewEffectLabel: "ぼかし効果", previewEffectNone: "オフ", previewEffectLight: "弱", previewEffectStrong: "強",
             previewSizeLabel: "画像サイズ", previewSizeCover: "フィル", previewSizeContain: "フィット",
-            previewHeader: "背景プレビュー",
+            previewHeader: "背景プレビュー", previewMobile: "モバイル表示", previewDesktop: "デスクトップ表示",
             settingAnimations: "アニメーション効果", settingDarkMode: "ダークモード", settingSound: "通知音", settingVoiceReader: "回答読み上げ",
             settingAudioSource: "音声ソース", audioSourceBrowser: "ブラウザのデフォルト", audioSourceElevenLabs: "ElevenLabs",
             settingVoiceType: "声の種類 (デフォルト)", settingElevenLabsVoice: "ElevenLabsの声", elevenLabsNeedKey: "先にAPIキーを入力", elevenLabsPreviewTitle: "音声をプレビュー",
