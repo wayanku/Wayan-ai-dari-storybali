@@ -638,6 +638,19 @@
         border-bottom: 1px solid var(--border-color);
         flex-shrink: 0;
     }
+    /* [BARU] Menyesuaikan gaya tombol di header modal pencarian */
+    #searchModal .modal-close-btn {
+        background: var(--bg-tertiary);
+        box-shadow: none;
+        color: var(--text-secondary);
+    }
+    #searchModal .modal-close-btn:hover {
+        background: #cbd5e1;
+        transform: scale(1.05);
+    }
+    html.dark #searchModal .modal-close-btn:hover {
+        background: #555;
+    }
 
     .typing-indicator { display: none; align-items: center; margin-bottom: 1rem; }
     .typing-indicator.show { display: flex; animation: fadeInBounce 0.5s ease-out; }
@@ -1439,9 +1452,14 @@
     <div class="modal-content">
         <div id="searchModalHeader">
             <span id="searchModalTitle" class="text-sm font-semibold" style="color: var(--text-primary);" data-translate-key="searchResultTitle">Hasil Pencarian</span>
-            <button onclick="hideSearchModal()" class="w-8 h-8 rounded-full flex items-center justify-center modal-close-btn" data-translate-title="searchCloseTitle">
-                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
+            <div class="flex items-center space-x-2">
+                <button onclick="openSearchInNewTab()" class="w-8 h-8 rounded-full flex items-center justify-center modal-close-btn" data-translate-title="searchOpenInNewTabTitle">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </button>
+                <button onclick="hideSearchModal()" class="w-8 h-8 rounded-full flex items-center justify-center modal-close-btn" data-translate-title="searchCloseTitle">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
         </div>
         <iframe id="searchFrame" src="about:blank" sandbox="allow-forms allow-scripts allow-popups allow-same-origin allow-popups-to-escape-sandbox"></iframe>
     </div>
@@ -1848,7 +1866,7 @@
             voiceModeTitle: "Mode Suara", sendTitle: "Kirim Pesan", searchModeTitle: "Mode Pencarian Internet", quickSettingsTitle: "Pengaturan Cepat",
             uploadImageTitle: "Upload Gambar", listening: "Mendengarkan...",
             callConnecting: "Menghubungkan...", callStartSpeaking: "Mulai Bicara", callEnd: "Akhiri Panggilan",
-            searchResultTitle: "Hasil Pencarian", searchCloseTitle: "Tutup Pencarian",
+            searchResultTitle: "Hasil Pencarian", searchCloseTitle: "Tutup Pencarian", searchOpenInNewTabTitle: "Buka di Tab Baru",
             imagePreviewCloseTitle: "Tutup Pratinjau Gambar", imagePreviewLabel: "Tanya sesuatu tentang gambar ini:", imagePreviewPlaceholder: "Contoh: Apa yang ada di gambar ini?...",
             buttonCancel: "Batal", buttonSend: "Kirim",
             profileCloseTitle: "Tutup Profil",
@@ -1910,7 +1928,7 @@
             voiceModeTitle: "Voice Mode", sendTitle: "Send Message", searchModeTitle: "Internet Search Mode", quickSettingsTitle: "Quick Settings",
             uploadImageTitle: "Upload Image", listening: "Listening...",
             callConnecting: "Connecting...", callStartSpeaking: "Start Speaking", callEnd: "End Call",
-            searchResultTitle: "Search Results", searchCloseTitle: "Close Search",
+            searchResultTitle: "Search Results", searchCloseTitle: "Close Search", searchOpenInNewTabTitle: "Open in New Tab",
             imagePreviewCloseTitle: "Close Image Preview", imagePreviewLabel: "Ask something about this image:", imagePreviewPlaceholder: "Example: What is in this image?...",
             buttonCancel: "Cancel", buttonSend: "Send",
             profileCloseTitle: "Close Profile",
@@ -1972,7 +1990,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             voiceModeTitle: "音声モード", sendTitle: "送信", searchModeTitle: "インターネット検索モード", quickSettingsTitle: "クイック設定",
             uploadImageTitle: "画像をアップロード", listening: "聞いています...",
             callConnecting: "接続中...", callStartSpeaking: "話し始める", callEnd: "通話を終了",
-            searchResultTitle: "検索結果", searchCloseTitle: "検索を閉じる",
+            searchResultTitle: "検索結果", searchCloseTitle: "検索を閉じる", searchOpenInNewTabTitle: "新しいタブで開く",
             imagePreviewCloseTitle: "画像プレビューを閉じる", imagePreviewLabel: "この画像について質問する:", imagePreviewPlaceholder: "例: この画像には何が写っていますか？...",
             buttonCancel: "キャンセル", buttonSend: "送信",
             profileCloseTitle: "プロフィールを閉じる",
@@ -3141,6 +3159,13 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         const modal = document.getElementById('searchModal');
         modal.classList.add('hidden');
         document.getElementById('searchFrame').src = 'about:blank'; // Hentikan loading
+    }
+    function openSearchInNewTab() {
+        const iframe = document.getElementById('searchFrame');
+        const url = iframe.src;
+        if (url && url !== 'about:blank') {
+            window.open(url, '_blank');
+        }
     }
     function triggerImageUpload() { document.getElementById('imageInput').click(); }
     
