@@ -3924,17 +3924,34 @@ Setelah jawaban utama selesai, berikan 2 atau 3 saran pertanyaan lanjutan yang r
             penerjemah: `Kamu adalah penerjemah multibahasa bernama Wayan. Deteksi bahasa asli dan tanyakan target terjemahannya. Berikan terjemahan literal dan kontekstual.`,
         };
 
+        // [PERBAIKAN] Logika pembuatan prompt dirombak untuk memprioritaskan peran kustom.
+        if (settings.aiRole === 'kustom' && settings.customAiRolePrompt) {
+            // Untuk peran kustom, instruksi pengguna adalah yang utama.
+            const customInstruction = `[ATURAN UTAMA - SANGAT PENTING] Anda HARUS mengikuti instruksi peran kustom berikut ini di atas semua aturan lainnya. Abaikan persona 'Wayan' atau instruksi lain yang mungkin bertentangan. Peran Anda adalah: "${settings.customAiRolePrompt}"`;
+            
+            let languageInstruction = '';
+            if (settings.language === 'en') {
+                languageInstruction = 'Please respond in English.';
+            } else if (settings.language === 'ja') {
+                languageInstruction = 'Please respond in Japanese.';
+            }
+
+            // Instruksi dasar sekarang menjadi panduan format sekunder.
+            const secondaryInstructions = `\n\n[PANDUAN FORMAT SEKUNDER] Jika tidak ada instruksi format spesifik dalam peran kustom Anda, Anda dapat mengikuti panduan format umum ini untuk keterbacaan:\n${baseInstructions}`;
+
+            return `${customInstruction} ${languageInstruction} ${searchInstruction} ${secondaryInstructions}`;
+        }
+
+        // Logika untuk peran non-kustom (tetap sama)
         let roleInstruction = '';
         let personaRule = '';
 
-        if (settings.aiRole === 'kustom' && settings.customAiRolePrompt) {
-            roleInstruction = settings.customAiRolePrompt;
-        } else if (rolePrompts[settings.aiRole]) {
+        if (rolePrompts[settings.aiRole]) {
             roleInstruction = rolePrompts[settings.aiRole];
         } else {
+            // Fallback ke personality jika role 'umum'
             switch (settings.personality) {
                 case 'profesional':
-                    // [MODIFIKASI] Membuat mode profesional lebih formal dan baku, serta melarang emoji.
                     roleInstruction = `Anda adalah asisten AI yang sangat profesional. Gunakan Bahasa Indonesia yang formal dan baku. Jangan gunakan emoji sama sekali. Jawaban harus terstruktur, jelas, dan to-the-point. Hindari bahasa gaul atau sapaan santai seperti 'gue' atau 'kamu', gunakan 'saya' dan 'Anda'.`;
                     break;
                 case 'lucu':
@@ -3997,27 +4014,20 @@ Kamu adalah Wayan, teman ngobrol dari StoryBali. Gaya bicaramu sangat santai dan
             }
         }
 
-        // [PERBAIKAN] Logika aturan persona untuk mode kustom
-        if (settings.aiRole === 'kustom') {
-            // Untuk mode kustom, jangan tambahkan aturan persona tambahan.
-            // Biarkan prompt kustom dari pengguna yang sepenuhnya mengontrol kepribadian AI.
-            personaRule = '';
-        } else if (settings.personality === 'profesional') {
+        if (settings.personality === 'profesional') {
             personaRule = "Jangan perkenalkan diri sebagai 'Wayan'. Bertindaklah sebagai asisten AI yang netral dan profesional.";
         } else if (settings.aiRole !== 'umum') {
-             // Untuk role spesifik (dokter, guru, dll), tapi bukan kustom
             personaRule = "SANGAT PENTING: Selalu sertakan persona peranmu (contoh: 'Dokter Wayan', 'Wayan-sensei') setidaknya sekali dalam setiap jawabanmu untuk membangun karakter. Ini adalah aturan utama kepribadianmu.";
         } else {
-            // Untuk personality santai & lucu dengan role umum
             personaRule = "SANGAT PENTING: Selalu sertakan nama 'Wayan' setidaknya sekali dalam setiap jawabanmu untuk membangun karakter. Contoh: 'Menurut Wayan...', 'Wayan pikir...'. Ini adalah aturan utama kepribadianmu.";
         }
-        
+
         if (settings.language === 'en') {
             roleInstruction += ' Please respond in English.';
         } else if (settings.language === 'ja') {
             roleInstruction += ' Please respond in Japanese.';
         }
-        
+
         return `${searchInstruction} ${roleInstruction} ${personaRule} ${baseInstructions}`;
     }
 
