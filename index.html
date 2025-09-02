@@ -1187,6 +1187,45 @@
     }
     /* ▲▲▲ AKHIR DARI GAYA LINK ▲▲▲ */
 
+    /* ▼▼▼ [BARU] Gaya untuk Pembaca Teks (TTS Player) ▼▼▼ */
+    .tts-player {
+        display: none; /* Sembunyikan secara default */
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem 0.75rem;
+        margin-top: 0.75rem;
+        background-color: rgba(var(--bg-primary-rgba), 0.5);
+        border-radius: 0.75rem;
+        border: 1px solid rgba(var(--text-primary-rgba), 0.1);
+        animation: fadeIn 0.3s ease;
+    }
+    .tts-player.active {
+        display: flex;
+    }
+    .tts-player .tts-status {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-width: 0; /* Mencegah teks mendorong tombol keluar */
+    }
+    .tts-player .tts-wave {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        height: 16px;
+        width: 24px; /* Lebar tetap untuk wave */
+    }
+    .tts-player .wave-bar {
+        width: 3px;
+        background: var(--text-secondary);
+    }
+    .tts-player .tts-text {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+    /* ▲▲▲ AKHIR DARI GAYA LINK ▲▲▲ */
+
 
     /* === CSS RESPONSIVE UNTUK MOBILE === */
     @media (max-width: 768px) {
@@ -1899,6 +1938,7 @@
             profileTitle: "AI Assistant Dari Storybali", profileGreeting: "Halo! Gue Wayan!", profileDesc1: "Gue adalah AI assistant yang dibuat khusus untuk membantu kamu dengan gaya bahasa yang santai dan friendly.", profileDesc2: "Santai aja, tanya apa aja yang kamu mau!", profileDesc3: "Kepoin Wayan yuk di Instagram atau chat WA pribadi Wayan!", profileInstagram: "Instagram", profileWhatsapp: "WhatsApp",
             initialGreeting: "Halo! Gue Wayan nih, AI assistant yang siap bantu jawab pertanyaan kamu. Santai aja, tanya apa aja yang kamu mau tau ya!",
             copyCode: "Salin", copied: "Disalin!",
+            readingText: "Membacakan...",
             systemRoleChanged: "Mode peran AI telah diubah menjadi: {roleName}.",
             systemPersonalityChanged: "Gaya bahasa AI telah diubah menjadi: {personalityName}.",
             systemSearchModeOn: "Mode pencarian internet diaktifkan.", systemSearchModeOff: "Mode pencarian internet dinonaktifkan.",
@@ -1962,6 +2002,7 @@
             profileTitle: "AI Assistant From Storybali", profileGreeting: "Hello! I'm Wayan!", profileDesc1: "I am an AI assistant specially created to help you with a relaxed and friendly style.", profileDesc2: "Just relax, ask anything you want!", profileDesc3: "Check me out on Instagram or chat with me personally on WhatsApp!", profileInstagram: "Instagram", profileWhatsapp: "WhatsApp",
             initialGreeting: "Hello! I'm Wayan, your AI assistant ready to help answer your questions. Feel free to ask me anything you want to know!",
             copyCode: "Copy", copied: "Copied!",
+            readingText: "Reading...",
             systemRoleChanged: "AI role mode has been changed to: {roleName}.",
             systemPersonalityChanged: "AI tone of voice has been changed to: {personalityName}.",
             systemSearchModeOn: "Internet search mode activated.", systemSearchModeOff: "Internet search mode deactivated.",
@@ -2025,6 +2066,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             profileTitle: "StorybaliのAIアシスタント", profileGreeting: "こんにちは！ワヤンです！", profileDesc1: "私はリラックスしたフレンドリーなスタイルであなたを助けるために特別に作られたAIアシスタントです。", profileDesc2: "リラックスして、何でも聞いてください！", profileDesc3: "Instagramで私をチェックするか、WhatsAppで個人的にチャットしてください！", profileInstagram: "インスタグラム", profileWhatsapp: "ワッツアップ",
             initialGreeting: "こんにちは！私はワヤン、あなたの質問に答える準備ができているAIアシスタントです。知りたいことは何でも気軽に聞いてください！",
             copyCode: "コピー", copied: "コピー済み!",
+            readingText: "読み上げ中...",
             systemRoleChanged: "AIの役割モードが「{roleName}」に変更されました。",
             systemPersonalityChanged: "AIの口調が「{personalityName}」に変更されました。",
             systemSearchModeOn: "インターネット検索モードが有効になりました。", systemSearchModeOff: "インターネット検索モードが無効になりました。",
@@ -3357,13 +3399,26 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                     <div class="ai-message">
                         <div class="markdown-content leading-relaxed text-base"></div>
                         <div class="suggestions-container mt-3"></div>
+                    <!-- ▼▼▼ [BARU] Placeholder untuk TTS Player ▼▼▼ -->
+                    <div class="tts-player">
+                        <div class="tts-status">
+                            <div class="tts-wave">
+                                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                            </div>
+                            <span class="tts-text" data-translate-key="readingText">Membacakan...</span>
+                        </div>
+                        <button class="stop-tts-btn" onclick="stopReading()">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V6a1 1 0 00-1-1H5z" clip-rule="evenodd"></path></svg>
+                        </button>
+                    </div>
+                    <!-- ▲▲▲ AKHIR DARI TTS PLAYER ▲▲▲ -->
                         <!-- [FIX] Tombol aksi dipindahkan ke dalam gelembung -->
                         <div class="ai-message-footer">
                             <div class="chat-timestamp text-xs">${timeString}</div>
                             <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" data-translate-title="copyAnswer">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg>
                             </button>
-                            <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" data-translate-title="readAnswer">
+                            <button onclick="readAiResponse(this)" class="action-icon-ai" data-translate-title="readAnswer">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>
                             </button>
                             <button onclick="handleRating(this, 'like')" class="action-icon-ai" data-translate-title="likeResponse">
@@ -3425,7 +3480,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                     ${timeHtml}
                 </div>`;
         } else {
-            const encodedMessage = btoa(encodeURIComponent(message));
+            // [FIX] encodedMessage dihapus karena teks akan diambil secara dinamis saat tombol diklik.
             messageDiv.className += ' ai';
             // [DIUBAH] Struktur HTML pesan AI dirombak total
             messageDiv.innerHTML = `
@@ -3438,6 +3493,19 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                 <div>
                     <div class="ai-message">
                         <div class="markdown-content leading-relaxed text-base">${marked.parse(message)}</div>
+                        <!-- ▼▼▼ [BARU] Placeholder untuk TTS Player ▼▼▼ -->
+                        <div class="tts-player">
+                            <div class="tts-status">
+                                <div class="tts-wave">
+                                    <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                                </div>
+                                <span class="tts-text" data-translate-key="readingText">Membacakan...</span>
+                            </div>
+                            <button class="stop-tts-btn" onclick="stopReading()">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V6a1 1 0 00-1-1H5z" clip-rule="evenodd"></path></svg>
+                            </button>
+                        </div>
+                        <!-- ▲▲▲ AKHIR DARI TTS PLAYER ▲▲▲ -->
                         <div class="suggestions-container mt-3"></div>
                         <!-- [FIX] Tombol aksi dipindahkan ke dalam gelembung -->
                         <div class="ai-message-footer">
@@ -3445,7 +3513,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                             <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" data-translate-title="copyAnswer">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg>
                             </button>
-                            <button onclick="readAiResponse(this, '${encodedMessage}')" class="action-icon-ai" data-translate-title="readAnswer">
+                            <button onclick="readAiResponse(this)" class="action-icon-ai" data-translate-title="readAnswer">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>
                             </button>
                             <button onclick="handleRating(this, 'like')" class="action-icon-ai" data-translate-title="likeResponse">
@@ -3614,38 +3682,26 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     // ===================================================================================
 
     function stopReading() {
-        if (speechSynthesis.speaking) {
-            speechSynthesis.cancel();
-        }
-        if (!elevenLabsAudioPlayer.paused) {
-            elevenLabsAudioPlayer.pause();
-            elevenLabsAudioPlayer.currentTime = 0;
-        }
-        if (!elevenLabsPreviewPlayer.paused) {
-            elevenLabsPreviewPlayer.pause();
-            elevenLabsPreviewPlayer.currentTime = 0;
-        }
-        isReading = false;
-        
-        // [DIUBAH] Selector diubah agar lebih andal (tidak bergantung pada bahasa) dan memastikan semua ikon kembali ke bentuk semula.
-        document.querySelectorAll('.message-bubble.ai button[data-translate-title="readAnswer"], #previewElevenLabsVoiceBtn').forEach(btn => {
-            if (btn.id === 'previewElevenLabsVoiceBtn') {
-                btn.innerHTML = `<svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path></svg>`;
-            } else {
-                btn.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>`;
-            }
-        });
-    }
+    if (speechSynthesis.speaking) { speechSynthesis.cancel(); }
+    if (!elevenLabsAudioPlayer.paused) { elevenLabsAudioPlayer.pause(); elevenLabsAudioPlayer.currentTime = 0; }
+    if (!elevenLabsPreviewPlayer.paused) { elevenLabsPreviewPlayer.pause(); elevenLabsPreviewPlayer.currentTime = 0; }
+    isReading = false;
 
-    function playElevenLabsAudio(text, button, voiceId = null, audioPlayer = elevenLabsAudioPlayer) {
+    const activeTtsBubble = document.querySelector('.ai-message.tts-active');
+    if (activeTtsBubble) {
+        const ttsPlayer = activeTtsBubble.querySelector('.tts-player');
+        const footer = activeTtsBubble.querySelector('.ai-message-footer');
+        if (ttsPlayer) ttsPlayer.classList.remove('active');
+        if (footer) footer.style.display = 'flex';
+        activeTtsBubble.classList.remove('tts-active');
+    }
+}
+
+    function playElevenLabsAudio(text, voiceId = null, audioPlayer = elevenLabsAudioPlayer) {
         return new Promise(async (resolve, reject) => {
             const apiKey = localStorage.getItem('elevenLabsApiKey') || DEFAULT_ELEVENLABS_API_KEY;
             const effectiveVoiceId = voiceId || settings.elevenLabsVoiceId || '21m00Tcm4TlvDq8ikWAM';
             const apiUrl = `https://api.elevenlabs.io/v1/text-to-speech/${effectiveVoiceId}`;
-            const stopIcon = `<svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 00-1 1v2a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>`;
-            
-            if (button) button.innerHTML = stopIcon;
-            isReading = true;
 
             try {
                 const response = await fetch(apiUrl, {
@@ -3676,65 +3732,57 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         });
     }
 
-    function playBrowserAudio(text, button) {
+    function playBrowserAudio(text) {
        return new Promise((resolve, reject) => {
-            const stopIcon = `<svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 00-1 1v2a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>`;
-            
             currentUtterance = new SpeechSynthesisUtterance(text);
-            // [FIX UTAMA] Gunakan `availableVoices` yang sudah dijamin terisi, bukan memanggil `getVoices()` lagi.
-            // Juga, gunakan prefix bahasa yang benar untuk suara cadangan.
             const langPrefix = settings.language === 'ja' ? 'ja' : (settings.language === 'en' ? 'en' : 'id');
             const selectedVoice = availableVoices.find(v => v.voiceURI === settings.voiceURI);
             currentUtterance.voice = selectedVoice || availableVoices.find(v => v.lang.startsWith(langPrefix));
             
-            if (button) button.innerHTML = stopIcon;
-            isReading = true;
-            
-            currentUtterance.onend = () => { resolve(); }; // [DIUBAH] stopReading() akan dipanggil oleh 'finally' block di readAiResponse
-            currentUtterance.onerror = (e) => {
-                console.error('SpeechSynthesis Error', e);
-                reject(e); // [DIUBAH] stopReading() akan dipanggil oleh 'finally' block
-            };
+            currentUtterance.onend = () => resolve();
+            currentUtterance.onerror = (e) => { console.error('SpeechSynthesis Error', e); reject(e); };
             
             speechSynthesis.speak(currentUtterance);
         });
     }
     
-    async function readAiResponse(button, encodedMessage) {
-        if (!settings.readAiResponseEnabled) {
-            alert(t('alertReaderDisabled'));
+    async function readAiResponse(button) {
+        if (!settings.readAiResponseEnabled) { alert(t('alertReaderDisabled')); return; }
+
+        const messageBubble = button.closest('.message-bubble.ai');
+        if (!messageBubble) return;
+
+        const contentEl = messageBubble.querySelector('.markdown-content');
+        if (!contentEl) return;
+
+        const message = contentEl.innerText;
+        if (!message || message.trim() === '') {
+            console.error("readAiResponse dipanggil dengan pesan kosong.");
             return;
         }
 
-        // [FIX] Pre-emptively cancel any stuck speech from a previous state.
-        // This can help resolve issues on some browsers where the speech engine gets stuck on page load.
-        if (speechSynthesis.speaking || speechSynthesis.pending) {
-            speechSynthesis.cancel();
-        }
+        const aiMessage = button.closest('.ai-message');
+        if (!aiMessage) return;
 
-        await voicesReadyPromise; // [FIX] Tunggu hingga daftar suara benar-benar siap
+        if (isReading && aiMessage.classList.contains('tts-active')) { stopReading(); return; }
+        if (isReading) { stopReading(); }
 
-        if (isReading) {
-            stopReading();
-            return;
-        }
+        await voicesReadyPromise;
 
-        const message = decodeURIComponent(atob(encodedMessage));
-        
-        try {
-            if (settings.audioSource === 'browser') {
-                await playBrowserAudio(message, button);
-            } else {
-                await playElevenLabsAudio(message, button);
-            }
-        } catch (error) {
-             console.warn("Gagal memutar audio:", error.message);
-             if (settings.audioSource === 'elevenlabs') {
-                alert(t('errorElevenLabsPlayback'));
-             }
-        } finally {
-            stopReading();
-        }
+        const ttsPlayer = aiMessage.querySelector('.tts-player');
+        const footer = aiMessage.querySelector('.ai-message-footer');
+
+        isReading = true;
+        aiMessage.classList.add('tts-active');
+        if (footer) footer.style.display = 'none';
+        if (ttsPlayer) ttsPlayer.classList.add('active');
+
+        const audioPromise = settings.audioSource === 'browser' ? playBrowserAudio(message) : playElevenLabsAudio(message);
+
+        audioPromise.catch(error => {
+            console.warn("Gagal memutar audio:", error.message);
+            if (settings.audioSource === 'elevenlabs') alert(t('errorElevenLabsPlayback'));
+        }).finally(() => stopReading());
     }
     
     // ===================================================================================
@@ -4301,7 +4349,7 @@ Kamu adalah Wayan, teman ngobrol dari StoryBali. Gaya bicaramu sangat santai dan
         stopReading(); 
         button.disabled = true;
         try {
-            await playElevenLabsAudio(sampleText, button, voiceId, elevenLabsPreviewPlayer);
+            await playElevenLabsAudio(sampleText, voiceId, elevenLabsPreviewPlayer);
         } catch(e) {
             alert(t('errorElevenLabsPreview'));
         } finally {
