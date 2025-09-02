@@ -3997,11 +3997,15 @@ Kamu adalah Wayan, teman ngobrol dari StoryBali. Gaya bicaramu sangat santai dan
             }
         }
 
-        // [MODIFIKASI] Aturan persona disederhanakan.
-        if (settings.personality === 'profesional') {
+        // [PERBAIKAN] Logika aturan persona untuk mode kustom
+        if (settings.aiRole === 'kustom') {
+            // Untuk mode kustom, jangan tambahkan aturan persona tambahan.
+            // Biarkan prompt kustom dari pengguna yang sepenuhnya mengontrol kepribadian AI.
+            personaRule = '';
+        } else if (settings.personality === 'profesional') {
             personaRule = "Jangan perkenalkan diri sebagai 'Wayan'. Bertindaklah sebagai asisten AI yang netral dan profesional.";
-        } else if (settings.aiRole !== 'umum' && settings.aiRole !== 'kustom') {
-             // Untuk role spesifik (dokter, guru, dll)
+        } else if (settings.aiRole !== 'umum') {
+             // Untuk role spesifik (dokter, guru, dll), tapi bukan kustom
             personaRule = "SANGAT PENTING: Selalu sertakan persona peranmu (contoh: 'Dokter Wayan', 'Wayan-sensei') setidaknya sekali dalam setiap jawabanmu untuk membangun karakter. Ini adalah aturan utama kepribadianmu.";
         } else {
             // Untuk personality santai & lucu dengan role umum
