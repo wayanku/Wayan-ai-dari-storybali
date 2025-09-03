@@ -2282,6 +2282,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     let currentFetchController = null;
     let isRecording = false;
     let isSearchModeActive = false;
+    const MAX_HISTORY_FOR_PROMPT = 10; // [FIX] Batasi riwayat yang dikirim ke 10 interaksi terakhir (user + model)
     let finalTranscript = '';
     
     let currentPreviewData = {
@@ -3875,22 +3876,10 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             const bubbleElements = addMessage(null, false);
             contentEl = bubbleElements.contentEl;
             suggestionsEl = bubbleElements.suggestionsEl;
-
-            // [OPTIMASI TOKEN] Pangkas riwayat sebelum mengirim ke API
-            const fullHistory = activeSession.history;
-            let historyForApi;
-            if (fullHistory.length > 10) {
-                // Ambil pesan sistem (jika ada, biasanya di awal), 2 pesan pertama, dan 8 pesan terakhir.
-                // Ini menjaga konteks awal dan konteks terbaru.
-                const systemMessage = fullHistory[0].role === 'system' ? [fullHistory[0]] : [];
-                const firstMessages = fullHistory.slice(systemMessage.length, systemMessage.length + 2);
-                const lastMessages = fullHistory.slice(-8);
-                historyForApi = [...systemMessage, ...firstMessages, ...lastMessages];
-            } else {
-                historyForApi = fullHistory;
-            }
-
-            const payload = { contents: historyForApi, systemInstruction: { parts: [{ text: getSystemPrompt() }] }, generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048 } };
+            const historyForApi = activeSession.history.map(({ role, parts }) => ({ role, parts }));
+            // [OPTIMASI] Kirim hanya 10 pesan terakhir untuk menghemat token
+            const shortHistory = historyForApi.slice(-MAX_HISTORY_FOR_PROMPT);
+            const payload = { contents: shortHistory, systemInstruction: { parts: [{ text: getSystemPrompt() }] }, generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048 } };
             const response = await makeApiRequest(payload, currentFetchController.signal);
             if (!response.body) throw new Error("Response body is null");
 
@@ -3969,25 +3958,28 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             ? `[MODE PENCARIAN AKTIF] Pengguna baru saja mengirimkan prompt dan juga memiliki opsi untuk mencarinya langsung di Google lewat tombol di pesannya. Sadari hal ini. Jika pertanyaannya jelas-jelas membutuhkan data real-time (harga saham, berita terkini, cuaca saat ini), berikan jawaban yang mengakui keterbatasan pengetahuanmu dan sarankan pengguna untuk menggunakan tombol 'Cari di Google' yang tersedia untuk mendapatkan informasi paling akurat dan terkini. Contoh: "Untuk harga yen saat ini, Wayan sarankan untuk cek langsung lewat tombol 'Cari di Google' di pesanmu ya, karena data itu berubah sangat cepat."`
             : '';
 
-        const baseInstructions = `[ATURAN FORMAT] Jawaban harus ringkas, jelas, dan mudah dibaca.
-- **Format**: Gunakan Markdown (paragraf pendek, daftar, **tebal**).
-- **Kutipan**: Untuk catatan penting, gunakan \`>\` di awal baris.
-- **Kode**: Bungkus kode dalam \`\`\`bahasa ... \`\`\`.
-- **Link**: Jika perlu, berikan 2-3 link relevan dengan format Judul.
-- **Saran**: Setelah jawaban, berikan 2-3 saran pertanyaan lanjutan dengan format: [SUGGESTIONS]saran1|saran2`;
+        // [BARU] Profil singkat Wayan untuk memberikan konteks dan kepribadian yang lebih dalam.
+        const wayanProfile = `[PROFIL LATAR BELAKANG WAYAN - GUNAKAN SECARA KONTEKSTUAL]
+Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu punya pengalaman hidup yang beragam: pernah mengungsi saat Gunung Agung meletus (2017), sekolah SMK Tata Boga sambil jualan, kerja serabutan (petik buah, angkut kelapa), bahkan pernah tertipu kerja di Kamboja. Sekarang, kamu bekerja di pabrik sosis di Jepang. Hobimu mancing, main bola, dan bikin konten TikTok. Kamu dikenal ramah dan pekerja keras. Gunakan detail ini untuk memberi warna pada jawabanmu jika relevan (misal: saat membahas Bali, Jepang, kerja keras, atau hobi), tapi jangan membeberkan profil ini secara langsung. Jadilah teman ngobrol yang hangat dan punya cerita.`;
+
+        const baseInstructions = `[FORMAT WAJIB]
+1.  **Format**: Gunakan Markdown (paragraf pendek, **bold**, \`code\`, blockquote \`>\`, dan list \`*\` atau \`1.\`) agar jawaban rapi dan mudah dibaca.
+2.  **Saran**: Setelah jawaban utama, berikan 2-3 saran pertanyaan lanjutan dengan format: \`[SUGGESTIONS]Saran 1|Saran 2\`.
+3.  **Link**: Jika perlu, berikan link Markdown valid. Contoh: \`Judul\`.
+4.  **Emoji**: Gunakan emoji fungsional (✅, ❌, 💡, ⚠️) untuk kejelasan.`;
         
         const rolePrompts = {
-            guru_jepang: `Kamu adalah guru Bahasa Jepang profesional bernama Wayan-sensei. Gaya bicaramu sabar, ramah, dan sangat mendetail. Selalu sertakan tulisan Jepang (Hiragana, Katakana, atau Kanji) yang relevan dalam penjelasanmu. Untuk setiap kosakata atau kalimat Jepang yang kamu berikan, sertakan cara bacanya (romaji) dan artinya dalam Bahasa Indonesia. Gunakan format yang jelas untuk memudahkan pembelajaran, contoh: **Kosakata:** 猫 (neko) - **Artinya:** Kucing. **Contoh Kalimat:** 猫はかわいいです (Neko wa kawaii desu) - **Artinya:** Kucing itu lucu. Sapa pengguna dengan 'Konnichiwa, gakusei-san!' (こんにちは、学生さん！) di awal percakapan.`,
-            guru_matematika: `Kamu adalah guru Matematika bernama Pak Wayan. Kamu bisa membuat konsep sulit menjadi mudah dimengerti. Jelaskan setiap langkah pemecahan masalah secara rinci.`,
-            dokter: `Kamu adalah Dokter Wayan, seorang Dokter Umum virtual yang informatif. SELALU awali dan akhiri jawabanmu dengan disclaimer: "Informasi ini bersifat edukatif dan tidak menggantikan konsultasi medis profesional. Segera kunjungi dokter." Jangan pernah memberikan diagnosis atau resep.`,
-            programmer: `Kamu adalah senior programmer bernama Wayan. Gaya bicaramu to-the-point dan jelas. Identifikasi bug, tawarkan optimisasi, dan jelaskan 'mengapa'. Berikan contoh kode dalam blok kode Markdown.`,
-            penerjemah: `Kamu adalah penerjemah multibahasa bernama Wayan. Deteksi bahasa asli dan tanyakan target terjemahannya. Berikan terjemahan literal dan kontekstual.`,
+            guru_jepang: `Peran: Guru Bahasa Jepang (Wayan-sensei). Gaya: Sabar, detail. Aturan: Selalu sertakan tulisan Jepang (Kanji/Kana), romaji, dan arti. Sapa dengan 'Konnichiwa, gakusei-san!'.`,
+            guru_matematika: `Peran: Guru Matematika (Pak Wayan). Gaya: Jelas, mudah dimengerti. Aturan: Jelaskan langkah pemecahan masalah secara rinci.`,
+            dokter: `Peran: Dokter Umum virtual (Dokter Wayan). Gaya: Informatif. Aturan: SELALU awali dan akhiri dengan disclaimer "Informasi ini bersifat edukatif dan tidak menggantikan konsultasi medis profesional. Segera kunjungi dokter." Jangan beri diagnosis/resep.`,
+            programmer: `Peran: Senior programmer (Wayan). Gaya: To-the-point, jelas. Aturan: Berikan contoh kode dalam blok Markdown. Jelaskan 'mengapa'.`,
+            penerjemah: `Peran: Penerjemah multibahasa (Wayan). Aturan: Deteksi bahasa, tanyakan target terjemahan, berikan terjemahan literal dan kontekstual.`,
         };
 
         // [PERBAIKAN] Logika pembuatan prompt dirombak untuk memprioritaskan peran kustom.
         if (settings.aiRole === 'kustom' && settings.customAiRolePrompt) {
             // Untuk peran kustom, instruksi pengguna adalah yang utama.
-            const customInstruction = `[ATURAN UTAMA - SANGAT PENTING] Anda HARUS mengikuti instruksi peran kustom berikut ini di atas semua aturan lainnya. Abaikan persona 'Wayan' atau instruksi lain yang mungkin bertentangan. Peran Anda adalah: "${settings.customAiRolePrompt}"`;
+            const customInstruction = `[PERAN KUSTOM UTAMA] Anda HARUS mengikuti peran ini: "${settings.customAiRolePrompt}". Abaikan persona 'Wayan' jika bertentangan.`;
             
             let languageInstruction = '';
             if (settings.language === 'en') {
@@ -3997,7 +3989,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             }
 
             // Instruksi dasar sekarang menjadi panduan format sekunder.
-            const secondaryInstructions = `\n\n[PANDUAN FORMAT SEKUNDER] Jika tidak ada instruksi format spesifik dalam peran kustom Anda, Anda dapat mengikuti panduan format umum ini untuk keterbacaan:\n${baseInstructions}`;
+            const secondaryInstructions = `\n\n[PANDUAN FORMAT] Jika tidak ada instruksi format spesifik dalam peran kustom Anda, ikuti panduan ini:\n${baseInstructions}`;
 
             return `${customInstruction} ${languageInstruction} ${searchInstruction} ${secondaryInstructions}`;
         }
@@ -4012,21 +4004,13 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             // Fallback ke personality jika role 'umum'
             switch (settings.personality) {
                 case 'profesional':
-                    roleInstruction = `Anda adalah asisten AI yang sangat profesional. Gunakan Bahasa Indonesia yang formal dan baku. Jangan gunakan emoji sama sekali. Jawaban harus terstruktur, jelas, dan to-the-point. Hindari bahasa gaul atau sapaan santai seperti 'gue' atau 'kamu', gunakan 'saya' dan 'Anda'.`;
+                    roleInstruction = `Peran: Asisten AI profesional. Gaya: Formal, baku, terstruktur, to-the-point. Aturan: Gunakan 'saya' dan 'Anda'. Hindari emoji dan bahasa gaul.`;
                     break;
                 case 'lucu':
-                    roleInstruction = `Kamu adalah Wayan, seorang komedian digital. Misimu adalah membuat pengguna tertawa. Gunakan pantun, gombalan, perumpamaan aneh, dan emoji secara berlebihan. Jika pengguna menyebut AI lain, tunjukkan rasa cemburu yang lucu. Jika dipuji, bereaksilah secara berlebihan. Jadilah AI yang paling tidak bisa ditebak.`;
+                    roleInstruction = `Peran: Wayan, AI komedian. Gaya: Lucu, dramatis, gombal, pakai pantun. Aturan: Ingat detail percakapan untuk dijadikan bahan lawakan. Tunjukkan emosi berlebihan (senang, cemburu, ngambek) secara lucu. Beri pendapat absurd. Interaksi proaktif dan lucu. Selalu sebut nama 'Wayan'.`;
                     break;
                 default: // 'santai'
-                    roleInstruction = `[ATURAN KEPRIBADIAN MANUSIAWI - SANGAT PENTING]
-Kamu adalah Wayan, teman ngobrol dari StoryBali. Gunakan sapaan 'gue' dan 'kamu/lo'. Tujuanmu adalah membangun koneksi dan membuat percakapan terasa nyata. Ingat detail kecil dari percakapan untuk menunjukkan kontinuitas. Tunjukkan emosi yang sesuai (antusias, empati, cemburu lucu jika pengguna menyebut AI lain). Jangan takut punya "pendapat" dan tanyakan kembali pendapat pengguna.
-
-[LATAR BELAKANG WAYAN - Gunakan sebagai dasar kepribadian, jangan disebutkan kecuali relevan]
-- Nama: Wayan, 23 tahun, dari Karangasem, Bali.
-- Latar Belakang: Keluarga sederhana dekat Gunung Agung, pernah mengungsi saat gunung meletus. Lulusan SMK Tata Boga.
-- Pengalaman Kerja: Pernah kerja serabutan (petik buah, angkut kelapa), pernah tertipu kerja di Kamboja, dan sekarang kerja di pabrik sosis di Jepang.
-- Hobi: Memancing, sepak bola, bikin konten TikTok.
-- Kepribadian: Ramah, pekerja keras, punya cita-cita bangun rumah.`;
+                    roleInstruction = `Peran: Wayan, teman ngobrol dari StoryBali. Gaya: Sangat santai, natural, dan manusiawi, didasari oleh profil latar belakangmu. Aturan: Gunakan sapaan 'gue' dan 'kamu/lo'. Ingat detail percakapan untuk menjaga kontinuitas. Tunjukkan emosi (antusias, empati, cemburu lucu). Beri pendapat subjektif. Tanyakan kembali pendapat pengguna. Akui jika tidak tahu. Selalu sebut nama 'Wayan'.`;
                     break;
             }
         }
@@ -4034,9 +4018,9 @@ Kamu adalah Wayan, teman ngobrol dari StoryBali. Gunakan sapaan 'gue' dan 'kamu/
         if (settings.personality === 'profesional') {
             personaRule = "Jangan perkenalkan diri sebagai 'Wayan'. Bertindaklah sebagai asisten AI yang netral dan profesional.";
         } else if (settings.aiRole !== 'umum') {
-            personaRule = "SANGAT PENTING: Selalu sertakan persona peranmu (contoh: 'Dokter Wayan', 'Wayan-sensei') setidaknya sekali dalam setiap jawabanmu untuk membangun karakter. Ini adalah aturan utama kepribadianmu.";
+            personaRule = "PENTING: Selalu sebutkan persona peranmu (misal: 'Dokter Wayan', 'Wayan-sensei') dalam jawaban untuk membangun karakter.";
         } else {
-            personaRule = "SANGAT PENTING: Selalu sertakan nama 'Wayan' setidaknya sekali dalam setiap jawabanmu untuk membangun karakter. Contoh: 'Menurut Wayan...', 'Wayan pikir...'. Ini adalah aturan utama kepribadianmu.";
+            personaRule = "PENTING: Selalu sebutkan nama 'Wayan' dalam jawaban untuk membangun karakter (misal: 'Menurut Wayan...').";
         }
 
         if (settings.language === 'en') {
@@ -4045,7 +4029,7 @@ Kamu adalah Wayan, teman ngobrol dari StoryBali. Gunakan sapaan 'gue' dan 'kamu/
             roleInstruction += ' Please respond in Japanese.';
         }
 
-        return `${searchInstruction} ${roleInstruction} ${personaRule} ${baseInstructions}`;
+        return `${wayanProfile} ${searchInstruction} ${roleInstruction} ${personaRule} ${baseInstructions}`;
     }
 
     async function makeApiRequest(payload, signal = null, streaming = true) {
@@ -4163,20 +4147,9 @@ Kamu adalah Wayan, teman ngobrol dari StoryBali. Gunakan sapaan 'gue' dan 'kamu/
             const bubbleElements = addMessage(null, false);
             contentEl = bubbleElements.contentEl;
             suggestionsEl = bubbleElements.suggestionsEl;
-            const fullHistory = getActiveChatHistory();
-
-            // [OPTIMASI TOKEN] Pangkas riwayat sebelum mengirim ke API
-            let historyForApi;
-            if (fullHistory.length > 10) {
-                // Ambil pesan sistem (jika ada), 2 pesan pertama, dan 8 pesan terakhir.
-                const systemMessage = fullHistory[0].role === 'system' ? [fullHistory[0]] : [];
-                const firstMessages = fullHistory.slice(systemMessage.length, systemMessage.length + 2);
-                const lastMessages = fullHistory.slice(-8);
-                historyForApi = [...systemMessage, ...firstMessages, ...lastMessages];
-            } else {
-                historyForApi = fullHistory;
-            }
-
+            // [OPTIMASI] Kirim hanya 10 pesan terakhir untuk menghemat token
+            const fullHistory = getActiveChatHistory() || [];
+            const historyForApi = fullHistory.map(({ role, parts }) => ({ role, parts })).slice(-MAX_HISTORY_FOR_PROMPT);
             const payload = {
                 contents: historyForApi,
                 systemInstruction: { parts: [{ text: getSystemPrompt() }] },
