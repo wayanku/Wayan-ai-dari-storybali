@@ -4796,7 +4796,8 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
     // [BARU] Mendaftarkan Service Worker saat aplikasi dimuat
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
+            // [PERBAIKAN] Menggunakan path relatif untuk pendaftaran agar lebih kompatibel dengan GitHub Pages
+            navigator.serviceWorker.register('sw.js')
                 .then(registration => {
                     console.log('Service Worker berhasil didaftarkan:', registration);
                 })
