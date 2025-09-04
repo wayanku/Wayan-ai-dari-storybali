@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -1394,6 +1395,15 @@
             
             <!-- [BARU] Wrapper untuk footer yang melayang agar efek transparan berfungsi -->
             <div class="chat-footer">
+                <!-- ▼▼▼ [BARU] Notifikasi Pesan Baru untuk Smart Scrolling ▼▼▼ -->
+                <div id="newMessageNotification" class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden">
+                    <button onclick="forceScrollToBottom()" class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold py-1.5 px-4 rounded-full shadow-lg flex items-center gap-2 transition-all duration-300 transform hover:-translate-y-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                        <span data-translate-key="newMessages">Pesan Baru</span>
+                    </button>
+                </div>
+                <!-- ▲▲▲ AKHIR DARI NOTIFIKASI PESAN BARU ▲▲▲ -->
+
                 <!-- Tombol saran cepat -->
                 <div class="quick-actions">
                     <button class="quick-action-btn" onclick="sendQuickMessage('Halo Wayan!')" data-translate-key="quickHello">Halo</button>
@@ -2280,6 +2290,10 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     let countdownInterval = null;
 
     let currentFetchController = null;
+    // [BARU] Variabel state untuk notifikasi cerdas
+    let isWindowActive = true;
+    let userHasScrolledUp = false;
+
     let isRecording = false;
     let isSearchModeActive = false;
     const MAX_HISTORY_FOR_PROMPT = 10; // [FIX] Batasi riwayat yang dikirim ke 10 interaksi terakhir (user + model)
@@ -3570,12 +3584,28 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     function hideTypingIndicator() { document.getElementById('typingIndicator')?.classList.remove('show'); }
     function showImageProcessingIndicator() { document.getElementById('imageProcessingIndicator')?.classList.add('show'); scrollToBottom(); }
     function hideImageProcessingIndicator() { document.getElementById('imageProcessingIndicator')?.classList.remove('show'); }
+    
+    // ▼▼▼ [DIUBAH] Logika Scroll dan Notifikasi Pesan Baru ▼▼▼
     function scrollToBottom() {
         const chatMessages = document.getElementById('chatMessages');
         setTimeout(() => chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' }), 100);
     }
+
+    function forceScrollToBottom() {
+        scrollToBottom();
+        document.getElementById('newMessageNotification').classList.add('hidden');
+    }
+
+    function showNewMessageNotification() {
+        // Hanya tampilkan notifikasi jika pengguna telah scroll ke atas, ATAU jika jendela tidak aktif
+        if (userHasScrolledUp || !isWindowActive) {
+            document.getElementById('newMessageNotification').classList.remove('hidden');
+        }
+    }
+    // ▲▲▲ AKHIR DARI PERUBAHAN LOGIKA SCROLL ▲▲▲
+
     function playNotificationSound() {
-        if (settings.soundEnabled) {
+        if (settings.soundEnabled && isWindowActive) { // Hanya putar suara jika jendela aktif
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
@@ -3589,6 +3619,27 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             oscillator.stop(audioCtx.currentTime + 0.3);
         }
     }
+
+    // ▼▼▼ [BARU] Fungsi untuk Notifikasi Asli (Native Notification) ▼▼▼
+    function requestNotificationPermission() {
+        if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+            Notification.requestPermission().then(permission => {
+                console.log('Izin Notifikasi:', permission);
+            });
+        }
+    }
+
+    function showNativeNotification(title, body) {
+        if ('Notification' in window && Notification.permission === 'granted' && !isWindowActive) {
+            const notification = new Notification(title, {
+                body: body,
+                icon: 'favicon-96x96.png', // Gunakan ikon Anda
+                sound: 'default' // Ini akan menggunakan suara notifikasi default sistem operasi
+            });
+        }
+    }
+    // ▲▲▲ AKHIR DARI FUNGSI NOTIFIKASI ASLI ▲▲▲
+
     function copyToClipboard(text, button) {
         navigator.clipboard.writeText(text).then(() => {
             const originalHTML = button.innerHTML;
@@ -4198,6 +4249,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
             }
             addToConversationHistory('model', mainAnswer.trim());
             playNotificationSound();
+            showNativeNotification(t('aiName'), mainAnswer.trim().substring(0, 100) + '...');
         } catch (error) {
             if (error.name === 'AbortError') {
                 addSystemMessage(t('systemResponseStopped'), 'warning');
@@ -4271,6 +4323,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
             }
             addToConversationHistory('model', mainAnswer.trim());
             playNotificationSound();
+            showNativeNotification(t('aiName'), mainAnswer.trim().substring(0, 100) + '...');
         } catch (error) {
             if (error.name === 'AbortError') {
                 addSystemMessage(t('systemImageAnalysisStopped'), 'warning');
@@ -4568,6 +4621,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         populateElevenLabsVoices();
         loadAllChatSessions();
         hideTypingIndicator();
+        requestNotificationPermission(); // [BARU] Minta izin notifikasi saat aplikasi dimuat
         hideImageProcessingIndicator();
         
         document.getElementById('fontSizeSelect').addEventListener('change', (e) => {
@@ -4613,6 +4667,27 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
 
         document.getElementById('previewElevenLabsVoiceBtn').addEventListener('click', previewElevenLabsVoice);
     });
+
+    // ▼▼▼ [BARU] Event Listener untuk Notifikasi Cerdas dan Scroll ▼▼▼
+    document.addEventListener('visibilitychange', () => {
+        isWindowActive = !document.hidden;
+        if (isWindowActive) {
+            // Saat pengguna kembali ke tab, sembunyikan notifikasi jika mereka sudah di bawah
+            const chatMessages = document.getElementById('chatMessages');
+            const isAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 150; // Toleransi 150px
+            if(isAtBottom) {
+                document.getElementById('newMessageNotification').classList.add('hidden');
+            }
+        }
+    });
+
+    document.getElementById('chatMessages').addEventListener('scroll', function() {
+        userHasScrolledUp = this.scrollHeight - this.scrollTop > this.clientHeight + 150; // Toleransi 150px
+        if (!userHasScrolledUp) {
+            document.getElementById('newMessageNotification').classList.add('hidden');
+        }
+    });
+    // ▲▲▲ AKHIR DARI EVENT LISTENER BARU ▲▲▲
 
     ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal'].forEach(id => {
         document.getElementById(id).addEventListener('click', e => {
