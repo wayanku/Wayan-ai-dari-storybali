@@ -1216,10 +1216,14 @@
         gap: 2px;
         height: 16px;
         width: 24px; /* Lebar tetap untuk wave */
+        /* [BARU] Menambahkan perspektif untuk animasi 3D */
+        perspective: 30px;
     }
     .tts-player .wave-bar {
         width: 3px;
         background: var(--text-secondary);
+        /* [DIUBAH] Mengganti animasi lama dengan animasi spektrum baru */
+        animation: tts-spectrum-animation 1.2s infinite ease-in-out;
     }
     .tts-player .tts-text {
         font-size: 0.8rem;
@@ -1238,6 +1242,19 @@
     .tts-player .stop-tts-btn:hover {
         background-color: rgba(var(--text-primary-rgba), 0.1);
     }
+    /* [BARU] Animasi spektrum untuk TTS Player */
+    @keyframes tts-spectrum-animation {
+        0%, 100% { transform: scaleY(0.1) rotateX(0); }
+        25% { transform: scaleY(1.0) rotateX(15deg); background-color: #6366f1; }
+        50% { transform: scaleY(0.3) rotateX(0); }
+        75% { transform: scaleY(0.8) rotateX(-15deg); background-color: #8b5cf6; }
+    }
+    /* [BARU] Menambahkan delay animasi untuk setiap bar agar terlihat dinamis */
+    .tts-player .wave-bar:nth-child(1) { animation-delay: -0.4s; }
+    .tts-player .wave-bar:nth-child(2) { animation-delay: -0.2s; }
+    .tts-player .wave-bar:nth-child(3) { animation-delay: 0s; }
+    .tts-player .wave-bar:nth-child(4) { animation-delay: -0.3s; }
+
     /* ▲▲▲ AKHIR DARI GAYA LINK ▲▲▲ */
 
 
@@ -1302,6 +1319,45 @@
     .call-avatar-container {
         animation: call-pulse 2s infinite;
     }
+    /* ▼▼▼ [PENYEMPURNAAN] Animasi Avatar Melayang ▼▼▼ */
+    .call-avatar-container img {
+        animation: call-avatar-float 4s ease-in-out infinite;
+    }
+    @keyframes call-avatar-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    /* ▲▲▲ AKHIR DARI PENYEMPURNAAN ▲▲▲ */
+    /* ▼▼▼ [PERBAIKAN] Gaya Baru untuk Modal Panggilan Suara ▼▼▼ */
+    #callModal {
+        background: radial-gradient(circle, #1a2a6c 0%, #000000 100%);
+        animation: call-background-pan 15s linear infinite;
+        background-size: 200% 200%;
+    }
+    @keyframes call-background-pan {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .call-action-button {
+        background-color: rgba(255, 255, 255, 0.15); /* Sedikit lebih terang */
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* Bayangan lebih kuat */
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Transisi lebih dinamis */
+    }
+    /* ▼▼▼ [PENYEMPURNAAN] Animasi Visualizer Suara Baru ▼▼▼ */
+    @keyframes call-visualizer-pulse {
+        0% { transform: scale(1.2); opacity: 0; border-color: #60a5fa; }
+        50% { opacity: 1; border-color: #3b82f6; }
+        100% { transform: scale(1.6); opacity: 0; border-color: #93c5fd; }
+    }
+    /* ▼▼▼ [PENYEMPURNAAN] Penyesuaian Tata Letak ▼▼▼ */
+    #callModal {
+        padding-bottom: calc(2rem + env(safe-area-inset-bottom)); /* Padding bawah untuk home bar iPhone */
+        padding-top: calc(2rem + env(safe-area-inset-top)); /* Padding atas untuk poni iPhone */
+    }
+    #callStatusText { min-height: 28px; /* Mencegah lompatan layout */ }
+    /* ▲▲▲ AKHIR DARI PENYEMPURNAAN ▲▲▲ */
+    /* ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲ */
     @keyframes call-pulse {
         0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
         70% { box-shadow: 0 0 0 20px rgba(255, 255, 255, 0); }
@@ -1314,6 +1370,36 @@
       max-height: 100px;
       overflow-y: auto;
     }
+    /* ▼▼▼ [BARU] GAYA UNTUK NOTIFIKASI ERROR DEBUG ▼▼▼ */
+    #errorToastContainer {
+        position: fixed;
+        bottom: 1rem;
+        left: 1rem;
+        right: 1rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        pointer-events: none;
+    }
+    .error-toast {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        background-color: #ef4444; /* red-500 */
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        max-width: 500px;
+        width: 100%;
+        pointer-events: auto;
+        animation: toast-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .error-toast code { font-size: 0.75rem; line-height: 1.2; }
+    @keyframes toast-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    /* ▲▲▲ AKHIR DARI GAYA NOTIFIKASI ERROR DEBUG ▲▲▲ */
     /* ▲▲▲ AKHIR DARI CSS PANGGILAN SUARA ▲▲▲ */
   </style>
 </head>
@@ -1480,34 +1566,42 @@
 </div>
     
 <!-- ▼▼▼ MODAL PANGGILAN SUARA YANG DIROMBAK TOTAL ▼▼▼ -->
-<div id="callModal" class="fixed inset-0 z-50 flex-col items-center justify-center hidden" style="background-color: rgba(0,0,0,0.8); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);">
-    <div class="text-center text-white">
-        <div class="call-avatar-container w-32 h-32 rounded-full p-1 mx-auto mb-4" style="border: 3px solid rgba(255,255,255,0.5);">
-            <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI Avatar" class="w-full h-full object-cover rounded-full">
+<div id="callModal" class="fixed inset-0 z-50 flex-col items-center justify-between hidden p-8" style="background-color: rgba(0,0,0,0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+    <!-- Area Konten Atas -->
+    <div class="w-full text-center text-white">
+        <div class="relative inline-block">
+            <div class="call-avatar-container w-32 h-32 rounded-full p-1 mx-auto mb-4" style="border: 3px solid rgba(255,255,255,0.5);">
+                <img src="https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg" alt="Wayan AI Avatar" class="w-full h-full object-cover rounded-full">
+            </div>
+            <!-- [BARU] Visualizer Suara -->
+            <div id="callVisualizer" class="absolute inset-0 rounded-full border-2 border-blue-400 opacity-0 transition-all duration-500" style="animation: call-visualizer-pulse 2s infinite ease-out;"></div>
         </div>
         <h2 class="text-2xl font-bold" data-translate-key="aiName">Wayan AI</h2>
-        <p id="callStatusText" class="text-lg mt-1 text-gray-300 transition-all duration-300 h-7" data-translate-key="callConnecting">Menghubungkan...</p>
-
-        <!-- [BARU] Area untuk menampilkan transkrip di iOS -->
-        <div id="callTranscriptPreview" class="w-full max-w-sm mx-auto mt-2 p-2 rounded-lg text-sm text-white text-left" style="display: none;">
-            <!-- Transkrip akan muncul di sini -->
-        </div>
+        <p id="callStatusText" class="text-lg mt-1 text-gray-300 transition-all duration-300" data-translate-key="callConnecting">Menghubungkan...</p>
     </div>
 
-    <!-- Wrapper untuk tombol di bagian bawah -->
-    <div class="absolute bottom-16 flex items-center space-x-8">
+    <!-- Area Transkrip (di tengah) -->
+    <div id="callTranscriptPreview" class="w-full max-w-sm mx-auto my-4 p-3 rounded-lg text-sm text-white text-center" style="display: none; background-color: rgba(0,0,0,0.25); backdrop-filter: blur(5px);">
+        <!-- Transkrip akan muncul di sini -->
+    </div>
+
+    <!-- Wrapper untuk tombol di bagian bawah (posisi disesuaikan) -->
+    <div class="w-full flex items-center justify-center space-x-8">
         <!-- Tombol Aksi Utama (Mikrofon/Kirim) -->
-        <button id="callActionBtn" class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform active:scale-95" data-translate-title="callStartSpeaking" style="display: none;">
+        <button id="callActionBtn" class="w-16 h-16 call-action-button bg-blue-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform active:scale-95" data-translate-title="callStartSpeaking" style="display: none;">
             <!-- Ikon akan diubah oleh JavaScript -->
         </button>
 
         <!-- Tombol Akhiri Panggilan -->
-        <button id="endCallBtn" onclick="endCall()" class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform" data-translate-title="callEnd">
+        <button id="endCallBtn" onclick="endCall()" class="w-16 h-16 call-action-button bg-red-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform" data-translate-title="callEnd">
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l-8 8m0-8l8 8"></path></svg>
         </button>
     </div>
 </div>
 <!-- ▲▲▲ AKHIR DARI MODAL PANGGILAN SUARA ▲▲▲ -->
+
+<!-- ▼▼▼ [BARU] CONTAINER UNTUK NOTIFIKASI ERROR ▼▼▼ -->
+<div id="errorToastContainer"></div>
 
 <!-- ▼▼▼ [BARU] MODAL UNTUK PENCARIAN GOOGLE ▼▼▼ -->
 <div id="searchModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
@@ -2665,10 +2759,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             }
             addOriginalMessage(messageToRender, msg.role === 'user', msg.timestamp);
         });
-        
-        chatMessages.appendChild(document.getElementById('typingIndicator'));
-        chatMessages.appendChild(document.getElementById('imageProcessingIndicator'));
-        
         scrollToBottom();
         updateSidebarActiveState();
     }
@@ -3437,7 +3527,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                     <!-- ▼▼▼ [BARU] Placeholder untuk TTS Player ▼▼▼ -->
                     <div class="tts-player">
                         <div class="tts-status">
-                            <div class="tts-wave">
+                            <div class="tts-wave" style="gap: 3px;">
                                 <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
                             </div>
                             <span class="tts-text" data-translate-key="readingText">Membacakan...</span>
@@ -3531,7 +3621,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                         <!-- ▼▼▼ [BARU] Placeholder untuk TTS Player ▼▼▼ -->
                         <div class="tts-player">
                             <div class="tts-status">
-                                <div class="tts-wave">
+                                <div class="tts-wave" style="gap: 3px;">
                                     <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
                                 </div>
                                 <span class="tts-text" data-translate-key="readingText">Membacakan...</span>
@@ -4377,6 +4467,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         isSpeaking = true;
         document.getElementById('callStatusText').textContent = t('callStatusSpeaking');
         document.getElementById('callActionBtn').style.display = 'none';
+        document.getElementById('callVisualizer').style.opacity = '1'; // [BARU] Tampilkan visualizer
         document.getElementById('callTranscriptPreview').style.display = 'none';
 
         const onAudioEnd = () => {
@@ -4384,6 +4475,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
             if (isCallActive) {
                 listenForUserSpeech();
             }
+            document.getElementById('callVisualizer').style.opacity = '0'; // [BARU] Sembunyikan visualizer
         };
 
         try {
@@ -4690,6 +4782,37 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
     // ▲▲▲ AKHIR DARI EVENT LISTENER BARU ▲▲▲
 
     ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal'].forEach(id => {
+        // ... (kode event listener modal yang ada tetap sama)
+    });
+
+    // ▼▼▼ [BARU] SISTEM PENANGANAN ERROR GLOBAL ▼▼▼
+    function showErrorToast(message, source, lineno, colno, error) {
+        const container = document.getElementById('errorToastContainer');
+        const toast = document.createElement('div');
+        toast.className = 'error-toast';
+
+        const fileName = source.substring(source.lastIndexOf('/') + 1);
+
+        toast.innerHTML = `
+            <div class="flex-shrink-0"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.636-1.214 2.43-1.214 3.066 0l5.516 10.52c.636 1.214-.26 2.74-1.533 2.74H4.274c-1.274 0-2.169-1.526-1.533-2.74l5.516-10.52zM9 13a1 1 0 112 0 1 1 0 01-2 0zm1-4a1 1 0 00-1 1v2a1 1 0 102 0V9a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg></div>
+            <div>
+                <p class="font-bold text-sm mb-1">Terjadi Error!</p>
+                <code class="block">${message}</code>
+                <code class="block mt-1 opacity-80">${fileName} at line ${lineno}:${colno}</code>
+            </div>
+        `;
+        container.appendChild(toast);
+        // Hapus notifikasi setelah 10 detik
+        setTimeout(() => { toast.remove(); }, 10000);
+    }
+
+    window.onerror = showErrorToast;
+    window.addEventListener('unhandledrejection', event => {
+        showErrorToast(event.reason.message, event.reason.stack || 'Promise', 'N/A', 'N/A', event.reason);
+    });
+    // ▲▲▲ AKHIR DARI SISTEM PENANGANAN ERROR GLOBAL ▲▲▲
+
+    ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal', 'confirmModal'].forEach(id => {
         document.getElementById(id).addEventListener('click', e => {
             if (e.target.id === id) {
                 if (id === 'profileModal') hideProfileModal();
