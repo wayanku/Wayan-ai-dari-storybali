@@ -4520,17 +4520,19 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         const callActionBtn = document.getElementById('callActionBtn');
         const callStatusText = document.getElementById('callStatusText');
         
+        // [ANALISIS] Di sini adalah titik percabangan utama.
+        // Kode akan memeriksa apakah perangkat adalah iOS.
         if (isIOS()) {
             userCallState = 'idle';
             callActionBtn.style.display = 'flex';
             callActionBtn.innerHTML = `<svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>`; // Mic Icon
             callActionBtn.title = t('callStartSpeaking');
-            callStatusText.textContent = t('profileHint'); // "Ketuk untuk bicara"
+            callStatusText.textContent = t('profileHint'); // Menampilkan pesan seperti "Ketuk untuk bicara"
             
             callActionBtn.onclick = () => {
                 if (userCallState === 'idle') {
                     startRecognitionForIOS();
-                } else if (userCallState === 'listening') {
+                } else if (userCallState === 'listening') { // Jika sedang merekam, tombol ini akan menghentikan rekaman.
                     if (callRecognition) callRecognition.stop();
                 } else if (userCallState === 'transcribed') {
                     const textToSend = document.getElementById('callTranscriptPreview').textContent.trim();
@@ -4541,7 +4543,8 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
                     }
                 }
             };
-        } else { // Android
+        } else { // [ANALISIS] Ini adalah alur untuk perangkat non-iOS (misalnya Android).
+                 // Tombol mikrofon disembunyikan dan perekaman suara dimulai secara otomatis.
             callActionBtn.style.display = 'none'; // No button for Android
             callStatusText.textContent = t('listening');
             startRecognitionForAndroid();
