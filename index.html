@@ -987,10 +987,11 @@
     .settings-card {
         background: var(--settings-card-bg);
         border-radius: 1rem; padding: 1rem;
+        margin-bottom: 1rem; /* [BARU] Menambahkan jarak bawah antar kartu */
         box-shadow: 0 4px 12px var(--shadow-color);
         transition: all 0.3s ease;
     }
-    .settings-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px var(--shadow-color); }
+    .settings-card:not(.nav-item):hover { transform: translateY(-2px); box-shadow: 0 6px 16px var(--shadow-color); }
     .settings-item { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); }
     .settings-item.flex-col {
         flex-direction: column;
@@ -1014,6 +1015,7 @@
         width: 2rem; /* 32px */
         height: 2rem; /* 32px */
         border-radius: 0.5rem; /* 8px */
+        flex-shrink: 0; /* [PERBAIKAN] Mencegah ikon menyusut */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1022,6 +1024,10 @@
         width: 1.25rem; /* 20px */
         height: 1.25rem; /* 20px */
     }
+    /* [DIHAPUS] Aturan ini tidak lagi diperlukan karena sudah digabungkan di atas */
+    /* .settings-item.nav-item .settings-icon-bg {
+        flex-shrink: 0;
+    } */
 
     .settings-input, .settings-select, #customRoleInput {
         border-radius: 0.5rem; background: var(--bg-tertiary); border: 1px solid var(--border-color);
@@ -1067,6 +1073,26 @@
     .toggle-new:checked { background-color: #6366f1; }
     html.dark .toggle-new:checked { background-color: #f5f5f5; }
     .toggle-new:checked::before { transform: translateX(20px); }
+
+    /* [BARU] Menyamakan gaya radio button dengan toggle switch */
+    .toggle-radio {
+        appearance: none; width: 44px; height: 24px; border-radius: 12px;
+        background-color: var(--bg-tertiary);
+        position: relative; cursor: pointer; transition: background-color 0.3s ease;
+        border: 1px solid var(--border-color); /* Tambahkan border agar terlihat di mode terang */
+    }
+    .toggle-radio::before {
+        content: ''; position: absolute; top: 2px; left: 2px; /* Disesuaikan dengan border */
+        width: 18px; height: 18px; border-radius: 50%; background-color: white;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    html.dark .toggle-radio { border-color: transparent; } /* Hapus border di mode gelap */
+    html.dark .toggle-radio::before { background-color: #121212; }
+    .toggle-radio:checked { background-color: #6366f1; border-color: #6366f1; }
+    html.dark .toggle-radio:checked { background-color: #f5f5f5; }
+    .toggle-radio:checked::before { transform: translateX(20px); }
+    /* Akhir dari gaya radio button baru */
 
     .choice-btn {
         width: 100%;
@@ -1746,14 +1772,18 @@
 <div id="settingsModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden">
     <div class="modal-content w-full h-full overflow-hidden flex flex-col" id="settingsModalContent">
         <!-- [DIUBAH] Header Modal Pengaturan dengan Tombol Kembali Dinamis -->
-        <div class="p-4 flex items-center justify-between flex-shrink-0 bg-white border-b border-gray-200 relative">
-            <button id="settingsBackBtn" onclick="navigateToSettingsPage('main')" class="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center modal-close-btn hidden">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-            </button>
-            <h3 id="settingsModalTitle" class="text-lg font-bold text-gray-800 text-center w-full" data-translate-key="settingsHeader">Pengaturan</h3>
-            <button onclick="toggleSettings()" class="w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn" data-translate-title="settingsCloseTitle">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
+        <div class="p-4 flex items-center justify-between flex-shrink-0 bg-white border-b border-gray-200">
+            <div class="w-10 h-10 flex items-center justify-start">
+                <button id="settingsBackBtn" onclick="navigateToSettingsPage('main')" class="w-8 h-8 rounded-full flex items-center justify-center modal-close-btn hidden">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+            </div>
+            <h3 id="settingsModalTitle" class="text-lg font-bold text-gray-800 text-center flex-grow" data-translate-key="settingsHeader">Pengaturan</h3>
+            <div class="w-10 h-10 flex items-center justify-end">
+                <button onclick="toggleSettings()" class="w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn" data-translate-title="settingsCloseTitle">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
         </div>
         
         <!-- [PENYEMPURNAAN] Kontainer scroll utama dengan padding yang lebih rapi -->
@@ -1843,10 +1873,8 @@
                         </div>
                         <input type="checkbox" id="darkModeToggle" class="toggle-new" onchange="handleDarkModeToggle()">
                     </div>
-                </div>
-                <!-- [DIUBAH] Kartu untuk Latar Belakang Kustom (Upload File) -->
-                <div class="settings-card nav-item" onclick="navigateToSettingsPage('background')">
-                    <div class="settings-item"> 
+                    <!-- [BARU] Item Gambar Latar dipindahkan ke dalam kartu Tampilan -->
+                    <div class="settings-item nav-item" onclick="navigateToSettingsPage('background')">
                         <div class="flex items-center space-x-4">
                             <div class="settings-icon-bg bg-pink-500">
                                 <svg class="text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
@@ -1859,7 +1887,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="settings-card">
+                <!-- [BARU] Judul seksi untuk Suara & Notifikasi -->
+                <h3 class="settings-section-header" data-translate-key="tabSound">Suara & Notifikasi</h3>
+                <div class="settings-card"> <!-- Pengaturan suara dikelompokkan di sini -->
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
                             <div class="settings-icon-bg bg-teal-500">
@@ -1959,24 +1989,27 @@
             <!-- [BARU] Halaman Pengaturan Bahasa -->
             <div id="settings-page-language" class="settings-page">
                 <div class="settings-card">
-                    <!-- [DIUBAH] Pilihan bahasa dengan ikon -->
-                    <div class="settings-item nav-item" onclick="selectChoice('language', 'id', this); navigateToSettingsPage('main');">
+                    <!-- [DIUBAH] Setiap bahasa memiliki toggle switch sendiri -->
+                    <div class="settings-item">
                         <div class="flex items-center space-x-4">
                             <img src="https://flagcdn.com/w40/id.png" alt="Indonesia Flag" class="w-6 h-auto rounded-sm">
                             <span class="text-sm font-medium text-gray-700" data-translate-key="langIndonesian">Indonesia</span>
                         </div>
+                        <input type="radio" name="languageToggle" id="language-id" class="toggle-radio" value="id" onchange="selectChoice('language', this.value, this)" checked>
                     </div>
-                    <div class="settings-item nav-item" onclick="selectChoice('language', 'en', this); navigateToSettingsPage('main');">
+                    <div class="settings-item">
                         <div class="flex items-center space-x-4">
                             <img src="https://flagcdn.com/w40/gb.png" alt="UK Flag" class="w-6 h-auto rounded-sm">
                             <span class="text-sm font-medium text-gray-700" data-translate-key="langEnglish">English</span>
                         </div>
+                        <input type="radio" name="languageToggle" id="language-en" class="toggle-radio" value="en" onchange="selectChoice('language', this.value, this)" >
                     </div>
-                    <div class="settings-item nav-item" onclick="selectChoice('language', 'ja', this); navigateToSettingsPage('main');">
+                    <div class="settings-item">
                         <div class="flex items-center space-x-4">
                             <img src="https://flagcdn.com/w40/jp.png" alt="Japan Flag" class="w-6 h-auto rounded-sm">
                             <span class="text-sm font-medium text-gray-700" data-translate-key="langJapanese">日本語</span>
                         </div>
+                        <input type="radio" name="languageToggle" id="language-ja" class="toggle-radio" value="ja" onchange="selectChoice('language', this.value, this)" >
                     </div>
                 </div>
             </div>
@@ -1984,27 +2017,27 @@
             <!-- [BARU] Halaman Pengaturan Gaya Bahasa -->
             <div id="settings-page-personality" class="settings-page">
                 <div class="settings-card">
-                    <!-- [DIUBAH] Pilihan gaya bahasa dengan ikon -->
-                    <div id="personality-santai" class="settings-item nav-item" onclick="selectChoice('personality', 'santai', this); navigateToSettingsPage('main');">
+                    <!-- [DIUBAH] Setiap gaya bahasa memiliki toggle switch sendiri -->
+                    <div class="settings-item">
                         <div class="flex items-center space-x-4">
                             <div class="settings-icon-bg bg-blue-100 text-blue-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
                             <span class="text-sm font-medium text-gray-700" data-translate-key="personalityCasual">Santai</span>
                         </div>
-                        <div class="choice-indicator"></div>
+                        <input type="radio" name="personalityToggle" id="personality-santai" class="toggle-radio" value="santai" onchange="selectChoice('personality', this.value, this)" checked>
                     </div>
-                    <div id="personality-profesional" class="settings-item nav-item" onclick="selectChoice('personality', 'profesional', this); navigateToSettingsPage('main');">
+                    <div class="settings-item">
                         <div class="flex items-center space-x-4">
                             <div class="settings-icon-bg bg-gray-100 text-gray-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></div>
                             <span class="text-sm font-medium text-gray-700" data-translate-key="personalityProfessional">Profesional</span>
                         </div>
-                        <div class="choice-indicator"></div>
+                        <input type="radio" name="personalityToggle" id="personality-profesional" class="toggle-radio" value="profesional" onchange="selectChoice('personality', this.value, this)" >
                     </div>
-                    <div id="personality-lucu" class="settings-item nav-item" onclick="selectChoice('personality', 'lucu', this); navigateToSettingsPage('main');">
+                    <div class="settings-item">
                         <div class="flex items-center space-x-4">
                             <div class="settings-icon-bg bg-yellow-100 text-yellow-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
                             <span class="text-sm font-medium text-gray-700" data-translate-key="personalityHumorous">Humoris</span>
                         </div>
-                        <div class="choice-indicator"></div>
+                        <input type="radio" name="personalityToggle" id="personality-lucu" class="toggle-radio" value="lucu" onchange="selectChoice('personality', this.value, this)" >
                     </div>
                 </div>
             </div>
@@ -2012,16 +2045,55 @@
             <!-- [BARU] Halaman Pengaturan Mode Peran AI -->
             <div id="settings-page-aiRole" class="settings-page">
                 <div class="settings-card">
-                    <div class="settings-item flex-col">
-                        <div class="grid grid-cols-3 gap-2 w-full pt-2">
-                            <button id="aiRole-umum" onclick="selectChoice('aiRole', 'umum', this)" class="choice-btn" data-translate-key="roleGeneral">Umum</button>
-                            <button id="aiRole-guru_jepang" onclick="selectChoice('aiRole', 'guru_jepang', this)" class="choice-btn" data-translate-key="roleJapaneseTeacher">B. Jepang</button>
-                            <button id="aiRole-guru_matematika" onclick="selectChoice('aiRole', 'guru_matematika', this)" class="choice-btn" data-translate-key="roleMathTeacher">Matematika</button>
-                            <button id="aiRole-dokter" onclick="selectChoice('aiRole', 'dokter', this)" class="choice-btn" data-translate-key="roleDoctor">Dokter</button>
-                            <button id="aiRole-programmer" onclick="selectChoice('aiRole', 'programmer', this)" class="choice-btn" data-translate-key="roleProgrammer">Programmer</button>
-                            <button id="aiRole-penerjemah" onclick="selectChoice('aiRole', 'penerjemah', this)" class="choice-btn" data-translate-key="roleTranslator">Penerjemah</button>
-                            <button id="aiRole-kustom" onclick="selectChoice('aiRole', 'kustom', this)" class="choice-btn col-span-3" data-translate-key="roleCustom">Kustom...</button>
+                    <!-- [DIUBAH] Setiap peran memiliki toggle switch sendiri -->
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-4">
+                            <div class="settings-icon-bg bg-gray-100 text-gray-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                            <span class="text-sm font-medium text-gray-700" data-translate-key="roleGeneral">Umum</span>
                         </div>
+                        <input type="radio" name="aiRoleToggle" id="aiRole-umum" class="toggle-radio" value="umum" onchange="selectChoice('aiRole', this.value, this)" checked>
+                    </div>
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-4">
+                            <div class="settings-icon-bg bg-red-100 text-red-600">🇯🇵</div>
+                            <span class="text-sm font-medium text-gray-700" data-translate-key="roleJapaneseTeacher">Guru B. Jepang</span>
+                        </div>
+                        <input type="radio" name="aiRoleToggle" id="aiRole-guru_jepang" class="toggle-radio" value="guru_jepang" onchange="selectChoice('aiRole', this.value, this)" >
+                    </div>
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-4">
+                            <div class="settings-icon-bg bg-blue-100 text-blue-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 0v6m0-6L9 13m12-2l-2-2-2 2m-2-2l-2 2"></path></svg></div>
+                            <span class="text-sm font-medium text-gray-700" data-translate-key="roleMathTeacher">Guru Matematika</span>
+                        </div>
+                        <input type="radio" name="aiRoleToggle" id="aiRole-guru_matematika" class="toggle-radio" value="guru_matematika" onchange="selectChoice('aiRole', this.value, this)" >
+                    </div>
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-4">
+                            <div class="settings-icon-bg bg-green-100 text-green-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                            <span class="text-sm font-medium text-gray-700" data-translate-key="roleDoctor">Dokter</span>
+                        </div>
+                        <input type="radio" name="aiRoleToggle" id="aiRole-dokter" class="toggle-radio" value="dokter" onchange="selectChoice('aiRole', this.value, this)" >
+                    </div>
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-4">
+                            <div class="settings-icon-bg bg-purple-100 text-purple-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg></div>
+                            <span class="text-sm font-medium text-gray-700" data-translate-key="roleProgrammer">Programmer</span>
+                        </div>
+                        <input type="radio" name="aiRoleToggle" id="aiRole-programmer" class="toggle-radio" value="programmer" onchange="selectChoice('aiRole', this.value, this)" >
+                    </div>
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-4">
+                            <div class="settings-icon-bg bg-orange-100 text-orange-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m4 13-4-4-4 4M19 17v-2a4 4 0 00-4-4H9.5M19 17h-2a4 4 0 00-4 4v2M19 17v2a4 4 0 01-4 4H9.5"></path></svg></div>
+                            <span class="text-sm font-medium text-gray-700" data-translate-key="roleTranslator">Penerjemah</span>
+                        </div>
+                        <input type="radio" name="aiRoleToggle" id="aiRole-penerjemah" class="toggle-radio" value="penerjemah" onchange="selectChoice('aiRole', this.value, this)" >
+                    </div>
+                    <div class="settings-item">
+                        <div class="flex items-center space-x-4">
+                            <div class="settings-icon-bg bg-slate-100 text-slate-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></div>
+                            <span class="text-sm font-medium text-gray-700" data-translate-key="roleCustom">Kustom...</span>
+                        </div>
+                        <input type="radio" name="aiRoleToggle" id="aiRole-kustom" class="toggle-radio" value="kustom" onchange="selectChoice('aiRole', this.value, this)" >
                     </div>
                     <div id="customRoleContainer" class="hidden p-2 mt-2">
                         <label class="block text-xs text-gray-600 mb-1" data-translate-key="customRoleLabel">Definisikan peran kustom AI:</label>
@@ -2235,7 +2307,7 @@
             previewEffectLabel: "Efek Blur", previewEffectNone: "Mati", previewEffectLight: "Ringan", previewEffectStrong: "Kuat",
             previewSizeLabel: "Ukuran Gambar", previewSizeCover: "Penuh", previewSizeContain: "Utuh",
             previewHeader: "Pratinjau Latar", previewMobile: "Tampilan Handphone", previewDesktop: "Tampilan Desktop",
-            settingAnimations: "Efek Animasi", settingDarkMode: "Mode Gelap", settingSound: "Suara Notifikasi", settingVoiceReader: "Pembaca Jawaban",
+            settingAnimations: "Efek Animasi", settingDarkMode: "Mode Gelap", tabSound: "Suara & Notifikasi", settingSound: "Suara Notifikasi", settingVoiceReader: "Pembaca Jawaban",
             settingAudioSource: "Sumber Audio", audioSourceBrowser: "Bawaan Browser", audioSourceElevenLabs: "ElevenLabs",
             settingVoiceType: "Jenis Suara (Bawaan)", settingElevenLabsVoice: "Suara ElevenLabs", elevenLabsNeedKey: "Masukkan API Key dulu", elevenLabsPreviewTitle: "Dengarkan Pratinjau Suara",
             elevenLabsHint: `Pilih "ElevenLabs" sebagai Sumber Audio dan simpan API Key di tab "Lanjutan" untuk menggunakan fitur ini.`,
@@ -2302,7 +2374,7 @@
             previewEffectLabel: "Blur Effect", previewEffectNone: "Off", previewEffectLight: "Light", previewEffectStrong: "Strong",
             previewSizeLabel: "Image Size", previewSizeCover: "Fill", previewSizeContain: "Fit",
             previewHeader: "Background Preview", previewMobile: "Mobile View", previewDesktop: "Desktop View",
-            settingAnimations: "Animations", settingDarkMode: "Dark Mode", settingSound: "Notification Sound", settingVoiceReader: "Answer Reader",
+            settingAnimations: "Animations", settingDarkMode: "Dark Mode", tabSound: "Sound & Notifications", settingSound: "Notification Sound", settingVoiceReader: "Answer Reader",
             settingAudioSource: "Audio Source", audioSourceBrowser: "Browser Default", audioSourceElevenLabs: "ElevenLabs",
             settingVoiceType: "Voice Type (Default)", settingElevenLabsVoice: "ElevenLabs Voice", elevenLabsNeedKey: "Enter API Key first", elevenLabsPreviewTitle: "Preview Voice",
             elevenLabsHint: `Select "ElevenLabs" as Audio Source and save an API Key in the "Advanced" tab to use this feature.`,
@@ -2369,7 +2441,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             previewEffectLabel: "ぼかし効果", previewEffectNone: "オフ", previewEffectLight: "弱", previewEffectStrong: "強",
             previewSizeLabel: "画像サイズ", previewSizeCover: "フィル", previewSizeContain: "フィット",
             previewHeader: "背景プレビュー", previewMobile: "モバイル表示", previewDesktop: "デスクトップ表示",
-            settingAnimations: "アニメーション効果", settingDarkMode: "ダークモード", settingSound: "通知音", settingVoiceReader: "回答読み上げ",
+            settingAnimations: "アニメーション効果", settingDarkMode: "ダークモード", tabSound: "音声と通知", settingSound: "通知音", settingVoiceReader: "回答読み上げ",
             settingAudioSource: "音声ソース", audioSourceBrowser: "ブラウザのデフォルト", audioSourceElevenLabs: "ElevenLabs",
             settingVoiceType: "声の種類 (デフォルト)", settingElevenLabsVoice: "ElevenLabsの声", elevenLabsNeedKey: "先にAPIキーを入力", elevenLabsPreviewTitle: "音声をプレビュー",
             elevenLabsHint: `この機能を使用するには、音声ソースとして「ElevenLabs」を選択し、「詳細」タブでAPIキーを保存してください。`,
@@ -3402,6 +3474,12 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.getElementById(`personality-${tempSettings.personality}`)?.classList.add('active');
         document.getElementById(`aiRole-${tempSettings.aiRole}`)?.classList.add('active');
         document.getElementById(`audioSource-${tempSettings.audioSource}`)?.classList.add('active');
+
+        // [BARU] Menetapkan status 'checked' untuk radio button
+        document.querySelector(`input[name="languageToggle"][value="${tempSettings.language}"]`).checked = true;
+        document.querySelector(`input[name="personalityToggle"][value="${tempSettings.personality}"]`).checked = true;
+        document.querySelector(`input[name="aiRoleToggle"][value="${tempSettings.aiRole}"]`).checked = true;
+
         
         const customRoleContainer = document.getElementById('customRoleContainer');
         customRoleContainer.classList.toggle('hidden', tempSettings.aiRole !== 'kustom');
@@ -3444,16 +3522,16 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         settings[settingName] = value;
         
         // [DIUBAH] Logika untuk menangani 'active' class pada tombol dan item
-        if (element.classList.contains('choice-btn')) {
-            Array.from(element.parentElement.children).forEach(child => child.classList.remove('active'));
+        if (element.classList.contains('toggle-radio')) {
+            // Tidak perlu menghapus 'active' karena radio button sudah menanganinya
+            // Cukup tambahkan 'active' ke elemen yang dipilih
             element.classList.add('active');
         } else if (element.classList.contains('settings-item')) {
-            Array.from(element.parentElement.children).forEach(child => child.classList.remove('active'));
             element.classList.add('active');
         }
 
         // [DIUBAH] Logika notifikasi sistem dipindahkan ke sini agar lebih terpusat
-        if (settingName === 'aiRole' && value !== 'kustom') {
+        if (settingName === 'aiRole') {
             document.getElementById('customRoleContainer').classList.toggle('hidden', value !== 'kustom');
             const roleKeyMap = { 'umum': 'roleGeneral', 'guru_jepang': 'roleJapaneseTeacher', 'guru_matematika': 'roleMathTeacher', 'dokter': 'roleDoctor', 'programmer': 'roleProgrammer', 'penerjemah': 'roleTranslator', 'kustom': 'roleCustom' };
             const roleNameKey = roleKeyMap[value];
@@ -3467,7 +3545,11 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             }
         }
 
-        if (settingName === 'language') {
+        if (settingName === 'language' || settingName === 'personality' || settingName === 'aiRole') {
+            updateSettingsSummary();
+        }
+
+        if (settingName === 'language') { // Aksi khusus untuk bahasa
             applyTranslations(value);
             populateVoiceList();
             if (activeChatId) {
