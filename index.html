@@ -709,12 +709,6 @@
         border: 1px solid var(--border-color);
         position: relative; /* [BARU] Diperlukan untuk UI Perekaman Suara */
     }
-    /* ▼▼▼ [BARU] Membuat kotak input lebih terang di mode gelap ▼▼▼ */
-    html.dark .input-box {
-        background-color: rgba(255, 255, 255, 0.07); /* Sedikit lebih terang dari latar */
-        border-color: rgba(255, 255, 255, 0.12); /* Garis tepi yang lebih jelas */
-    }
-    /* ▲▲▲ AKHIR DARI PERUBAHAN ▲▲▲ */
 
     .input-box input {
         width: 100%;
@@ -951,6 +945,38 @@
         75% { border-image-source: linear-gradient(135deg, #667eea, #764ba2, #f093fb); }
         100% { border-image-source: linear-gradient(135deg, #764ba2, #f093fb, #667eea); }
     }
+
+    /* ▼▼▼ [BARU] Gaya untuk Navigasi Halaman Pengaturan ▼▼▼ */
+    .settings-page {
+        display: none; /* Sembunyikan semua halaman secara default */
+        animation: slide-in-down 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; /* [DIUBAH] Animasi dari atas ke bawah */
+    }
+    .settings-page.active {
+        display: block;
+    }
+    .settings-page.slide-out {
+        animation: slide-out-up 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; /* [DIUBAH] Animasi dari bawah ke atas */
+    }
+    @keyframes slide-in-right {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slide-out-left {
+        from { opacity: 1; transform: translateX(0); }
+        to { opacity: 0; transform: translateX(-30px); }
+    }
+    /* [BARU] Keyframes untuk animasi vertikal */
+    @keyframes slide-in-down {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slide-out-up {
+        from { opacity: 1; transform: translateY(0); }
+        to { opacity: 0; transform: translateY(20px); }
+    }
+    .settings-item.nav-item { cursor: pointer; }
+    .settings-item.nav-item:hover { background-color: var(--bg-tertiary); }
+    /* ▲▲▲ AKHIR DARI GAYA NAVIGASI PENGATURAN ▲▲▲ */
     
     .settings-tab { transition: all 0.3s ease; border-bottom: 2px solid transparent; color: var(--text-secondary); }
     .settings-tab.active { color: #4f46e5; font-weight: 600; border-bottom-color: #4f46e5; }
@@ -1719,18 +1745,21 @@
 <!-- [DIUBAH] Menghapus padding (p-4) dan mengubah ukuran modal pengaturan menjadi layar penuh -->
 <div id="settingsModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden">
     <div class="modal-content w-full h-full overflow-hidden flex flex-col" id="settingsModalContent">
-        <div class="p-4 flex items-center justify-between flex-shrink-0 bg-white border-b border-gray-200">
-            <h3 class="text-lg font-bold text-gray-800" data-translate-key="settingsHeader">Pengaturan</h3>
+        <!-- [DIUBAH] Header Modal Pengaturan dengan Tombol Kembali Dinamis -->
+        <div class="p-4 flex items-center justify-between flex-shrink-0 bg-white border-b border-gray-200 relative">
+            <button id="settingsBackBtn" onclick="navigateToSettingsPage('main')" class="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center modal-close-btn hidden">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+            <h3 id="settingsModalTitle" class="text-lg font-bold text-gray-800 text-center w-full" data-translate-key="settingsHeader">Pengaturan</h3>
             <button onclick="toggleSettings()" class="w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn" data-translate-title="settingsCloseTitle">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
-        <!-- [DIHAPUS] Navigasi Tab telah dihapus pada iterasi sebelumnya -->
         
         <!-- [PENYEMPURNAAN] Kontainer scroll utama dengan padding yang lebih rapi -->
         <div class="flex-1 overflow-y-auto p-4">
-            <!-- Konten dari semua tab digabung menjadi satu daftar scroll -->
-            <div>
+            <!-- [DIUBAH] Halaman Utama Pengaturan -->
+            <div id="settings-page-main" class="settings-page active">
                 <!-- Seksi Umum -->
                 <h3 class="settings-section-header" data-translate-key="tabGeneral">Umum</h3>
                 <div class="settings-card">
@@ -1743,61 +1772,50 @@
                         </div>
                         <input type="text" id="aiNameInput" value="Wayan" class="settings-input text-right" readonly style="cursor: not-allowed;">
                     </div>
-                    <div class="settings-item flex-col">
-                        <div class="w-full flex items-center space-x-4">
-                            <div class="settings-icon-bg bg-blue-500">
+                    <!-- [DIUBAH] Item menjadi tombol navigasi -->
+                    <div class="settings-item nav-item" onclick="navigateToSettingsPage('language')">
+                        <div class="flex items-center space-x-4">
+                             <div class="settings-icon-bg bg-blue-500">
                                 <svg class="text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h7.5"></path></svg>
                             </div>
                             <label class="text-sm font-medium text-gray-700" data-translate-key="settingLanguage">Bahasa</label>
                         </div>
-                        <div class="grid grid-cols-3 gap-2 w-full pt-2">
-                            <button id="language-id" onclick="selectChoice('language', 'id', this)" class="choice-btn" data-translate-key="langIndonesian">Indonesia</button>
-                            <button id="language-en" onclick="selectChoice('language', 'en', this)" class="choice-btn" data-translate-key="langEnglish">English</button>
-                            <button id="language-ja" onclick="selectChoice('language', 'ja', this)" class="choice-btn" data-translate-key="langJapanese">日本語</button>
+                        <div class="flex items-center gap-2">
+                            <span id="currentLanguage" class="text-sm text-gray-500 dark:text-gray-400">Indonesia</span>
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </div>
                     </div>
-                    <div class="settings-item flex-col">
+                    <div class="settings-item nav-item" onclick="navigateToSettingsPage('personality')">
                         <div class="w-full flex items-center space-x-4">
                             <div class="settings-icon-bg bg-green-500">
                                 <svg class="text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                             </div>
                             <label class="text-sm font-medium text-gray-700" data-translate-key="settingPersonality">Gaya Bahasa</label>
                         </div>
-                        <div class="grid grid-cols-3 gap-2 w-full pt-2">
-                            <button id="personality-santai" onclick="selectChoice('personality', 'santai', this)" class="choice-btn" data-translate-key="personalityCasual">Santai</button>
-                            <button id="personality-profesional" onclick="selectChoice('personality', 'profesional', this)" class="choice-btn" data-translate-key="personalityProfessional">Profesional</button>
-                            <button id="personality-lucu" onclick="selectChoice('personality', 'lucu', this)" class="choice-btn" data-translate-key="personalityHumorous">Humoris</button>
+                        <div class="flex items-center gap-2">
+                            <span id="currentPersonality" class="text-sm text-gray-500 dark:text-gray-400">Santai</span>
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </div>
                     </div>
-                </div>
-                <div class="settings-card">
-                    <div class="settings-item flex-col">
+
+                    <div class="settings-item nav-item" onclick="navigateToSettingsPage('aiRole')">
                          <div class="w-full flex items-center space-x-4">
                             <div class="settings-icon-bg bg-purple-500">
                                 <svg class="text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V21H9z"></path></svg>
                             </div>
                             <label class="text-sm font-medium text-gray-700" data-translate-key="settingAIRole">Mode Peran AI</label>
                         </div>
-                        <div class="grid grid-cols-3 gap-2 w-full pt-2">
-                            <button id="aiRole-umum" onclick="selectChoice('aiRole', 'umum', this)" class="choice-btn" data-translate-key="roleGeneral">Umum</button>
-                            <button id="aiRole-guru_jepang" onclick="selectChoice('aiRole', 'guru_jepang', this)" class="choice-btn" data-translate-key="roleJapaneseTeacher">B. Jepang</button>
-                            <button id="aiRole-guru_matematika" onclick="selectChoice('aiRole', 'guru_matematika', this)" class="choice-btn" data-translate-key="roleMathTeacher">Matematika</button>
-                            <button id="aiRole-dokter" onclick="selectChoice('aiRole', 'dokter', this)" class="choice-btn" data-translate-key="roleDoctor">Dokter</button>
-                            <button id="aiRole-programmer" onclick="selectChoice('aiRole', 'programmer', this)" class="choice-btn" data-translate-key="roleProgrammer">Programmer</button>
-                            <button id="aiRole-penerjemah" onclick="selectChoice('aiRole', 'penerjemah', this)" class="choice-btn" data-translate-key="roleTranslator">Penerjemah</button>
-                            <button id="aiRole-kustom" onclick="selectChoice('aiRole', 'kustom', this)" class="choice-btn col-span-3" data-translate-key="roleCustom">Kustom...</button>
+                        <div class="flex items-center gap-2">
+                            <span id="currentAiRole" class="text-sm text-gray-500 dark:text-gray-400">Umum</span>
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </div>
-                    </div>
-                    <div id="customRoleContainer" class="hidden p-2 mt-2">
-                        <label class="block text-xs text-gray-600 mb-1" data-translate-key="customRoleLabel">Definisikan peran kustom AI:</label>
-                        <textarea id="customRoleInput" data-translate-placeholder="customRolePlaceholder" class="w-full settings-input text-sm" rows="3"></textarea>
                     </div>
                 </div>
 
                 <!-- Seksi Tampilan -->
                 <h3 class="settings-section-header" data-translate-key="tabAppearance">Tampilan</h3>
                 <div class="settings-card">
-                    <div class="settings-item">
+                    <div class="settings-item nav-item" onclick="navigateToSettingsPage('appearance')">
                         <div class="flex items-center space-x-4">
                             <div class="settings-icon-bg bg-sky-500">
                                 <svg class="text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
@@ -1805,9 +1823,6 @@
                             <label class="text-sm font-medium text-gray-700" data-translate-key="settingFontSize">Ukuran Font</label>
                         </div>
                         <select id="fontSizeSelect" class="settings-select text-right w-auto">
-                            <option value="sm" data-translate-key="fontSmall">Kecil</option>
-                            <option value="base" selected data-translate-key="fontNormal">Normal</option>
-                            <option value="lg" data-translate-key="fontLarge">Besar</option>
                         </select>
                     </div>
                     <div class="settings-item"> 
@@ -1830,75 +1845,17 @@
                     </div>
                 </div>
                 <!-- [DIUBAH] Kartu untuk Latar Belakang Kustom (Upload File) -->
-                <div class="settings-card">
-                    <div class="settings-item flex-col"> 
-                        <div class="w-full flex items-center space-x-4">
+                <div class="settings-card nav-item" onclick="navigateToSettingsPage('background')">
+                    <div class="settings-item"> 
+                        <div class="flex items-center space-x-4">
                             <div class="settings-icon-bg bg-pink-500">
                                 <svg class="text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
                             </div>
                             <label for="backgroundFileInput" class="text-sm font-medium text-gray-700" data-translate-key="settingBackground">Gambar Latar</label>
                         </div>
-                        <div class="w-full pt-2 space-y-2">
-                            <input type="file" id="backgroundFileInput" onchange="handleBackgroundUpload(event)" class="hidden" accept="image/*">
-                            <label for="backgroundFileInput" class="settings-btn-action bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm py-2 cursor-pointer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                <span data-translate-key="uploadBackground">Unggah Latar Belakang Chat</span>
-                            </label>
-                            <p id="backgroundFileName" class="text-xs text-gray-500 pl-1 truncate text-center"></p>
-                            
-                            <!-- [DIUBAH] Area Pratinjau dan Kontrol Latar Belakang Baru -->
-                            <div id="backgroundPreviewWrapper" class="mt-3 p-2 border-t border-dashed hidden" style="border-color: var(--border-color);">
-                                <div class="flex justify-center items-end gap-4 w-full">
-                                    <!-- Pratinjau Mobile -->
-                                    <div class="flex flex-col items-center">
-                                        <div class="preview-pane mobile-view">
-                                            <div class="preview-background"></div><div class="preview-header"></div>
-                                            <div class="preview-bubble ai">
-                                                <div class="preview-avatar"></div>
-                                                <div class="preview-text-content">
-                                                    <div class="preview-name">Wayan AI</div>
-                                                    <p>Halo! Gue Wayan nih, AI assistant yang siap bantu...</p>
-                                                </div>
-                                            </div>
-                                            <div class="preview-bubble user"><div class="preview-text-content"><p>Apa kabar?</p></div></div>
-                                            <div class="preview-footer"></div>
-                                        </div>
-                                        <p class="text-xs mt-2" style="color: var(--text-secondary);" data-translate-key="previewMobile">Tampilan Handphone</p>
-                                    </div>
-                                    <!-- Pratinjau Desktop -->
-                                    <div class="flex flex-col items-center flex-grow min-w-0">
-                                        <div class="preview-pane desktop-view">
-                                            <div class="preview-background"></div><div class="preview-header"></div>
-                                            <div class="preview-bubble ai"><div class="preview-avatar"></div><div class="preview-text-content"><div class="preview-name">Wayan AI</div><p>Halo! Gue Wayan nih, AI assistant yang siap bantu...</p></div></div>
-                                            <div class="preview-bubble user"><div class="preview-text-content"><p>Apa kabar?</p></div></div>
-                                            <div class="preview-footer"></div>
-                                        </div>
-                                        <p class="text-xs mt-2" style="color: var(--text-secondary);" data-translate-key="previewDesktop">Tampilan Desktop</p>
-                                    </div>
-                                </div>
-                                <div class="w-full max-w-xs mx-auto space-y-3 mt-4">
-                                    <div>
-                                        <label class="text-xs font-medium" style="color: var(--text-secondary);" data-translate-key="previewEffectLabel">Efek Blur</label>
-                                        <div class="grid grid-cols-3 gap-2 mt-1">
-                                            <button id="blurBtnNone" onclick="setPreviewBlur('none')" class="choice-btn" data-translate-key="previewEffectNone">Mati</button>
-                                            <button id="blurBtnLight" onclick="setPreviewBlur('light')" class="choice-btn" data-translate-key="previewEffectLight">Ringan</button>
-                                            <button id="blurBtnStrong" onclick="setPreviewBlur('strong')" class="choice-btn" data-translate-key="previewEffectStrong">Kuat</button>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="text-xs font-medium" style="color: var(--text-secondary);" data-translate-key="previewSizeLabel">Ukuran Gambar</label>
-                                        <div class="grid grid-cols-2 gap-2 mt-1">
-                                            <button id="sizeBtnCover" onclick="setPreviewSize('cover')" class="choice-btn" data-translate-key="previewSizeCover">Penuh</button>
-                                            <button id="sizeBtnContain" onclick="setPreviewSize('contain')" class="choice-btn" data-translate-key="previewSizeContain">Utuh</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="text-xs text-center mt-4" style="color: var(--text-secondary);" data-translate-key="previewHeader">Pratinjau Latar</p>
-                            </div>
-
-                            <button onclick="removeCustomBackground()" class="settings-btn-action bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm py-2 mt-2">
-                                <span data-translate-key="removeBackground">Hapus Latar</span>
-                            </button>
+                        <div class="flex items-center gap-2">
+                            <span id="currentBackground" class="text-sm text-gray-500 dark:text-gray-400">Default</span>
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </div>
                     </div>
                 </div>
@@ -1923,20 +1880,18 @@
                     </div>
 
                     <!-- ▼▼▼ [PERBAIKAN] Pengaturan Sumber Audio Baru ▼▼▼ -->
-                    <div class="settings-item flex-col">
-                        <div class="w-full flex items-center space-x-4">
+                    <div class="settings-item nav-item" onclick="navigateToSettingsPage('audio')">
+                        <div class="flex items-center space-x-4">
                             <div class="settings-icon-bg bg-cyan-500">
                                 <svg class="text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>
                             </div>
                             <label class="text-sm font-medium text-gray-700" data-translate-key="settingAudioSource">Sumber Audio</label>
                         </div>
-                        <div class="grid grid-cols-2 gap-2 w-full pt-2">
-                            <button id="audioSource-browser" onclick="selectChoice('audioSource', 'browser', this)" class="choice-btn" data-translate-key="audioSourceBrowser">Bawaan Browser</button>
-                            <button id="audioSource-elevenlabs" onclick="selectChoice('audioSource', 'elevenlabs', this)" class="choice-btn" data-translate-key="audioSourceElevenLabs">ElevenLabs</button>
+                        <div class="flex items-center gap-2">
+                            <span id="currentAudioSource" class="text-sm text-gray-500 dark:text-gray-400">Bawaan Browser</span>
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </div>
                     </div>
-                    <!-- ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲ -->
-
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
                             <div class="settings-icon-bg bg-orange-500">
@@ -1950,23 +1905,6 @@
                     </div>
                     
                     <div class="settings-item flex-col items-start" id="elevenLabsVoiceSettings">
-                        <div class="flex items-center space-x-4 w-full justify-between">
-                            <div class="flex items-center space-x-4">
-                                <div class="settings-icon-bg bg-rose-500">
-                                    <svg class="text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                                </div>
-                                <label class="text-sm font-medium text-gray-700" data-translate-key="settingElevenLabsVoice">Suara ElevenLabs</label>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <select id="elevenLabsVoiceSelect" class="settings-select text-right w-auto max-w-[120px]">
-                                    <option value="" data-translate-key="elevenLabsNeedKey">Masukkan API Key dulu</option>
-                                </select>
-                                <button id="previewElevenLabsVoiceBtn" data-translate-title="elevenLabsPreviewTitle" class="w-8 h-8 flex items-center justify-center rounded-md bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                                    <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path></svg>
-                                </button>
-                            </div>
-                        </div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 px-1" data-translate-key="elevenLabsHint">Pilih "ElevenLabs" sebagai Sumber Audio dan simpan API Key di tab "Lanjutan" untuk menggunakan fitur ini.</p>
                     </div>
                 </div>
 
@@ -1994,7 +1932,7 @@
                     </div>
                 </div>
                 
-                <div class="settings-card">
+                <div class="settings-card nav-item" onclick="navigateToSettingsPage('feedback')">
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
                             <div class="settings-icon-bg bg-emerald-500">
@@ -2002,15 +1940,10 @@
                             </div>
                             <h4 class="text-sm font-medium text-gray-700" data-translate-key="feedbackTitle">Beri Masukan</h4>
                         </div>
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </div>
-                    <p class="text-xs text-gray-500 mb-3" data-translate-key="feedbackSubtitle">Punya ide atau saran? Beri tahu kami!</p>
-                    <textarea id="settingsFeedbackInput" data-translate-placeholder="feedbackPlaceholder" class="w-full settings-input text-sm mb-3" rows="3"></textarea>
-                    <button id="sendSettingsFeedbackBtn" onclick="sendGeneralFeedback()" class="w-full settings-btn-action bg-green-600 text-white hover:bg-green-700">
-                        <span data-translate-key="feedbackSendButton">Kirim Masukan</span>
-                    </button>
                 </div>
-                
-                <div class="settings-card">
+                <div class="settings-card nav-item" onclick="navigateToSettingsPage('apiKeys')">
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
                             <div class="settings-icon-bg bg-gray-700">
@@ -2018,7 +1951,195 @@
                             </div>
                             <h4 class="text-sm font-medium text-gray-700" data-translate-key="apiKeysTitle">API Keys</h4>
                         </div>
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </div>
+                </div>
+            </div>
+
+            <!-- [BARU] Halaman Pengaturan Bahasa -->
+            <div id="settings-page-language" class="settings-page">
+                <div class="settings-card">
+                    <!-- [DIUBAH] Pilihan bahasa dengan ikon -->
+                    <div class="settings-item nav-item" onclick="selectChoice('language', 'id', this); navigateToSettingsPage('main');">
+                        <div class="flex items-center space-x-4">
+                            <img src="https://flagcdn.com/w40/id.png" alt="Indonesia Flag" class="w-6 h-auto rounded-sm">
+                            <span class="text-sm font-medium text-gray-700" data-translate-key="langIndonesian">Indonesia</span>
+                        </div>
+                    </div>
+                    <div class="settings-item nav-item" onclick="selectChoice('language', 'en', this); navigateToSettingsPage('main');">
+                        <div class="flex items-center space-x-4">
+                            <img src="https://flagcdn.com/w40/gb.png" alt="UK Flag" class="w-6 h-auto rounded-sm">
+                            <span class="text-sm font-medium text-gray-700" data-translate-key="langEnglish">English</span>
+                        </div>
+                    </div>
+                    <div class="settings-item nav-item" onclick="selectChoice('language', 'ja', this); navigateToSettingsPage('main');">
+                        <div class="flex items-center space-x-4">
+                            <img src="https://flagcdn.com/w40/jp.png" alt="Japan Flag" class="w-6 h-auto rounded-sm">
+                            <span class="text-sm font-medium text-gray-700" data-translate-key="langJapanese">日本語</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [BARU] Halaman Pengaturan Gaya Bahasa -->
+            <div id="settings-page-personality" class="settings-page">
+                <div class="settings-card">
+                    <!-- [DIUBAH] Pilihan gaya bahasa dengan ikon -->
+                    <div id="personality-santai" class="settings-item nav-item" onclick="selectChoice('personality', 'santai', this); navigateToSettingsPage('main');">
+                        <div class="flex items-center space-x-4">
+                            <div class="settings-icon-bg bg-blue-100 text-blue-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                            <span class="text-sm font-medium text-gray-700" data-translate-key="personalityCasual">Santai</span>
+                        </div>
+                        <div class="choice-indicator"></div>
+                    </div>
+                    <div id="personality-profesional" class="settings-item nav-item" onclick="selectChoice('personality', 'profesional', this); navigateToSettingsPage('main');">
+                        <div class="flex items-center space-x-4">
+                            <div class="settings-icon-bg bg-gray-100 text-gray-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></div>
+                            <span class="text-sm font-medium text-gray-700" data-translate-key="personalityProfessional">Profesional</span>
+                        </div>
+                        <div class="choice-indicator"></div>
+                    </div>
+                    <div id="personality-lucu" class="settings-item nav-item" onclick="selectChoice('personality', 'lucu', this); navigateToSettingsPage('main');">
+                        <div class="flex items-center space-x-4">
+                            <div class="settings-icon-bg bg-yellow-100 text-yellow-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                            <span class="text-sm font-medium text-gray-700" data-translate-key="personalityHumorous">Humoris</span>
+                        </div>
+                        <div class="choice-indicator"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [BARU] Halaman Pengaturan Mode Peran AI -->
+            <div id="settings-page-aiRole" class="settings-page">
+                <div class="settings-card">
+                    <div class="settings-item flex-col">
+                        <div class="grid grid-cols-3 gap-2 w-full pt-2">
+                            <button id="aiRole-umum" onclick="selectChoice('aiRole', 'umum', this)" class="choice-btn" data-translate-key="roleGeneral">Umum</button>
+                            <button id="aiRole-guru_jepang" onclick="selectChoice('aiRole', 'guru_jepang', this)" class="choice-btn" data-translate-key="roleJapaneseTeacher">B. Jepang</button>
+                            <button id="aiRole-guru_matematika" onclick="selectChoice('aiRole', 'guru_matematika', this)" class="choice-btn" data-translate-key="roleMathTeacher">Matematika</button>
+                            <button id="aiRole-dokter" onclick="selectChoice('aiRole', 'dokter', this)" class="choice-btn" data-translate-key="roleDoctor">Dokter</button>
+                            <button id="aiRole-programmer" onclick="selectChoice('aiRole', 'programmer', this)" class="choice-btn" data-translate-key="roleProgrammer">Programmer</button>
+                            <button id="aiRole-penerjemah" onclick="selectChoice('aiRole', 'penerjemah', this)" class="choice-btn" data-translate-key="roleTranslator">Penerjemah</button>
+                            <button id="aiRole-kustom" onclick="selectChoice('aiRole', 'kustom', this)" class="choice-btn col-span-3" data-translate-key="roleCustom">Kustom...</button>
+                        </div>
+                    </div>
+                    <div id="customRoleContainer" class="hidden p-2 mt-2">
+                        <label class="block text-xs text-gray-600 mb-1" data-translate-key="customRoleLabel">Definisikan peran kustom AI:</label>
+                        <textarea id="customRoleInput" data-translate-placeholder="customRolePlaceholder" class="w-full settings-input text-sm" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [BARU] Halaman Pengaturan Latar Belakang -->
+            <div id="settings-page-background" class="settings-page">
+                <div class="settings-card">
+                    <div class="w-full pt-2 space-y-2">
+                        <input type="file" id="backgroundFileInput" onchange="handleBackgroundUpload(event)" class="hidden" accept="image/*">
+                        <label for="backgroundFileInput" class="settings-btn-action bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm py-2 cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            <span data-translate-key="uploadBackground">Unggah Latar Belakang Chat</span>
+                        </label>
+                        <p id="backgroundFileName" class="text-xs text-gray-500 pl-1 truncate text-center"></p>
+                        <div id="backgroundPreviewWrapper" class="mt-3 p-2 border-t border-dashed hidden" style="border-color: var(--border-color);">
+                            <div class="flex justify-center items-end gap-4 w-full">
+                                <div class="flex flex-col items-center">
+                                    <div class="preview-pane mobile-view">
+                                        <div class="preview-background"></div><div class="preview-header"></div>
+                                        <div class="preview-bubble ai"><div class="preview-avatar"></div><div class="preview-text-content"><div class="preview-name">Wayan AI</div><p>Halo! Gue Wayan nih, AI assistant yang siap bantu...</p></div></div>
+                                        <div class="preview-bubble user"><div class="preview-text-content"><p>Apa kabar?</p></div></div>
+                                        <div class="preview-footer"></div>
+                                    </div>
+                                    <p class="text-xs mt-2" style="color: var(--text-secondary);" data-translate-key="previewMobile">Tampilan Handphone</p>
+                                </div>
+                                <div class="flex flex-col items-center flex-grow min-w-0">
+                                    <div class="preview-pane desktop-view">
+                                        <div class="preview-background"></div><div class="preview-header"></div>
+                                        <div class="preview-bubble ai"><div class="preview-avatar"></div><div class="preview-text-content"><div class="preview-name">Wayan AI</div><p>Halo! Gue Wayan nih, AI assistant yang siap bantu...</p></div></div>
+                                        <div class="preview-bubble user"><div class="preview-text-content"><p>Apa kabar?</p></div></div>
+                                        <div class="preview-footer"></div>
+                                    </div>
+                                    <p class="text-xs mt-2" style="color: var(--text-secondary);" data-translate-key="previewDesktop">Tampilan Desktop</p>
+                                </div>
+                            </div>
+                            <div class="w-full max-w-xs mx-auto space-y-3 mt-4">
+                                <div>
+                                    <label class="text-xs font-medium" style="color: var(--text-secondary);" data-translate-key="previewEffectLabel">Efek Blur</label>
+                                    <div class="grid grid-cols-3 gap-2 mt-1">
+                                        <button id="blurBtnNone" onclick="setPreviewBlur('none')" class="choice-btn" data-translate-key="previewEffectNone">Mati</button>
+                                        <button id="blurBtnLight" onclick="setPreviewBlur('light')" class="choice-btn" data-translate-key="previewEffectLight">Ringan</button>
+                                        <button id="blurBtnStrong" onclick="setPreviewBlur('strong')" class="choice-btn" data-translate-key="previewEffectStrong">Kuat</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-xs font-medium" style="color: var(--text-secondary);" data-translate-key="previewSizeLabel">Ukuran Gambar</label>
+                                    <div class="grid grid-cols-2 gap-2 mt-1">
+                                        <button id="sizeBtnCover" onclick="setPreviewSize('cover')" class="choice-btn" data-translate-key="previewSizeCover">Penuh</button>
+                                        <button id="sizeBtnContain" onclick="setPreviewSize('contain')" class="choice-btn" data-translate-key="previewSizeContain">Utuh</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center mt-4" style="color: var(--text-secondary);" data-translate-key="previewHeader">Pratinjau Latar</p>
+                        </div>
+                        <button onclick="removeCustomBackground()" class="settings-btn-action bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm py-2 mt-2">
+                            <span data-translate-key="removeBackground">Hapus Latar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [BARU] Halaman Pengaturan Audio -->
+            <div id="settings-page-audio" class="settings-page">
+                <div class="settings-card">
+                    <div class="settings-item flex-col">
+                        <div class="w-full flex items-center space-x-4">
+                            <div class="settings-icon-bg bg-cyan-500">
+                                <svg class="text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.647 11 4.101 11 5v14c0 .899-.077 1.353-.293 1.569l-4.707-4.707z"></path></svg>
+                            </div>
+                            <label class="text-sm font-medium text-gray-700" data-translate-key="settingAudioSource">Sumber Audio</label>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 w-full pt-2">
+                            <button id="audioSource-browser" onclick="selectChoice('audioSource', 'browser', this)" class="choice-btn" data-translate-key="audioSourceBrowser">Bawaan Browser</button>
+                            <button id="audioSource-elevenlabs" onclick="selectChoice('audioSource', 'elevenlabs', this)" class="choice-btn" data-translate-key="audioSourceElevenLabs">ElevenLabs</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-card">
+                    <div class="settings-item flex-col items-start" id="elevenLabsVoiceSettings">
+                        <div class="flex items-center space-x-4 w-full justify-between">
+                            <div class="flex items-center space-x-4">
+                                <div class="settings-icon-bg bg-rose-500">
+                                    <svg class="text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                                </div>
+                                <label class="text-sm font-medium text-gray-700" data-translate-key="settingElevenLabsVoice">Suara ElevenLabs</label>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <select id="elevenLabsVoiceSelect" class="settings-select text-right w-auto max-w-[120px]">
+                                    <option value="" data-translate-key="elevenLabsNeedKey">Masukkan API Key dulu</option>
+                                </select>
+                                <button id="previewElevenLabsVoiceBtn" data-translate-title="elevenLabsPreviewTitle" class="w-8 h-8 flex items-center justify-center rounded-md bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 px-1" data-translate-key="elevenLabsHint">Pilih "ElevenLabs" sebagai Sumber Audio dan simpan API Key di tab "Lanjutan" untuk menggunakan fitur ini.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [BARU] Halaman Pengaturan Masukan -->
+            <div id="settings-page-feedback" class="settings-page">
+                <div class="settings-card">
+                    <p class="text-xs text-gray-500 mb-3" data-translate-key="feedbackSubtitle">Punya ide atau saran? Beri tahu kami!</p>
+                    <textarea id="settingsFeedbackInput" data-translate-placeholder="feedbackPlaceholder" class="w-full settings-input text-sm mb-3" rows="5"></textarea>
+                    <button id="sendSettingsFeedbackBtn" onclick="sendGeneralFeedback()" class="w-full settings-btn-action bg-green-600 text-white hover:bg-green-700">
+                        <span data-translate-key="feedbackSendButton">Kirim Masukan</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- [BARU] Halaman Pengaturan API Keys -->
+            <div id="settings-page-apiKeys" class="settings-page">
+                <div class="settings-card">
                     <div class="space-y-2 text-sm">
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">API Key Gemini 1 (Utama)</label>
@@ -2049,7 +2170,7 @@
                         </button>
                     </div>
                 </div>
-            </div> <!-- Akhir dari wrapper konten -->
+            </div>
         </div>
         <div class="p-4 bg-gray-50 border-t border-gray-200 flex-shrink-0">
             <div class="grid grid-cols-2 gap-3">
@@ -2317,6 +2438,43 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         return text;
     };
     // ▲▲▲ AKHIR DARI i18n ▲▲▲
+
+    // ▼▼▼ [BARU] Navigasi Halaman Pengaturan ▼▼▼
+    function navigateToSettingsPage(pageId) {
+        const allPages = document.querySelectorAll('.settings-page');
+        const targetPage = document.getElementById(`settings-page-${pageId}`);
+        const mainPage = document.getElementById('settings-page-main');
+        const backBtn = document.getElementById('settingsBackBtn');
+        const titleEl = document.getElementById('settingsModalTitle');
+
+        const pageTitles = {
+            main: 'settingsHeader',
+            language: 'settingLanguage',
+            personality: 'settingPersonality',
+            aiRole: 'settingAIRole',
+            appearance: 'tabAppearance',
+            background: 'settingBackground',
+            audio: 'settingAudioSource',
+            feedback: 'feedbackTitle',
+            apiKeys: 'apiKeysTitle'
+        };
+
+        allPages.forEach(page => {
+            if (page.classList.contains('active')) {
+                page.classList.add('slide-out');
+                page.classList.remove('active');
+            }
+        });
+
+        setTimeout(() => {
+            allPages.forEach(page => page.classList.remove('slide-out'));
+            if (targetPage) {
+                targetPage.classList.add('active');
+                titleEl.textContent = t(pageTitles[pageId] || 'settingsHeader');
+                backBtn.classList.toggle('hidden', pageId === 'main');
+            }
+        }, 300); // Durasi harus sama dengan animasi CSS
+    }
 
     function adjustHeightForMobile() {
         let vh = window.innerHeight * 0.01;
@@ -3168,6 +3326,12 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.getElementById('darkModeToggle').checked = settings.darkMode;
         applyDarkMode(settings.darkMode);
         const sidebar = document.getElementById('sidebar');
+        const fontSizeOptions = {
+            sm: 'fontSmall',
+            base: 'fontNormal',
+            lg: 'fontLarge'
+        };
+        document.getElementById('fontSizeSelect').innerHTML = Object.keys(fontSizeOptions).map(key => `<option value="${key}" ${settings.fontSize === key ? 'selected' : ''}>${t(fontSizeOptions[key])}</option>`).join('');
         const overlay = document.getElementById('sidebarOverlay');
         const isMobile = window.innerWidth <= 768;
         if (isMobile) {
@@ -3206,6 +3370,29 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         }
         
         applyCustomBackground();
+    }
+    function updateSettingsSummary() {
+        // Update Language Summary
+        const langMap = { id: 'langIndonesian', en: 'langEnglish', ja: 'langJapanese' };
+        document.getElementById('currentLanguage').textContent = t(langMap[settings.language]);
+
+        // Update Personality Summary
+        const personalityMap = { santai: 'personalityCasual', profesional: 'personalityProfessional', lucu: 'personalityHumorous' };
+        document.getElementById('currentPersonality').textContent = t(personalityMap[settings.personality]);
+
+        // Update AI Role Summary
+        const roleMap = {
+            umum: 'roleGeneral', guru_jepang: 'roleJapaneseTeacher', guru_matematika: 'roleMathTeacher',
+            dokter: 'roleDoctor', programmer: 'roleProgrammer', penerjemah: 'roleTranslator', kustom: 'roleCustom'
+        };
+        document.getElementById('currentAiRole').textContent = t(roleMap[settings.aiRole]);
+
+        // Update Background Summary
+        document.getElementById('currentBackground').textContent = settings.backgroundUrl ? t('backgroundFileSet') : 'Default';
+
+        // Update Audio Source Summary
+        const audioMap = { browser: 'audioSourceBrowser', elevenlabs: 'audioSourceElevenLabs' };
+        document.getElementById('currentAudioSource').textContent = t(audioMap[settings.audioSource]);
     }
 
     function populateSettingsForm() {
@@ -3250,14 +3437,23 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         }
 
         document.getElementById('backgroundFileInput').value = ''; // Reset file input
+        updateSettingsSummary();
     }
 
     function selectChoice(settingName, value, element) {
         settings[settingName] = value;
-        Array.from(element.parentElement.children).forEach(child => child.classList.remove('active'));
-        element.classList.add('active');
+        
+        // [DIUBAH] Logika untuk menangani 'active' class pada tombol dan item
+        if (element.classList.contains('choice-btn')) {
+            Array.from(element.parentElement.children).forEach(child => child.classList.remove('active'));
+            element.classList.add('active');
+        } else if (element.classList.contains('settings-item')) {
+            Array.from(element.parentElement.children).forEach(child => child.classList.remove('active'));
+            element.classList.add('active');
+        }
 
-        if (settingName === 'aiRole') {
+        // [DIUBAH] Logika notifikasi sistem dipindahkan ke sini agar lebih terpusat
+        if (settingName === 'aiRole' && value !== 'kustom') {
             document.getElementById('customRoleContainer').classList.toggle('hidden', value !== 'kustom');
             const roleKeyMap = { 'umum': 'roleGeneral', 'guru_jepang': 'roleJapaneseTeacher', 'guru_matematika': 'roleMathTeacher', 'dokter': 'roleDoctor', 'programmer': 'roleProgrammer', 'penerjemah': 'roleTranslator', 'kustom': 'roleCustom' };
             const roleNameKey = roleKeyMap[value];
@@ -3294,6 +3490,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         if (modal.classList.contains('hidden')) {
             tempSettings = JSON.parse(JSON.stringify(settings)); // Deep copy
             populateSettingsForm();
+            navigateToSettingsPage('main'); // Selalu mulai dari halaman utama
             modal.classList.remove('hidden');
         } else {
             modal.classList.add('hidden');
