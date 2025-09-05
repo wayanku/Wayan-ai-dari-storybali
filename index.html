@@ -48,7 +48,7 @@
     /* === CSS VARIABLES UNTUK DARK/LIGHT MODE === */
     :root {
       --bg-primary: #ffffff;
-      --bg-secondary: #f7f8fc;
+      --bg-secondary: #f1f5f9; /* [PERUBAHAN] Dibuat sedikit lebih gelap */
       --bg-tertiary: #f1f5f9;
       --bg-accent: #eef2ff;
       --text-primary: #1e293b;
@@ -57,7 +57,7 @@
       --border-color: #e2e8f0;
       --ai-message-bg: #e2e8f0;
       --modal-bg: rgba(255, 255, 255, 0.98);
-      --settings-card-bg: #ffffff;
+      --settings-card-bg: #ffffff; /* [DIKEMBALIKAN] Kartu pengaturan kembali menjadi putih */
       --shadow-color: rgba(0, 0, 0, 0.05);
       --bg-primary-rgba: 255, 255, 255;
       --bg-secondary-rgba: 247, 248, 252;
@@ -812,22 +812,29 @@
 
     .quick-actions {
         display: flex; gap: 0.5rem; padding: 0.75rem 1rem;
-        background: var(--bg-primary);
-        border-top: 1px solid var(--border-color);
+        /* [PERBAIKAN] Memastikan latar belakang benar-benar transparan */
+        background: transparent;
+        border-top: none;
         overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
-        box-shadow: inset 0 -2px 5px var(--shadow-color);
     }
     .quick-actions::-webkit-scrollbar { display: none; }
     .quick-action-btn {
-        flex-shrink: 0; padding: 0.5rem 1rem; background: var(--bg-accent);
-        border: 1px solid #a7c0ff; border-radius: 9999px; font-size: 0.75rem;
-        font-weight: 500; color: #4f46e5; transition: all 0.2s ease-in-out;
-        box-shadow: 0 2px 5px var(--shadow-color);
+        flex-shrink: 0; padding: 0.5rem 1rem;
+        /* [DIUBAH] Efek Kaca/Glassmorphism untuk tombol saran */
+        background: rgba(var(--bg-tertiary-rgba), 0.4);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(var(--text-primary-rgba), 0.1);
+        border-radius: 9999px; font-size: 0.75rem;
+        font-weight: 500; color: var(--text-primary); transition: all 0.2s ease-in-out;
+        box-shadow: 0 2px 5px var(--shadow-color); /* Bayangan tetap ada */
     }
-    html.dark .quick-action-btn { color: var(--text-primary); border-color: #555; }
-    .quick-action-btn:hover { background: #c7d2fe; border-color: #6366f1; transform: translateY(-1px); }
-    html.dark .quick-action-btn:hover { background: #4a4a4a; border-color: #777; }
-    .quick-action-btn:active { background: #a5b4fc; transform: scale(0.98); }
+    .quick-action-btn:hover {
+        background: rgba(var(--bg-tertiary-rgba), 0.7);
+        border-color: rgba(var(--text-primary-rgba), 0.2);
+        transform: translateY(-1px);
+    }
+    .quick-action-btn:active { transform: scale(0.98); }
 
     .suggestion-btn {
         background: var(--bg-tertiary);
@@ -856,10 +863,10 @@
     html.dark .modal-content { border: 1px solid var(--border-color); }
     #settingsModal .modal-content {
         /* [DIUBAH] Mengubah modal pengaturan menjadi layar penuh */
-        /* [PERMINTAAN PENGGUNA] Efek Kaca/Glassmorphism untuk Modal Pengaturan */
-        background-color: rgba(var(--bg-secondary-rgba), 0.6); /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan lagi */
-        backdrop-filter: blur(6px); /* [PERMINTAAN PENGGUNA] Blur dikurangi lagi */
-        -webkit-backdrop-filter: blur(6px);
+        /* [PERUBAHAN] Latar belakang diubah menjadi warna solid */
+        background-color: var(--bg-secondary); /* [PERUBAHAN] Latar belakang utama modal menjadi abu-abu */
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
         padding: 0; overflow: hidden;
         border-radius: 0;
         box-shadow: none;
@@ -867,9 +874,6 @@
         max-width: 100%;
         max-height: 100%;
         transition: opacity 0.3s ease; /* Hanya animasi fade */
-    }
-    html.dark #settingsModal .modal-content {
-        background-color: rgba(var(--bg-secondary-rgba), 0.55); /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan lagi */
     }
     .modal-overlay.hidden { opacity: 0; pointer-events: none; }
     .modal-overlay:not(.hidden) .modal-content { opacity: 1; transform: scale(1); }
