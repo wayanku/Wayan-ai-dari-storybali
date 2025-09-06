@@ -5,7 +5,8 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
     console.log('Service Worker: Diaktifkan.');
-    // [PERBAIKAN] Memastikan service worker segera mengambil kontrol atas halaman yang terbuka
+    // [PENYEMPURNAAN] Memastikan service worker yang baru diaktifkan
+    // segera mengambil kontrol atas semua halaman yang terbuka.
     event.waitUntil(self.clients.claim());
 });
 
