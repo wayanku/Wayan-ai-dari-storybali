@@ -12,7 +12,7 @@ const URLS_TO_CACHE = [
   'apple-touch-icon.png',
   'site.webmanifest',
   'https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg', // Avatar
-  'https://cdn.tailwindcss.com',
+  'https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp', // Ganti dengan URL skrip yang benar
   'https://cdn.jsdelivr.net/npm/marked/marked.min.js',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
 ];
