@@ -1207,51 +1207,76 @@
     }
     /* ▲▲▲ AKHIR DARI GAYA PRATINJAU ▲▲▲ */
     
-    .markdown-content, .markdown-content p, .markdown-content li {
+    /* ▼▼▼ [PERBAIKAN MARKDOWN] Gaya dirombak agar mirip ChatGPT ▼▼▼ */
+    .markdown-content {
         color: var(--text-primary); 
-        overflow-wrap: break-word; /* [FIX] Mencegah link keluar dari gelembung chat */
-        word-wrap: break-word; /* Fallback */
-        font-weight: 600; /* [DIUBAH] Dibuat lebih tebal agar lebih jelas */
-        font-size: 1.025rem; /* [BARU] Sedikit diperbesar agar lebih mudah dibaca */
-        line-height: 1.6; /* [BARU] Menambah jarak antar baris agar lebih nyaman dibaca */
+        font-size: 1rem; /* Ukuran font standar */
+        line-height: 1.7; /* Jarak antar baris lebih lega */
+        overflow-wrap: break-word;
+        word-wrap: break-word;
     }
-    .markdown-content p:not(:last-child) { margin-bottom: 1rem; } /* [DIUBAH] Menambah jarak antar paragraf */
-    .markdown-content ul, .markdown-content ol {
-        list-style-position: inside;
-        padding-left: 0.5rem;
+    .markdown-content p, .markdown-content ul, .markdown-content ol, .markdown-content pre, .markdown-content blockquote {
+        margin-bottom: 1rem; /* Jarak konsisten antar elemen */
+    }
+    .markdown-content p:last-child, .markdown-content ul:last-child, .markdown-content ol:last-child, .markdown-content pre:last-child, .markdown-content blockquote:last-child {
+        margin-bottom: 0; /* Hapus jarak di elemen terakhir */
+    }
+    .markdown-content strong, .markdown-content b { font-weight: 600; }
+    .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+        font-weight: 600;
         margin-bottom: 0.75rem;
+        line-height: 1.3;
     }
-    .markdown-content li { margin-bottom: 0.25rem; }
+    .markdown-content h1 { font-size: 1.5em; }
+    .markdown-content h2 { font-size: 1.25em; }
+    .markdown-content h3 { font-size: 1.1em; }
+
+    .markdown-content ul, .markdown-content ol {
+        padding-left: 1.25rem; /* [DIUBAH] Sedikit mengurangi padding dasar */
+        margin-left: 0.25rem; /* [BARU] Menambah sedikit margin untuk konsistensi */
+    }
+    .markdown-content li { 
+        margin-bottom: 0.5rem; /* Jarak antar item list */
+        padding-left: 0.25rem; /* Sedikit padding untuk teks setelah bullet/nomor */
+    }
+    /* [BARU] Gaya untuk daftar bertingkat (multi-level list) */
+    .markdown-content ul ul, .markdown-content ol ol, .markdown-content ul ol, .markdown-content ol ul {
+        margin-top: 0.5rem; /* Jarak antara item induk dan daftar anak */
+        margin-bottom: 0.5rem;
+    }
+    .markdown-content li::marker {
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
     .markdown-content code:not(pre > code) {
-        background-color: var(--bg-tertiary);
-        padding: 0.1rem 0.3rem;
-        border-radius: 0.25rem;
+        background-color: rgba(var(--text-primary-rgba), 0.08);
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.375rem;
         font-size: 0.85em;
-        font-family: 'Courier New', Courier, monospace;
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
     }
     .markdown-content pre {
-        position: relative; /* [BARU] Diperlukan untuk memposisikan tombol salin */
-        background-color: #1e293b;
-        color: #e2e8f0;
-        padding: 0.75rem;
-        border-radius: 0.5rem;
+        position: relative;
+        background-color: #1e1e1e; /* Warna latar lebih gelap */
+        color: #d4d4d4; /* Warna teks lebih terang */
+        padding: 1rem;
+        border-radius: 0.75rem; /* Sudut lebih melengkung */
         overflow-x: auto;
-        margin-bottom: 0.75rem;
         font-size: 0.85em;
+        border: 1px solid var(--border-color);
     }
-    /* [BARU] Tombol untuk menyalin kode */
     .copy-code-btn {
         position: absolute;
         top: 0.5rem;
         right: 0.5rem;
-        background-color: #374151; /* gray-700 */
-        color: #d1d5db; /* gray-300 */
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #d4d4d4;
         border: none;
         padding: 0.25rem 0.5rem;
         border-radius: 0.375rem;
         font-size: 0.75rem;
         cursor: pointer;
-        opacity: 0;
+        opacity: 0.7;
         transition: opacity 0.2s ease-in-out;
     }
     .markdown-content pre:hover .copy-code-btn {
@@ -1262,17 +1287,15 @@
         background: transparent;
         padding: 0;
     }
+    html.dark .markdown-content pre { background-color: #1e1e1e; }
     .markdown-content blockquote {
-        border-left: 4px solid #a5b4fc;
+        border-left: 3px solid var(--border-color);
         padding-left: 1rem;
         margin-left: 0.25rem;
         font-style: italic;
         color: var(--text-secondary);
     }
-    html.dark .markdown-content blockquote {
-        border-left-color: #888;
-    }
-    .markdown-content strong { font-weight: 600; }
+    /* ▲▲▲ AKHIR DARI PERBAIKAN MARKDOWN ▲▲▲ */
 
     /* ▼▼▼ [BARU] GAYA UNTUK LINK AGAR BERWARNA BIRU ▼▼▼ */
     .markdown-content a {
