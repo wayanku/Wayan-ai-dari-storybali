@@ -2,6 +2,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -1485,6 +1486,43 @@
     .error-toast code { font-size: 0.75rem; line-height: 1.2; }
     @keyframes toast-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     /* ▲▲▲ AKHIR DARI GAYA NOTIFIKASI ERROR DEBUG ▲▲▲ */
+    /* ▼▼▼ [BARU] GAYA UNTUK PRATINJAU FILE DI INPUT AREA ▼▼▼ */
+    #filePreviewContainer {
+        display: none; /* Sembunyikan secara default */
+        flex-wrap: wrap;
+        gap: 0.5rem; /* 8px */
+        padding: 0.5rem; /* 8px */
+        margin-bottom: 0.5rem; /* 8px */
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem; /* 12px */
+        background-color: var(--bg-secondary);
+        animation: fadeIn 0.3s ease;
+    }
+    .file-preview-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem; /* 8px */
+        background-color: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 9999px;
+        padding: 0.25rem 0.25rem 0.25rem 0.75rem; /* 4px 4px 4px 12px */
+        font-size: 0.875rem; /* 14px */
+        font-weight: 500;
+        color: var(--text-primary);
+        box-shadow: 0 1px 2px var(--shadow-color);
+    }
+    .file-preview-chip .remove-file-btn {
+        background-color: var(--bg-tertiary);
+    }
+    /* [BARU] Gaya khusus untuk pratinjau gambar */
+    .image-preview-chip img {
+        width: 2.5rem; /* 40px */
+        height: 2.5rem; /* 40px */
+        object-fit: cover;
+        border-radius: 0.5rem; /* 8px */
+        border: 1px solid var(--border-color);
+    }
+    /* ▲▲▲ AKHIR DARI GAYA PRATINJAU FILE ▲▲▲ */
     /* ▲▲▲ AKHIR DARI CSS PANGGILAN SUARA ▲▲▲ */
   </style>
 </head>
@@ -1587,6 +1625,24 @@
 
                 <div class="input-area">
                     <div class="input-box">
+                        <!-- ▼▼▼ [BARU] KONTainer UNTUK PRATINJAU FILE ▼▼▼ -->
+                        <div id="filePreviewContainer">
+                            <!-- Pratinjau file akan muncul di sini melalui JS -->
+                            <!-- Contoh:
+                            <div class="file-preview-chip">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                <span class="truncate max-w-[150px]">nama_file_yang_panjang.txt</span>
+                                <button onclick="removeAttachedFile(this)" class="w-5 h-5 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 remove-file-btn">&times;</button>
+                            </div>
+                            <div class="file-preview-chip image-preview-chip">
+                                <img src="path/to/image.jpg" alt="Preview">
+                                <span class="truncate max-w-[150px]">nama_gambar.jpg</span>
+                                <button onclick="removeAttachedFile(this)" class="w-5 h-5 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 remove-file-btn">&times;</button>
+                            </div>
+                            -->
+                        </div>
+                        <!-- ▲▲▲ AKHIR DARI KONTainer PRATINJAU FILE ▲▲▲ -->
+
                         <input
                             type="text"
                         id="messageInput"
@@ -1605,13 +1661,19 @@
                         </div>
                     </div>
                     <!-- Akhir UI Perekaman Suara -->
-
-                    <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                    
+                    <!-- [DIUBAH] Input file dipisahkan untuk gambar dan file lain -->
+                    <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleFileUpload(event, 'image')">
+                    <input type="file" id="fileInput" accept=".txt,.pdf,.csv,.md,.json,.html,.js,.css" style="display: none;" onchange="handleFileUpload(event, 'file')">
                     
                     <div class="action-buttons">
                         <div class="left-actions">
                             <button onclick="triggerImageUpload()" class="action-btn" data-translate-title="uploadImageTitle">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+                            </button>
+                            <!-- [BARU] Tombol untuk unggah file -->
+                            <button onclick="triggerFileUpload()" class="action-btn" data-translate-title="uploadFileTitle">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.122 2.122l7.81-7.81"></path></svg>
                             </button>
                             <!-- [DIPINDAHKAN] Tombol Panggilan Suara -->
                             <button id="startCallBtn" onclick="startCall()" class="action-btn" data-translate-title="voiceCallTitle">
@@ -2291,7 +2353,7 @@
             aiName: "Wayan AI", profileHint: "Klik untuk lihat profil", voiceCallTitle: "Mulai Panggilan Suara", settingsTitle: "Buka Pengaturan",
             quickHello: "Halo", quickHowAreYou: "Apa kabar?", quickJoke: "Joke", quickProductive: "Tips Produktif", quickMovie: "Film", quickCoding: "Coding",
             inputPlaceholder: "Minta Wayan AI...", imageProcessing: "Menganalisis gambar...", stopGenerating: "Hentikan",
-            voiceModeTitle: "Mode Suara", sendTitle: "Kirim Pesan", searchModeTitle: "Mode Pencarian Internet", quickSettingsTitle: "Pengaturan Cepat",
+            voiceModeTitle: "Mode Suara", sendTitle: "Kirim Pesan", searchModeTitle: "Mode Pencarian Internet", quickSettingsTitle: "Pengaturan Cepat", uploadFileTitle: "Unggah File",
             uploadImageTitle: "Upload Gambar", listening: "Mendengarkan...",
             callConnecting: "Menghubungkan...", callStartSpeaking: "Mulai Bicara", callEnd: "Akhiri Panggilan",
             searchResultTitle: "Hasil Pencarian", searchCloseTitle: "Tutup Pencarian", searchOpenInNewTabTitle: "Buka di Tab Baru",
@@ -2358,7 +2420,7 @@
             aiName: "Wayan AI", profileHint: "Click to see profile", voiceCallTitle: "Start Voice Call", settingsTitle: "Open Settings",
             quickHello: "Hello", quickHowAreYou: "How are you?", quickJoke: "Joke", quickProductive: "Productivity Tips", quickMovie: "Movie", quickCoding: "Coding",
             inputPlaceholder: "Ask Wayan AI...", imageProcessing: "Analyzing image...", stopGenerating: "Stop",
-            voiceModeTitle: "Voice Mode", sendTitle: "Send Message", searchModeTitle: "Internet Search Mode", quickSettingsTitle: "Quick Settings",
+            voiceModeTitle: "Voice Mode", sendTitle: "Send Message", searchModeTitle: "Internet Search Mode", quickSettingsTitle: "Quick Settings", uploadFileTitle: "Upload File",
             uploadImageTitle: "Upload Image", listening: "Listening...",
             callConnecting: "Connecting...", callStartSpeaking: "Start Speaking", callEnd: "End Call",
             searchResultTitle: "Search Results", searchCloseTitle: "Close Search", searchOpenInNewTabTitle: "Open in New Tab",
@@ -2425,7 +2487,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             aiName: "ワヤンAI", profileHint: "プロフィールを見る", voiceCallTitle: "音声通話を開始", settingsTitle: "設定を開く",
             quickHello: "こんにちは", quickHowAreYou: "元気ですか？", quickJoke: "冗談", quickProductive: "生産性のヒント", quickMovie: "映画", quickCoding: "コーディング",
             inputPlaceholder: "ワヤンAIに質問...", imageProcessing: "画像を分析中...", stopGenerating: "停止",
-            voiceModeTitle: "音声モード", sendTitle: "送信", searchModeTitle: "インターネット検索モード", quickSettingsTitle: "クイック設定",
+            voiceModeTitle: "音声モード", sendTitle: "送信", searchModeTitle: "インターネット検索モード", quickSettingsTitle: "クイック設定", uploadFileTitle: "ファイルをアップロード",
             uploadImageTitle: "画像をアップロード", listening: "聞いています...",
             callConnecting: "接続中...", callStartSpeaking: "話し始める", callEnd: "通話を終了",
             searchResultTitle: "検索結果", searchCloseTitle: "検索を閉じる", searchOpenInNewTabTitle: "新しいタブで開く",
@@ -2709,6 +2771,13 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         base64: null,
         fileName: null,
         mimeType: null
+    };
+    // [BARU] Variabel untuk menyimpan data file yang di-attach
+    let attachedFileData = {
+        content: null,
+        fileName: null,
+        mimeType: null,
+        type: 'file' // [BARU] 'file' atau 'image'
     };
 
     const defaultSettings = {
@@ -3710,71 +3779,76 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         }
     }
     function triggerImageUpload() { document.getElementById('imageInput').click(); }
-    
-    function handleImageUpload(event) {
+    // [BARU] Fungsi untuk memicu unggahan file
+    function triggerFileUpload() { document.getElementById('fileInput').click(); }
+
+    // ▼▼▼ [DIUBAH] Logika handleFileUpload dirombak total ▼▼▼
+    function handleFileUpload(event, fileType) {
         const file = event.target.files[0];
-        if (file) {
-            if (!file.type.startsWith('image/')) { 
-                alert(t('alertImageInvalid'));
-                event.target.value = '';
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = e => {
-                currentPreviewData = {
-                    base64: e.target.result,
-                    fileName: file.name,
-                    mimeType: file.type
-                };
-                showImagePreview(currentPreviewData.base64, currentPreviewData.fileName);
+        if (!file) { event.target.value = ''; return; }
+
+        // Hapus file yang mungkin sudah ada sebelumnya
+        removeAttachedFile();
+
+        const reader = new FileReader();
+        reader.onload = e => {
+            attachedFileData = {
+                content: e.target.result, // base64 untuk gambar, teks untuk file
+                fileName: file.name,
+                mimeType: file.type,
+                type: fileType // 'image' atau 'file'
             };
-            reader.readAsDataURL(file);
+            showFilePreview(file.name, fileType, e.target.result);
+        };
+        reader.onerror = () => addSystemMessage(`Gagal membaca file ${file.name}.`, 'warning');
+
+        if (fileType === 'image') {
+            if (!file.type.startsWith('image/')) {
+                alert(t('alertImageInvalid'));
+                event.target.value = ''; return;
+            }
+            reader.readAsDataURL(file); // Baca sebagai Base64
+        } else { // Menangani file teks
+            reader.readAsText(file); // Baca sebagai Teks
         }
+        event.target.value = ''; // Reset input agar file yang sama bisa diunggah lagi
     }
 
-    function showImagePreview(base64Image, fileName) {
-        document.getElementById('previewImage').src = base64Image;
-        document.getElementById('previewFileName').textContent = fileName;
-        document.getElementById('imageQuestionInput').value = '';
-        document.getElementById('imagePreviewModal').classList.remove('hidden');
-        setTimeout(() => document.getElementById('imageQuestionInput').focus(), 300);
+    // [DIUBAH] Fungsi untuk menampilkan chip pratinjau file atau gambar
+    function showFilePreview(fileName, fileType, content) {
+        const container = document.getElementById('filePreviewContainer');
+        let previewChipHTML = '';
+
+        if (fileType === 'image') {
+            previewChipHTML = `
+                <div class="file-preview-chip image-preview-chip">
+                    <img src="${content}" alt="Preview ${fileName}">
+                    <span class="truncate max-w-[200px]">${fileName}</span>
+                    <button onclick="removeAttachedFile()" class="w-6 h-6 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 remove-file-btn text-lg font-bold leading-none flex-shrink-0" title="Hapus file">&times;</button>
+                </div>`;
+        } else {
+            previewChipHTML = `
+                <div class="file-preview-chip">
+                    <svg class="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span class="truncate max-w-[200px]">${fileName}</span>
+                    <button onclick="removeAttachedFile()" class="w-6 h-6 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 remove-file-btn text-lg font-bold leading-none flex-shrink-0" title="Hapus file">&times;</button>
+                </div>`;
+        }
+        
+        container.innerHTML = previewChipHTML;
+        container.style.display = 'flex';
+        document.getElementById('messageInput').focus();
     }
 
-    function hideImagePreview() {
-        document.getElementById('imagePreviewModal').classList.add('hidden');
-        document.getElementById('imageInput').value = '';
-        currentPreviewData = { base64: null, fileName: null, mimeType: null };
+    // [BARU] Fungsi untuk menghapus file yang di-attach
+    function removeAttachedFile() {
+        attachedFileData = { content: null, fileName: null, mimeType: null, type: 'file' };
+        const container = document.getElementById('filePreviewContainer');
+        container.style.display = 'none';
+        container.innerHTML = '';
     }
 
-    function sendImageWithQuestion() {
-        const question = document.getElementById('imageQuestionInput').value.trim();
-        if (!question) { 
-            alert(t('alertImageNoQuestion'));
-            return;
-        }
-        if (!currentPreviewData.base64) { 
-            alert(t('alertImageNoData'));
-            return;
-        }
-        
-        const allUserData = getChatLimitData();
-        const userData = allUserData[currentUserIP] || { count: 0 };
-        if (userData.count >= CHAT_LIMIT) {
-            alert(t('alertLimitReached'));
-            hideImagePreview();
-            return;
-        }
-        
-        const imageData = currentPreviewData.base64;
-        const imageName = currentPreviewData.fileName;
-        const imageMimeType = currentPreviewData.mimeType;
-        
-        hideImagePreview();
-        
-        addImageMessageWithQuestion(imageData, imageName, question, true);
-        showImageProcessingIndicator();
-        analyzeImageWithQuestion(imageData, question, imageMimeType);
-    }
+    // ▲▲▲ AKHIR DARI PERUBAHAN LOGIKA UPLOAD FILE ▲▲▲
 
     function addImageMessageWithQuestion(imageSrc, fileName, question, isUser = false) {
         const chatMessages = document.getElementById('chatMessages');
@@ -4604,10 +4678,24 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
     }
 
     async function sendMessage() {
+        // ▼▼▼ [DIUBAH] Logika pengiriman pesan disesuaikan untuk menangani file terlampir ▼▼▼
         const input = document.getElementById('messageInput');
-        const message = input.value.trim();
-        if (!message || !currentUserIP || currentFetchController) return;
-        
+        let userMessage = input.value.trim();
+
+        // Cek apakah ada file yang dilampirkan
+        const hasAttachedItem = attachedFileData && attachedFileData.content;
+
+        // Jika ada file tapi tidak ada pesan, jangan kirim
+        if (hasAttachedItem && !userMessage) {
+            alert(t('alertImageNoQuestion')); // Menggunakan terjemahan yang sudah ada
+            return;
+        }
+
+        // Jika tidak ada pesan dan tidak ada file, jangan kirim
+        if (!userMessage && !hasAttachedItem) return;
+
+        if (!currentUserIP || currentFetchController) return;
+
         const activeSession = allChatSessions.find(s => s.id === activeChatId);
         if (!activeSession) return;
         if(activeSession.title === 'Percakapan Baru' && activeSession.history.length === 1) {
@@ -4621,16 +4709,36 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         userData.count++;
         saveChatLimitData({ ...allUserData, [currentUserIP]: userData });
         
+        let messageForDisplay = userMessage;
+        let messageForHistory = userMessage;
+
+        if (hasAttachedItem) {
+            if (attachedFileData.type === 'image') {
+                // Kirim sebagai pesan gambar
+                addImageMessageWithQuestion(attachedFileData.content, attachedFileData.fileName, userMessage, true);
+                showImageProcessingIndicator();
+                analyzeImageWithQuestion(attachedFileData.content, userMessage, attachedFileData.mimeType);
+                removeAttachedFile();
+                input.value = '';
+                handleInputChange({ target: input });
+                return; // Hentikan eksekusi sendMessage biasa
+            } else { // type === 'file'
+                messageForDisplay = `<div><div class="flex items-center gap-2 mb-2 p-2 rounded-lg bg-black bg-opacity-10 dark:bg-white dark:bg-opacity-10"><svg class="w-5 h-5 text-gray-500 dark:text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><span class="font-semibold text-sm">${attachedFileData.fileName}</span></div>${userMessage}</div>`;
+                messageForHistory = `Berikut adalah isi dari file "${attachedFileData.fileName}". Pertanyaanku adalah: "${userMessage}"\n\n---\n${attachedFileData.content}\n---`;
+            }
+            removeAttachedFile(); // Hapus pratinjau setelah data disiapkan
+        }
+
         if (isSearchModeActive) {
-            addMessage(message, true, [], true);
+            addMessage(messageForDisplay, true, [], true);
         } else {
-            addMessage(message, true, [], false);
+            addMessage(messageForDisplay, true, [], false);
         }
     // [BARU] Sembunyikan saran cepat setelah pesan pertama dikirim
     document.querySelector('.quick-actions').style.display = 'none';
 
         trackUserMessageCount();
-        addToConversationHistory('user', message);
+        addToConversationHistory('user', messageForHistory);
         input.value = '';
         handleInputChange({ target: input });
         showTypingIndicator();
@@ -4645,6 +4753,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         currentFetchController = new AbortController();
         document.getElementById('stopGeneratingContainer').style.display = 'block';
 
+        // ▲▲▲ AKHIR DARI PERUBAHAN LOGIKA PENGIRIMAN PESAN ▲▲▲
         let contentEl, suggestionsEl;
 
         try {
