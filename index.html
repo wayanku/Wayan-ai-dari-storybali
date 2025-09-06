@@ -3217,13 +3217,11 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         handleInputChange({ target: document.getElementById('messageInput') });
         sendMessage();
     }
-    function toggleSearchMode() {
-        isSearchModeActive = !isSearchModeActive;
-        const searchBtn = document.getElementById('toggleSearchModeBtn');
-        searchBtn.classList.toggle('active', isSearchModeActive);
-        
-        const messageKey = isSearchModeActive ? 'systemSearchModeOn' : 'systemSearchModeOff';
-        addSystemMessage(t(messageKey), 'info');
+    // [PERBAIKAN] Fungsi ini diubah agar langsung membuka modal pengaturan
+    function openQuickSettings() {
+        // Memastikan modal terbuka dan mengarahkan ke halaman utama pengaturan
+        if (document.getElementById('settingsModal').classList.contains('hidden')) toggleSettings();
+        navigateToSettingsPage('main');
     }
     function toggleVoiceMode() {
         if (isRecording) {
@@ -3618,28 +3616,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                 addSystemMessage(t('systemPersonalityChanged', { personalityName: t(personalityNameKey) }), 'info');
             }
         }
-
-        if (settingName === 'language' || settingName === 'personality' || settingName === 'aiRole') {
-            updateSettingsSummary();
-        }
-
-        if (settingName === 'language') { // Aksi khusus untuk bahasa
-            applyTranslations(value);
-            populateVoiceList();
-            if (activeChatId) {
-                loadChat(activeChatId); // Muat ulang chat untuk menerapkan terjemahan pada pesan
-            }
-            renderSidebar(); // Muat ulang sidebar untuk menerapkan terjemahan pada judul
-        }
-    }
-    function switchSettingsTab(tabName) {
-        document.querySelectorAll('.settings-tab, .settings-tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelector(`.settings-tab[onclick="switchSettingsTab('${tabName}')"]`).classList.add('active');
-        document.getElementById(`tab-${tabName}`).classList.add('active');
-        // [DIHAPUS] Fungsi ini tidak lagi diperlukan karena tidak ada tab
-        // document.querySelectorAll('.settings-tab, .settings-tab-content').forEach(el => el.classList.remove('active'));
-        // document.querySelector(`.settings-tab[onclick="switchSettingsTab('${tabName}')"]`).classList.add('active');
-        // document.getElementById(`tab-${tabName}`).classList.add('active');
     }
     function toggleSettings() {
         const modal = document.getElementById('settingsModal');
@@ -4235,13 +4211,13 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     }
     
     async function populateElevenLabsVoices() {
-        const apiKey = localStorage.getItem('elevenLabsApiKey') || DEFAULT_ELEVENLABS_API_KEY;
+        const apiKey = localStorage.getItem('elevenLabsApiKey'); // [PERBAIKAN] Hapus fallback ke kunci default
         const selectElement = document.getElementById('elevenLabsVoiceSelect');
         const previewBtn = document.getElementById('previewElevenLabsVoiceBtn');
         
         previewBtn.disabled = true; 
         if (!apiKey) {
-            selectElement.innerHTML = `<option value="">${t('elevenLabsNeedKey')}</option>`;
+            selectElement.innerHTML = `<option value="">${t('elevenLabsNeedKey')}</option>`; // Pesan ini sudah benar
             return;
         }
 
@@ -4698,8 +4674,8 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
 
         const activeSession = allChatSessions.find(s => s.id === activeChatId);
         if (!activeSession) return;
-        if(activeSession.title === 'Percakapan Baru' && activeSession.history.length === 1) {
-            activeSession.title = message.substring(0, 30) + (message.length > 30 ? '...' : '');
+        if(activeSession.title === t('newConversation') && activeSession.history.length === 1 && userMessage) {
+            activeSession.title = userMessage.substring(0, 30) + (userMessage.length > 30 ? '...' : '');
             renderSidebar();
         }
         
