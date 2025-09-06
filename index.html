@@ -3734,6 +3734,19 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.getElementById('confirmModal').classList.add('hidden');
         confirmModalResolver = null;
     }
+    // ▼▼▼ [FIX] Menambahkan fungsi toggleSearchMode yang hilang ▼▼▼
+function toggleSearchMode() {
+    isSearchModeActive = !isSearchModeActive;
+    const btn = document.getElementById('toggleSearchModeBtn');
+    btn.classList.toggle('active', isSearchModeActive);
+    if (isSearchModeActive) {
+        addSystemMessage(t('systemSearchModeOn'), 'info');
+    } else {
+        addSystemMessage(t('systemSearchModeOff'), 'info');
+    }
+}
+// ▲▲▲ AKHIR DARI FIX ▲▲▲
+
     function showSearchModal(query) {
         const modal = document.getElementById('searchModal');
         const title = document.getElementById('searchModalTitle');
