@@ -1001,11 +1001,11 @@
     .settings-card:not(.nav-item):hover { transform: translateY(-2px); box-shadow: 0 6px 16px var(--shadow-color); }
     .settings-item { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); }
     .settings-item.flex-col {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
+        flex-direction: column; align-items: flex-start; gap: 0.5rem;
     }
     .settings-item:last-child { border-bottom: none; }
+    /* [PERMINTAAN PENGGUNA] Memperbesar dan menebalkan teks pengaturan */
+    .settings-item label, .settings-item span { font-size: 0.95rem; font-weight: 500; }
     .settings-icon { width: 1.25rem; height: 1.25rem; color: #6366f1; }
     html.dark .settings-icon { color: var(--text-primary); }
     /* ▼▼▼ [PENYEMPURNAAN] Gaya untuk Judul Seksi Pengaturan ▼▼▼ */
@@ -2012,7 +2012,8 @@
 
                 <!-- Seksi Lanjutan -->
                 <h3 class="settings-section-header" data-translate-key="tabAdvanced">Lanjutan</h3>
-                 <div class="settings-card">
+                <div class="settings-card">
+                    <!-- Simpan Riwayat -->
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
                             <div class="settings-icon-bg bg-lime-500">
@@ -2022,20 +2023,8 @@
                         </div>
                         <input type="checkbox" id="saveHistoryToggle" class="toggle-new" checked>
                     </div>
-                    <div class="p-2 space-y-2">
-                         <button onclick="exportChatHistory()" class="settings-btn-action bg-green-100 text-green-700 hover:bg-green-200">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                            <span data-translate-key="exportHistory">Export Riwayat Chat Ini</span>
-                         </button>
-                         <button onclick="clearAllChatHistory()" class="settings-btn-action bg-red-100 text-red-700 hover:bg-red-200">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            <span data-translate-key="clearAllHistory">Hapus SEMUA Percakapan</span>
-                         </button>
-                    </div>
-                </div>
-                
-                <div class="settings-card nav-item" onclick="navigateToSettingsPage('feedback')">
-                    <div class="settings-item">
+                    <!-- Beri Masukan -->
+                    <div class="settings-item nav-item" onclick="navigateToSettingsPage('feedback')">
                         <div class="flex items-center space-x-4">
                             <div class="settings-icon-bg bg-emerald-500">
                                 <svg class="text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
@@ -2044,9 +2033,8 @@
                         </div>
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </div>
-                </div>
-                <div class="settings-card nav-item" onclick="navigateToSettingsPage('apiKeys')">
-                    <div class="settings-item">
+                    <!-- API Keys -->
+                    <div class="settings-item nav-item" onclick="navigateToSettingsPage('apiKeys')">
                         <div class="flex items-center space-x-4">
                             <div class="settings-icon-bg bg-gray-700">
                                 <svg class="text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.623 5.912M15.364 15.364A5 5 0 1119 12c0 .426-.055.84-.16 1.232m-5.84-3.072a3 3 0 00-4.243 4.243M8 12a4 4 0 118 0 4 4 0 01-8 0z"></path></svg>
@@ -2054,6 +2042,17 @@
                             <h4 class="text-sm font-medium text-gray-700" data-translate-key="apiKeysTitle">API Keys</h4>
                         </div>
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </div>
+                    <!-- Tombol Aksi Riwayat -->
+                    <div class="p-2 space-y-2 mt-2 border-t border-gray-200 dark:border-gray-700">
+                         <button onclick="exportChatHistory()" class="settings-btn-action bg-green-100 text-green-700 hover:bg-green-200">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            <span data-translate-key="exportHistory">Export Riwayat Chat Ini</span>
+                         </button>
+                         <button onclick="clearAllChatHistory()" class="settings-btn-action bg-red-100 text-red-700 hover:bg-red-200">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            <span data-translate-key="clearAllHistory">Hapus SEMUA Percakapan</span>
+                         </button>
                     </div>
                 </div>
             </div>
@@ -2092,21 +2091,21 @@
                     <!-- [DIUBAH] Setiap gaya bahasa memiliki toggle switch sendiri -->
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
-                            <div class="settings-icon-bg bg-blue-100 text-blue-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                            <div class="settings-icon-bg bg-blue-500"><svg class="text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-7.536 5.879a.75.75 0 001.072 1.038 4.5 4.5 0 005.928 0 .75.75 0 00-1.072-1.038 3 3 0 01-3.784 0z" clip-rule="evenodd"></path></svg></div>
                             <span class="text-sm font-medium text-gray-700" data-translate-key="personalityCasual">Santai</span>
                         </div>
                         <input type="radio" name="personalityToggle" id="personality-santai" class="toggle-radio" value="santai" onchange="selectChoice('personality', this.value, this)" checked>
                     </div>
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
-                            <div class="settings-icon-bg bg-gray-100 text-gray-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></div>
+                            <div class="settings-icon-bg bg-gray-700"><svg class="text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10.362 3.591L12 2.147V2a1 1 0 00-1-1H9a1 1 0 00-1 1v.147L9.638 3.591A2 2 0 009.293 4.585l-4.147 5.333A1 1 0 006 11.5v6a1 1 0 001 1h6a1 1 0 001-1v-6a1 1 0 00-.853-.982l-4.147-5.333a2 2 0 00-1.296-.994z"></path></svg></div>
                             <span class="text-sm font-medium text-gray-700" data-translate-key="personalityProfessional">Profesional</span>
                         </div>
                         <input type="radio" name="personalityToggle" id="personality-profesional" class="toggle-radio" value="profesional" onchange="selectChoice('personality', this.value, this)" >
                     </div>
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
-                            <div class="settings-icon-bg bg-yellow-100 text-yellow-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                            <div class="settings-icon-bg bg-yellow-500"><svg class="text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM6.5 8a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM10 13.5a.5.5 0 01.5.5v.5a.5.5 0 01-1 0v-.5a.5.5 0 01.5-.5zM11.5 8a1.5 1.5 0 100 3 1.5 1.5 0 000-3z"></path><path fill-rule="evenodd" d="M10 1.5a8.5 8.5 0 100 17 8.5 8.5 0 000-17zM0 10a10 10 0 1120 0 10 10 0 01-20 0z" clip-rule="evenodd"></path><path d="M10 13a.5.5 0 01.5.5v.5a.5.5 0 01-1 0v-.5A.5.5 0 0110 13z"></path></svg></div>
                             <span class="text-sm font-medium text-gray-700" data-translate-key="personalityHumorous">Humoris</span>
                         </div>
                         <input type="radio" name="personalityToggle" id="personality-lucu" class="toggle-radio" value="lucu" onchange="selectChoice('personality', this.value, this)" >
@@ -2120,49 +2119,49 @@
                     <!-- [DIUBAH] Setiap peran memiliki toggle switch sendiri -->
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
-                            <div class="settings-icon-bg bg-gray-100 text-gray-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                            <div class="settings-icon-bg bg-gray-500"><svg class="text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM2 10a8 8 0 1116 0 8 8 0 01-16 0z"></path></svg></div>
                             <span class="text-sm font-medium text-gray-700" data-translate-key="roleGeneral">Umum</span>
                         </div>
                         <input type="radio" name="aiRoleToggle" id="aiRole-umum" class="toggle-radio" value="umum" onchange="selectChoice('aiRole', this.value, this)" checked>
                     </div>
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
-                            <div class="settings-icon-bg bg-red-100 text-red-600">🇯🇵</div>
+                            <div class="settings-icon-bg bg-red-500"><span class="text-white font-bold text-sm">JP</span></div>
                             <span class="text-sm font-medium text-gray-700" data-translate-key="roleJapaneseTeacher">Guru B. Jepang</span>
                         </div>
                         <input type="radio" name="aiRoleToggle" id="aiRole-guru_jepang" class="toggle-radio" value="guru_jepang" onchange="selectChoice('aiRole', this.value, this)" >
                     </div>
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
-                            <div class="settings-icon-bg bg-blue-100 text-blue-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 0v6m0-6L9 13m12-2l-2-2-2 2m-2-2l-2 2"></path></svg></div>
+                            <div class="settings-icon-bg bg-blue-500"><svg class="text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 2a1 1 0 00-1 1v14a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H5zm3 4a1 1 0 10-2 0v2a1 1 0 102 0V6zm-1 5a1 1 0 112 0v2a1 1 0 11-2 0v-2zm4-5a1 1 0 10-2 0v2a1 1 0 102 0V6zm-1 5a1 1 0 112 0v2a1 1 0 11-2 0v-2z" clip-rule="evenodd"></path></svg></div>
                             <span class="text-sm font-medium text-gray-700" data-translate-key="roleMathTeacher">Guru Matematika</span>
                         </div>
                         <input type="radio" name="aiRoleToggle" id="aiRole-guru_matematika" class="toggle-radio" value="guru_matematika" onchange="selectChoice('aiRole', this.value, this)" >
                     </div>
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
-                            <div class="settings-icon-bg bg-green-100 text-green-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                            <div class="settings-icon-bg bg-green-500"><svg class="text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path><path d="M10 3a1 1 0 011 1v1.414l1.293-1.293a1 1 0 111.414 1.414L12.414 7H14a1 1 0 110 2h-1.586l1.293 1.293a1 1 0 11-1.414 1.414L11 9.414V11a1 1 0 11-2 0V9.414l-1.293 1.293a1 1 0 01-1.414-1.414L7.586 8H6a1 1 0 110-2h1.586l-1.293-1.293a1 1 0 011.414-1.414L9 5.414V4a1 1 0 011-1z"></path></svg></div>
                             <span class="text-sm font-medium text-gray-700" data-translate-key="roleDoctor">Dokter</span>
                         </div>
                         <input type="radio" name="aiRoleToggle" id="aiRole-dokter" class="toggle-radio" value="dokter" onchange="selectChoice('aiRole', this.value, this)" >
                     </div>
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
-                            <div class="settings-icon-bg bg-purple-100 text-purple-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg></div>
+                            <div class="settings-icon-bg bg-purple-500"><svg class="text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.672 1.903a1 1 0 011.656 0l4.472 3.253a1 1 0 01.328 1.13l-1.6 4.8a1 1 0 01-1.13 1.13l-4.8-1.6a1 1 0 01-1.13-.328L.747 6.533a1 1 0 011.13-1.656l4.795-1.974zM13 12a1 1 0 100 2h5a1 1 0 100-2h-5z" clip-rule="evenodd"></path></svg></div>
                             <span class="text-sm font-medium text-gray-700" data-translate-key="roleProgrammer">Programmer</span>
                         </div>
                         <input type="radio" name="aiRoleToggle" id="aiRole-programmer" class="toggle-radio" value="programmer" onchange="selectChoice('aiRole', this.value, this)" >
                     </div>
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
-                            <div class="settings-icon-bg bg-orange-100 text-orange-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m4 13-4-4-4 4M19 17v-2a4 4 0 00-4-4H9.5M19 17h-2a4 4 0 00-4 4v2M19 17v2a4 4 0 01-4 4H9.5"></path></svg></div>
+                            <div class="settings-icon-bg bg-orange-500"><svg class="text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7 2a1 1 0 011 1v1h4V3a1 1 0 112 0v1h2a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h2V3a1 1 0 011-1zm1 8a1 1 0 100-2h4a1 1 0 100 2H8z" clip-rule="evenodd"></path></svg></div>
                             <span class="text-sm font-medium text-gray-700" data-translate-key="roleTranslator">Penerjemah</span>
                         </div>
                         <input type="radio" name="aiRoleToggle" id="aiRole-penerjemah" class="toggle-radio" value="penerjemah" onchange="selectChoice('aiRole', this.value, this)" >
                     </div>
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
-                            <div class="settings-icon-bg bg-slate-100 text-slate-600"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></div>
+                            <div class="settings-icon-bg bg-slate-500"><svg class="text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg></div>
                             <span class="text-sm font-medium text-gray-700" data-translate-key="roleCustom">Kustom...</span>
                         </div>
                         <input type="radio" name="aiRoleToggle" id="aiRole-kustom" class="toggle-radio" value="kustom" onchange="selectChoice('aiRole', this.value, this)" >
@@ -2317,12 +2316,12 @@
             </div>
         </div>
         <div class="p-4 bg-gray-50 border-t border-gray-200 flex-shrink-0">
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="resetAllSettings()" class="settings-btn-action bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm py-2">
-                    <span data-translate-key="resetSettings">Reset</span>
-                </button>
-                <button onclick="saveAllSettings()" class="settings-btn-action bg-blue-600 text-white hover:bg-blue-700 text-sm py-2">
+            <div class="space-y-3">
+                <button onclick="saveAllSettings()" class="settings-btn-action bg-blue-500 text-white hover:bg-blue-600 text-sm py-2.5 rounded-lg font-semibold">
                     <span data-translate-key="saveAndClose">Simpan & Tutup</span>
+                </button>
+                <button onclick="resetAllSettings()" class="settings-btn-action bg-gray-200 text-blue-500 hover:bg-gray-300 text-sm py-2.5 rounded-lg font-semibold">
+                    <span data-translate-key="resetSettings">Reset</span>
                 </button>
             </div>
         </div>
