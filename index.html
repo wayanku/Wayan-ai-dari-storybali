@@ -3734,19 +3734,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.getElementById('confirmModal').classList.add('hidden');
         confirmModalResolver = null;
     }
-    // ▼▼▼ [FIX] Menambahkan fungsi toggleSearchMode yang hilang ▼▼▼
-function toggleSearchMode() {
-    isSearchModeActive = !isSearchModeActive;
-    const btn = document.getElementById('toggleSearchModeBtn');
-    btn.classList.toggle('active', isSearchModeActive);
-    if (isSearchModeActive) {
-        addSystemMessage(t('systemSearchModeOn'), 'info');
-    } else {
-        addSystemMessage(t('systemSearchModeOff'), 'info');
-    }
-}
-// ▲▲▲ AKHIR DARI FIX ▲▲▲
-
     function showSearchModal(query) {
         const modal = document.getElementById('searchModal');
         const title = document.getElementById('searchModalTitle');
@@ -4936,29 +4923,26 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         document.getElementById('callVisualizer').style.opacity = '1'; // [BARU] Tampilkan visualizer
         document.getElementById('callTranscriptPreview').style.display = 'none';
 
+        // [FIX SAFARI & IOS] Fungsi onAudioEnd didefinisikan di luar try-catch
+        // agar bisa dipanggil dalam kondisi sukses maupun gagal.
         const onAudioEnd = () => {
             isSpeaking = false;
+            document.getElementById('callVisualizer').style.opacity = '0'; // Sembunyikan visualizer
             if (isCallActive) {
-                listenForUserSpeech();
+                // Jeda singkat ini sangat penting untuk Safari agar browser
+                // sempat melepaskan kontrol audio sebelum mencoba merekam.
+                setTimeout(listenForUserSpeech, 150);
             }
-            document.getElementById('callVisualizer').style.opacity = '0'; // [BARU] Sembunyikan visualizer
         };
 
         try {
             if (settings.audioSource === 'elevenlabs') {
-                await playElevenLabsAudio(text, null);
-                // For ElevenLabs, onended event on the audio player handles this.
-                elevenLabsAudioPlayer.onended = onAudioEnd;
+                // Untuk ElevenLabs, event 'onended' sudah ditangani di dalam playElevenLabsAudio
+                // yang akan memanggil resolve() dari promise, yang kemudian memanggil onAudioEnd.
+                await playElevenLabsAudio(text).finally(onAudioEnd);
             } else {
-                const utterance = new SpeechSynthesisUtterance(text);
-                const selectedVoice = speechSynthesis.getVoices().find(v => v.voiceURI === settings.voiceURI);
-                utterance.voice = selectedVoice || speechSynthesis.getVoices().find(v => v.lang.startsWith('id'));
-                utterance.onend = onAudioEnd;
-                utterance.onerror = (e) => {
-                    console.error("Speech synthesis error", e);
-                    onAudioEnd(); 
-                };
-                speechSynthesis.speak(utterance);
+                // Untuk suara browser, kita gunakan event 'onend' dan 'onerror'.
+                await playBrowserAudio(text).finally(onAudioEnd);
             }
         } catch (error) {
             console.error("Error playing AI speech:", error);
@@ -4969,7 +4953,8 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
     function listenForUserSpeech() {
         if (!isCallActive || isSpeaking || isListeningForCall) return;
 
-        if (!('webkitSpeechRecognition' in window)) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
             alert(t('callErrorBrowserSupport'));
             endCall();
             return;
@@ -4982,13 +4967,16 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         // [ANALISIS] Di sini adalah titik percabangan utama.
         // Kode akan memeriksa apakah perangkat adalah iOS.
         if (isIOS()) {
-            userCallState = 'idle';
+            userCallState = 'idle'; // State: idle, listening, transcribed
             callActionBtn.style.display = 'flex';
             callActionBtn.innerHTML = `<svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>`; // Mic Icon
-            callActionBtn.title = t('callStartSpeaking');
+            callActionBtn.title = t('callStartSpeaking'); // [DIUBAH] Menggunakan title yang lebih sesuai
             callStatusText.textContent = t('callStartSpeaking'); // [PERBAIKAN] Menggunakan teks yang lebih sesuai
             
-            callActionBtn.onclick = () => {
+            callActionBtn.onclick = (event) => {
+                // [FIX SAFARI] Mencegah event klik ganda yang bisa terjadi di beberapa browser
+                event.stopPropagation(); 
+                event.preventDefault();
                 if (userCallState === 'idle') {
                     startRecognitionForIOS();
                 } else if (userCallState === 'listening') { // Jika sedang merekam, tombol ini akan menghentikan rekaman.
@@ -5003,6 +4991,10 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
                 }
             };
         } else { // [ANALISIS] Ini adalah alur untuk perangkat non-iOS (misalnya Android).
+                 // [FIX] Pastikan tombol aksi disembunyikan untuk alur otomatis Android.
+                 // Ini mencegah tombol dari alur iOS muncul secara tidak sengaja.
+                 callActionBtn.style.display = 'none';
+
                  // Tombol mikrofon disembunyikan dan perekaman suara dimulai secara otomatis.
             callActionBtn.style.display = 'none'; // No button for Android
             callStatusText.textContent = t('listening');
@@ -5012,7 +5004,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
 
     function startRecognitionForAndroid() {
         let final_transcript = '';
-        callRecognition = new webkitSpeechRecognition();
+        callRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         callRecognition.continuous = false;
         callRecognition.interimResults = true;
         callRecognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
@@ -5050,12 +5042,17 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         const transcriptPreview = document.getElementById('callTranscriptPreview');
         const callActionBtn = document.getElementById('callActionBtn');
         
+        // [FIX IOS] Hentikan rekaman yang mungkin masih berjalan sebelum memulai yang baru
+        if (callRecognition) {
+            callRecognition.stop();
+        }
+        
         callActionBtn.innerHTML = `<svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V6a1 1 0 00-1-1H5z" clip-rule="evenodd"></path></svg>`; // Stop Icon
         callActionBtn.title = t('stopGenerating');
         transcriptPreview.style.display = 'block';
         transcriptPreview.textContent = t('listening');
 
-        callRecognition = new webkitSpeechRecognition();
+        callRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         callRecognition.continuous = true;
         callRecognition.interimResults = true;
         callRecognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
@@ -5070,14 +5067,20 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
 
         callRecognition.onend = () => {
             isListeningForCall = false;
-            userCallState = 'transcribed';
-            callActionBtn.innerHTML = `<svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>`; // Send Icon
-            callActionBtn.title = t('buttonSend');
+            // [FIX SAFARI & IOS] Hanya ubah state jika panggilan masih aktif untuk mencegah kondisi balapan
+            if (isCallActive) {
+                userCallState = 'transcribed';
+                callActionBtn.innerHTML = `<svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>`; // Send Icon
+                callActionBtn.title = t('buttonSend');
+            }
         };
         callRecognition.onerror = (e) => { 
-            console.error("iOS Recognition Error:", e.error);
+            console.error("iOS/Safari Recognition Error:", e.error);
+            // [FIX SAFARI & IOS] Pastikan state direset dengan benar saat terjadi error
+            userCallState = 'idle';
             isListeningForCall = false; 
-            if(isCallActive) listenForUserSpeech(); 
+            // [FIX SAFARI] Beri jeda singkat sebelum mencoba mendengarkan lagi untuk menghindari macet
+            if(isCallActive) setTimeout(listenForUserSpeech, 100); 
         };
         callRecognition.start();
     }
