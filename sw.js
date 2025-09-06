@@ -49,30 +49,37 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Kita hanya menangani request GET
-  if (event.request.method !== 'GET') {
+  const url = new URL(event.request.url);
+
+  // [PERBAIKAN] Abaikan request ke API Google/Firebase agar tidak di-cache.
+  // Biarkan request ini langsung ke network.
+  if (url.hostname.includes('google.com') || url.hostname.includes('gstatic.com') || url.hostname.includes('firebaseapp.com')) {
     return;
   }
 
-  // Strategi Cache First
-  event.respondWith(
-    caches.match(event.request)
-      .then((cachedResponse) => {
-        // Jika ada di cache, kembalikan dari cache
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-
-        // Jika tidak ada di cache, coba ambil dari network
-        return fetch(event.request).catch(() => {
-          // Jika network gagal (offline), kembalikan halaman offline
-          // Hanya untuk request navigasi (halaman HTML)
-          if (event.request.mode === 'navigate') {
-            return caches.match(OFFLINE_URL);
+  // [PERBAIKAN] Hanya tangani request GET untuk strategi caching.
+  // Ini mencegah masalah dengan request POST, dll.
+  if (event.request.method === 'GET') {
+    // Strategi Cache First (untuk aset statis)
+    event.respondWith(
+      caches.match(event.request)
+        .then((cachedResponse) => {
+          // Jika ada di cache, kembalikan dari cache
+          if (cachedResponse) {
+            return cachedResponse;
           }
-        });
-      })
-  );
+  
+          // Jika tidak ada di cache, coba ambil dari network
+          return fetch(event.request).catch(() => {
+            // Jika network gagal (offline), kembalikan halaman offline
+            // Hanya untuk request navigasi (halaman HTML)
+            if (event.request.mode === 'navigate') {
+              return caches.match(OFFLINE_URL);
+            }
+          });
+        })
+    );
+  }
 });
 
 let inactivityTimer = null;
