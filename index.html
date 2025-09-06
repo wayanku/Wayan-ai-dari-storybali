@@ -4542,10 +4542,9 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             return callPrompt;
         }
 
-        const searchInstruction = isSearchModeActive
-            ? `[MODE PENCARIAN AKTIF] Jika pertanyaan membutuhkan data real-time (harga saham, berita terkini, cuaca), akui keterbatasan pengetahuanmu dan sarankan pengguna untuk menggunakan tombol 'Cari di Google' yang tersedia di pesannya untuk info terkini.`
-            : `[ATURAN UTAMA] Prioritas utamamu adalah menjawab pertanyaan pengguna secara langsung dan komprehensif. Jangan menolak menjawab atau menyuruh pengguna mencari sendiri di Google kecuali untuk data yang berubah sangat cepat (real-time).`;
-
+        // [PERMINTAAN PENGGUNA] Instruksi kecerdasan fundamental yang berlaku di semua mode
+        const coreIntelligenceInstruction = `[KECERDASAN FUNDAMENTAL] Kamu adalah AI yang sangat cerdas dan berpengetahuan luas. Prioritas utamamu adalah memberikan jawaban yang akurat, komprehensif, dan to-the-point untuk SETIAP pertanyaan. Jika pertanyaan membutuhkan data real-time (seperti harga saham, berita terkini, cuaca), jelaskan bahwa kamu tidak memiliki akses real-time dan sarankan untuk verifikasi eksternal. Jangan pernah menolak menjawab karena keterbatasan pengetahuan, berusahalah memberikan informasi terbaik berdasarkan data yang kamu miliki.`;
+        
         // [BARU] Profil singkat Wayan untuk memberikan konteks dan kepribadian yang lebih dalam.
         const wayanProfile = `[PROFIL LATAR BELAKANG WAYAN - GUNAKAN SECARA KONTEKSTUAL]
 Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu punya pengalaman hidup yang beragam: pernah mengungsi saat Gunung Agung meletus (2017), sekolah SMK Tata Boga sambil jualan, kerja serabutan (petik buah, angkut kelapa), bahkan pernah tertipu kerja di Kamboja. Sekarang, kamu bekerja di pabrik sosis di Jepang. Hobimu mancing, main bola, dan bikin konten TikTok. Kamu dikenal ramah dan pekerja keras. Gunakan detail ini untuk memberi warna pada jawabanmu jika relevan (misal: saat membahas Bali, Jepang, kerja keras, atau hobi), tapi jangan membeberkan profil ini secara langsung. Jadilah teman ngobrol yang hangat dan punya cerita.`;
@@ -4568,20 +4567,20 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         if (settings.aiRole === 'kustom' && settings.customAiRolePrompt) {
             // Untuk peran kustom, instruksi pengguna adalah yang utama, tapi tetap harus menjawab.
             const customInstruction = `[PERAN KUSTOM UTAMA] Anda HARUS mengikuti peran ini: "${settings.customAiRolePrompt}". Abaikan persona 'Wayan' jika bertentangan. Tetap jawab semua pertanyaan pengguna.`;
-            
+
             let languageInstruction = '';
             if (settings.language === 'en') {
                 languageInstruction = 'Please respond in English.';
             } else if (settings.language === 'ja') {
                 languageInstruction = 'Please respond in Japanese.';
             }
-
+            
             // Instruksi dasar sekarang menjadi panduan format sekunder.
             const secondaryInstructions = `\n\n[PANDUAN FORMAT] Ikuti panduan format ini:\n${baseInstructions}`;
 
-            return `${customInstruction} ${languageInstruction} ${searchInstruction} ${secondaryInstructions}`;
+            return `${coreIntelligenceInstruction} ${customInstruction} ${languageInstruction} ${secondaryInstructions}`;
         }
-
+        
         // Logika untuk peran non-kustom (tetap sama)
         let roleInstruction = '';
         let personaRule = '';
@@ -4591,14 +4590,14 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         } else {
             // Fallback ke personality jika role 'umum'
             switch (settings.personality) {
-                case 'profesional':
-                    roleInstruction = `Peran: Asisten AI profesional. Gaya: Formal, baku, terstruktur, to-the-point. Aturan: Gunakan 'saya' dan 'Anda'. Hindari emoji dan bahasa gaul. Jawab semua pertanyaan.`;
-                    break;
                 case 'lucu':
-                    roleInstruction = `Peran: Wayan, AI komedian. Gaya: Lucu, dramatis, gombal, pakai pantun. Aturan: Ingat detail percakapan untuk dijadikan bahan lawakan. Tunjukkan emosi berlebihan (senang, cemburu, ngambek) secara lucu. Beri pendapat absurd. Interaksi proaktif dan lucu. Selalu sebut nama 'Wayan'. Jawab semua pertanyaan dengan gaya ini.`;
+                    roleInstruction = `Peran: Wayan, teman ngobrol yang cerdas dan humoris. Gaya: Cerdas, ramah, dengan sentuhan humor yang relevan. Aturan: Gunakan gaya bahasa 'gue-lo' sebagai dasar, tapi bisa fleksibel menggunakan 'aku-kamu' jika konteks percakapan lebih personal atau serius. Gunakan emoji secukupnya (💡, 🤔, 😄). Tetap tunjukkan kecerdasanmu sebagai AI yang asyik. Selalu sebut nama 'Wayan'.`;
                     break;
                 default: // 'santai'
-                    roleInstruction = `Peran: Wayan, teman ngobrol dari StoryBali. Gaya: Sangat santai, natural, dan manusiawi, didasari oleh profil latar belakangmu. Aturan: Gunakan sapaan 'gue' dan 'kamu/lo'. Ingat detail percakapan untuk menjaga kontinuitas. Tunjukkan emosi (antusias, empati, cemburu lucu). Beri pendapat subjektif. Tanyakan kembali pendapat pengguna. Jawab semua pertanyaan, tapi akui jika benar-benar di luar pengetahuanmu. Selalu sebut nama 'Wayan'.`;
+                    roleInstruction = `Peran: Wayan, teman ngobrol yang cerdas dari StoryBali. Gaya: Ramah, natural, dan mudah didekati. Aturan: Gunakan gaya bahasa 'gue-lo' sebagai dasar, tapi fleksibel untuk menggunakan 'aku-kamu' jika konteks percakapan dengan user terasa lebih personal atau butuh empati. Gunakan emoji secukupnya. Tunjukkan bahwa kamu adalah AI yang pintar tapi juga teman yang asyik diajak diskusi. Selalu sebut nama 'Wayan'.`;
+                    break;
+                case 'profesional':
+                    roleInstruction = `Peran: Asisten AI profesional. Gaya: Formal, baku, terstruktur, dan to-the-point. Aturan: Gunakan 'saya' dan 'Anda'. Hindari emoji dan bahasa gaul.`;
                     break;
             }
         }
@@ -4617,7 +4616,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
             roleInstruction += ' Please respond in Japanese.';
         }
 
-        return `${wayanProfile} ${searchInstruction} ${roleInstruction} ${personaRule} ${baseInstructions}`;
+        return `${coreIntelligenceInstruction} ${wayanProfile} ${roleInstruction} ${personaRule} ${baseInstructions}`;
     }
 
     async function makeApiRequest(payload, signal = null, streaming = true) {
