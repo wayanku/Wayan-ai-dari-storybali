@@ -4768,25 +4768,24 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
                 const response = await fetch(apiUrl, fetchOptions);
     
                 if (response.ok) {
-                    console.log(`Berhasil menggunakan API Key urutan ke-${currentIndex + 1}`);
+                    console.log(`Berhasil menggunakan API Key urutan ke-${currentIndex + 1} (${currentApiKey.substring(0, 4)}...${currentApiKey.substring(currentApiKey.length - 4)})`);
                     localStorage.setItem('lastKeyIndex', currentIndex);
                     return response;
                 }
     
                 if (response.status === 429) {
-                    console.warn(`API Key urutan ke-${currentIndex + 1} telah mencapai limit. Mencoba kunci berikutnya...`);
+                    console.warn(`API Key urutan ke-${currentIndex + 1} (${currentApiKey.substring(0, 4)}...) telah mencapai limit. Mencoba kunci berikutnya...`);
+                    // Tidak perlu throw error, biarkan loop berlanjut
                 } else {
                     const errorBody = await response.text();
-                    console.error("API Error Body:", errorBody);
-                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+                    console.error(`API Key urutan ke-${currentIndex + 1} gagal dengan status ${response.status}. Body:`, errorBody);
+                    // Jangan throw error di sini, biarkan loop mencoba kunci berikutnya
                 }
     
             } catch (error) {
-                if (error.name === 'AbortError') throw error; 
-                console.error(`Gagal dengan API Key urutan ke-${currentIndex + 1}:`, error.message);
-                if (!String(error.message).includes("429")) {
-                     throw error;
-                }
+                if (error.name === 'AbortError') throw error; // Jika user membatalkan, hentikan proses
+                console.error(`Gagal dengan API Key urutan ke-${currentIndex + 1} (${currentApiKey.substring(0, 4)}...):`, error.message);
+                // Cukup log error dan biarkan loop melanjutkan ke kunci berikutnya
             }
         }
     
