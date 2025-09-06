@@ -2424,23 +2424,25 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const googleProvider = new firebase.auth.GoogleAuthProvider();
-
+    
     let currentUser = null;
 
-    // Fungsi untuk login
-    function signInWithGoogle() {
-      auth.signInWithPopup(googleProvider).catch(error => {
-        console.error("Error saat login dengan Google:", error);
-        alert("Gagal login: " + error.message);
-      });
-    }
+    // ▼▼▼ [PERBAIKAN] Fungsi dipindahkan ke luar agar bisa diakses secara global ▼▼▼
+     // Fungsi untuk login
+     function signInWithGoogle() {
+       auth.signInWithPopup(googleProvider).catch(error => {
+         console.error("Error saat login dengan Google:", error);
+         alert("Gagal login: " + error.message);
+       });
+     }
 
-    // Fungsi untuk logout
-    function signOut() {
-      auth.signOut().catch(error => {
-        console.error("Error saat logout:", error);
-      });
-    }
+     // Fungsi untuk logout
+     function signOut() {
+       auth.signOut().catch(error => {
+         console.error("Error saat logout:", error);
+       });
+     }
+    // ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲
 
     // Listener untuk status otentikasi
     auth.onAuthStateChanged(user => {
@@ -5412,7 +5414,11 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         if (!userHasScrolledUp) {
             document.getElementById('newMessageNotification').classList.add('hidden');
         }
-    });
+    });// ▼▼▼ [PERBAIKAN] Menambahkan event listener untuk tombol Login dan Logout ▼▼▼
+document.getElementById('loginBtn').addEventListener('click', signInWithGoogle);
+document.getElementById('logoutBtn').addEventListener('click', signOut);
+// ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲
+
     // ▲▲▲ AKHIR DARI EVENT LISTENER BARU ▲▲▲
 
     ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal'].forEach(id => {
