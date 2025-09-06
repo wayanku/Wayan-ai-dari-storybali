@@ -3,6 +3,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -52,9 +53,9 @@
       --bg-secondary: #f1f5f9; /* [PERUBAHAN] Dibuat sedikit lebih gelap */
       --bg-tertiary: #f1f5f9;
       --bg-accent: #eef2ff;
-      --text-primary: #1e293b;
-      --text-secondary: #475569;
-      --text-light: #64748b;
+      --text-primary: #111827; /* [PERBAIKAN] Dibuat lebih gelap untuk kontras yang lebih baik */
+      --text-secondary: #374151; /* [PERBAIKAN] Dibuat sedikit lebih gelap agar lebih terbaca */
+      --text-light: #6b7280; /* [PERBAIKAN] Dibuat sedikit lebih gelap dan kurang jenuh */
       --border-color: #e2e8f0;
       --ai-message-bg: #e2e8f0;
       --modal-bg: rgba(255, 255, 255, 0.98);
@@ -73,8 +74,8 @@
       --bg-tertiary: #2a2a2a;      /* Lighter Gray */
       --bg-accent: #3c3c3c;        /* Accent Gray for selections */
       --text-primary: #f5f5f5;      /* Bright White for readability */
-      --text-secondary: #a0a0a0;    /* Medium Gray */
-      --text-light: #6b6b6b;        /* Darker Gray */
+      --text-secondary: #a1a1aa;    /* [PERBAIKAN] Dibuat lebih terang */
+      --text-light: #71717a;        /* [PERBAIKAN] Dibuat lebih terang */
       --border-color: #3a3a3a;
       --ai-message-bg: #2c2c2c;
       --modal-bg: rgba(20, 20, 20, 0.95);
@@ -141,7 +142,7 @@
         margin: 0;
         padding: 0;
         overflow: hidden; /* Mencegah body memiliki scrollbar sendiri */
-        /* [DIUBAH] Diterapkan ke html & body untuk mengunci viewport secara total di iOS (PWA) */
+        /* [DIUBAH] Diterapkan ke html & body untuk mengunci viewport secara total di iOS (PWA), namun mengizinkan bounce di elemen anak */
         overscroll-behavior: none;
     }
 
@@ -955,31 +956,39 @@
 
     /* ▼▼▼ [BARU] Gaya untuk Navigasi Halaman Pengaturan ▼▼▼ */
     .settings-page {
+        position: absolute; /* [DIUBAH] Agar bisa tumpang tindih saat animasi */
+        top: 0; left: 0; right: 0; bottom: 0;
+        padding: 1rem; /* [DIUBAH] Padding dipindahkan ke sini dari kontainer scroll */
+        overflow-y: auto; /* [DIUBAH] Setiap halaman punya scroll sendiri */
         display: none; /* Sembunyikan semua halaman secara default */
-        animation: slide-in-down 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; /* [DIUBAH] Animasi dari atas ke bawah */
+        animation-duration: 0.35s; /* [DIUBAH] Durasi animasi disamakan */
+        animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        animation-fill-mode: forwards;
     }
     .settings-page.active {
         display: block;
     }
-    .settings-page.slide-out {
-        animation: slide-out-up 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; /* [DIUBAH] Animasi dari bawah ke atas */
-    }
-    @keyframes slide-in-right {
-        from { opacity: 0; transform: translateX(30px); }
-        to { opacity: 1; transform: translateX(0); }
+    /* [DIUBAH] Kelas animasi baru untuk transisi iOS */
+    .settings-page.slide-in-from-right { animation-name: slide-in-from-right; }
+    .settings-page.slide-out-to-left { animation-name: slide-out-to-left; }
+    .settings-page.slide-in-from-left { animation-name: slide-in-from-left; }
+    .settings-page.slide-out-to-right { animation-name: slide-out-to-right; }
+
+    @keyframes slide-in-from-right {
+        from { transform: translateX(100%); }
+        to { transform: translateX(0); }
     }
     @keyframes slide-out-left {
-        from { opacity: 1; transform: translateX(0); }
-        to { opacity: 0; transform: translateX(-30px); }
+        from { transform: translateX(0); }
+        to { transform: translateX(-30%); } /* Keluar sedikit saja agar terlihat natural */
     }
-    /* [BARU] Keyframes untuk animasi vertikal */
-    @keyframes slide-in-down {
-        from { opacity: 0; transform: translateY(-20px); }
-        to { opacity: 1; transform: translateY(0); }
+    @keyframes slide-in-from-left {
+        from { transform: translateX(-30%); }
+        to { transform: translateX(0); }
     }
-    @keyframes slide-out-up {
-        from { opacity: 1; transform: translateY(0); }
-        to { opacity: 0; transform: translateY(20px); }
+    @keyframes slide-out-to-right {
+        from { transform: translateX(0); }
+        to { transform: translateX(100%); }
     }
     .settings-item.nav-item { cursor: pointer; }
     .settings-item.nav-item:hover { background-color: var(--bg-tertiary); }
@@ -1385,7 +1394,7 @@
         padding-top: 8rem !important;
         padding-bottom: 9rem !important; /* [BARU] Padding bawah untuk footer transparan */
         /* [BARU] Mencegah scroll 'bocor' ke body di iOS (PWA) */
-        overscroll-behavior-y: contain;
+        overscroll-behavior-y: auto; /* [DIUBAH] Mengizinkan efek "bounce" vertikal khas iOS */
     }
 
     .chat-messages::-webkit-scrollbar { width: 8px; }
@@ -1858,8 +1867,8 @@
             </div>
         </div>
         
-        <!-- [PENYEMPURNAAN] Kontainer scroll utama dengan padding yang lebih rapi -->
-        <div class="flex-1 overflow-y-auto p-4">
+        <!-- [DIUBAH] Kontainer ini sekarang menjadi 'viewport' untuk halaman-halaman pengaturan -->
+        <div class="flex-1 overflow-hidden relative">
             <!-- [DIUBAH] Halaman Utama Pengaturan -->
             <div id="settings-page-main" class="settings-page active">
                 <!-- Seksi Umum -->
@@ -1883,7 +1892,7 @@
                             <label class="text-sm font-medium text-gray-700" data-translate-key="settingLanguage">Bahasa</label>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span id="currentLanguage" class="text-sm text-gray-500 dark:text-gray-400">Indonesia</span>
+                            <span id="currentLanguage" class="text-sm font-normal" style="color: var(--text-secondary);">Indonesia</span>
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </div>
                     </div>
@@ -1895,7 +1904,7 @@
                             <label class="text-sm font-medium text-gray-700" data-translate-key="settingPersonality">Gaya Bahasa</label>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span id="currentPersonality" class="text-sm text-gray-500 dark:text-gray-400">Santai</span>
+                            <span id="currentPersonality" class="text-sm font-normal" style="color: var(--text-secondary);">Santai</span>
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </div>
                     </div>
@@ -1908,7 +1917,7 @@
                             <label class="text-sm font-medium text-gray-700" data-translate-key="settingAIRole">Mode Peran AI</label>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span id="currentAiRole" class="text-sm text-gray-500 dark:text-gray-400">Umum</span>
+                            <span id="currentAiRole" class="text-sm font-normal" style="color: var(--text-secondary);">Umum</span>
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </div>
                     </div>
@@ -1954,7 +1963,7 @@
                             <label for="backgroundFileInput" class="text-sm font-medium text-gray-700" data-translate-key="settingBackground">Gambar Latar</label>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span id="currentBackground" class="text-sm text-gray-500 dark:text-gray-400">Default</span>
+                            <span id="currentBackground" class="text-sm font-normal" style="color: var(--text-secondary);">Default</span>
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </div>
                     </div>
@@ -1990,7 +1999,7 @@
                             <label class="text-sm font-medium text-gray-700" data-translate-key="settingAudioSource">Sumber Audio</label>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span id="currentAudioSource" class="text-sm text-gray-500 dark:text-gray-400">Bawaan Browser</span>
+                            <span id="currentAudioSource" class="text-sm font-normal" style="color: var(--text-secondary);">Bawaan Browser</span>
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </div>
                     </div>
@@ -2066,7 +2075,7 @@
                             <img src="https://flagcdn.com/w40/id.png" alt="Indonesia Flag" class="w-6 h-auto rounded-sm">
                             <span class="text-sm font-medium text-gray-700" data-translate-key="langIndonesian">Indonesia</span>
                         </div>
-                        <input type="radio" name="languageToggle" id="language-id" class="toggle-radio" value="id" onchange="selectChoice('language', this.value, this)" checked>
+                        <input type="radio" name="languageToggle" id="language-id" class="toggle-radio" value="id" onchange="selectChoice('language', this.value, this)">
                     </div>
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
@@ -2094,7 +2103,7 @@
                             <div class="settings-icon-bg bg-blue-500"><svg class="text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-7.536 5.879a.75.75 0 001.072 1.038 4.5 4.5 0 005.928 0 .75.75 0 00-1.072-1.038 3 3 0 01-3.784 0z" clip-rule="evenodd"></path></svg></div>
                             <span class="text-sm font-medium text-gray-700" data-translate-key="personalityCasual">Santai</span>
                         </div>
-                        <input type="radio" name="personalityToggle" id="personality-santai" class="toggle-radio" value="santai" onchange="selectChoice('personality', this.value, this)" checked>
+                        <input type="radio" name="personalityToggle" id="personality-santai" class="toggle-radio" value="santai" onchange="selectChoice('personality', this.value, this)">
                     </div>
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
@@ -2122,7 +2131,7 @@
                             <div class="settings-icon-bg bg-gray-500"><svg class="text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM2 10a8 8 0 1116 0 8 8 0 01-16 0z"></path></svg></div>
                             <span class="text-sm font-medium text-gray-700" data-translate-key="roleGeneral">Umum</span>
                         </div>
-                        <input type="radio" name="aiRoleToggle" id="aiRole-umum" class="toggle-radio" value="umum" onchange="selectChoice('aiRole', this.value, this)" checked>
+                        <input type="radio" name="aiRoleToggle" id="aiRole-umum" class="toggle-radio" value="umum" onchange="selectChoice('aiRole', this.value, this)">
                     </div>
                     <div class="settings-item">
                         <div class="flex items-center space-x-4">
@@ -2241,7 +2250,7 @@
                             <label class="text-sm font-medium text-gray-700" data-translate-key="settingAudioSource">Sumber Audio</label>
                         </div>
                         <div class="grid grid-cols-2 gap-2 w-full pt-2">
-                            <button id="audioSource-browser" onclick="selectChoice('audioSource', 'browser', this)" class="choice-btn" data-translate-key="audioSourceBrowser">Bawaan Browser</button>
+                            <button id="audioSource-browser" onclick="selectChoice('audioSource', 'browser', this)" class="choice-btn active" data-translate-key="audioSourceBrowser">Bawaan Browser</button>
                             <button id="audioSource-elevenlabs" onclick="selectChoice('audioSource', 'elevenlabs', this)" class="choice-btn" data-translate-key="audioSourceElevenLabs">ElevenLabs</button>
                         </div>
                     </div>
@@ -2353,6 +2362,14 @@
     // ▼▼▼ [BARU] Sistem Internasionalisasi (i18n) ▼▼▼
     const translations = {
         id: {
+            // [BARU] Terjemahan untuk judul tombol aksi di riwayat
+            renameChatTitle: "Ganti Nama",
+            deleteChatTitle: "Hapus Chat",
+            // [BARU] Terjemahan untuk tombol stop
+            stopSpeakingTitle: "Hentikan Bicara",
+            // [BARU] Terjemahan untuk pratinjau suara
+            alertSelectVoiceFirst: "Pilih suara terlebih dahulu.",
+
             newChat: "Mulai Chat Baru", newChatTitle: "Mulai Obrolan Baru", sidebarToggleTitle: "Tampilkan/Sembunyikan Riwayat Obrolan",
             aiName: "Wayan AI", profileHint: "Klik untuk lihat profil", voiceCallTitle: "Mulai Panggilan Suara", settingsTitle: "Buka Pengaturan",
             quickHello: "Halo", quickHowAreYou: "Apa kabar?", quickJoke: "Joke", quickProductive: "Tips Produktif", quickMovie: "Film", quickCoding: "Coding",
@@ -2419,7 +2436,12 @@
             inactiveNotification: "Mau udahan ngobrol sama Wayan?",
             welcomeBackNotification: "Wayan kangen nih! Mau lanjut ngobrol lagi?",
         },
+        // [BARU] Menambahkan terjemahan yang hilang untuk bahasa Inggris
         en: {
+            renameChatTitle: "Rename",
+            deleteChatTitle: "Delete Chat",
+            stopSpeakingTitle: "Stop Speaking",
+            alertSelectVoiceFirst: "Please select a voice first.",
             newChat: "New Chat", newChatTitle: "Start a New Conversation", sidebarToggleTitle: "Show/Hide Chat History",
             aiName: "Wayan AI", profileHint: "Click to see profile", voiceCallTitle: "Start Voice Call", settingsTitle: "Open Settings",
             quickHello: "Hello", quickHowAreYou: "How are you?", quickJoke: "Joke", quickProductive: "Productivity Tips", quickMovie: "Movie", quickCoding: "Coding",
@@ -2486,7 +2508,12 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             inactiveNotification: "Done chatting with Wayan?",
             welcomeBackNotification: "Wayan missed you! Want to continue our chat?",
         },
+        // [BARU] Menambahkan terjemahan yang hilang untuk bahasa Jepang
         ja: {
+            renameChatTitle: "名前を変更",
+            deleteChatTitle: "チャットを削除",
+            stopSpeakingTitle: "話すのをやめる",
+            alertSelectVoiceFirst: "まず声を選択してください。",
             newChat: "新しいチャット", newChatTitle: "新しい会話を始める", sidebarToggleTitle: "チャット履歴の表示/非表示",
             aiName: "ワヤンAI", profileHint: "プロフィールを見る", voiceCallTitle: "音声通話を開始", settingsTitle: "設定を開く",
             quickHello: "こんにちは", quickHowAreYou: "元気ですか？", quickJoke: "冗談", quickProductive: "生産性のヒント", quickMovie: "映画", quickCoding: "コーディング",
@@ -2582,9 +2609,18 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     };
     // ▲▲▲ AKHIR DARI i18n ▲▲▲
 
+    // ▼▼▼ [BARU] Fungsi untuk Haptic Feedback ▼▼▼
+    function triggerHapticFeedback(style = 'light') {
+        if ('vibrate' in navigator) {
+            const pattern = style === 'light' ? 10 : (style === 'medium' ? 30 : [50, 30, 50]);
+            navigator.vibrate(pattern);
+        }
+    }
+
     // ▼▼▼ [BARU] Navigasi Halaman Pengaturan ▼▼▼
     function navigateToSettingsPage(pageId) {
         const allPages = document.querySelectorAll('.settings-page');
+        const activePage = document.querySelector('.settings-page.active');
         const targetPage = document.getElementById(`settings-page-${pageId}`);
         const mainPage = document.getElementById('settings-page-main');
         const backBtn = document.getElementById('settingsBackBtn');
@@ -2602,21 +2638,31 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             apiKeys: 'apiKeysTitle'
         };
 
-        allPages.forEach(page => {
-            if (page.classList.contains('active')) {
-                page.classList.add('slide-out');
-                page.classList.remove('active');
-            }
-        });
+        if (!targetPage || (activePage && activePage.id === targetPage.id)) return;
 
+        const isGoingBack = pageId === 'main';
+
+        // Hapus semua kelas animasi sebelumnya
+        allPages.forEach(p => p.className = 'settings-page');
+
+        if (isGoingBack) {
+            // Animasi kembali ke halaman utama
+            if (activePage) activePage.classList.add('slide-out-to-right');
+            targetPage.classList.add('active', 'slide-in-from-left');
+        } else {
+            // Animasi maju ke sub-halaman
+            if (activePage) activePage.classList.add('slide-out-to-left');
+            targetPage.classList.add('active', 'slide-in-from-right');
+        }
+
+        // Setelah animasi selesai, bersihkan kelas dan state
         setTimeout(() => {
-            allPages.forEach(page => page.classList.remove('slide-out'));
-            if (targetPage) {
-                targetPage.classList.add('active');
-                titleEl.textContent = t(pageTitles[pageId] || 'settingsHeader');
-                backBtn.classList.toggle('hidden', pageId === 'main');
-            }
-        }, 300); // Durasi harus sama dengan animasi CSS
+            if (activePage) activePage.classList.remove('active', 'slide-out-to-left', 'slide-out-to-right');
+            targetPage.classList.remove('slide-in-from-right', 'slide-in-from-left');
+        }, 350); // Sedikit lebih lama dari durasi animasi
+
+        titleEl.textContent = t(pageTitles[pageId] || 'settingsHeader');
+        backBtn.classList.toggle('hidden', pageId === 'main');
     }
 
     function adjustHeightForMobile() {
@@ -3009,10 +3055,10 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             item.innerHTML = `
                 <span class="title">${displayTitle}</span>
                 <div class="actions">
-                    <button onclick="renameChatSession('${session.id}', event)" class="action-icon" title="Ganti Nama">
+                    <button onclick="renameChatSession('${session.id}', event)" class="action-icon" data-translate-title="renameChatTitle">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
                     </button>
-                    <button onclick="deleteChatSession('${session.id}', event)" class="action-icon" title="Hapus Chat">
+                    <button onclick="deleteChatSession('${session.id}', event)" class="action-icon" data-translate-title="deleteChatTitle">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     </button>
                 </div>`;
@@ -3218,6 +3264,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     }
     function sendQuickMessage(message) {
         document.getElementById('messageInput').value = message;
+        triggerHapticFeedback('light');
         handleInputChange({ target: document.getElementById('messageInput') });
         sendMessage();
     }
@@ -3233,6 +3280,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         } else {
             startVoiceRecognition();
         }
+        triggerHapticFeedback('medium');
     }
     function startVoiceRecognition() {
         if (!('webkitSpeechRecognition' in window)) {
@@ -3246,7 +3294,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         const micBtn = document.getElementById('micBtn');
         micBtn.classList.add('send-btn-active');
         micBtn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V6a1 1 0 00-1-1H5z" clip-rule="evenodd"></path></svg>`;
-        micBtn.title = t('stopGenerating');
+        micBtn.title = t('stopSpeakingTitle');
 
         document.getElementById('messageInput').style.visibility = 'hidden';
         document.getElementById('voiceRecordingUI').style.display = 'flex';
@@ -3436,6 +3484,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     function saveAllSettings() {
         settings.customAiRolePrompt = document.getElementById('customRoleInput').value;
         settings.fontSize = document.getElementById('fontSizeSelect').value;
+        triggerHapticFeedback('light'); // Getaran saat menyimpan
         settings.animationsEnabled = document.getElementById('animationToggle').checked;
         settings.soundEnabled = document.getElementById('soundToggle').checked;
         settings.readAiResponseEnabled = document.getElementById('readAiResponseToggle').checked;
@@ -3500,11 +3549,11 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.getElementById('saveHistoryToggle').checked = settings.saveHistory;
         
         document.querySelectorAll('.choice-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById(`language-${settings.language || 'id'}`)?.classList.add('active');
-        document.getElementById(`personality-${settings.personality}`)?.classList.add('active');
-        document.getElementById(`aiRole-${settings.aiRole}`)?.classList.add('active');
-        document.getElementById(`audioSource-${settings.audioSource}`)?.classList.add('active');
-        
+        document.querySelector(`input[name="languageToggle"][value="${settings.language}"]`).checked = true;
+        document.querySelector(`input[name="personalityToggle"][value="${settings.personality}"]`).checked = true;
+        document.querySelector(`input[name="aiRoleToggle"][value="${settings.aiRole}"]`).checked = true;
+        document.querySelector(`#audioSource-${settings.audioSource}`).classList.add('active');
+
         const customRoleContainer = document.getElementById('customRoleContainer');
         customRoleContainer.classList.toggle('hidden', settings.aiRole !== 'kustom');
         if (settings.aiRole === 'kustom') document.getElementById('customRoleInput').value = settings.customAiRolePrompt;
@@ -3522,25 +3571,25 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     function updateSettingsSummary() {
         // Update Language Summary
         const langMap = { id: 'langIndonesian', en: 'langEnglish', ja: 'langJapanese' };
-        document.getElementById('currentLanguage').textContent = t(langMap[settings.language]);
+        document.getElementById('currentLanguage').textContent = t(langMap[tempSettings.language]);
 
         // Update Personality Summary
         const personalityMap = { santai: 'personalityCasual', profesional: 'personalityProfessional', lucu: 'personalityHumorous' };
-        document.getElementById('currentPersonality').textContent = t(personalityMap[settings.personality]);
+        document.getElementById('currentPersonality').textContent = t(personalityMap[tempSettings.personality]);
 
         // Update AI Role Summary
         const roleMap = {
             umum: 'roleGeneral', guru_jepang: 'roleJapaneseTeacher', guru_matematika: 'roleMathTeacher',
             dokter: 'roleDoctor', programmer: 'roleProgrammer', penerjemah: 'roleTranslator', kustom: 'roleCustom'
         };
-        document.getElementById('currentAiRole').textContent = t(roleMap[settings.aiRole]);
+        document.getElementById('currentAiRole').textContent = t(roleMap[tempSettings.aiRole]);
 
         // Update Background Summary
-        document.getElementById('currentBackground').textContent = settings.backgroundUrl ? t('backgroundFileSet') : 'Default';
+        document.getElementById('currentBackground').textContent = tempSettings.backgroundUrl ? t('backgroundFileSet') : 'Default';
 
         // Update Audio Source Summary
         const audioMap = { browser: 'audioSourceBrowser', elevenlabs: 'audioSourceElevenLabs' };
-        document.getElementById('currentAudioSource').textContent = t(audioMap[settings.audioSource]);
+        document.getElementById('currentAudioSource').textContent = t(audioMap[tempSettings.audioSource]);
     }
 
     function populateSettingsForm() {
@@ -3595,30 +3644,41 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     }
 
     function selectChoice(settingName, value, element) {
-        settings[settingName] = value;
+        tempSettings[settingName] = value;
+        triggerHapticFeedback('light');
         
         // [DIUBAH] Logika untuk menangani 'active' class pada tombol dan item
         if (element.classList.contains('toggle-radio')) {
-            // Tidak perlu menghapus 'active' karena radio button sudah menanganinya
-            // Cukup tambahkan 'active' ke elemen yang dipilih
-            element.classList.add('active');
-        } else if (element.classList.contains('settings-item')) {
+            // Radio buttons are handled by their 'checked' state, no need for 'active' class
+        } else if (element.classList.contains('choice-btn')) {
+            // For choice buttons (like audio source), manage the active class
+            const groupName = element.id.split('-')[0];
+            document.querySelectorAll(`[id^="${groupName}-"]`).forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
         }
 
         // [DIUBAH] Logika notifikasi sistem dipindahkan ke sini agar lebih terpusat
         if (settingName === 'aiRole') {
             document.getElementById('customRoleContainer').classList.toggle('hidden', value !== 'kustom');
-            const roleKeyMap = { 'umum': 'roleGeneral', 'guru_jepang': 'roleJapaneseTeacher', 'guru_matematika': 'roleMathTeacher', 'dokter': 'roleDoctor', 'programmer': 'roleProgrammer', 'penerjemah': 'roleTranslator', 'kustom': 'roleCustom' };
-            const roleNameKey = roleKeyMap[value];
-            if (roleNameKey) addSystemMessage(t('systemRoleChanged', { roleName: t(roleNameKey) }), 'info');
         }
+
+        // Update the summary text in the main settings page in real-time
+        updateSettingsSummary();
+    }
+    function applyChoiceChangeNotifications(settingName, value) {
+        // This function is now separate to be called only when settings are saved.
+        // This prevents notifications from appearing while just browsing the settings.
         if (settingName === 'personality') {
             const personalityKeyMap = { 'santai': 'personalityCasual', 'profesional': 'personalityProfessional', 'lucu': 'personalityHumorous' };
             const personalityNameKey = personalityKeyMap[value];
             if (personalityNameKey) {
                 addSystemMessage(t('systemPersonalityChanged', { personalityName: t(personalityNameKey) }), 'info');
             }
+        }
+        if (settingName === 'aiRole') {
+            const roleKeyMap = { 'umum': 'roleGeneral', 'guru_jepang': 'roleJapaneseTeacher', 'guru_matematika': 'roleMathTeacher', 'dokter': 'roleDoctor', 'programmer': 'roleProgrammer', 'penerjemah': 'roleTranslator', 'kustom': 'roleCustom' };
+            const roleNameKey = roleKeyMap[value];
+            if (roleNameKey) addSystemMessage(t('systemRoleChanged', { roleName: t(roleNameKey) }), 'info');
         }
     }
     function toggleSettings() {
@@ -4722,6 +4782,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         }
 
         if (isSearchModeActive) {
+            triggerHapticFeedback('light');
             addMessage(messageForDisplay, true, [], true);
         } else {
             addMessage(messageForDisplay, true, [], false);
@@ -4730,6 +4791,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
     document.querySelector('.quick-actions').style.display = 'none';
 
         trackUserMessageCount();
+        triggerHapticFeedback('medium');
         addToConversationHistory('user', messageForHistory);
         input.value = '';
         handleInputChange({ target: input });
@@ -4909,6 +4971,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
             return;
         }
         stopReading(); 
+        triggerHapticFeedback('light');
         button.disabled = true;
         try {
             await playElevenLabsAudio(sampleText, voiceId, elevenLabsPreviewPlayer);
@@ -5203,26 +5266,31 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         
         document.getElementById('fontSizeSelect').addEventListener('change', (e) => {
             settings.fontSize = e.target.value;
+            triggerHapticFeedback('light');
             saveSettings();
         });
 
         document.getElementById('animationToggle').addEventListener('change', () => {
             toggleAnimations();
+            triggerHapticFeedback('light');
             saveSettings();
         });
 
         document.getElementById('soundToggle').addEventListener('change', (e) => {
             settings.soundEnabled = e.target.checked;
+            triggerHapticFeedback('light');
             saveSettings();
         });
 
         document.getElementById('readAiResponseToggle').addEventListener('change', (e) => {
             settings.readAiResponseEnabled = e.target.checked;
+            triggerHapticFeedback('light');
             saveSettings();
         });
 
         document.getElementById('voiceSelect').addEventListener('change', (e) => {
             settings.voiceURI = e.target.value;
+            triggerHapticFeedback('light');
             saveSettings();
         });
 
@@ -5233,11 +5301,13 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
 
         document.getElementById('saveHistoryToggle').addEventListener('change', (e) => {
             settings.saveHistory = e.target.checked;
+            triggerHapticFeedback('light');
             saveSettings();
         });
         
         document.getElementById('stopBtn').addEventListener('click', () => {
             if (currentFetchController) {
+                triggerHapticFeedback('medium');
                 currentFetchController.abort();
             }
         });
