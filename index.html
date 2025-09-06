@@ -42,6 +42,11 @@
   <!-- Library untuk memformat Markdown -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
+  <!-- ▼▼▼ [BARU] Firebase SDK ▼▼▼ -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <!-- ▲▲▲ AKHIR DARI Firebase SDK ▲▲▲ -->
+
   <style>
     /* [PERMINTAAN PENGGUNA] Mengimpor font 'Inter' agar mirip font iPhone di semua perangkat */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -1583,6 +1588,24 @@
                  </ul>
             </div>
         </div>
+        <!-- ▼▼▼ [BARU] Area Profil Pengguna & Tombol Login/Logout ▼▼▼ -->
+        <div id="userProfile" class="p-4 border-t flex-shrink-0" style="border-color: var(--border-color);">
+            <!-- Konten akan diisi oleh JavaScript -->
+            <div id="loginContainer" class="flex items-center justify-center">
+                <button id="loginBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-all">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a5.27 5.27 0 0 1-5.279-5.28 5.27 5.27 0 0 1 5.279-5.279c1.259 0 2.397.447 3.29 1.178l2.6-2.599c-1.584-1.381-3.615-2.233-5.89-2.233a8.908 8.908 0 0 0-8.934 8.934 8.907 8.907 0 0 0 8.934 8.934c4.956 0 8.327-3.453 8.327-8.538 0-.635-.055-1.25-.156-1.856z"></path></svg>
+                    <span>Login dengan Google</span>
+                </button>
+            </div>
+            <div id="userInfoContainer" class="hidden items-center space-x-3">
+                <img id="userAvatar" class="w-10 h-10 rounded-full" src="" alt="User Avatar">
+                <div class="flex-grow min-w-0">
+                    <p id="userName" class="font-semibold text-sm truncate" style="color: var(--text-primary);"></p>
+                    <button id="logoutBtn" class="text-xs text-red-500 hover:text-red-600 font-medium">Logout</button>
+                </div>
+            </div>
+        </div>
+        <!-- ▲▲▲ AKHIR DARI Area Profil Pengguna ▲▲▲ -->
     </div>
 
     <div class="chat-container">
@@ -2383,6 +2406,48 @@
     // ===================================================================================
     // KODE SCRIPT UTAMA (VERSI GABUNGAN DENGAN PERBAIKAN FINAL)
     // ===================================================================================
+
+    // ▼▼▼ [BARU] Inisialisasi Firebase & Logika Otentikasi ▼▼▼
+    // [DIUBAH] Menggunakan konfigurasi Firebase dari pengguna
+    const firebaseConfig = {
+      apiKey: "AIzaSyDIRmhod4j-WfVEw0MfN7f0UhaOX-XpJuc",
+      authDomain: "storybali.firebaseapp.com",
+      databaseURL: "https://storybali-default-rtdb.firebaseio.com",
+      projectId: "storybali",
+      storageBucket: "storybali.appspot.com", // [FIX] Menghapus .firebasestorage dari nama bucket
+      messagingSenderId: "928239695333",
+      appId: "1:928239695333:web:7b4f6581c392614c51eb0c",
+      measurementId: "G-MTYGDZW92D"
+    };
+
+    // Inisialisasi Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+    let currentUser = null;
+
+    // Fungsi untuk login
+    function signInWithGoogle() {
+      auth.signInWithPopup(googleProvider).catch(error => {
+        console.error("Error saat login dengan Google:", error);
+        alert("Gagal login: " + error.message);
+      });
+    }
+
+    // Fungsi untuk logout
+    function signOut() {
+      auth.signOut().catch(error => {
+        console.error("Error saat logout:", error);
+      });
+    }
+
+    // Listener untuk status otentikasi
+    auth.onAuthStateChanged(user => {
+      currentUser = user;
+      updateUIForAuthState();
+    });
+    // ▲▲▲ AKHIR DARI Logika Otentikasi ▲▲▲
 
     // ▼▼▼ [BARU] Sistem Internasionalisasi (i18n) ▼▼▼
     const translations = {
@@ -3775,6 +3840,24 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         confirmModalResolver = null;
     }
 
+    // ▼▼▼ [BARU] Fungsi untuk memperbarui UI berdasarkan status login ▼▼▼
+    function updateUIForAuthState() {
+        const loginContainer = document.getElementById('loginContainer');
+        const userInfoContainer = document.getElementById('userInfoContainer');
+
+        if (currentUser) {
+            // Pengguna sudah login
+            loginContainer.classList.add('hidden');
+            userInfoContainer.classList.remove('hidden');
+            userInfoContainer.classList.add('flex'); // Pastikan display flex
+            document.getElementById('userAvatar').src = currentUser.photoURL || 'favicon-96x96.png';
+            document.getElementById('userName').textContent = currentUser.displayName || 'Pengguna';
+        } else {
+            // Pengguna belum login
+            loginContainer.classList.remove('hidden');
+            userInfoContainer.classList.add('hidden');
+        }
+    }
     // ▼▼▼ [FIX] Menambahkan fungsi toggleSearchMode yang hilang ▼▼▼
     function toggleSearchMode() {
         isSearchModeActive = !isSearchModeActive;
