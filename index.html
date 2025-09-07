@@ -5719,6 +5719,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
     // [BARU] Fungsi untuk konfirmasi dan penghapusan story
     async function confirmDeleteStory() {
         if (!currentStoryInView) return;
+        hideStoryViewer(); // [FIX] Sembunyikan viewer dulu agar tidak ada konflik klik
 
         const confirmed = await showConfirmModal({
             title: "Hapus Story?",
@@ -5728,14 +5729,16 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         });
 
         if (confirmed) {
-            deleteStory(currentStoryInView.id);
+            // [FIX] Pastikan ID story disimpan sebelum currentStoryInView di-reset
+            const storyIdToDelete = currentStoryInView.id;
+            deleteStory(storyIdToDelete);
         }
     }
 
     async function deleteStory(storyId) {
         try {
             await db.collection('stories').doc(storyId).delete();
-            hideStoryViewer(); // Tutup viewer setelah berhasil dihapus
+            // Tidak perlu panggil hideStoryViewer() lagi karena sudah dipanggil di confirmDeleteStory
         } catch (error) {
             console.error("Gagal menghapus story:", error);
             alert("Gagal menghapus story. Coba lagi.");
@@ -5814,17 +5817,20 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
     // ▲▲▲ AKHIR DARI LOGIKA STORY ▲▲▲
 
     ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal', 'confirmModal', 'storyViewerModal', 'createStoryModal'].forEach(id => {
-        document.getElementById(id).addEventListener('click', e => {
-            if (e.target.id === id) {
-                if (id === 'profileModal') hideProfileModal();
-                else if (id === 'imagePreviewModal') hideImagePreview();
-                else if (id === 'settingsModal') toggleSettings();
-                else if (id === 'searchModal') hideSearchModal();
-                else if (id === 'confirmModal') handleConfirm(false);
-                else if (id === 'storyViewerModal') hideStoryViewer();
-                else if (id === 'createStoryModal') hideCreateStoryModal();
-            }
-        });
+        const modalElement = document.getElementById(id);
+        if (modalElement) {
+            modalElement.addEventListener('click', e => {
+                if (e.target.id === id) {
+                    if (id === 'profileModal') hideProfileModal();
+                    else if (id === 'imagePreviewModal') hideImagePreview();
+                    else if (id === 'settingsModal') toggleSettings();
+                    else if (id === 'searchModal') hideSearchModal();
+                    else if (id === 'confirmModal') handleConfirm(false);
+                    else if (id === 'storyViewerModal') hideStoryViewer();
+                    else if (id === 'createStoryModal') hideCreateStoryModal();
+                }
+            });
+        }
     });
     document.addEventListener('touchstart', function () {}, true);
 
