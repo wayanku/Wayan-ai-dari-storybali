@@ -1540,10 +1540,6 @@
         width: 60px;
         text-align: center;
         cursor: pointer;
-        /* [FIX] Menambahkan flexbox untuk menyejajarkan item secara vertikal */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
     }
     .story-avatar-wrapper {
         width: 56px;
@@ -1563,13 +1559,7 @@
     html.dark .add-story-btn .story-username {
         color: var(--text-secondary);
     }
-    .story-item .story-username, .add-story-btn .story-username { 
-        font-size: 0.7rem; 
-        color: var(--text-secondary); 
-        line-height: 1.2; 
-        overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
-        height: 1.4rem; /* [FIX] Memberikan tinggi tetap untuk 2 baris teks (0.7rem * 2) */
-    }
+    .story-item .story-username { font-size: 0.7rem; color: var(--text-secondary); line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .add-story-btn .story-avatar-wrapper { background: var(--bg-tertiary); border: 2px dashed var(--border-color); padding: 0; display: flex; align-items: center; justify-content: center; }
     .add-story-btn .story-avatar-wrapper svg { color: var(--text-secondary); }
     /* ▲▲▲ AKHIR DARI GAYA STORY ▲▲▲ */
@@ -2659,28 +2649,29 @@
 
      // Fungsi untuk logout
      function signOut() {
-        auth.signOut().catch(error => {
-            console.error("Error saat logout:", error);
-        });
+       auth.signOut().catch(error => {
+         console.error("Error saat logout:", error);
+       });
      }
     // ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲
 
     // Listener untuk status otentikasi
     auth.onAuthStateChanged(user => {
-      currentUser = user; // [FIX] Pastikan currentUser di-set di sini
+      currentUser = user;
       updateUIForAuthState();
     });
 
     // [FIX PWA iOS] Tangani hasil redirect setelah login berhasil
     auth.getRedirectResult().then(result => {
         if (result && result.user) {
+            // Jika ada hasil dari redirect, onAuthStateChanged akan otomatis
+            // dipicu oleh Firebase SDK. Kita tidak perlu melakukan apa-apa di sini.
+            // Cukup log untuk debugging.
             console.log("Berhasil mendapatkan hasil redirect login:", result.user.displayName);
-            // Tidak perlu set currentUser di sini karena onAuthStateChanged akan menanganinya.
-            // Cukup pastikan UI diperbarui.
-            updateUIForAuthState();
         }
+    }).catch(error => {
+        console.error("Error saat getRedirectResult:", error);
     });
-    // ▲▲▲ AKHIR DARI Logika Otentikasi ▲▲▲
 
     // ▼▼▼ [BARU] Sistem Internasionalisasi (i18n) ▼▼▼
     // Tambahkan terjemahan baru
