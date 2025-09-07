@@ -4088,14 +4088,16 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             userInfoContainer.classList.add('flex'); // Pastikan display flex
             document.getElementById('userAvatar').src = currentUser.photoURL || 'favicon-96x96.png';
             document.getElementById('userName').textContent = currentUser.displayName || 'Pengguna';
+            // [FIX] Tombol "Tambah Story" hanya dirender jika sudah login.
+            renderAddStoryButton();
         } else {
             // Pengguna belum login
             loginContainer.classList.remove('hidden');
             userInfoContainer.classList.add('hidden');
+            renderAddStoryButton(); // Tetap render tombolnya, fungsinya akan mengarahkan ke login.
         }
-        // [DIUBAH] Render tombol dan story di luar kondisi if/else agar selalu dijalankan
-        renderAddStoryButton();
-        listenForStories(); // [FIX] Panggil listener story di luar kondisi login agar semua bisa melihat.
+        // [FIX] Panggil listener story di sini, SETELAH UI diperbarui, agar semua bisa melihat story.
+        listenForStories();
     }    
 	// ▼▼▼ [FIX] Menambahkan fungsi toggleSearchMode yang hilang ▼▼▼
     function toggleSearchMode() {
