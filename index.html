@@ -1536,8 +1536,9 @@
     #storiesList::-webkit-scrollbar { display: none; }
 
     .story-item, .add-story-btn {
+        /* [DIKEMBALIKAN] Tata letak kembali ke vertikal */
         flex-shrink: 0;
-        width: 60px;
+        width: 60px; /* [DIKEMBALIKAN] Lebar tetap */
         text-align: center;
         cursor: pointer;
     }
@@ -1548,7 +1549,8 @@
         padding: 2px;
         background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
         margin: 0 auto 4px;
-        transition: transform 0.2s ease;
+        transition: transform 0.2s ease; 
+        flex-shrink: 0; /* [BARU] Mencegah ikon menyusut */
     }
     .story-item:hover .story-avatar-wrapper { transform: scale(1.05); }
     .story-avatar-wrapper img {
@@ -1559,7 +1561,20 @@
     html.dark .add-story-btn .story-username {
         color: var(--text-secondary);
     }
-    .story-item .story-username { font-size: 0.7rem; color: var(--text-secondary); line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    /* [DIKEMBALIKAN] Margin bawah untuk avatar */
+    .story-item .story-avatar-wrapper { margin: 0 auto 4px; }
+    .add-story-btn .story-avatar-wrapper { margin: 0 auto 4px; }
+
+    .story-item .story-username { 
+        font-size: 0.7rem; 
+        color: var(--text-secondary); 
+        line-height: 1.2; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        white-space: nowrap;
+    }
+    /* [DIKEMBALIKAN & DIPERBAIKI] Ukuran avatar kembali normal dan teks diatur agar tidak membuat container lebih tinggi */
+    .add-story-btn .story-username { font-size: 0.7rem; color: var(--text-secondary); line-height: 1.2; }
     .add-story-btn .story-avatar-wrapper { background: var(--bg-tertiary); border: 2px dashed var(--border-color); padding: 0; display: flex; align-items: center; justify-content: center; }
     .add-story-btn .story-avatar-wrapper svg { color: var(--text-secondary); }
     /* ▲▲▲ AKHIR DARI GAYA STORY ▲▲▲ */
@@ -1624,6 +1639,8 @@
     }
     .story-viewer-footer {
         padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+        /* [DIUBAH] Flexbox untuk menata semua item di footer */
+        display: flex;
     }
     .story-progress-container {
         display: flex;
@@ -1993,18 +2010,78 @@
 
     <!-- [BARU] Area Navigasi Klik (Kiri & Kanan) -->
     <div class="absolute inset-0 flex justify-between items-center">
-        <div class="w-1/3 h-full" onclick="previousStory()"></div>
-        <div class="w-1/3 h-full" onclick="nextStory()"></div>
+        <div class="w-1/4 h-full" onclick="previousStory()"></div>
+        <!-- [DIUBAH] Area tengah untuk jeda/lanjut -->
+        <div class="w-1/2 h-full" onclick="toggleStoryPause()"></div>
+        <div class="w-1/4 h-full" onclick="nextStory()"></div>
     </div>
     <!-- Footer: Tombol Hapus (hanya muncul untuk pemilik story) -->
-    <div class="story-viewer-footer flex justify-center">
-        <button id="deleteStoryBtn" onclick="confirmDeleteStory()" class="hidden items-center gap-2 px-4 py-2 rounded-full text-white text-sm font-semibold hover:bg-black/40">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-            <span>Hapus</span>
-        </button>
+    <!-- [DIUBAH] Footer sekarang berisi input komentar dan tombol "Dilihat oleh" -->
+    <div class="story-viewer-footer justify-between items-center w-full pointer-events-auto gap-3">
+        <!-- [DIUBAH] Input Komentar (untuk penonton) -->
+        <div id="storyCommentView" class="relative flex-grow hidden items-center">
+            <input id="storyCommentInput" type="text" placeholder="Kirim komentar..." class="w-full bg-black/20 border border-white/30 rounded-full py-2.5 pl-4 pr-12 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50">
+            <button onclick="sendStoryComment()" class="absolute right-1 top-1/2 -translate-y-1/2 bg-white/90 text-black rounded-full w-8 h-8 flex items-center justify-center hover:bg-white transition-transform transform active:scale-90">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+            </button>
+        </div>
+
+        <!-- [BARU] Input Komentar Palsu (untuk pengguna yang belum login) -->
+        <div id="storyLoginPromptView" onclick="signInWithGoogle()" class="relative flex-grow hidden items-center cursor-pointer">
+            <div class="w-full bg-black/20 border border-white/30 rounded-full py-2.5 px-4 text-white/70">
+                Login untuk mengirim komentar...
+            </div>
+        </div>
+
+        <!-- [DIUBAH] Tombol Aksi (untuk pemilik story) -->
+        <div id="storyOwnerView" class="flex-grow hidden justify-between items-center">
+             <button onclick="showStoryViews()" class="flex items-center gap-2 text-white text-sm font-semibold px-4 py-2 rounded-full bg-black/20 hover:bg-black/40 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                <span id="storyViewCount">Dilihat oleh 0</span>
+            </button>
+             <button id="deleteStoryBtn" onclick="confirmDeleteStory()" class="flex items-center gap-2 px-4 py-2 rounded-full text-white text-sm font-semibold bg-black/20 hover:bg-black/40 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                <span>Hapus</span>
+            </button>
+        </div>
+
+        <!-- [DIHAPUS] Tombol lihat penonton untuk penonton biasa, karena sudah digabung dengan daftar komentar -->
     </div>
 </div>
 <!-- ▲▲▲ AKHIR DARI MODAL STORY VIEWER ▲▲▲ -->
+
+<!-- ▼▼▼ [BARU] MODAL UNTUK MELIHAT PENONTON STORY ▼▼▼ -->
+<div id="storyViewsModal" class="fixed inset-0 modal-overlay z-[120] flex items-center justify-center hidden p-4">
+    <div class="modal-content p-0 max-w-sm w-full max-h-[60vh] flex flex-col">
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+            <h3 class="font-bold text-center" style="color: var(--text-primary);">Penonton & Komentar</h3>
+        </div>
+        <div id="storyViewsList" class="flex-grow overflow-y-auto p-4 space-y-3">
+            <!-- Daftar penonton akan muncul di sini -->
+        </div>
+        <div class="p-2 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
+             <button onclick="hideStoryViewsModal()" class="w-full settings-btn-action bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm py-2">
+                Tutup
+            </button>
+        </div>
+    </div>
+</div>
+<!-- ▲▲▲ AKHIR DARI MODAL PENONTON STORY ▲▲▲ -->
+
+
+<!-- [DIPINDAHKAN & DIPERBAIKI] Area untuk menampilkan komentar dipindahkan ke luar modal -->
+<div id="storyCommentsContainer" class="fixed bottom-20 left-4 right-4 max-h-[30vh] overflow-y-auto space-y-2 pointer-events-auto z-[111] hidden">
+    <!-- Komentar akan di-render di sini oleh JavaScript -->
+</div>
+
+
+<!-- [BARU] Gaya untuk area komentar story -->
+<style>
+    .story-comment-item {
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+</style>
 
 <!-- ▼▼▼ [BARU] CONTAINER UNTUK NOTIFIKASI ERROR ▼▼▼ -->
 <div id="errorToastContainer"></div>
@@ -2720,7 +2797,7 @@
     // Tambahkan terjemahan baru
     const translations = {
         id: {
-            storiesTitle: "Stories", historyTitle: "Riwayat Chat", createStoryTitle: "Buat Story Baru", createStoryDesc: "Story akan hilang setelah 1 jam.", storyPlaceholder: "Apa yang kamu pikirkan?", buttonPost: "Posting", addStory: "Tambah Story",
+            storiesTitle: "Stories", historyTitle: "Riwayat Chat", createStoryTitle: "Buat Story Baru", createStoryDesc: "Story akan hilang setelah 1 jam.", storyPlaceholder: "Apa yang kamu pikirkan?", buttonPost: "Posting", addStory: "Story",
             newChat: "Mulai Chat Baru", newChatTitle: "Mulai Obrolan Baru", sidebarToggleTitle: "Tampilkan/Sembunyikan Riwayat Obrolan",
             aiName: "Wayan AI", profileHint: "Klik untuk lihat profil", voiceCallTitle: "Mulai Panggilan Suara", settingsTitle: "Buka Pengaturan",
             quickHello: "Halo", quickHowAreYou: "Apa kabar?", quickJoke: "Joke", quickProductive: "Tips Produktif", quickMovie: "Film", quickCoding: "Coding",
@@ -5733,6 +5810,10 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
     let currentStoryGroupInView = [];
     let currentStoryIndex = 0;
     let storyTimer = null;
+    let isStoryPaused = false; // [BARU] Status jeda story
+    let storyViewHasBeenLogged = false; // [BARU] Mencegah duplikasi log view
+    let unsubscribeComments = null; // [BARU] Untuk listener komentar
+    let storyTimerStartTime = 0; // [BARU] Waktu mulai timer
 
     function showStoryViewer(storyGroup) {
         currentStoryGroupInView = storyGroup;
@@ -5772,6 +5853,14 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         clearTimeout(storyTimer); // Hentikan timer
         currentStoryGroupInView = [];
         currentStoryIndex = 0;
+        storyViewHasBeenLogged = false; // [BARU] Reset status log
+        isStoryPaused = false; // [BARU] Reset status jeda saat menutup
+        if (unsubscribeComments) { // [BARU] Hentikan listener komentar saat menutup
+            unsubscribeComments();
+            unsubscribeComments = null;
+        }
+        hideStoryViewsModal(); // [BARU] Pastikan modal penonton juga tertutup
+        document.getElementById('storyCommentsContainer').classList.add('hidden'); // [FIX] Sembunyikan kontainer komentar saat menutup
         document.getElementById('storyViewerModal').classList.add('hidden');
     }
 
@@ -5798,6 +5887,8 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
 
     function displayCurrentStory() {
         if (storyTimer) clearTimeout(storyTimer);
+        storyViewHasBeenLogged = false; // [BARU] Reset status log untuk story baru
+        isStoryPaused = false; // [BARU] Reset status jeda saat story baru ditampilkan
         if (currentStoryIndex >= currentStoryGroupInView.length) {
             hideStoryViewer();
             return;
@@ -5813,10 +5904,32 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         document.getElementById('storyViewerContent').textContent = story.content;
         document.getElementById('storyViewerTimestamp').textContent = formatStoryTimestamp(story.createdAt);
 
-        const deleteBtn = document.getElementById('deleteStoryBtn');
-        deleteBtn.classList.toggle('hidden', !currentUser || currentUser.uid !== story.userId);
-        deleteBtn.classList.toggle('flex', currentUser && currentUser.uid === story.userId);
+        // [DIUBAH] Logika untuk menampilkan footer yang sesuai
+        const isOwner = currentUser && currentUser.uid === story.userId; // Pemilik story
+        const canComment = currentUser; // Hanya pengguna yang login bisa berkomentar
 
+        document.getElementById('storyOwnerView').classList.toggle('hidden', !isOwner);
+        document.getElementById('storyOwnerView').classList.toggle('flex', isOwner);
+
+        // [DIUBAH] Logika untuk menampilkan input komentar yang benar
+        const commentView = document.getElementById('storyCommentView');
+        const loginPromptView = document.getElementById('storyLoginPromptView');
+
+        commentView.classList.toggle('hidden', isOwner || !canComment); // Tampilkan input asli jika sudah login & bukan pemilik
+        loginPromptView.classList.toggle('hidden', isOwner || canComment); // Tampilkan pancingan login jika belum login & bukan pemilik
+        document.getElementById('storyCommentInput').value = ''; // Kosongkan input komentar
+
+        // [BARU] Ambil dan tampilkan komentar untuk story ini
+        listenForStoryComments(story.id);
+
+        if (isOwner) {
+            // [BARU] Jika pemilik, tampilkan jumlah view
+            updateStoryViewCount(story.id);
+        } else {
+            // [BARU] Jika bukan pemilik, catat view setelah 2 detik
+            setTimeout(() => logStoryView(story.id), 2000);
+        }
+        
         // Update progress bar
         const progressBars = document.querySelectorAll('.story-progress-fill');
         progressBars.forEach((bar, index) => {
@@ -5833,7 +5946,26 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
             }
         }, 50);
 
-        storyTimer = setTimeout(nextStory, 5000); // Pindah ke story berikutnya setelah 5 detik
+        storyTimerStartTime = Date.now(); // [BARU] Catat waktu mulai
+        storyTimer = setTimeout(nextStory, 5000);
+    }
+
+    // [BARU] Fungsi untuk jeda/lanjutkan story
+    function toggleStoryPause() {
+        const currentBarFill = document.querySelectorAll('.story-progress-fill')[currentStoryIndex];
+        if (!currentBarFill) return;
+
+        isStoryPaused = !isStoryPaused;
+        if (isStoryPaused) {
+            clearTimeout(storyTimer);
+            const elapsedTime = Date.now() - storyTimerStartTime;
+            const remainingTime = 5000 - elapsedTime;
+            currentBarFill.style.transition = 'none'; // Hentikan animasi CSS
+            currentBarFill.dataset.remainingTime = remainingTime; // Simpan sisa waktu
+        } else {
+            const remainingTime = parseFloat(currentBarFill.dataset.remainingTime) || 5000;
+            storyTimer = setTimeout(nextStory, remainingTime);
+        }
     }
 
     function nextStory() {
@@ -5845,6 +5977,149 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         if (currentStoryIndex > 0) currentStoryIndex--;
         displayCurrentStory();
     }
+
+    // [BARU] Fungsi untuk mencatat siapa yang melihat story
+    async function logStoryView(storyId) {
+        if (!currentUser || storyViewHasBeenLogged) return;
+
+        const story = currentStoryGroupInView.find(s => s.id === storyId);
+        if (!story || story.userId === currentUser.uid) return; // Jangan catat view dari pemilik
+
+        storyViewHasBeenLogged = true; // Tandai sudah dicatat untuk story ini
+        try {
+            await db.collection('stories').doc(storyId).collection('views').doc(currentUser.uid).set({
+                userName: currentUser.displayName,
+                userAvatar: currentUser.photoURL,
+                viewedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            console.log(`View untuk story ${storyId} oleh ${currentUser.displayName} berhasil dicatat.`);
+        } catch (error) {
+            console.error("Gagal mencatat view story:", error);
+        }
+    }
+
+    // [BARU] Fungsi untuk memperbarui jumlah view untuk pemilik
+    function updateStoryViewCount(storyId) {
+        const viewCountEl = document.getElementById('storyViewCount');
+        db.collection('stories').doc(storyId).collection('views').onSnapshot(snapshot => {
+            viewCountEl.textContent = `Dilihat oleh ${snapshot.size}`;
+        });
+    }
+
+    // [BARU] Fungsi untuk mengirim komentar
+    async function sendStoryComment() {
+        if (!currentUser) return;
+        const input = document.getElementById('storyCommentInput');
+        const commentText = input.value.trim();
+        if (!commentText) return;
+
+        const story = currentStoryGroupInView[currentStoryIndex];
+        if (!story) return;
+
+        const commentData = {
+            userId: currentUser.uid,
+            userName: currentUser.displayName,
+            userAvatar: currentUser.photoURL,
+            comment: commentText,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        try {
+            await db.collection('stories').doc(story.id).collection('comments').add(commentData);
+            input.value = ''; // Kosongkan input setelah berhasil
+        } catch (error) {
+            console.error("Gagal mengirim komentar:", error);
+            alert("Gagal mengirim komentar. Coba lagi.");
+        }
+    }
+
+    // [BARU] Fungsi untuk menampilkan modal daftar penonton
+    async function showStoryViews() {
+        const story = currentStoryGroupInView[currentStoryIndex];
+        if (!story) return;
+
+        const modal = document.getElementById('storyViewsModal');
+        const listEl = document.getElementById('storyViewsList');
+        listEl.innerHTML = '<p class="text-center text-sm text-gray-500">Memuat...</p>';
+        modal.classList.remove('hidden');
+
+        try {
+            const viewsSnapshot = await db.collection('stories').doc(story.id).collection('views')
+                .orderBy('viewedAt', 'desc')
+                .get();
+
+            if (viewsSnapshot.empty) {
+                listEl.innerHTML = '<p class="text-center text-sm text-gray-500">Belum ada yang melihat story ini.</p>';
+                return;
+            }
+
+            listEl.innerHTML = ''; // Kosongkan daftar
+            viewsSnapshot.forEach(doc => {
+                const view = doc.data();
+                // [BARU] Ambil komentar dari user ini (jika ada)
+                const userComments = commentsForViewModal.filter(c => c.userId === doc.id);
+
+                const viewEl = document.createElement('div');
+                viewEl.className = 'flex flex-col gap-1'; // Diubah menjadi kolom
+                viewEl.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <img src="${view.userAvatar || 'favicon-96x96.png'}" alt="${view.userName}" class="w-10 h-10 rounded-full">
+                        <span class="font-semibold" style="color: var(--text-primary);">${view.userName}</span>
+                    </div>
+                    ${userComments.map(comment => `
+                        <div class="pl-12 text-sm" style="color: var(--text-secondary);">
+                            <p class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg inline-block">${comment.comment}</p>
+                        </div>
+                    `).join('')}
+                `;
+                listEl.appendChild(viewEl);
+            });
+        } catch (error) {
+            console.error("Gagal mengambil daftar penonton:", error);
+            listEl.innerHTML = '<p class="text-center text-sm text-red-500">Gagal memuat data.</p>';
+        }
+    }
+
+    // [BARU] Fungsi untuk menyembunyikan modal daftar penonton
+    function hideStoryViewsModal() { document.getElementById('storyViewsModal').classList.add('hidden'); }
+    let commentsForViewModal = []; // [BARU] Variabel untuk menyimpan komentar
+
+    // [BARU] Fungsi untuk mendengarkan dan menampilkan komentar secara real-time
+    function listenForStoryComments(storyId) {
+        const commentsContainer = document.getElementById('storyCommentsContainer');
+        commentsContainer.classList.remove('hidden'); // [FIX] Tampilkan kontainer komentar
+        commentsContainer.innerHTML = ''; // Kosongkan komentar dari story sebelumnya
+
+        // Hentikan listener lama jika ada
+        if (unsubscribeComments) {
+            unsubscribeComments();
+        }
+
+        unsubscribeComments = db.collection('stories').doc(storyId).collection('comments')
+            .orderBy('createdAt', 'asc')
+            .onSnapshot(snapshot => {
+                commentsForViewModal = snapshot.docs.map(doc => doc.data()); // [BARU] Simpan komentar untuk modal penonton
+                commentsContainer.innerHTML = ''; // Hapus semua komentar saat ada pembaruan
+                snapshot.forEach(doc => {
+                    const comment = doc.data();
+                    const commentEl = document.createElement('div');
+                    commentEl.className = 'story-comment-item flex items-center gap-2 bg-black/20 text-white p-2 rounded-lg text-sm';
+                    commentEl.innerHTML = `
+                        <img src="${comment.userAvatar || 'favicon-96x96.png'}" alt="${comment.userName}" class="w-6 h-6 rounded-full flex-shrink-0">
+                        <div class="min-w-0">
+                            <span class="font-semibold mr-1.5">${comment.userName}</span>
+                            <span class="opacity-90 break-words">${comment.comment}</span>
+                        </div>
+                    `;
+                    commentsContainer.appendChild(commentEl);
+                });
+                // Scroll ke komentar terbaru
+                commentsContainer.scrollTop = commentsContainer.scrollHeight;
+            }, error => {
+                console.error("Gagal mengambil komentar:", error);
+            });
+    }
+
 
     async function postStory() {
         if (!currentUser) return;
@@ -5975,8 +6250,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         if (listEl && !listEl.querySelector('.add-story-btn')) {
             const addButton = document.createElement('div');
             addButton.className = 'add-story-btn';
-            addButton.innerHTML = `<div class="story-avatar-wrapper"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg></div><p class="story-username" data-translate-key="addStory">Tambah Story</p>`;
-            // [DIUBAH] Logika tombol disesuaikan dengan status login
+            addButton.innerHTML = `<div class="story-avatar-wrapper"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg></div><p class="story-username" data-translate-key="addStory">Story</p>`;
             addButton.onclick = () => {
                 if (currentUser) {
                     showCreateStoryModal();
@@ -5990,7 +6264,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
     }
     // ▲▲▲ AKHIR DARI LOGIKA STORY ▲▲▲
 
-    ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal', 'confirmModal', 'storyViewerModal', 'createStoryModal'].forEach(id => {
+    ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal', 'confirmModal', 'storyViewerModal', 'createStoryModal', 'storyViewsModal'].forEach(id => {
         const modalElement = document.getElementById(id); // [FIX] Pastikan elemen ada sebelum menambahkan listener
         if (modalElement) {
             modalElement.addEventListener('click', e => {
@@ -6002,6 +6276,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
                     else if (id === 'confirmModal') handleConfirm(false);
                     else if (id === 'storyViewerModal') hideStoryViewer();
                     else if (id === 'createStoryModal') hideCreateStoryModal();
+                    else if (id === 'storyViewsModal') hideStoryViewsModal();
                 }
             });
         }
