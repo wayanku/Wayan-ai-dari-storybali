@@ -6011,8 +6011,11 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         storyViewHasBeenLogged = true; // Tandai sudah dicatat untuk story ini
         try {
             await db.collection('stories').doc(storyId).collection('views').doc(currentUser.uid).set({
-                userName: currentUser.displayName,
-                userAvatar: currentUser.photoURL,
+            // [FIX] Tangani kasus di mana displayName atau photoURL bisa null
+            // untuk mencegah error '400 Bad Request' dari Firestore.
+            userName: currentUser.displayName || 'Pengguna Anonim',
+            // Sediakan URL gambar placeholder jika pengguna tidak punya foto profil.
+            userAvatar: currentUser.photoURL || 'https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg',
                 viewedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             console.log(`View untuk story ${storyId} oleh ${currentUser.displayName} berhasil dicatat.`);
