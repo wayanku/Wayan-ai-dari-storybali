@@ -1554,6 +1554,11 @@
     .story-avatar-wrapper img {
         width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 2px solid var(--bg-primary);
     }
+    /* [PERBAIKAN] Membuat teks story lebih terang di mode gelap */
+    html.dark .story-item .story-username,
+    html.dark .add-story-btn .story-username {
+        color: var(--text-secondary);
+    }
     .story-item .story-username { font-size: 0.7rem; color: var(--text-secondary); line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .add-story-btn .story-avatar-wrapper { background: var(--bg-tertiary); border: 2px dashed var(--border-color); padding: 0; display: flex; align-items: center; justify-content: center; }
     .add-story-btn .story-avatar-wrapper svg { color: var(--text-secondary); }
@@ -1596,6 +1601,41 @@
     }
     /* ▲▲▲ AKHIR DARI GAYA PRATINJAU FILE ▲▲▲ */
     /* ▲▲▲ AKHIR DARI CSS PANGGILAN SUARA ▲▲▲ */
+
+    /* ▼▼▼ [BARU] GAYA UNTUK PENAMPIL STORY (STORY VIEWER) ▼▼▼ */
+    #storyViewerModal {
+        background-color: var(--story-bg-color, #73B193); /* Warna default jika variabel tidak diset */
+        transition: background-color 0.5s ease, opacity 0.3s ease;
+        font-family: 'Inter', sans-serif;
+    }
+    #storyViewerModal.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+    .story-viewer-header {
+        padding-top: calc(0.75rem + env(safe-area-inset-top));
+    }
+    .story-viewer-content {
+        font-size: 1.75rem; /* 28px */
+        line-height: 2.25rem; /* 36px */
+        font-weight: 700; /* bold */
+    }
+    .story-viewer-footer {
+        padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    }
+    .story-progress-container {
+        display: flex;
+        gap: 4px;
+        width: 100%;
+    }
+    .story-progress-bar {
+        flex-grow: 1;
+        height: 3px;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    /* ▲▲▲ AKHIR DARI GAYA PENAMPIL STORY ▲▲▲ */
   </style>
 </head>
 <body>
@@ -1879,6 +1919,32 @@
     </div>
 </div>
 <!-- ▲▲▲ AKHIR DARI MODAL STORY ▲▲▲ -->
+
+<!-- ▼▼▼ [BARU] MODAL UNTUK MELIHAT STORY (STORY VIEWER) ▼▼▼ -->
+<div id="storyViewerModal" class="fixed inset-0 z-[60] flex flex-col justify-between p-4 text-white hidden">
+    <!-- Header: Progress Bar, Info Pengguna, Tombol Tutup -->
+    <div class="story-viewer-header">
+        <div class="story-progress-container mb-3">
+            <!-- Progress bar akan diisi oleh JS -->
+        </div>
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <img id="storyViewerAvatar" src="" alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-white/80">
+                <div>
+                    <p id="storyViewerUsername" class="font-semibold"></p>
+                    <p id="storyViewerTimestamp" class="text-xs opacity-80"></p>
+                </div>
+            </div>
+            <button onclick="hideStoryViewer()" class="w-8 h-8 rounded-full flex items-center justify-center bg-black/20 hover:bg-black/40 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Konten Utama: Teks Story -->
+    <div id="storyViewerContent" class="flex-grow flex items-center justify-center text-center px-4"></div>
+</div>
+<!-- ▲▲▲ AKHIR DARI MODAL STORY VIEWER ▲▲▲ -->
 
 <!-- ▼▼▼ [BARU] CONTAINER UNTUK NOTIFIKASI ERROR ▼▼▼ -->
 <div id="errorToastContainer"></div>
@@ -5555,6 +5621,21 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
     // ▲▲▲ AKHIR DARI SISTEM PENANGANAN ERROR GLOBAL ▲▲▲
 
     // ▼▼▼ [BARU] SEMUA LOGIKA UNTUK FITUR STORY ▼▼▼
+    const storyBackgroundColors = [
+        '#73B193', '#34A853', '#F4B400', '#EA4335', '#4285F4',
+        '#9C27B0', '#673AB7', '#3F51B5', '#009688', '#FF5722'
+    ];
+
+    function showStoryViewer(story) {
+        const modal = document.getElementById('storyViewerModal');
+        const randomColor = storyBackgroundColors[Math.floor(Math.random() * storyBackgroundColors.length)];
+        modal.style.setProperty('--story-bg-color', randomColor);
+        document.getElementById('storyViewerAvatar').src = story.userAvatar || 'favicon-96x96.png';
+        document.getElementById('storyViewerUsername').textContent = story.userName;
+        document.getElementById('storyViewerContent').textContent = story.content;
+        modal.classList.remove('hidden');
+    }
+
     function showCreateStoryModal() {
         document.getElementById('storyContentInput').value = '';
         // [FIX] Pastikan counter direset saat modal dibuka
@@ -5568,6 +5649,10 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
 
     function hideCreateStoryModal() {
         document.getElementById('createStoryModal').classList.add('hidden');
+    }
+
+    function hideStoryViewer() {
+        document.getElementById('storyViewerModal').classList.add('hidden');
     }
 
     async function postStory() {
@@ -5649,12 +5734,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
             `;
             // [DIUBAH] Tambahkan fungsi untuk melihat story saat diklik
             item.onclick = () => {
-                if (!currentUser) {
-                    signInWithGoogle(); // Jika belum login, minta login
-                } else {
-                    // TODO: Logika untuk menampilkan konten story
-                    alert(`Melihat story dari: ${story.userName}\n\n"${story.content}"`);
-                }
+                showStoryViewer(story);
             };
             listEl.appendChild(item);
         });
@@ -5680,7 +5760,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
     }
     // ▲▲▲ AKHIR DARI LOGIKA STORY ▲▲▲
 
-    ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal', 'confirmModal'].forEach(id => {
+    ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal', 'confirmModal', 'storyViewerModal', 'createStoryModal'].forEach(id => {
         document.getElementById(id).addEventListener('click', e => {
             if (e.target.id === id) {
                 if (id === 'profileModal') hideProfileModal();
@@ -5688,6 +5768,8 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
                 else if (id === 'settingsModal') toggleSettings();
                 else if (id === 'searchModal') hideSearchModal();
                 else if (id === 'confirmModal') handleConfirm(false);
+                else if (id === 'storyViewerModal') hideStoryViewer();
+                else if (id === 'createStoryModal') hideCreateStoryModal();
             }
         });
     });
