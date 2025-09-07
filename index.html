@@ -1604,12 +1604,14 @@
 
     /* ▼▼▼ [BARU] GAYA UNTUK PENAMPIL STORY (STORY VIEWER) ▼▼▼ */
     #storyViewerModal {
-        background-color: var(--story-bg-color, #73B193); /* Warna default jika variabel tidak diset */
-        transition: background-color 0.5s ease, opacity 0.3s ease;
+        /* [DIKEMBALIKAN] Latar belakang kembali menjadi warna solid acak, dengan transisi warna */
+        background-color: var(--story-bg-color, '#73B193'); /* Warna default jika variabel tidak diset */
+        transition: background-color 0.5s ease, opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         font-family: 'Inter', sans-serif;
     }
     #storyViewerModal.hidden {
         opacity: 0;
+        transform: scale(1.05); /* Animasi zoom-out saat ditutup */
         pointer-events: none;
     }
     .story-viewer-header {
@@ -1633,6 +1635,13 @@
         height: 3px;
         background-color: rgba(255, 255, 255, 0.3);
         border-radius: 2px;
+        overflow: hidden; /* [BARU] Diperlukan untuk progress fill */
+    }
+    /* [BARU] Gaya untuk progress fill yang aktif */
+    .story-progress-fill {
+        width: 0%;
+        height: 100%;
+        background-color: white;
         overflow: hidden;
     }
     /* [BARU] Gaya untuk tombol hapus story */
@@ -1927,7 +1936,7 @@
 <!-- ▲▲▲ AKHIR DARI MODAL STORY ▲▲▲ -->
 
 <!-- ▼▼▼ [BARU] MODAL UNTUK MELIHAT STORY (STORY VIEWER) ▼▼▼ -->
-<div id="storyViewerModal" class="fixed inset-0 z-[60] flex flex-col justify-between p-4 text-white hidden">
+<div id="storyViewerModal" class="fixed inset-0 z-[110] flex flex-col justify-between p-4 text-white hidden transition-opacity duration-300"> <!-- [FIX] Menghapus duplikasi dan memastikan z-index benar -->
     <!-- Header: Progress Bar, Info Pengguna, Tombol Tutup -->
     <div class="story-viewer-header">
         <div class="story-progress-container mb-3">
@@ -1941,7 +1950,7 @@
                     <p id="storyViewerTimestamp" class="text-xs opacity-80"></p>
                 </div>
             </div>
-            <button onclick="hideStoryViewer()" class="w-8 h-8 rounded-full flex items-center justify-center bg-black/20 hover:bg-black/40 transition-colors">
+            <button onclick="hideStoryViewer()" class="w-8 h-8 rounded-full flex items-center justify-center bg-black/30 hover:bg-black/50 transition-colors"> <!-- [FIX] Menghapus duplikasi -->
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
@@ -5639,27 +5648,27 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         '#73B193', '#34A853', '#F4B400', '#EA4335', '#4285F4',
         '#9C27B0', '#673AB7', '#3F51B5', '#009688', '#FF5722'
     ];
-    let currentStoryInView = null; // [BARU] Menyimpan data story yang sedang dilihat
+    // [DIUBAH] Menyimpan grup story dan indeks saat ini
+    let currentStoryGroupInView = [];
+    let currentStoryIndex = 0;
+    let storyTimer = null;
 
-    function showStoryViewer(story) {
-        currentStoryInView = story; // [BARU] Simpan story yang sedang dilihat
+    function showStoryViewer(storyGroup) {
+        currentStoryGroupInView = storyGroup;
+        currentStoryIndex = 0;
         const modal = document.getElementById('storyViewerModal');
-        const randomColor = storyBackgroundColors[Math.floor(Math.random() * storyBackgroundColors.length)];
-        modal.style.setProperty('--story-bg-color', randomColor);
-        document.getElementById('storyViewerAvatar').src = story.userAvatar || 'favicon-96x96.png';
-        document.getElementById('storyViewerUsername').textContent = story.userName;
-        document.getElementById('storyViewerContent').textContent = story.content;
-        
-        // [BARU] Tampilkan tombol hapus jika pengguna adalah pemilik story
-        const deleteBtn = document.getElementById('deleteStoryBtn');
-        if (currentUser && currentUser.uid === story.userId) {
-            deleteBtn.classList.remove('hidden');
-            deleteBtn.classList.add('flex');
-        } else {
-            deleteBtn.classList.add('hidden');
-            deleteBtn.classList.remove('flex');
-        }
 
+        // Render progress bar untuk semua story dalam grup
+        const progressContainer = document.querySelector('.story-progress-container');
+        progressContainer.innerHTML = '';
+        storyGroup.forEach(() => {
+            const barWrapper = document.createElement('div');
+            barWrapper.className = 'story-progress-bar';
+            barWrapper.innerHTML = `<div class="story-progress-fill"></div>`;
+            progressContainer.appendChild(barWrapper);
+        });
+
+        displayCurrentStory(); // Tampilkan story pertama
         modal.classList.remove('hidden');
     }
 
@@ -5679,8 +5688,76 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
     }
 
     function hideStoryViewer() {
-        currentStoryInView = null; // [BARU] Reset saat modal ditutup
+        clearTimeout(storyTimer); // Hentikan timer
+        currentStoryGroupInView = [];
+        currentStoryIndex = 0;
         document.getElementById('storyViewerModal').classList.add('hidden');
+    }
+
+    // [BARU] Fungsi untuk memformat timestamp story
+    function formatStoryTimestamp(timestamp) {
+        if (!timestamp) return '';
+        const storyDate = timestamp.toDate(); // Konversi Firestore Timestamp ke Date
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - storyDate) / 1000);
+
+        if (diffInSeconds < 60) {
+            return `${diffInSeconds} detik yang lalu`;
+        }
+        const diffInMinutes = Math.floor(diffInSeconds / 60);
+        if (diffInMinutes < 60) {
+            return `${diffInMinutes} menit yang lalu`;
+        }
+        const diffInHours = Math.floor(diffInMinutes / 60);
+        if (diffInHours < 24) {
+            return `${diffInHours} jam yang lalu`;
+        }
+        return storyDate.toLocaleDateString('id-ID'); // Jika lebih dari sehari, tampilkan tanggal
+    }
+
+    function displayCurrentStory() {
+        if (storyTimer) clearTimeout(storyTimer);
+        if (currentStoryIndex >= currentStoryGroupInView.length) {
+            hideStoryViewer();
+            return;
+        }
+
+        const story = currentStoryGroupInView[currentStoryIndex];
+        const modal = document.getElementById('storyViewerModal');
+        const randomColor = storyBackgroundColors[Math.floor(Math.random() * storyBackgroundColors.length)];
+
+        modal.style.setProperty('--story-bg-color', randomColor);
+        document.getElementById('storyViewerAvatar').src = story.userAvatar || 'favicon-96x96.png';
+        document.getElementById('storyViewerUsername').textContent = story.userName;
+        document.getElementById('storyViewerContent').textContent = story.content;
+        document.getElementById('storyViewerTimestamp').textContent = formatStoryTimestamp(story.createdAt);
+
+        const deleteBtn = document.getElementById('deleteStoryBtn');
+        deleteBtn.classList.toggle('hidden', !currentUser || currentUser.uid !== story.userId);
+        deleteBtn.classList.toggle('flex', currentUser && currentUser.uid === story.userId);
+
+        // Update progress bar
+        const progressBars = document.querySelectorAll('.story-progress-fill');
+        progressBars.forEach((bar, index) => {
+            bar.style.transition = 'none';
+            bar.style.width = (index < currentStoryIndex) ? '100%' : '0%';
+        });
+
+        // Animasikan progress bar saat ini
+        setTimeout(() => {
+            const currentBar = progressBars[currentStoryIndex];
+            if (currentBar) {
+                currentBar.style.transition = 'width 5s linear';
+                currentBar.style.width = '100%';
+            }
+        }, 50);
+
+        storyTimer = setTimeout(nextStory, 5000); // Pindah ke story berikutnya setelah 5 detik
+    }
+
+    function nextStory() {
+        currentStoryIndex++;
+        displayCurrentStory();
     }
 
     async function postStory() {
@@ -5718,9 +5795,10 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
 
     // [BARU] Fungsi untuk konfirmasi dan penghapusan story
     async function confirmDeleteStory() {
-        if (!currentStoryInView) return;
-        // [FIX] Simpan ID story SEBELUM viewer ditutup dan currentStoryInView di-reset.
-        const storyToDelete = currentStoryInView;
+        if (currentStoryIndex >= currentStoryGroupInView.length) return;
+        const storyToDelete = currentStoryGroupInView[currentStoryIndex];
+        
+        clearTimeout(storyTimer); // Hentikan timer agar tidak pindah story saat konfirmasi
         hideStoryViewer(); 
 
         const confirmed = await showConfirmModal({
@@ -5753,23 +5831,32 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
             unsubscribeStories();
         }
 
-        // [DIUBAH] Kita akan memfilter berdasarkan `createdAt` bukan `expiresAt`
-        const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000); // Waktu satu jam yang lalu
+        // [DIUBAH] Logika diubah untuk memfilter story yang belum kedaluwarsa.
+        const now = new Date();
         unsubscribeStories = db.collection('stories')
-          .where('createdAt', '>', oneHourAgo) // Hanya ambil story yang dibuat setelah waktu ini
-          .orderBy('createdAt', 'desc')
+          .where('expiresAt', '>', now) // [FIX] Hanya ambil story yang waktu kedaluwarsanya masih di masa depan.
+          .orderBy('expiresAt', 'asc') // [FIX] Urutkan berdasarkan expiresAt terlebih dahulu sesuai aturan Firestore.
           .onSnapshot(snapshot => {
-              const stories = [];
+              // [DIUBAH] Logika untuk mengelompokkan story berdasarkan userId
+              const storyGroups = {};
               snapshot.forEach(doc => {
-                  stories.push({ id: doc.id, ...doc.data() });
+                  const story = { id: doc.id, ...doc.data() };
+                  if (!storyGroups[story.userId]) {
+                      storyGroups[story.userId] = {
+                          userName: story.userName,
+                          userAvatar: story.userAvatar,
+                          stories: []
+                      };
+                  }
+                  storyGroups[story.userId].stories.push(story);
               });
-              renderStories(stories);
+              renderStories(Object.values(storyGroups));
           }, error => {
               console.error("Gagal mendengarkan stories:", error);
           });
     }
 
-    function renderStories(stories) {
+    function renderStories(storyGroups) {
         const listEl = document.getElementById('storiesList');
         if (!listEl) return;
         
@@ -5780,18 +5867,18 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
             listEl.appendChild(addStoryButton); // Tambahkan kembali
         }
 
-        stories.forEach(story => {
+        storyGroups.forEach(group => {
             const item = document.createElement('div');
             item.className = 'story-item';
             item.innerHTML = `
                 <div class="story-avatar-wrapper">
-                    <img src="${story.userAvatar || 'favicon-96x96.png'}" alt="${story.userName}">
+                    <img src="${group.userAvatar || 'favicon-96x96.png'}" alt="${group.userName}">
                 </div>
-                <p class="story-username">${story.userName}</p>
+                <p class="story-username">${group.userName}</p>
             `;
-            // [DIUBAH] Tambahkan fungsi untuk melihat story saat diklik
+            // [DIUBAH] Kirim seluruh grup story ke viewer
             item.onclick = () => {
-                showStoryViewer(story);
+                showStoryViewer(group.stories);
             };
             listEl.appendChild(item);
         });
@@ -5818,7 +5905,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
     // ▲▲▲ AKHIR DARI LOGIKA STORY ▲▲▲
 
     ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal', 'confirmModal', 'storyViewerModal', 'createStoryModal'].forEach(id => {
-        const modalElement = document.getElementById(id);
+        const modalElement = document.getElementById(id); // [FIX] Pastikan elemen ada sebelum menambahkan listener
         if (modalElement) {
             modalElement.addEventListener('click', e => {
                 if (e.target.id === id) {
