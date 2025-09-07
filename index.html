@@ -3,6 +3,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6310,6 +6311,34 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         const count = this.value.length;
         document.getElementById('storyCharCounter').textContent = `${count} / 150`;
     });
+
+    // ▼▼▼ [BARU] LOGIKA UNTUK PEMBARUAN SERVICE WORKER OTOMATIS ▼▼▼
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration().then(reg => {
+            if (!reg) return;
+
+            // Listener untuk mendeteksi ketika SW baru ditemukan
+            reg.addEventListener('updatefound', () => {
+                const newWorker = reg.installing;
+                newWorker.addEventListener('statechange', () => {
+                    // Jika SW baru sudah terinstal dan ada SW lama yang aktif
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        console.log('Pembaruan Service Worker ditemukan! Mengaktifkan dan memuat ulang...');
+                        // Kirim pesan ke SW baru untuk melewati fase 'waiting'
+                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                    }
+                });
+            });
+        });
+
+        // Listener untuk memuat ulang halaman setelah SW baru mengambil alih
+        let refreshing;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) return;
+            window.location.reload();
+            refreshing = true;
+        });
+    }
 </script>
 
 <!-- Onboarding Modal & Script (tidak diubah) -->
