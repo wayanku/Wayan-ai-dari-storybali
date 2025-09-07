@@ -1991,6 +1991,11 @@
     <!-- Konten Utama: Teks Story -->
     <div id="storyViewerContent" class="flex-grow flex items-center justify-center text-center px-4"></div>
 
+    <!-- [BARU] Area Navigasi Klik (Kiri & Kanan) -->
+    <div class="absolute inset-0 flex justify-between items-center">
+        <div class="w-1/3 h-full" onclick="previousStory()"></div>
+        <div class="w-1/3 h-full" onclick="nextStory()"></div>
+    </div>
     <!-- Footer: Tombol Hapus (hanya muncul untuk pemilik story) -->
     <div class="story-viewer-footer flex justify-center">
         <button id="deleteStoryBtn" onclick="confirmDeleteStory()" class="hidden items-center gap-2 px-4 py-2 rounded-full text-white text-sm font-semibold hover:bg-black/40">
@@ -5789,6 +5794,11 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
 
     function nextStory() {
         currentStoryIndex++;
+        displayCurrentStory();
+    }
+
+    function previousStory() {
+        if (currentStoryIndex > 0) currentStoryIndex--;
         displayCurrentStory();
     }
 
