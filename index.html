@@ -2622,7 +2622,20 @@
     const auth = firebase.auth();
     const db = firebase.firestore(); // [BARU] Inisialisasi Firestore
     const googleProvider = new firebase.auth.GoogleAuthProvider();
-    
+
+    // ▼▼▼ TAMBAHKAN BLOK KODE DI BAWAH INI ▼▼▼
+    // Memaksa Firebase untuk menggunakan penyimpanan lokal yang lebih persisten.
+    // Ini membantu melawan fitur pembersihan data otomatis oleh browser.
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => {
+        console.log("Persistence berhasil diatur ke LOCAL.");
+      })
+      .catch((error) => {
+        console.error("Gagal mengatur persistence:", error);
+      });
+    // ▲▲▲ AKHIR DARI KODE YANG DITAMBAHKAN ▲▲▲
+
+
     let currentUser = null; // ▼▼▼ GUNAKAN KODE INI SEBAGAI PENGGANTI ▼▼▼
 
     // Listener untuk status otentikasi & penanganan hasil redirect
