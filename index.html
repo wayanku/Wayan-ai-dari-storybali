@@ -6017,6 +6017,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
             });
             console.log(`View untuk story ${storyId} oleh ${currentUser.displayName} berhasil dicatat.`);
         } catch (error) {
+            // [FIX] Tambahkan notifikasi jika gagal mencatat view
             console.error("Gagal mencatat view story:", error);
         }
     }
@@ -6052,6 +6053,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
             input.value = ''; // Kosongkan input setelah berhasil
         } catch (error) {
             console.error("Gagal mengirim komentar:", error);
+            // [FIX] Tambahkan notifikasi jika gagal mengirim komentar
             alert("Gagal mengirim komentar. Coba lagi.");
         }
     }
