@@ -1650,6 +1650,38 @@
         transition: background-color 0.2s ease;
         backdrop-filter: blur(5px);
     }
+    /* ▼▼▼ [BARU] GAYA UNTUK MODAL BUAT STORY YANG DIROMBAK ▼▼▼ */
+    #createStoryModal .modal-content {
+        /* [DIUBAH] Latar belakang gradien yang menarik */
+        background: linear-gradient(145deg, #6a82fb, #fc5c7d);
+        border: none;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        /* [DIUBAH] Dibuat lebih tinggi untuk tampilan yang lebih imersif */
+        height: 70vh;
+        max-height: 500px;
+        display: flex;
+        flex-direction: column;
+        padding: 1rem; /* Padding dasar */
+    }
+    #storyContentInput {
+        /* [DIUBAH] Menghapus semua gaya default input */
+        background: transparent;
+        border: none;
+        outline: none;
+        box-shadow: none;
+        /* [DIUBAH] Teks besar dan di tengah seperti WhatsApp Status */
+        font-size: 1.75rem; /* 28px */
+        font-weight: 700;
+        color: white;
+        text-align: center;
+        flex-grow: 1; /* Mengisi ruang yang tersedia */
+        resize: none; /* Mencegah user mengubah ukuran */
+        padding: 1rem;
+    }
+    #storyContentInput::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+    /* ▲▲▲ AKHIR DARI GAYA MODAL BUAT STORY ▲▲▲ */
     /* ▲▲▲ AKHIR DARI GAYA PENAMPIL STORY ▲▲▲ */
   </style>
 </head>
@@ -1913,23 +1945,23 @@
 <!-- ▲▲▲ AKHIR DARI MODAL PANGGILAN SUARA ▲▲▲ -->
 
 <!-- ▼▼▼ [BARU] MODAL UNTUK MEMBUAT STORY BARU ▼▼▼ -->
-<div id="createStoryModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
-    <div class="modal-content p-6 max-w-sm w-full">
-        <div class="text-center">
-            <h3 class="text-lg font-bold text-gray-800 mb-4" style="color: var(--text-primary);" data-translate-key="createStoryTitle">Buat Story Baru</h3>
-            <p class="text-sm text-gray-500 mb-4" data-translate-key="createStoryDesc">Story akan hilang setelah 1 jam.</p>
-            
-            <textarea id="storyContentInput" data-translate-placeholder="storyPlaceholder" class="w-full settings-input text-sm mb-4" rows="4" maxlength="150"></textarea>
-            <p id="storyCharCounter" class="text-xs text-right text-gray-500 mb-4">0 / 150</p>
+<div id="createStoryModal" class="fixed inset-0 modal-overlay z-[110] flex items-center justify-center hidden p-4"> <!-- [FIX] z-index dinaikkan -->
+    <!-- [DIUBAH] Konten modal dirombak total -->
+    <div class="modal-content max-w-sm w-full">
+        <!-- Tombol Tutup di Pojok Kanan Atas -->
+        <button onclick="hideCreateStoryModal()" class="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center bg-black/20 hover:bg-black/40 transition-colors text-white z-10">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
 
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="hideCreateStoryModal()" class="settings-btn-action bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm py-2">
-                    <span data-translate-key="buttonCancel">Batal</span>
-                </button>
-                <button id="postStoryBtn" onclick="postStory()" class="settings-btn-action bg-blue-600 text-white hover:bg-blue-700 text-sm py-2">
-                    <span data-translate-key="buttonPost">Posting</span>
-                </button>
-            </div>
+        <!-- Area Konten Utama -->
+        <textarea id="storyContentInput" data-translate-placeholder="storyPlaceholder" maxlength="150" placeholder="Apa yang kamu pikirkan?"></textarea>
+
+        <!-- Footer dengan Counter dan Tombol Posting -->
+        <div class="flex-shrink-0 mt-auto">
+            <p id="storyCharCounter" class="text-xs text-right text-white/80 mb-3">0 / 150</p>
+            <button id="postStoryBtn" onclick="postStory()" class="w-full bg-white text-blue-600 font-bold py-3 rounded-full text-base transition-transform transform hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed">
+                <span data-translate-key="buttonPost">Posting</span>
+            </button>
         </div>
     </div>
 </div>
@@ -1992,7 +2024,7 @@
 <!-- ▲▲▲ AKHIR DARI MODAL PENCARIAN GOOGLE ▲▲▲ -->
 
 <!-- Semua Modal Lainnya (tidak diubah, hanya ditambah title) -->
-<div id="imagePreviewModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
+<div id="imagePreviewModal" class="fixed inset-0 modal-overlay z-[110] flex items-center justify-center hidden p-4"> <!-- [FIX] z-index dinaikkan -->
     <div class="modal-content p-6 max-w-sm w-full" id="imagePreviewContent">
         <div class="text-center relative">
             <button onclick="hideImagePreview()" class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn" data-translate-title="imagePreviewCloseTitle">
@@ -2013,7 +2045,7 @@
         </div>
     </div>
 </div>
-<div id="profileModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
+<div id="profileModal" class="fixed inset-0 modal-overlay z-[110] flex items-center justify-center hidden p-4"> <!-- [FIX] z-index dinaikkan -->
     <!-- [DIUBAH] Tampilan modal profil dirombak total untuk estetika yang lebih baik -->
     <div class="modal-content p-8 max-w-sm w-full" id="profileModalContent">
         <div class="text-center relative">
@@ -2058,7 +2090,7 @@
     </div>
 </div>
 <!-- [DIUBAH] Menghapus padding (p-4) dan mengubah ukuran modal pengaturan menjadi layar penuh -->
-<div id="settingsModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden">
+<div id="settingsModal" class="fixed inset-0 modal-overlay z-[110] flex items-center justify-center hidden"> <!-- [FIX] z-index dinaikkan -->
     <div class="modal-content w-full h-full overflow-hidden flex flex-col" id="settingsModalContent">
         <!-- [DIUBAH] Header Modal Pengaturan dengan Tombol Kembali Dinamis -->
         <div class="p-4 flex items-center justify-between flex-shrink-0 bg-white border-b border-gray-200">
@@ -2549,7 +2581,7 @@
 </div>
 
 <!-- ▼▼▼ [BARU] MODAL KONFIRMASI KUSTOM ▼▼▼ -->
-<div id="confirmModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
+<div id="confirmModal" class="fixed inset-0 modal-overlay z-[120] flex items-center justify-center hidden p-4"> <!-- [FIX] z-index dinaikkan (paling tinggi) -->
     <div class="modal-content p-6 max-w-sm w-full">
         <div class="text-center">
             <h3 id="confirmModalTitle" class="text-lg font-bold text-gray-800 mb-2" style="color: var(--text-primary);">Konfirmasi</h3>
