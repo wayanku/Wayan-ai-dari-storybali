@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wayan-ai-cache-v4'; // [PENTING] Naikkan versi cache lagi
+const CACHE_NAME = 'wayan-ai-cache-v3'; // [PENTING] Naikkan versi cache lagi
 const OFFLINE_URL = 'offline.html';
 
 // Daftar aset inti yang akan di-cache saat instalasi
@@ -11,8 +11,8 @@ const URLS_TO_CACHE = [
   'favicon.ico',
   'apple-touch-icon.png',
   'site.webmanifest',
-  'https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg', // Avatar
-  'https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp', // Ganti dengan URL skrip yang benar
+  'https://i.postimg.cc/Wz2Gmx8X/IMG-2621.jpg', // Avatar,
+  'https://cdn.tailwindcss.com', // This is the correct URL as used in index.html
   'https://cdn.jsdelivr.net/npm/marked/marked.min.js',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
 ];
@@ -24,10 +24,15 @@ self.addEventListener('install', (event) => {
       .then((cache) => {
         console.log('Service Worker: Membuka cache dan menambahkan aset inti');
         // Cache halaman offline terlebih dahulu
-        cache.add(new Request(OFFLINE_URL, {cache: 'reload'}));
-        return cache.addAll(URLS_TO_CACHE);
+        const cacheOffline = cache.add(new Request(OFFLINE_URL, {cache: 'reload'}));
+        // Add all core assets
+        const cacheCoreAssets = cache.addAll(URLS_TO_CACHE);
+        return Promise.all([cacheOffline, cacheCoreAssets]);
       })
       .then(() => self.skipWaiting()) // Aktifkan service worker baru segera setelah instalasi
+      .catch(error => {
+        console.error('Gagal melakukan pre-caching saat instalasi:', error);
+      })
   );
 });
 
@@ -60,25 +65,51 @@ self.addEventListener('fetch', (event) => {
   // [PERBAIKAN] Hanya tangani request GET untuk strategi caching.
   // Ini mencegah masalah dengan request POST, dll.
   if (event.request.method === 'GET') {
-    // Strategi Cache First (untuk aset statis)
-    event.respondWith(
-      caches.match(event.request)
-        .then((cachedResponse) => {
-          // Jika ada di cache, kembalikan dari cache
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-  
-          // Jika tidak ada di cache, coba ambil dari network
-          return fetch(event.request).catch(() => {
-            // Jika network gagal (offline), kembalikan halaman offline
-            // Hanya untuk request navigasi (halaman HTML)
-            if (event.request.mode === 'navigate') {
-              return caches.match(OFFLINE_URL);
-            }
-          });
-        })
-    );
+    // [DIUBAH] Strategi Network First untuk halaman utama (index.html)
+    // Ini akan selalu mencoba mengambil dari jaringan terlebih dahulu untuk memastikan konten selalu terbaru.
+    // Jika jaringan gagal (offline), baru akan mengambil dari cache.
+    if (url.pathname === '/' || url.pathname === '/index.html') {
+      event.respondWith(
+        fetch(event.request)
+          .then(networkResponse => {
+            // Jika berhasil, simpan salinan baru ke cache untuk kunjungan offline berikutnya.
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
+            return networkResponse;
+          })
+          .catch(() => {
+            return caches.match(event.request).then(cachedResponse => cachedResponse || caches.match(OFFLINE_URL));
+          })
+      );
+    } else if (event.request.mode === 'navigate') {
+      // Untuk navigasi ke halaman lain (misal: /profile), gunakan Network first.
+      event.respondWith(
+        fetch(event.request).catch(() => caches.match(OFFLINE_URL))
+      );
+    }
+    else {
+      // Untuk aset lain (CSS, JS, gambar), gunakan Cache First, fallback ke Network.
+      // Ini adalah strategi terbaik untuk aset yang tidak sering berubah.
+      event.respondWith(
+        caches.match(event.request)
+          .then((cachedResponse) => {
+            return cachedResponse || fetch(event.request).then(networkResponse => {
+              // Simpan aset baru ke cache saat berhasil diambil dari network
+              return caches.open(CACHE_NAME).then(cache => {
+                cache.put(event.request, networkResponse.clone());
+                return networkResponse;
+              });
+            }).catch(() => {
+              // Jika aset adalah gambar dan gagal diambil, kita bisa mengembalikan gambar placeholder
+              if (event.request.destination === 'image') {
+                // Anda bisa membuat file 'placeholder.svg' dan menambahkannya ke URLS_TO_CACHE
+                // return caches.match('/placeholder.svg'); 
+              }
+              return new Response('', { status: 503, statusText: 'Service Unavailable' });
+            })
+          })
+      );
+    }
   }
 });
 
