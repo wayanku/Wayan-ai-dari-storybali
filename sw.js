@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wayan-ai-cache-v2';
+const CACHE_NAME = 'wayan-ai-cache-v3'; // [PENTING] Naikkan versi cache lagi
 const OFFLINE_URL = 'offline.html';
 
 // Daftar aset inti yang akan di-cache saat instalasi
@@ -103,5 +103,14 @@ self.addEventListener('message', (event) => {
   } else if (event.data.type === 'CANCEL_INACTIVITY_TIMER') {
     // Batalkan timer jika pengguna kembali
     clearTimeout(inactivityTimer);
+  }
+});
+
+// [BARU] Listener untuk pesan 'SKIP_WAITING' dari klien
+// Ini memungkinkan kita untuk secara manual memaksa service worker baru untuk aktif.
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('Service Worker: Menerima pesan SKIP_WAITING, mengaktifkan service worker baru.');
+    self.skipWaiting();
   }
 });
