@@ -5719,7 +5719,9 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
     // [BARU] Fungsi untuk konfirmasi dan penghapusan story
     async function confirmDeleteStory() {
         if (!currentStoryInView) return;
-        hideStoryViewer(); // [FIX] Sembunyikan viewer dulu agar tidak ada konflik klik
+        // [FIX] Simpan ID story SEBELUM viewer ditutup dan currentStoryInView di-reset.
+        const storyToDelete = currentStoryInView;
+        hideStoryViewer(); 
 
         const confirmed = await showConfirmModal({
             title: "Hapus Story?",
@@ -5729,9 +5731,8 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         });
 
         if (confirmed) {
-            // [FIX] Pastikan ID story disimpan sebelum currentStoryInView di-reset
-            const storyIdToDelete = currentStoryInView.id;
-            deleteStory(storyIdToDelete);
+            // Gunakan ID dari variabel yang sudah disimpan.
+            deleteStory(storyToDelete.id);
         }
     }
 
