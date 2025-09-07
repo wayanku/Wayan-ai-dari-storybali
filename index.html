@@ -2626,24 +2626,33 @@
     let currentUser = null;
 
     // ▼▼▼ [PERBAIKAN] Fungsi dipindahkan ke luar agar bisa diakses secara global ▼▼▼
-     // Fungsi untuk login
-     async function signInWithGoogle() {
-       // [FIX PWA iOS] Deteksi apakah aplikasi berjalan dalam mode standalone (PWA di Layar Utama)
-       const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+     // [PERBAIKAN PWA] Fungsi login diubah untuk menangani mode PWA di Android & iOS
+     function signInWithGoogle() {
+       // Deteksi apakah aplikasi berjalan dalam mode standalone (PWA di Layar Utama)
+       const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone || document.referrer.includes('android-app://');
 
-       if (isInStandaloneMode) {
-         // Untuk PWA di iOS, gunakan redirect karena popup diblokir.
+       if (isInStandaloneMode) { // Jika berjalan sebagai PWA
+         // Gunakan signInWithRedirect karena popup sering diblokir di mode PWA.
+         // Ini akan membuka halaman login Google di dalam jendela PWA.
          console.log("Mode PWA terdeteksi, menggunakan signInWithRedirect.");
          try {
-           await auth.signInWithRedirect(googleProvider);
+           auth.signInWithRedirect(googleProvider);
          } catch (error) {
            console.error("Error saat signInWithRedirect:", error);
            alert("Gagal memulai proses login: " + error.message);
          }
-       } else {
-         // Untuk browser biasa, popup lebih baik.
+       } else { // Jika berjalan di browser biasa
+         // Gunakan signInWithPopup untuk pengalaman pengguna yang lebih baik di browser.
          console.log("Mode browser terdeteksi, menggunakan signInWithPopup.");
-         auth.signInWithPopup(googleProvider).catch(error => { console.error("Error saat login dengan Google:", error); alert("Gagal login: " + error.message); });
+         auth.signInWithPopup(googleProvider).catch(error => {
+           console.error("Error saat login dengan Google:", error);
+           // Menangani error umum dimana popup diblokir
+           if (error.code === 'auth/popup-blocked') {
+             alert('Jendela login diblokir oleh browser. Mohon izinkan popup untuk situs ini dan coba lagi.');
+           } else {
+             alert("Gagal login: " + error.message);
+           }
+         });
        }
      }
 
@@ -2661,16 +2670,19 @@
       updateUIForAuthState();
     });
 
-    // [FIX PWA iOS] Tangani hasil redirect setelah login berhasil
-    auth.getRedirectResult().then(result => {
-        if (result && result.user) {
-            // Jika ada hasil dari redirect, onAuthStateChanged akan otomatis
-            // dipicu oleh Firebase SDK. Kita tidak perlu melakukan apa-apa di sini.
-            // Cukup log untuk debugging.
-            console.log("Berhasil mendapatkan hasil redirect login:", result.user.displayName);
-        }
-    }).catch(error => {
-        console.error("Error saat getRedirectResult:", error);
+    // [PERBAIKAN PWA] Tangani hasil redirect setelah login berhasil.
+    // Kode ini akan berjalan saat halaman dimuat kembali setelah redirect dari Google.
+    document.addEventListener('DOMContentLoaded', () => {
+        auth.getRedirectResult().then(result => {
+            if (result && result.user) {
+                // Jika ada hasil dari redirect, onAuthStateChanged akan otomatis
+                // dipicu oleh Firebase SDK. Kita tidak perlu melakukan apa-apa di sini.
+                // Cukup log untuk debugging.
+                console.log("Berhasil mendapatkan hasil redirect login:", result.user.displayName);
+            }
+        }).catch(error => {
+            console.error("Error saat getRedirectResult:", error);
+        });
     });
 
     // ▼▼▼ [BARU] Sistem Internasionalisasi (i18n) ▼▼▼
