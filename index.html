@@ -1766,7 +1766,7 @@
             <div class="header-gradient flex-shrink-0">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
-                        <button onclick="toggleSidebar()" 
+                        <button onclick="toggleSidebar(true)" 
                                 class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 active:bg-opacity-40 transition-all duration-200 ease-in-out" 
                                 data-translate-title="sidebarToggleTitle">
                              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
@@ -2010,32 +2010,41 @@
     <div id="storyViewerContent" class="flex-grow flex items-center justify-center text-center px-4"></div>
 
     <!-- [BARU] Area Navigasi Klik (Kiri & Kanan) -->
-    <div class="absolute inset-0 flex justify-between items-center">
-        <div class="w-1/4 h-full" onclick="previousStory()"></div>
+    <div class="absolute inset-x-0 top-0 bottom-20 flex justify-between items-center">
+        <div class="w-1/3 h-full" onclick="previousStory()"></div>
         <!-- [DIUBAH] Area tengah untuk jeda/lanjut -->
-        <div class="w-1/2 h-full" onclick="toggleStoryPause()"></div>
-        <div class="w-1/4 h-full" onclick="nextStory()"></div>
+        <div class="w-1/3 h-full" onclick="toggleStoryPause()"></div>
+        <div class="w-1/3 h-full" onclick="nextStory()"></div>
     </div>
     <!-- Footer: Tombol Hapus (hanya muncul untuk pemilik story) -->
     <!-- [DIUBAH] Footer sekarang berisi input komentar dan tombol "Dilihat oleh" -->
-    <div class="story-viewer-footer justify-between items-center w-full pointer-events-auto gap-3">
-        <!-- [DIUBAH] Input Komentar (untuk penonton) -->
-        <div id="storyCommentView" class="relative flex-grow hidden">
-            <input id="storyCommentInput" type="text" placeholder="Kirim komentar..." class="w-full bg-black/20 border border-white/30 rounded-full py-2.5 pl-4 pr-12 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50">
-            <button onclick="sendStoryComment()" class="absolute right-1 top-1/2 -translate-y-1/2 bg-white/90 text-black rounded-full w-8 h-8 flex items-center justify-center hover:bg-white transition-transform transform active:scale-90">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-            </button>
-        </div>
+    <div class="story-viewer-footer justify-between items-center w-full pointer-events-auto gap-2">
+        <!-- [DIUBAH] Tombol untuk melihat komentar (untuk semua orang) -->
+        <button id="storyCommentsButton" onclick="toggleStoryCommentsVisibility()" class="flex items-center gap-2 text-white text-sm font-semibold px-4 py-2 rounded-full bg-black/20 hover:bg-black/40 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+            <span id="storyCommentCount">0 Komentar</span>
+        </button>
 
-        <!-- [BARU] Input Komentar Palsu (untuk pengguna yang belum login) -->
-        <div id="storyLoginPromptView" onclick="signInWithGoogle()" class="relative flex-grow hidden cursor-pointer">
-            <div class="w-full bg-black/20 border border-white/30 rounded-full py-2.5 px-4 text-white/70">
-                Login untuk mengirim komentar...
+        <!-- [DIUBAH] Input komentar dipisahkan dari tombol lihat komentar -->
+        <div id="storyCommentInputContainer" class="relative flex-grow">
+            <!-- Input untuk pengguna yang sudah login -->
+            <div id="storyCommentView" class="relative hidden">
+                <input id="storyCommentInput" type="text" placeholder="Kirim komentar..." class="w-full bg-black/20 border border-white/30 rounded-full py-2.5 pl-4 pr-12 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50">
+                <!-- [DIUBAH] Tombol kirim sekarang juga memanggil fungsi resume -->
+                <button onclick="sendStoryComment()" class="absolute right-1 top-1/2 -translate-y-1/2 bg-white/90 text-black rounded-full w-8 h-8 flex items-center justify-center hover:bg-white transition-transform transform active:scale-90">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                </button>
+            </div>
+            <!-- Tombol login untuk pengguna yang belum login -->
+            <div id="storyLoginPromptView" onclick="signInWithGoogle()" class="relative hidden cursor-pointer">
+                <div class="w-full bg-black/20 border border-white/30 rounded-full py-2.5 px-4 text-white/70 text-center">
+                    Login untuk berkomentar
+                </div>
             </div>
         </div>
-
+        
         <!-- [DIUBAH] Tombol Aksi (untuk pemilik story) -->
-        <div id="storyOwnerView" class="flex-grow hidden justify-between items-center">
+        <div id="storyOwnerView" class="flex-shrink-0 hidden items-center gap-2">
              <button onclick="showStoryViews()" class="flex items-center gap-2 text-white text-sm font-semibold px-4 py-2 rounded-full bg-black/20 hover:bg-black/40 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 <span id="storyViewCount">Dilihat oleh 0</span>
@@ -2045,15 +2054,13 @@
                 <span>Hapus</span>
             </button>
         </div>
-
-        <!-- [DIHAPUS] Tombol lihat penonton untuk penonton biasa, karena sudah digabung dengan daftar komentar -->
     </div>
 </div>
 <!-- ▲▲▲ AKHIR DARI MODAL STORY VIEWER ▲▲▲ -->
 
 <!-- ▼▼▼ [BARU] MODAL UNTUK MELIHAT PENONTON STORY ▼▼▼ -->
-<div id="storyViewsModal" class="fixed inset-0 modal-overlay z-[120] flex items-center justify-center hidden p-4">
-    <div class="modal-content p-0 max-w-sm w-full max-h-[60vh] flex flex-col">
+<div id="storyViewsModal" class="fixed inset-0 modal-overlay z-[120] flex items-end md:items-center justify-center hidden p-4">
+    <div class="modal-content p-0 max-w-sm w-full max-h-[60vh] flex flex-col" style="background-color: var(--bg-secondary);">
         <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
             <h3 class="font-bold text-center" style="color: var(--text-primary);">Penonton & Komentar</h3>
         </div>
@@ -2061,8 +2068,9 @@
             <!-- Daftar penonton akan muncul di sini -->
         </div>
         <div class="p-2 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
-             <button onclick="hideStoryViewsModal()" class="w-full settings-btn-action bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm py-2">
-                Tutup
+             <!-- [DIUBAH] Tombol tutup sekarang juga memanggil fungsi resume -->
+             <button onclick="hideStoryViewsModal()" class="w-full settings-btn-action text-sm py-2" style="background-color: var(--bg-tertiary); color: var(--text-primary);">
+                <span data-translate-key="buttonCancel">Tutup</span>
             </button>
         </div>
     </div>
@@ -2070,8 +2078,8 @@
 <!-- ▲▲▲ AKHIR DARI MODAL PENONTON STORY ▲▲▲ -->
 
 
-<!-- [DIPINDAHKAN & DIPERBAIKI] Area untuk menampilkan komentar dipindahkan ke luar modal -->
-<div id="storyCommentsContainer" class="fixed bottom-20 left-4 right-4 max-h-[30vh] overflow-y-auto space-y-2 pointer-events-auto z-[111] hidden">
+<!-- [DIUBAH] Area untuk menampilkan komentar sekarang menjadi modal terpisah -->
+<div id="storyCommentsContainer" class="fixed inset-0 modal-overlay z-[120] flex items-end justify-center hidden p-4 pointer-events-none">
     <!-- Komentar akan di-render di sini oleh JavaScript -->
 </div>
 
@@ -3418,13 +3426,14 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
 
         const savedElevenLabsKey = localStorage.getItem('elevenLabsApiKey');
         const elevenLabsInput = document.getElementById('elevenLabsApiKey');
-        if (savedElevenLabsKey) {
+        // [FIX] Pastikan elemen ada sebelum mencoba mengatur nilainya
+        if (elevenLabsInput && savedElevenLabsKey) {
             elevenLabsInput.value = savedElevenLabsKey;
         } else {
             elevenLabsInput.value = DEFAULT_ELEVENLABS_API_KEY;
         }
     }
-    function toggleSidebar() {
+    function toggleSidebar(isFromButton = false) {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
         const isMobile = window.innerWidth <= 768;
@@ -3432,7 +3441,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         if (isMobile) {
             const isOpen = sidebar.classList.toggle('open');
             overlay.classList.toggle('active', isOpen);
-        } else {
+        } else if (isFromButton) { // [DIUBAH] Hanya toggle jika dipanggil dari tombol
             const isCollapsed = sidebar.classList.toggle('collapsed');
             settings.isSidebarOpen = !isCollapsed;
             saveSettings();
@@ -5878,11 +5887,12 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         currentStoryIndex = 0;
         storyViewHasBeenLogged = false; // [BARU] Reset status log
         isStoryPaused = false; // [BARU] Reset status jeda saat menutup
+        wasPausedBeforeModal = false; // [BARU] Reset juga flag ini
         if (unsubscribeComments) { // [BARU] Hentikan listener komentar saat menutup
             unsubscribeComments();
             unsubscribeComments = null;
         }
-        hideStoryViewsModal(); // [BARU] Pastikan modal penonton juga tertutup
+        hideStoryViewsModal(); 
         document.getElementById('storyCommentsContainer').classList.add('hidden'); // [FIX] Sembunyikan kontainer komentar saat menutup
         document.getElementById('storyViewerModal').classList.add('hidden');
     }
@@ -5912,6 +5922,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         if (storyTimer) clearTimeout(storyTimer);
         storyViewHasBeenLogged = false; // [BARU] Reset status log untuk story baru
         isStoryPaused = false; // [BARU] Reset status jeda saat story baru ditampilkan
+        wasPausedBeforeModal = false; // [BARU] Reset juga flag ini
         if (currentStoryIndex >= currentStoryGroupInView.length) {
             hideStoryViewer();
             return;
@@ -5931,15 +5942,16 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         const isOwner = currentUser && currentUser.uid === story.userId; // Pemilik story
         const canComment = currentUser; // Hanya pengguna yang login bisa berkomentar
 
+        // Tampilkan/sembunyikan tombol aksi untuk pemilik
         document.getElementById('storyOwnerView').classList.toggle('hidden', !isOwner);
         document.getElementById('storyOwnerView').classList.toggle('flex', isOwner);
 
-        // [DIUBAH] Logika untuk menampilkan input komentar yang benar
-        const commentView = document.getElementById('storyCommentView');
+        // Tampilkan input komentar untuk user login, atau tombol login untuk tamu
+        const commentInputView = document.getElementById('storyCommentView');
         const loginPromptView = document.getElementById('storyLoginPromptView');
+        commentInputView.classList.toggle('hidden', !canComment);
+        loginPromptView.classList.toggle('hidden', canComment);
 
-        commentView.classList.toggle('hidden', isOwner || !canComment);
-        loginPromptView.classList.toggle('hidden', isOwner || canComment);
         document.getElementById('storyCommentInput').value = ''; // Kosongkan input komentar
 
         // [BARU] Ambil dan tampilkan komentar untuk story ini
@@ -5973,21 +5985,43 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         storyTimer = setTimeout(nextStory, 5000);
     }
 
-    // [BARU] Fungsi untuk jeda/lanjutkan story
-    function toggleStoryPause() {
+    // [DIUBAH] Fungsi jeda dan lanjutkan dipisah agar lebih mudah dikontrol
+    function pauseStory() {
+        if (isStoryPaused) return; // Jangan lakukan apa-apa jika sudah dijeda
+        isStoryPaused = true;
+        clearTimeout(storyTimer);
+        const currentBarFill = document.querySelectorAll('.story-progress-fill')[currentStoryIndex];
+        if (!currentBarFill) return;
+        
+        const elapsedTime = Date.now() - storyTimerStartTime;
+        storyTimerRemainingTime = 5000 - elapsedTime;
+        
+        // Hentikan animasi CSS dengan mengambil lebar saat ini
+        const computedWidth = window.getComputedStyle(currentBarFill).width;
+        currentBarFill.style.transition = 'none';
+        currentBarFill.style.width = computedWidth;
+    }
+
+    function resumeStory() {
+        if (!isStoryPaused) return; // Jangan lakukan apa-apa jika tidak sedang dijeda
+        isStoryPaused = false;
         const currentBarFill = document.querySelectorAll('.story-progress-fill')[currentStoryIndex];
         if (!currentBarFill) return;
 
-        isStoryPaused = !isStoryPaused;
+        // Lanjutkan animasi dari titik berhenti
+        setTimeout(() => {
+            currentBarFill.style.transition = `width ${storyTimerRemainingTime / 1000}s linear`;
+            currentBarFill.style.width = '100%';
+        }, 50);
+
+        storyTimer = setTimeout(nextStory, storyTimerRemainingTime);
+    }
+
+    function toggleStoryPause() {
         if (isStoryPaused) {
-            clearTimeout(storyTimer);
-            const elapsedTime = Date.now() - storyTimerStartTime;
-            const remainingTime = 5000 - elapsedTime;
-            currentBarFill.style.transition = 'none'; // Hentikan animasi CSS
-            currentBarFill.dataset.remainingTime = remainingTime; // Simpan sisa waktu
+            resumeStory();
         } else {
-            const remainingTime = parseFloat(currentBarFill.dataset.remainingTime) || 5000;
-            storyTimer = setTimeout(nextStory, remainingTime);
+            pauseStory();
         }
     }
 
@@ -5995,7 +6029,6 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         currentStoryIndex++;
         displayCurrentStory();
     }
-
     function previousStory() {
         if (currentStoryIndex > 0) currentStoryIndex--;
         displayCurrentStory();
@@ -6040,6 +6073,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         const commentText = input.value.trim();
         if (!commentText) return;
 
+        resumeStory(); // [BARU] Lanjutkan story setelah komentar dikirim
         const story = currentStoryGroupInView[currentStoryIndex];
         if (!story) return;
 
@@ -6109,14 +6143,36 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
     }
 
     // [BARU] Fungsi untuk menyembunyikan modal daftar penonton
-    function hideStoryViewsModal() { document.getElementById('storyViewsModal').classList.add('hidden'); }
+    function hideStoryViewsModal() { 
+        document.getElementById('storyViewsModal').classList.add('hidden'); 
+        // [BARU] Lanjutkan story jika sebelumnya tidak sedang dijeda secara manual
+        if (!wasPausedBeforeModal) {
+            resumeStory();
+        }
+    }
     let commentsForViewModal = []; // [BARU] Variabel untuk menyimpan komentar
+    
+    // [BARU] Fungsi untuk menampilkan/menyembunyikan modal komentar
+    function toggleStoryCommentsVisibility() {
+        const modal = document.getElementById('storyViewsModal'); // Menggunakan modal yang sama dengan penonton
+        const listEl = document.getElementById('storyViewsList');
+        
+        if (modal.classList.contains('hidden')) {
+            // [BARU] Jeda story saat modal dibuka
+            wasPausedBeforeModal = isStoryPaused; // Simpan status jeda saat ini
+            pauseStory();
+            modal.classList.remove('hidden');
+
+            listEl.innerHTML = commentsForViewModal.length > 0 ? '' : '<p class="text-center text-sm text-gray-500">Belum ada komentar.</p>';
+            commentsForViewModal.forEach(comment => listEl.appendChild(createCommentElementForModal(comment)));
+        } else {
+            modal.classList.add('hidden');
+        }
+    }
 
     // [BARU] Fungsi untuk mendengarkan dan menampilkan komentar secara real-time
     function listenForStoryComments(storyId) {
-        const commentsContainer = document.getElementById('storyCommentsContainer');
-        commentsContainer.classList.remove('hidden'); // [FIX] Tampilkan kontainer komentar
-        commentsContainer.innerHTML = ''; // Kosongkan komentar dari story sebelumnya
+        const commentCountEl = document.getElementById('storyCommentCount');
 
         // Hentikan listener lama jika ada
         if (unsubscribeComments) {
@@ -6127,25 +6183,28 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
             .orderBy('createdAt', 'asc')
             .onSnapshot(snapshot => {
                 commentsForViewModal = snapshot.docs.map(doc => doc.data()); // [BARU] Simpan komentar untuk modal penonton
-                commentsContainer.innerHTML = ''; // Hapus semua komentar saat ada pembaruan
-                snapshot.forEach(doc => {
-                    const comment = doc.data();
-                    const commentEl = document.createElement('div');
-                    commentEl.className = 'story-comment-item flex items-center gap-2 bg-black/20 text-white p-2 rounded-lg text-sm';
-                    commentEl.innerHTML = `
-                        <img src="${comment.userAvatar || 'favicon-96x96.png'}" alt="${comment.userName}" class="w-6 h-6 rounded-full flex-shrink-0">
-                        <div class="min-w-0">
-                            <span class="font-semibold mr-1.5">${comment.userName}</span>
-                            <span class="opacity-90 break-words">${comment.comment}</span>
-                        </div>
-                    `;
-                    commentsContainer.appendChild(commentEl);
-                });
-                // Scroll ke komentar terbaru
-                commentsContainer.scrollTop = commentsContainer.scrollHeight;
+                commentCountEl.textContent = `${snapshot.size} Komentar`;
             }, error => {
                 console.error("Gagal mengambil komentar:", error);
             });
+    }
+
+    // [BARU] Fungsi untuk membuat elemen komentar untuk modal
+    function createCommentElementForModal(comment) {
+        const commentEl = document.createElement('div');
+        // [DIUBAH] Gaya gelembung chat yang lebih baik dengan variabel CSS
+        commentEl.className = 'flex items-start gap-3 p-3 rounded-xl shadow-sm';
+        commentEl.style.backgroundColor = 'var(--bg-primary)'; // Latar putih (terang) / hitam pekat (gelap)
+
+        commentEl.innerHTML = `
+            <img src="${comment.userAvatar || 'favicon-96x96.png'}" alt="${comment.userName}" class="w-10 h-10 rounded-full flex-shrink-0 border-2" style="border-color: var(--border-color);">
+            <div class="flex-grow">
+                <p class="font-semibold text-sm" style="color: var(--text-primary);">${comment.userName}</p>
+                <!-- [DIUBAH] Menambahkan kelas untuk word-break agar teks panjang tidak merusak layout -->
+                <p class="text-sm break-words" style="color: var(--text-secondary);">${comment.comment}</p>
+            </div>
+        `;
+        return commentEl;
     }
 
 
@@ -6292,7 +6351,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
     }
     // ▲▲▲ AKHIR DARI LOGIKA STORY ▲▲▲
 
-    ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal', 'confirmModal', 'storyViewerModal', 'createStoryModal', 'storyViewsModal'].forEach(id => {
+    ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal', 'confirmModal', 'storyViewerModal', 'createStoryModal'].forEach(id => {
         const modalElement = document.getElementById(id); // [FIX] Pastikan elemen ada sebelum menambahkan listener
         if (modalElement) {
             modalElement.addEventListener('click', e => {
@@ -6304,17 +6363,29 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
                     else if (id === 'confirmModal') handleConfirm(false);
                     else if (id === 'storyViewerModal') hideStoryViewer();
                     else if (id === 'createStoryModal') hideCreateStoryModal();
-                    else if (id === 'storyViewsModal') hideStoryViewsModal();
                 }
             });
         }
     });
+    // [DIUBAH] Listener khusus untuk modal penonton/komentar agar bisa ditutup dengan klik di luar
+    document.getElementById('storyViewsModal').addEventListener('click', e => {
+        if (e.target.id === 'storyViewsModal') {
+            hideStoryViewsModal();
+        }
+    });
+
     document.addEventListener('touchstart', function () {}, true);
 
     // [BARU] Event listener untuk input story
     document.getElementById('storyContentInput').addEventListener('input', function() {
         const count = this.value.length;
         document.getElementById('storyCharCounter').textContent = `${count} / 150`;
+    });
+
+    // [BARU] Event listener untuk menjeda story saat mengetik komentar
+    document.getElementById('storyCommentInput').addEventListener('focus', pauseStory);
+    document.getElementById('storyCommentInput').addEventListener('blur', () => {
+        if (document.getElementById('storyCommentInput').value.trim() === '') resumeStory();
     });
 
     // ▼▼▼ [BARU] LOGIKA UNTUK PEMBARUAN SERVICE WORKER OTOMATIS ▼▼▼
