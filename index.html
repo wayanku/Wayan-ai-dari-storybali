@@ -45,6 +45,7 @@
   <!-- ▼▼▼ [BARU] Firebase SDK ▼▼▼ -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <!-- ▲▲▲ AKHIR DARI Firebase SDK ▲▲▲ -->
 
   <style>
@@ -1530,6 +1531,33 @@
     .error-toast code { font-size: 0.75rem; line-height: 1.2; }
     @keyframes toast-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     /* ▲▲▲ AKHIR DARI GAYA NOTIFIKASI ERROR DEBUG ▲▲▲ */
+    /* ▼▼▼ [BARU] GAYA UNTUK FITUR STORY ▼▼▼ */
+    #storiesList { scrollbar-width: none; -ms-overflow-style: none; }
+    #storiesList::-webkit-scrollbar { display: none; }
+
+    .story-item, .add-story-btn {
+        flex-shrink: 0;
+        width: 60px;
+        text-align: center;
+        cursor: pointer;
+    }
+    .story-avatar-wrapper {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        padding: 2px;
+        background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        margin: 0 auto 4px;
+        transition: transform 0.2s ease;
+    }
+    .story-item:hover .story-avatar-wrapper { transform: scale(1.05); }
+    .story-avatar-wrapper img {
+        width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 2px solid var(--bg-primary);
+    }
+    .story-item .story-username { font-size: 0.7rem; color: var(--text-secondary); line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .add-story-btn .story-avatar-wrapper { background: var(--bg-tertiary); border: 2px dashed var(--border-color); padding: 0; display: flex; align-items: center; justify-content: center; }
+    .add-story-btn .story-avatar-wrapper svg { color: var(--text-secondary); }
+    /* ▲▲▲ AKHIR DARI GAYA STORY ▲▲▲ */
     /* ▼▼▼ [BARU] GAYA UNTUK PRATINJAU FILE DI INPUT AREA ▼▼▼ */
     #filePreviewContainer {
         display: none; /* Sembunyikan secara default */
@@ -1583,13 +1611,33 @@
                     <svg class="w-5 h-5 text-gray-400 group-hover:text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                 </button>
             </div>
-            <div class="flex-grow overflow-y-auto -mr-2 pr-2">
-                 <ul id="chatHistoryList">
-                 </ul>
+
+            <!-- ▼▼▼ [DIUBAH] Kontainer bawah untuk Riwayat Chat dan Profil ▼▼▼ -->
+            <div class="flex-grow flex flex-col min-h-0">
+                <!-- ▼▼▼ [BARU] Bagian Atas: Story Pengguna ▼▼▼ -->
+                <!-- [DIUBAH] Dihapus kelas 'hidden' agar selalu terlihat -->
+                <div id="storiesContainer" class="py-2 border-b border-t flex-shrink-0" style="border-color: var(--border-color);">
+                    <div class="px-4 text-xs font-semibold text-gray-500 mb-2" data-translate-key="storiesTitle">Stories</div>
+                    <div id="storiesList" class="flex items-center gap-3 overflow-x-auto px-4 pb-2">
+                        <!-- Tombol "Tambah Story" dan story pengguna lain akan muncul di sini -->
+                    </div>
+                </div>
+
+                <!-- ▼▼▼ [DIUBAH] Bagian Bawah: Riwayat Chat (dibuat bisa scroll) ▼▼▼ -->
+                <div class="flex-grow overflow-y-auto min-h-0">
+                    <div class="px-4 pt-4 pb-2 text-xs font-semibold text-gray-500" data-translate-key="historyTitle">
+                        Riwayat Chat
+                    </div>
+                    <div class="pr-2"> <!-- Wrapper untuk padding kanan agar tidak memotong scrollbar -->
+                        <ul id="chatHistoryList">
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- ▼▼▼ [BARU] Area Profil Pengguna & Tombol Login/Logout ▼▼▼ -->
-        <div id="userProfile" class="p-4 border-t flex-shrink-0" style="border-color: var(--border-color);">
+        <!-- [DIUBAH] Dipindahkan ke luar dari kontainer scroll -->
+        <div id="userProfile" class="p-4 border-t flex-shrink-0" style="border-color: var(--border-color); margin-top: auto;">
             <!-- Konten akan diisi oleh JavaScript -->
             <div id="loginContainer" class="flex items-center justify-center">
                 <button id="loginBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-all">
@@ -1809,6 +1857,29 @@
 </div>
 <!-- ▲▲▲ AKHIR DARI MODAL PANGGILAN SUARA ▲▲▲ -->
 
+<!-- ▼▼▼ [BARU] MODAL UNTUK MEMBUAT STORY BARU ▼▼▼ -->
+<div id="createStoryModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center hidden p-4">
+    <div class="modal-content p-6 max-w-sm w-full">
+        <div class="text-center">
+            <h3 class="text-lg font-bold text-gray-800 mb-4" style="color: var(--text-primary);" data-translate-key="createStoryTitle">Buat Story Baru</h3>
+            <p class="text-sm text-gray-500 mb-4" data-translate-key="createStoryDesc">Story akan hilang setelah 1 jam.</p>
+            
+            <textarea id="storyContentInput" data-translate-placeholder="storyPlaceholder" class="w-full settings-input text-sm mb-4" rows="4" maxlength="150"></textarea>
+            <p id="storyCharCounter" class="text-xs text-right text-gray-500 mb-4">0 / 150</p>
+
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="hideCreateStoryModal()" class="settings-btn-action bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm py-2">
+                    <span data-translate-key="buttonCancel">Batal</span>
+                </button>
+                <button id="postStoryBtn" onclick="postStory()" class="settings-btn-action bg-blue-600 text-white hover:bg-blue-700 text-sm py-2">
+                    <span data-translate-key="buttonPost">Posting</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ▲▲▲ AKHIR DARI MODAL STORY ▲▲▲ -->
+
 <!-- ▼▼▼ [BARU] CONTAINER UNTUK NOTIFIKASI ERROR ▼▼▼ -->
 <div id="errorToastContainer"></div>
 
@@ -1826,7 +1897,7 @@
                 </button>
             </div>
         </div>
-        <iframe id="searchFrame" src="about:blank" sandbox="allow-forms allow-scripts allow-popups allow-same-origin allow-popups-to-escape-sandbox"></iframe>
+        <iframe id="searchFrame" src="about:blank" sandbox="allow-forms allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe>
     </div>
 </div>
 <!-- ▲▲▲ AKHIR DARI MODAL PENCARIAN GOOGLE ▲▲▲ -->
@@ -2423,17 +2494,31 @@
     // Inisialisasi Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    const db = firebase.firestore(); // [BARU] Inisialisasi Firestore
     const googleProvider = new firebase.auth.GoogleAuthProvider();
     
     let currentUser = null;
 
     // ▼▼▼ [PERBAIKAN] Fungsi dipindahkan ke luar agar bisa diakses secara global ▼▼▼
      // Fungsi untuk login
-     function signInWithGoogle() {
-       auth.signInWithPopup(googleProvider).catch(error => {
-         console.error("Error saat login dengan Google:", error);
-         alert("Gagal login: " + error.message);
-       });
+     async function signInWithGoogle() {
+       // [FIX PWA iOS] Deteksi apakah aplikasi berjalan dalam mode standalone (PWA di Layar Utama)
+       const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+       if (isInStandaloneMode) {
+         // Untuk PWA di iOS, gunakan redirect karena popup diblokir.
+         console.log("Mode PWA terdeteksi, menggunakan signInWithRedirect.");
+         try {
+           await auth.signInWithRedirect(googleProvider);
+         } catch (error) {
+           console.error("Error saat signInWithRedirect:", error);
+           alert("Gagal memulai proses login: " + error.message);
+         }
+       } else {
+         // Untuk browser biasa, popup lebih baik.
+         console.log("Mode browser terdeteksi, menggunakan signInWithPopup.");
+         auth.signInWithPopup(googleProvider).catch(error => { console.error("Error saat login dengan Google:", error); alert("Gagal login: " + error.message); });
+       }
      }
 
      // Fungsi untuk logout
@@ -2446,14 +2531,28 @@
 
     // Listener untuk status otentikasi
     auth.onAuthStateChanged(user => {
-      currentUser = user;
+      currentUser = user; // [FIX] Pastikan currentUser di-set di sini
+      // [DIUBAH] Panggil listener story setelah status user jelas
+      if (user) {
+        listenForStories();
+      }
       updateUIForAuthState();
+    });
+
+    // [FIX PWA iOS] Tangani hasil redirect setelah login berhasil
+    auth.getRedirectResult().then(result => {
+      if (result && result.user) {
+          console.log("Berhasil mendapatkan hasil redirect login:", result.user.displayName);
+          currentUser = result.user;
+      }
     });
     // ▲▲▲ AKHIR DARI Logika Otentikasi ▲▲▲
 
     // ▼▼▼ [BARU] Sistem Internasionalisasi (i18n) ▼▼▼
+    // Tambahkan terjemahan baru
     const translations = {
         id: {
+            storiesTitle: "Stories", historyTitle: "Riwayat Chat", createStoryTitle: "Buat Story Baru", createStoryDesc: "Story akan hilang setelah 1 jam.", storyPlaceholder: "Apa yang kamu pikirkan?", buttonPost: "Posting", addStory: "Tambah Story",
             newChat: "Mulai Chat Baru", newChatTitle: "Mulai Obrolan Baru", sidebarToggleTitle: "Tampilkan/Sembunyikan Riwayat Obrolan",
             aiName: "Wayan AI", profileHint: "Klik untuk lihat profil", voiceCallTitle: "Mulai Panggilan Suara", settingsTitle: "Buka Pengaturan",
             quickHello: "Halo", quickHowAreYou: "Apa kabar?", quickJoke: "Joke", quickProductive: "Tips Produktif", quickMovie: "Film", quickCoding: "Coding",
@@ -2520,6 +2619,7 @@
             inactiveNotification: "Mau udahan ngobrol sama Wayan?",
             welcomeBackNotification: "Wayan kangen nih! Mau lanjut ngobrol lagi?",
         },
+        // ... tambahkan terjemahan baru ke bahasa lain jika perlu
         en: {
             newChat: "New Chat", newChatTitle: "Start a New Conversation", sidebarToggleTitle: "Show/Hide Chat History",
             aiName: "Wayan AI", profileHint: "Click to see profile", voiceCallTitle: "Start Voice Call", settingsTitle: "Open Settings",
@@ -3859,8 +3959,11 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             loginContainer.classList.remove('hidden');
             userInfoContainer.classList.add('hidden');
         }
-    }
-    // ▼▼▼ [FIX] Menambahkan fungsi toggleSearchMode yang hilang ▼▼▼
+        // [DIUBAH] Render tombol dan story di luar kondisi if/else agar selalu dijalankan
+        renderAddStoryButton();
+        listenForStories();
+    }    
+	// ▼▼▼ [FIX] Menambahkan fungsi toggleSearchMode yang hilang ▼▼▼
     function toggleSearchMode() {
         isSearchModeActive = !isSearchModeActive;
         const btn = document.getElementById('toggleSearchModeBtn');
@@ -5451,6 +5554,132 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
     });
     // ▲▲▲ AKHIR DARI SISTEM PENANGANAN ERROR GLOBAL ▲▲▲
 
+    // ▼▼▼ [BARU] SEMUA LOGIKA UNTUK FITUR STORY ▼▼▼
+    function showCreateStoryModal() {
+        document.getElementById('storyContentInput').value = '';
+        // [FIX] Pastikan counter direset saat modal dibuka
+        const storyContentInput = document.getElementById('storyContentInput');
+        const count = storyContentInput.value.length;
+        document.getElementById('storyCharCounter').textContent = `${count} / 150`;
+
+        document.getElementById('storyCharCounter').textContent = '0 / 150';
+        document.getElementById('createStoryModal').classList.remove('hidden');
+    }
+
+    function hideCreateStoryModal() {
+        document.getElementById('createStoryModal').classList.add('hidden');
+    }
+
+    async function postStory() {
+        if (!currentUser) return;
+        const content = document.getElementById('storyContentInput').value.trim();
+        if (!content) return;
+
+        const postBtn = document.getElementById('postStoryBtn');
+        postBtn.disabled = true;
+        postBtn.querySelector('span').textContent = 'Posting...';
+
+        const now = new Date();
+        const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+
+        const storyData = {
+            userId: currentUser.uid,
+            userName: currentUser.displayName,
+            userAvatar: currentUser.photoURL,
+            content: content,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            expiresAt: firebase.firestore.Timestamp.fromDate(oneHourLater)
+        };
+
+        try {
+            await db.collection('stories').add(storyData);
+            hideCreateStoryModal();
+        } catch (error) {
+            console.error("Gagal memposting story:", error);
+            alert("Gagal memposting story. Coba lagi.");
+        } finally {
+            postBtn.disabled = false;
+            postBtn.querySelector('span').textContent = t('buttonPost');
+        }
+    }
+
+    let unsubscribeStories = null; // [FIX] Variabel untuk menyimpan fungsi unsubscribe
+
+    function listenForStories() {
+        // [FIX] Hentikan listener lama sebelum memulai yang baru untuk mencegah duplikasi
+        if (unsubscribeStories) {
+            unsubscribeStories();
+        }
+
+        // [DIUBAH] Kita akan memfilter berdasarkan `createdAt` bukan `expiresAt`
+        const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000); // Waktu satu jam yang lalu
+        unsubscribeStories = db.collection('stories')
+          .where('createdAt', '>', oneHourAgo) // Hanya ambil story yang dibuat setelah waktu ini
+          .orderBy('createdAt', 'desc')
+          .onSnapshot(snapshot => {
+              const stories = [];
+              snapshot.forEach(doc => {
+                  stories.push({ id: doc.id, ...doc.data() });
+              });
+              renderStories(stories);
+          }, error => {
+              console.error("Gagal mendengarkan stories:", error);
+          });
+    }
+
+    function renderStories(stories) {
+        const listEl = document.getElementById('storiesList');
+        if (!listEl) return;
+        
+        // Simpan tombol "Tambah Story" jika ada
+        const addStoryButton = listEl.querySelector('.add-story-btn');
+        listEl.innerHTML = ''; // Kosongkan daftar
+        if (addStoryButton) {
+            listEl.appendChild(addStoryButton); // Tambahkan kembali
+        }
+
+        stories.forEach(story => {
+            const item = document.createElement('div');
+            item.className = 'story-item';
+            item.innerHTML = `
+                <div class="story-avatar-wrapper">
+                    <img src="${story.userAvatar || 'favicon-96x96.png'}" alt="${story.userName}">
+                </div>
+                <p class="story-username">${story.userName}</p>
+            `;
+            // [DIUBAH] Tambahkan fungsi untuk melihat story saat diklik
+            item.onclick = () => {
+                if (!currentUser) {
+                    signInWithGoogle(); // Jika belum login, minta login
+                } else {
+                    // TODO: Logika untuk menampilkan konten story
+                    alert(`Melihat story dari: ${story.userName}\n\n"${story.content}"`);
+                }
+            };
+            listEl.appendChild(item);
+        });
+    }
+
+    function renderAddStoryButton() {
+        const listEl = document.getElementById('storiesList');
+        if (listEl && !listEl.querySelector('.add-story-btn')) {
+            const addButton = document.createElement('div');
+            addButton.className = 'add-story-btn';
+            addButton.innerHTML = `<div class="story-avatar-wrapper"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg></div><p class="story-username" data-translate-key="addStory">Tambah Story</p>`;
+            // [DIUBAH] Logika tombol disesuaikan dengan status login
+            addButton.onclick = () => {
+                if (currentUser) {
+                    showCreateStoryModal();
+                } else {
+                    signInWithGoogle();
+                }
+            };
+            listEl.prepend(addButton);
+            applyTranslations(settings.language); // [FIX] Terapkan terjemahan ke tombol baru
+        }
+    }
+    // ▲▲▲ AKHIR DARI LOGIKA STORY ▲▲▲
+
     ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal', 'confirmModal'].forEach(id => {
         document.getElementById(id).addEventListener('click', e => {
             if (e.target.id === id) {
@@ -5463,6 +5692,12 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         });
     });
     document.addEventListener('touchstart', function () {}, true);
+
+    // [BARU] Event listener untuk input story
+    document.getElementById('storyContentInput').addEventListener('input', function() {
+        const count = this.value.length;
+        document.getElementById('storyCharCounter').textContent = `${count} / 150`;
+    });
 </script>
 
 <!-- Onboarding Modal & Script (tidak diubah) -->
