@@ -1635,6 +1635,12 @@
         border-radius: 2px;
         overflow: hidden;
     }
+    /* [BARU] Gaya untuk tombol hapus story */
+    #deleteStoryBtn {
+        background-color: rgba(0, 0, 0, 0.2);
+        transition: background-color 0.2s ease;
+        backdrop-filter: blur(5px);
+    }
     /* ▲▲▲ AKHIR DARI GAYA PENAMPIL STORY ▲▲▲ */
   </style>
 </head>
@@ -1943,6 +1949,14 @@
 
     <!-- Konten Utama: Teks Story -->
     <div id="storyViewerContent" class="flex-grow flex items-center justify-center text-center px-4"></div>
+
+    <!-- Footer: Tombol Hapus (hanya muncul untuk pemilik story) -->
+    <div class="story-viewer-footer flex justify-center">
+        <button id="deleteStoryBtn" onclick="confirmDeleteStory()" class="hidden items-center gap-2 px-4 py-2 rounded-full text-white text-sm font-semibold hover:bg-black/40">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            <span>Hapus</span>
+        </button>
+    </div>
 </div>
 <!-- ▲▲▲ AKHIR DARI MODAL STORY VIEWER ▲▲▲ -->
 
@@ -5625,14 +5639,27 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         '#73B193', '#34A853', '#F4B400', '#EA4335', '#4285F4',
         '#9C27B0', '#673AB7', '#3F51B5', '#009688', '#FF5722'
     ];
+    let currentStoryInView = null; // [BARU] Menyimpan data story yang sedang dilihat
 
     function showStoryViewer(story) {
+        currentStoryInView = story; // [BARU] Simpan story yang sedang dilihat
         const modal = document.getElementById('storyViewerModal');
         const randomColor = storyBackgroundColors[Math.floor(Math.random() * storyBackgroundColors.length)];
         modal.style.setProperty('--story-bg-color', randomColor);
         document.getElementById('storyViewerAvatar').src = story.userAvatar || 'favicon-96x96.png';
         document.getElementById('storyViewerUsername').textContent = story.userName;
         document.getElementById('storyViewerContent').textContent = story.content;
+        
+        // [BARU] Tampilkan tombol hapus jika pengguna adalah pemilik story
+        const deleteBtn = document.getElementById('deleteStoryBtn');
+        if (currentUser && currentUser.uid === story.userId) {
+            deleteBtn.classList.remove('hidden');
+            deleteBtn.classList.add('flex');
+        } else {
+            deleteBtn.classList.add('hidden');
+            deleteBtn.classList.remove('flex');
+        }
+
         modal.classList.remove('hidden');
     }
 
@@ -5652,6 +5679,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
     }
 
     function hideStoryViewer() {
+        currentStoryInView = null; // [BARU] Reset saat modal ditutup
         document.getElementById('storyViewerModal').classList.add('hidden');
     }
 
@@ -5688,6 +5716,31 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         }
     }
 
+    // [BARU] Fungsi untuk konfirmasi dan penghapusan story
+    async function confirmDeleteStory() {
+        if (!currentStoryInView) return;
+
+        const confirmed = await showConfirmModal({
+            title: "Hapus Story?",
+            message: "Story ini akan dihapus secara permanen.",
+            confirmText: "Hapus",
+            cancelText: "Batal"
+        });
+
+        if (confirmed) {
+            deleteStory(currentStoryInView.id);
+        }
+    }
+
+    async function deleteStory(storyId) {
+        try {
+            await db.collection('stories').doc(storyId).delete();
+            hideStoryViewer(); // Tutup viewer setelah berhasil dihapus
+        } catch (error) {
+            console.error("Gagal menghapus story:", error);
+            alert("Gagal menghapus story. Coba lagi.");
+        }
+    }
     let unsubscribeStories = null; // [FIX] Variabel untuk menyimpan fungsi unsubscribe
 
     function listenForStories() {
