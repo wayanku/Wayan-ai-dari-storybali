@@ -5770,10 +5770,32 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
 
     // ▲▲▲ AKHIR DARI EVENT LISTENER BARU ▲▲▲
 
-    ['profileModal', 'imagePreviewModal', 'settingsModal', 'searchModal'].forEach(id => {
-        // ... (kode event listener modal yang ada tetap sama)
-    });
+    // ▼▼▼ [BARU] Logika untuk memperbarui Service Worker secara otomatis ▼▼▼
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration().then(reg => {
+            if (reg) {
+                reg.addEventListener('updatefound', () => {
+                    const newWorker = reg.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            // Service worker baru sedang menunggu untuk aktif.
+                            console.log('Pembaruan tersedia! Memuat ulang halaman...');
+                            // Kirim pesan ke service worker baru untuk mengambil alih.
+                            newWorker.postMessage({ type: 'SKIP_WAITING' });
+                        }
+                    });
+                });
 
+                // [BARU] Listener untuk memastikan halaman dimuat ulang setelah SW baru aktif
+                let refreshing;
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (refreshing) return;
+                    window.location.reload();
+                    refreshing = true;
+                });
+            }
+        });
+    }
     // ▼▼▼ [BARU] SISTEM PENANGANAN ERROR GLOBAL ▼▼▼
     function showErrorToast(message, source, lineno, colno, error) {
         const container = document.getElementById('errorToastContainer');
