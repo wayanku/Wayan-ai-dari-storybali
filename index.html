@@ -2623,6 +2623,19 @@
     const db = firebase.firestore(); // [BARU] Inisialisasi Firestore
     const googleProvider = new firebase.auth.GoogleAuthProvider();
 
+    // ▼▼▼ TAMBAHKAN BARIS DI BAWAH INI ▼▼▼
+    auth.tenantId = null; // Pastikan tidak ada tenant ID yang mengganggu
+    auth.languageCode = 'id'; // Opsional, tapi bagus untuk konsistensi
+    auth.useDeviceLanguage();
+
+    // INI ADALAH BARIS KUNCINYA:
+    // Memberitahu Firebase untuk menggunakan domain utama kita sebagai domain otentikasi.
+    // Ini mencegah masalah "bounce tracking" yang disebabkan oleh redirect ke domain firebaseapp.com.
+    if (!auth.authDomain) {
+      auth.authDomain = 'wayanku.github.io';
+    }
+    // ▲▲▲ AKHIR DARI KODE YANG DITAMBAHKAN ▲▲▲
+
     // ▼▼▼ TAMBAHKAN BLOK KODE DI BAWAH INI ▼▼▼
     // Memaksa Firebase untuk menggunakan penyimpanan lokal yang lebih persisten.
     // Ini membantu melawan fitur pembersihan data otomatis oleh browser.
@@ -5843,7 +5856,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         postBtn.querySelector('span').textContent = 'Posting...';
 
         const now = new Date();
-        const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+        const twentyFourHoursLater = new Date(now.getTime() + 24 * 60 * 60 * 1000); // [DIUBAH] Durasi story menjadi 24 jam
 
         const storyData = {
             userId: currentUser.uid,
@@ -5851,7 +5864,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
             userAvatar: currentUser.photoURL,
             content: content,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            expiresAt: firebase.firestore.Timestamp.fromDate(oneHourLater)
+            expiresAt: firebase.firestore.Timestamp.fromDate(twentyFourHoursLater)
         };
 
         try {
