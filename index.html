@@ -1540,6 +1540,10 @@
         width: 60px;
         text-align: center;
         cursor: pointer;
+        /* [FIX] Menambahkan flexbox untuk menyejajarkan item secara vertikal */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
     .story-avatar-wrapper {
         width: 56px;
@@ -1559,7 +1563,13 @@
     html.dark .add-story-btn .story-username {
         color: var(--text-secondary);
     }
-    .story-item .story-username { font-size: 0.7rem; color: var(--text-secondary); line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .story-item .story-username, .add-story-btn .story-username { 
+        font-size: 0.7rem; 
+        color: var(--text-secondary); 
+        line-height: 1.2; 
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
+        height: 1.4rem; /* [FIX] Memberikan tinggi tetap untuk 2 baris teks (0.7rem * 2) */
+    }
     .add-story-btn .story-avatar-wrapper { background: var(--bg-tertiary); border: 2px dashed var(--border-color); padding: 0; display: flex; align-items: center; justify-content: center; }
     .add-story-btn .story-avatar-wrapper svg { color: var(--text-secondary); }
     /* ▲▲▲ AKHIR DARI GAYA STORY ▲▲▲ */
@@ -2649,28 +2659,26 @@
 
      // Fungsi untuk logout
      function signOut() {
-       auth.signOut().catch(error => {
-         console.error("Error saat logout:", error);
-       });
+        auth.signOut().catch(error => {
+            console.error("Error saat logout:", error);
+        });
      }
     // ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲
 
     // Listener untuk status otentikasi
     auth.onAuthStateChanged(user => {
       currentUser = user; // [FIX] Pastikan currentUser di-set di sini
-      // [DIUBAH] Panggil listener story setelah status user jelas
-      if (user) {
-        listenForStories();
-      }
       updateUIForAuthState();
     });
 
     // [FIX PWA iOS] Tangani hasil redirect setelah login berhasil
     auth.getRedirectResult().then(result => {
-      if (result && result.user) {
-          console.log("Berhasil mendapatkan hasil redirect login:", result.user.displayName);
-          currentUser = result.user;
-      }
+        if (result && result.user) {
+            console.log("Berhasil mendapatkan hasil redirect login:", result.user.displayName);
+            // Tidak perlu set currentUser di sini karena onAuthStateChanged akan menanganinya.
+            // Cukup pastikan UI diperbarui.
+            updateUIForAuthState();
+        }
     });
     // ▲▲▲ AKHIR DARI Logika Otentikasi ▲▲▲
 
@@ -4087,7 +4095,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         }
         // [DIUBAH] Render tombol dan story di luar kondisi if/else agar selalu dijalankan
         renderAddStoryButton();
-        listenForStories();
+        listenForStories(); // [FIX] Panggil listener story di luar kondisi login agar semua bisa melihat.
     }    
 	// ▼▼▼ [FIX] Menambahkan fungsi toggleSearchMode yang hilang ▼▼▼
     function toggleSearchMode() {
