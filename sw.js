@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wayan-ai-cache-v10'; // [PENTING] Naikkan versi cache untuk menerapkan perubahan
+const CACHE_NAME = 'wayan-ai-cache-v11'; // [PENTING] Naikkan versi cache untuk menerapkan perubahan
 const OFFLINE_URL = 'offline.html';
 
 // Daftar aset inti yang akan di-cache saat instalasi
@@ -12,7 +12,7 @@ const URLS_TO_CACHE = [
   'favicon.ico',
   'apple-touch-icon.png',
   'site.webmanifest',
-  '/web-app-manifest-512x512.png', // [DIUBAH] Menggunakan ikon dari manifest
+  'web-app-manifest-512x512.png', // [DIUBAH] Menggunakan path relatif
   'https://cdn.tailwindcss.com', // This is the correct URL as used in index.html
   'https://cdn.jsdelivr.net/npm/marked/marked.min.js',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
