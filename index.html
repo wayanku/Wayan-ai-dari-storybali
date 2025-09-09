@@ -1202,7 +1202,7 @@
         width: 15%;
         aspect-ratio: 1 / 1;
         border-radius: 50%; /* [DIUBAH] Menggunakan ikon dari manifest */
-        background-image: url('/web-app-manifest-512x512.png');
+        background-image: url('web-app-manifest-512x512.png');
         background-size: cover;
         flex-shrink: 0;
     }
@@ -1774,7 +1774,7 @@
                         </button>
                         <div class="flex items-center space-x-3">
                             <div class="ai-avatar w-12 h-12 flex-shrink-0 flex items-center justify-center overflow-hidden relative cursor-pointer" onclick="showProfileModal()">
-                                <img src="/web-app-manifest-512x512.png" alt="StoryBali"
+                                <img src="web-app-manifest-512x512.png" alt="StoryBali"
                                      class="w-full h-full object-cover">
                             </div>
                             <div>
@@ -1798,12 +1798,12 @@
             <div id="chatMessages" class="flex-1 overflow-y-auto p-4 chat-messages">
                  <!-- Typing Indicator will be added here by JS -->
                  <div id="typingIndicator" class="typing-indicator items-start space-x-3">
-                    <div onclick="showProfileModal()" class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden cursor-pointer"><img src="/web-app-manifest-512x512.png" alt="StoryBali" class="w-full h-full object-cover"></div>
+                    <div onclick="showProfileModal()" class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden cursor-pointer"><img src="web-app-manifest-512x512.png" alt="StoryBali" class="w-full h-full object-cover"></div>
                     <div class="typing-bubble"><div class="flex space-x-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
                 </div>
                 <!-- Image Processing Indicator -->
                 <div id="imageProcessingIndicator" class="typing-indicator items-start space-x-3">
-                    <div onclick="showProfileModal()" class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden cursor-pointer"><img src="/web-app-manifest-512x512.png" alt="StoryBali" class="w-full h-full object-cover"></div>
+                    <div onclick="showProfileModal()" class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden cursor-pointer"><img src="web-app-manifest-512x512.png" alt="StoryBali" class="w-full h-full object-cover"></div>
                     <div class="typing-bubble flex items-center">
                         <div class="flex space-x-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
                         <span class="ml-2 text-sm" style="color: var(--text-secondary);" data-translate-key="imageProcessing">Menganalisis gambar...</span>
@@ -1934,7 +1934,7 @@
     <div class="w-full text-center text-white">
         <div class="relative inline-block">
             <div class="call-avatar-container w-32 h-32 rounded-full p-1 mx-auto mb-4" style="border: 3px solid rgba(255,255,255,0.5);">
-                <img src="/web-app-manifest-512x512.png" alt="Wayan AI Avatar" class="w-full h-full object-cover rounded-full">
+                <img src="web-app-manifest-512x512.png" alt="Wayan AI Avatar" class="w-full h-full object-cover rounded-full">
             </div>
             <!-- [BARU] Visualizer Suara -->
             <div id="callVisualizer" class="absolute inset-0 rounded-full border-2 border-blue-400 opacity-0 transition-all duration-500" style="animation: call-visualizer-pulse 2s infinite ease-out;"></div>
@@ -2147,7 +2147,7 @@
             
             <!-- Avatar -->
             <div class="w-24 h-24 mx-auto mb-4 overflow-hidden profile-avatar-border shadow-lg">
-                <img src="/web-app-manifest-512x512.png" alt="StoryBali" class="w-full h-full object-cover">
+                <img src="web-app-manifest-512x512.png" alt="StoryBali" class="w-full h-full object-cover">
             </div>
             
             <!-- Name & Title -->
@@ -4432,7 +4432,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             messageDiv.innerHTML = `
                 <div class="flex items-center space-x-3 mb-2">
                     <div onclick="showProfileModal()" class="ai-avatar w-8 h-8 flex-shrink-0 flex items-center justify-center overflow-hidden cursor-pointer">
-                        <img src="/web-app-manifest-512x512.png" alt="Wayan AI" class="w-full h-full object-cover">
+                        <img src="web-app-manifest-512x512.png" alt="Wayan AI" class="w-full h-full object-cover">
                     </div>
                     <div class="font-bold text-sm" style="color: var(--text-primary);">Wayan AI</div>
                 </div>
@@ -4527,7 +4527,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             messageDiv.innerHTML = `
                 <div class="flex items-center space-x-3 mb-2">
                     <div onclick="showProfileModal()" class="ai-avatar w-8 h-8 flex-shrink-0 flex items-center justify-center overflow-hidden cursor-pointer">
-                        <img src="/web-app-manifest-512x512.png" alt="Wayan AI" class="w-full h-full object-cover">
+                        <img src="web-app-manifest-512x512.png" alt="Wayan AI" class="w-full h-full object-cover">
                     </div>
                     <div class="font-bold text-sm" style="color: var(--text-primary);">Wayan AI</div>
                 </div>
@@ -6049,7 +6049,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
             // untuk mencegah error '400 Bad Request' dari Firestore.
             userName: currentUser.displayName || 'Pengguna Anonim',
             // Sediakan URL gambar placeholder jika pengguna tidak punya foto profil.
-            userAvatar: currentUser.photoURL || '/web-app-manifest-512x512.png',
+            userAvatar: currentUser.photoURL || 'web-app-manifest-512x512.png',
                 viewedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             console.log(`View untuk story ${storyId} oleh ${currentUser.displayName} berhasil dicatat.`);
