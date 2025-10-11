@@ -5112,7 +5112,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
             const currentApiKey = validApiKeys[currentIndex];
             const apiAction = streaming ? 'streamGenerateContent' : 'generateContent';
             const sseParam = streaming ? '&alt=sse' : '';
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:${apiAction}?key=${currentApiKey}${sseParam}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:${apiAction}?key=${currentApiKey}${sseParam}`;
             
             console.log(`Mencoba API Key urutan ke-${currentIndex + 1}...`);
 
