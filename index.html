@@ -7,6 +7,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <title>Wayan AI - Asisten Cerdas dari Storybali</title>
   <meta name="google-site-verification" content="g8-s5Mbu3DeWRHtXBt80kARydxNiS1a_XnmNfdyePkI" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta http-equiv="Content-Style-Type" content="text/css">
@@ -37,7 +38,7 @@
   <meta name="Generator" content="Cocoa HTML Writer">
   <meta name="CocoaVersion" content="2299.77">
   <!-- Viewport diubah untuk menangani safe area (home bar) di iOS -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Library untuk memformat Markdown -->
@@ -61,7 +62,7 @@
       --bg-accent: #eef2ff;
       --text-primary: #1e293b;
       --text-secondary: #475569;
-      --text-light: #64748b;
+      --text-light: #526072; /* [FIX] Dibuat lebih gelap untuk kontras */
       --border-color: #e2e8f0;
       --ai-message-bg: #e2e8f0;
       --modal-bg: rgba(255, 255, 255, 0.98);
@@ -81,7 +82,7 @@
       --bg-accent: #3c3c3c;        /* Accent Gray for selections */
       --text-primary: #f5f5f5;      /* Bright White for readability */
       --text-secondary: #a0a0a0;    /* Medium Gray */
-      --text-light: #6b6b6b;        /* Darker Gray */
+      --text-light: #888888;        /* [FIX] Dibuat lebih terang untuk kontras */
       --border-color: #3a3a3a;
       --ai-message-bg: #2c2c2c;
       --modal-bg: rgba(20, 20, 20, 0.95);
@@ -179,7 +180,7 @@
         flex-direction: column;
         transition: transform 0.3s ease-in-out, min-width 0.3s ease-in-out, width 0.3s ease-in-out;
         flex-shrink: 0;
-    }
+    }    
     html.dark #sidebar {
         background-color: rgba(var(--bg-secondary-rgba), 0.45); /* [PERMINTAAN PENGGUNA] Dibuat lebih transparan lagi */
     }
@@ -493,7 +494,7 @@
     /* ▼▼▼ CSS UNTUK WAKTU CHAT ▼▼▼ */
     .chat-timestamp {
         font-size: 0.65rem;
-        color: var(--text-light);
+        color: var(--text-secondary); /* [FIX] Menggunakan warna yang lebih kontras */
         margin-top: 0.5rem;
     }
     .user-message .chat-timestamp {
@@ -597,11 +598,11 @@
     }
     .action-icon-ai:hover {
         color: var(--text-primary);
-        background-color: var(--bg-tertiary);
+        background-color: rgba(var(--text-primary-rgba), 0.1); /* [FIX] Warna hover lebih konsisten */
     }
     /* [BARU] Gaya untuk tombol rating yang aktif */
     .action-icon-ai.rating-active {
-        color: #4f46e5; /* Warna biru/indigo saat aktif */
+        color: #4f46e5 !important; /* Warna biru/indigo saat aktif */
     }
     html.dark .action-icon-ai.rating-active {
         color: #a5b4fc; /* Warna biru lebih terang di mode gelap */
@@ -625,7 +626,7 @@
     }
     .ai-message-footer .action-icon-ai:hover {
         color: var(--text-primary);
-        background-color: rgba(var(--bg-primary-rgba), 0.5);
+        background-color: rgba(var(--text-primary-rgba), 0.15); /* [FIX] Dibuat sedikit lebih terlihat */
     }
     html.dark .ai-message-footer .action-icon-ai:hover {
         background-color: rgba(var(--bg-primary-rgba), 0.2);
@@ -746,7 +747,8 @@
     .action-buttons .left-actions {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        /* [DIUBAH] Menggunakan flex-wrap dan gap yang lebih fleksibel */
+        gap: 0.75rem; /* Mengurangi jarak antar tombol */
     }
     
     .action-btn {
@@ -1399,7 +1401,7 @@
             bottom: 0;
             z-index: 100;
             transform: translateX(-100%);
-            border-right: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color); /* [DIHAPUS] transisi sudah ada di #sidebar */
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             width: 80vw;
             max-width: 280px;
@@ -1410,7 +1412,7 @@
         
         /* [PERMINTAAN PENGGUNA] Memanjangkan bubble AI ke kanan di mobile */
         .message-bubble.ai { max-width: 100%; } 
-        .user-message { max-width: 90%; }
+        .user-message { max-width: 85%; } /* [DIUBAH] Dibuat konsisten dengan desktop */
         .user-message { padding: 0.8rem 1.2rem; }
         .quick-actions { padding: 0.6rem 0.8rem; }
         .quick-action-btn { padding: 0.4rem 0.8rem; font-size: 0.7rem; }
@@ -1767,7 +1769,7 @@
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
                         <button onclick="toggleSidebar()" 
-                                class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 active:bg-opacity-40 transition-all duration-200 ease-in-out" 
+                                class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 active:bg-opacity-40 transition-all duration-200 ease-in-out" aria-label="Tampilkan/Sembunyikan Riwayat Obrolan"
                                 data-translate-title="sidebarToggleTitle">
                              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
                         </button>
@@ -1784,7 +1786,7 @@
                     </div>
                     <div class="flex items-center space-x-2">
                         <button onclick="toggleSettings()"
-                                class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 active:bg-opacity-40 transition-all duration-200 ease-in-out"
+                                class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 active:bg-opacity-40 transition-all duration-200 ease-in-out" aria-label="Buka Pengaturan"
                                 data-translate-title="settingsTitle">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
@@ -1883,37 +1885,37 @@
                     
                     <div class="action-buttons">
                         <div class="left-actions">
-                            <button onclick="triggerImageUpload()" class="action-btn" data-translate-title="uploadImageTitle">
+                            <button onclick="triggerImageUpload()" class="action-btn" aria-label="Unggah Gambar" data-translate-title="uploadImageTitle">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
                             </button>
                             <!-- [BARU] Tombol untuk unggah file -->
-                            <button onclick="triggerFileUpload()" class="action-btn" data-translate-title="uploadFileTitle">
+                            <button onclick="triggerFileUpload()" class="action-btn" aria-label="Unggah File" data-translate-title="uploadFileTitle">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.122 2.122l7.81-7.81"></path></svg>
                             </button>
                             <!-- [DIPINDAHKAN] Tombol Panggilan Suara -->
-                            <button id="startCallBtn" onclick="startCall()" class="action-btn" data-translate-title="voiceCallTitle">
+                            <button id="startCallBtn" onclick="startCall()" class="action-btn" aria-label="Mulai Panggilan Suara" data-translate-title="voiceCallTitle">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                             </button>
                             <!-- Tombol Video dihapus dan diganti dengan Tombol Pencarian Internet -->
-                            <button id="toggleSearchModeBtn" onclick="toggleSearchMode()" class="action-btn" data-translate-title="searchModeTitle">
+                            <button id="toggleSearchModeBtn" onclick="toggleSearchMode()" class="action-btn" aria-label="Mode Pencarian Internet" data-translate-title="searchModeTitle">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <line x1="2" y1="12" x2="22" y2="12"></line>
                                     <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
                                 </svg>
                             </button>
-                            <button onclick="openQuickSettings()" class="action-btn" data-translate-title="quickSettingsTitle">
+                            <button onclick="openQuickSettings()" class="action-btn" aria-label="Pengaturan Cepat" data-translate-title="quickSettingsTitle">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
                             </button>
                         </div>
                         
                         <div class="dynamic-icon-container">
-                            <button id="micBtn" onclick="toggleVoiceMode()" class="dynamic-icon-btn" data-translate-title="voiceModeTitle">
+                            <button id="micBtn" onclick="toggleVoiceMode()" class="dynamic-icon-btn" aria-label="Mode Suara" data-translate-title="voiceModeTitle">
                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
                                 </svg>
                             </button>
-                            <button id="sendBtn" onclick="sendMessage()" class="dynamic-icon-btn send-btn-active" data-translate-title="sendTitle" style="opacity: 0; pointer-events: none;">
+                            <button id="sendBtn" onclick="sendMessage()" class="dynamic-icon-btn send-btn-active" aria-label="Kirim Pesan" data-translate-title="sendTitle" style="opacity: 0; pointer-events: none;">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                                 </svg>
@@ -2093,10 +2095,10 @@
         <div id="searchModalHeader">
             <span id="searchModalTitle" class="text-sm font-semibold" style="color: var(--text-primary);" data-translate-key="searchResultTitle">Hasil Pencarian</span>
             <div class="flex items-center space-x-2">
-                <button onclick="openSearchInNewTab()" class="w-8 h-8 rounded-full flex items-center justify-center modal-close-btn" data-translate-title="searchOpenInNewTabTitle">
+                <button onclick="openSearchInNewTab()" class="w-8 h-8 rounded-full flex items-center justify-center modal-close-btn" aria-label="Buka di Tab Baru" data-translate-title="searchOpenInNewTabTitle">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                 </button>
-                <button onclick="hideSearchModal()" class="w-8 h-8 rounded-full flex items-center justify-center modal-close-btn" data-translate-title="searchCloseTitle">
+                <button onclick="hideSearchModal()" class="w-8 h-8 rounded-full flex items-center justify-center modal-close-btn" aria-label="Tutup Pencarian" data-translate-title="searchCloseTitle">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
@@ -2110,7 +2112,7 @@
 <div id="imagePreviewModal" class="fixed inset-0 modal-overlay z-[110] flex items-center justify-center hidden p-4"> <!-- [FIX] z-index dinaikkan -->
     <div class="modal-content p-6 max-w-sm w-full" id="imagePreviewContent">
         <div class="text-center relative">
-            <button onclick="hideImagePreview()" class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn" data-translate-title="imagePreviewCloseTitle">
+            <button onclick="hideImagePreview()" class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn" aria-label="Tutup Pratinjau Gambar" data-translate-title="imagePreviewCloseTitle">
                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
             <div class="mb-4">
@@ -2132,7 +2134,7 @@
     <!-- [DIUBAH] Tampilan modal profil dirombak total untuk estetika yang lebih baik -->
     <div class="modal-content p-8 max-w-sm w-full" id="profileModalContent">
         <div class="text-center relative">
-            <button onclick="hideProfileModal()" class="absolute -top-3 -right-3 w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn" data-translate-title="profileCloseTitle">
+            <button onclick="hideProfileModal()" class="absolute -top-3 -right-3 w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn" aria-label="Tutup Profil" data-translate-title="profileCloseTitle">
                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
             
@@ -2184,7 +2186,7 @@
             </div>
             <h3 id="settingsModalTitle" class="text-lg font-bold text-gray-800 text-center flex-grow" data-translate-key="settingsHeader">Pengaturan</h3>
             <div class="w-10 h-10 flex items-center justify-end">
-                <button onclick="toggleSettings()" class="w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn" data-translate-title="settingsCloseTitle">
+                <button onclick="toggleSettings()" class="w-8 h-8 rounded-full flex items-center justify-center shadow-lg modal-close-btn" aria-label="Tutup Pengaturan" data-translate-title="settingsCloseTitle">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
@@ -4547,22 +4549,22 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                         <!-- [FIX] Tombol aksi dipindahkan ke dalam gelembung -->
                         <div class="ai-message-footer">
                             ${timeString ? `<div class="chat-timestamp text-xs">${timeString}</div>` : ''}
-                            <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" data-translate-title="copyAnswer">
+                            <button onclick="copyToClipboard(this.closest('.message-bubble').querySelector('.markdown-content').innerText, this)" class="action-icon-ai" aria-label="Salin Jawaban" data-translate-title="copyAnswer">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg>
                             </button>
-                            <button onclick="readAiResponse(this)" class="action-icon-ai" data-translate-title="readAnswer">
+                            <button onclick="readAiResponse(this)" class="action-icon-ai" aria-label="Baca Jawaban" data-translate-title="readAnswer">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>
                             </button>
-                            <button onclick="handleRating(this, 'like')" class="action-icon-ai" data-translate-title="likeResponse">
+                            <button onclick="handleRating(this, 'like')" class="action-icon-ai" aria-label="Suka jawaban ini" data-translate-title="likeResponse">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>
                             </button>
-                            <button onclick="handleRating(this, 'dislike')" class="action-icon-ai" data-translate-title="dislikeResponse">
+                            <button onclick="handleRating(this, 'dislike')" class="action-icon-ai" aria-label="Tidak suka jawaban ini" data-translate-title="dislikeResponse">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14-.47-.14-.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41-.17-.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
                             </button>
-                            <button onclick="regenerateResponse(this)" class="action-icon-ai" data-translate-title="regenerateResponse">
+                            <button onclick="regenerateResponse(this)" class="action-icon-ai" aria-label="Buat ulang jawaban" data-translate-title="regenerateResponse">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
                             </button>
-                            <button onclick="shareResponse(this)" class="action-icon-ai" data-translate-title="shareResponse">
+                            <button onclick="shareResponse(this)" class="action-icon-ai" aria-label="Bagikan jawaban" data-translate-title="shareResponse">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3z"></path></svg>
                             </button>
                         </div>
@@ -6404,7 +6406,7 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
 <div id="onboardingModal" class="fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 hidden">
   <div class="modal-container">
     <div id="onboardingSlides"></div>
-    <div class="modal-footer flex items-center justify-between px-5 py-3">
+    <div class="modal-footer flex items-center justify-between px-5 py-3" style="color: var(--text-secondary);">
       <button id="skipOnboardingBtn" class="text-xs font-medium text-gray-500 hover:text-indigo-500 transition-colors" data-translate-key="onboardingSkip">Lewati</button>
       <div class="flex space-x-1.5" id="onboardingDots"></div>
       <button id="nextOnboardingBtn" class="text-sm bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-2 rounded-lg shadow-md" data-translate-key="onboardingNext">Selanjutnya</button>
@@ -6486,7 +6488,7 @@ html.dark .onboarding-slide .icon-wrapper svg {
 #onboardingModal .modal-footer { background-color: var(--bg-tertiary); border-top: 1px solid var(--border-color); }
 #nextOnboardingBtn { transition: all 0.2s ease; }
 #nextOnboardingBtn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3); }
-
+    html.dark #skipOnboardingBtn { color: var(--text-secondary); } /* [FIX] Kontras tombol skip di mode gelap */
 @keyframes onboarding-pop-in { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 @keyframes onboarding-item-fade-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 /* ▲▲▲ AKHIR DARI PERBAIKAN ONBOARDING ▲▲▲ */</style>
