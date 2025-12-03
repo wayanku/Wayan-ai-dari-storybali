@@ -3274,6 +3274,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     let isListeningForCall = false; // Flag untuk status mikrofon
     let userCallState = 'idle'; // State untuk alur iOS: 'idle', 'listening', 'transcribed'
 
+    let modelCache = {}; // [BARU] Cache untuk menyimpan model yang valid per API Key
     const DEFAULT_API_KEY_1 = 'AIzaSyClcqSMaHiXMZI4qYlTySqC3I3hWWg8H9s';
     const DEFAULT_API_KEY_2 = 'AIzaSyB8OPwzNAAyO1nWd9g185rx4YK3WIJy_Fw';
     const DEFAULT_API_KEY_3 = 'AIzaSyAYzvB1mfVdjrBtXY2n4-UUzCH5juQt8rU';
@@ -5077,6 +5078,43 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         return `${coreIntelligenceInstruction} ${wayanProfile} ${roleInstruction} ${personaRule} ${baseInstructions}`;
     }
 
+    // [BARU] Fungsi untuk mengambil model terbaik yang tersedia untuk sebuah API key
+    async function getBestModelForKey(apiKey) {
+        const modelsUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
+        try {
+            const response = await fetch(modelsUrl);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error?.message || "Gagal mengambil daftar model dari Google.");
+            }
+
+            // Filter model yang mendukung 'generateContent' (model chat)
+            const validModels = data.models.filter(m =>
+                m.supportedGenerationMethods && m.supportedGenerationMethods.includes("generateContent")
+            );
+
+            if (validModels.length === 0) {
+                throw new Error("API Key valid, tapi tidak ada model chat yang tersedia untuk akun ini.");
+            }
+
+            // Prioritaskan model 'flash' karena lebih cepat dan efisien
+            const preferredModel = validModels.find(m => m.name.includes('flash'));
+            if (preferredModel) {
+                console.log(`Model terpilih (preferensi 'flash'): ${preferredModel.name}`);
+                return preferredModel.name; // Mengembalikan nama lengkap, misal: "models/gemini-1.5-flash-latest"
+            }
+
+            // Jika tidak ada 'flash', gunakan model valid pertama yang ditemukan
+            const fallbackModel = validModels[0];
+            console.log(`Model terpilih (fallback): ${fallbackModel.name}`);
+            return fallbackModel.name;
+
+        } catch (error) {
+            throw error; // Lemparkan error agar bisa ditangkap oleh makeApiRequest
+        }
+    }
+
     async function makeApiRequest(payload, signal = null, streaming = true) {
         if (apiKeys.length === 0) loadApiKeys();
         const validApiKeys = apiKeys.filter(key => key && key.trim() !== '');
@@ -5099,10 +5137,24 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         for (let i = 0; i < validApiKeys.length; i++) {
             const currentIndex = (startingIndex + i) % validApiKeys.length;
             const currentApiKey = validApiKeys[currentIndex];
-            const apiAction = streaming ? 'streamGenerateContent' : 'generateContent';
-            const sseParam = streaming ? '&alt=sse' : '';
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:${apiAction}?key=${currentApiKey}${sseParam}`;
-            
+
+            // ▼▼▼ [LOGIKA BARU] Cek model dari cache atau fetch baru ▼▼▼
+            let modelToUse = modelCache[currentApiKey];
+            if (!modelToUse) {
+                try {
+                    console.log(`Mencari model untuk API Key urutan ke-${currentIndex + 1}...`);
+                    modelToUse = await getBestModelForKey(currentApiKey);
+                    modelCache[currentApiKey] = modelToUse; // Simpan ke cache
+                } catch (modelError) {
+                    console.warn(`Gagal mendapatkan model untuk API Key urutan ke-${currentIndex + 1}: ${modelError.message}. Mencoba kunci berikutnya...`);
+                    continue; // Lanjut ke API key berikutnya
+                }
+            }
+            // ▲▲▲ AKHIR DARI LOGIKA BARU ▲▲▲
+
+            const apiAction = streaming ? 'streamGenerateContent' : 'generateContent'; // Nama model sudah termasuk dalam modelToUse
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${modelToUse}:${apiAction}?key=${currentApiKey}`;
+
             console.log(`Mencoba API Key urutan ke-${currentIndex + 1}...`);
 
             try {
