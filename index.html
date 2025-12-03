@@ -2635,6 +2635,10 @@
                             <label class="block text-xs text-gray-500 mb-1">API Key Gemini 5 (Cadangan)</label>
                             <input type="password" id="apiKey5" placeholder="Opsional" class="settings-input w-full">
                         </div>
+                         <div>
+                            <label class="block text-xs text-gray-500 mb-1">API Key Gemini 6 (Cadangan)</label>
+                            <input type="password" id="apiKey6" placeholder="Opsional" class="settings-input w-full">
+                        </div>
                         <div class="pt-2 border-t border-gray-200 dark:border-gray-700 mt-4">
                             <label class="block text-xs text-gray-500 mb-1">API Key ElevenLabs (Untuk Suara)</label>
                             <input type="password" id="elevenLabsApiKey" placeholder="masukkan api elevenlabs" class="settings-input w-full">
@@ -3280,6 +3284,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     const DEFAULT_API_KEY_3 = 'AIzaSyAYzvB1mfVdjrBtXY2n4-UUzCH5juQt8rU';
     const DEFAULT_API_KEY_4 = 'AIzaSyCkkekhKcQzFUUjx8ZcuqEYyqRde1ZDJcU';
     const DEFAULT_API_KEY_5 = 'AIzaSyCV-88PX1_tKh5VBjki9VeyY8gAH5bpZ0o';
+    const DEFAULT_API_KEY_6 = 'AIzaSyDZpoeHa12J64F_ONhmH1vDrsqW_KVhAUc';
     const DEFAULT_ELEVENLABS_API_KEY = '_51cca647c5de2291ff8247aad3561325390e4ef1e3166918';
     
     async function getUserIP() {
@@ -3392,7 +3397,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         switchSettingsTab('general');
     }
     function saveApiKeys() {
-        const geminiKeysToSave = Array.from({length: 5}, (_, i) => document.getElementById(`apiKey${i + 1}`).value.trim());
+        const geminiKeysToSave = Array.from({length: 6}, (_, i) => document.getElementById(`apiKey${i + 1}`).value.trim());
         localStorage.setItem('storybaliApiKeys', JSON.stringify(geminiKeysToSave));
         
         const elevenLabsKey = document.getElementById('elevenLabsApiKey').value.trim();
@@ -3409,7 +3414,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
 
     function loadApiKeys() {
         const savedGeminiKeys = localStorage.getItem('storybaliApiKeys');
-        const defaultGeminiKeys = [DEFAULT_API_KEY_1, DEFAULT_API_KEY_2, DEFAULT_API_KEY_3, DEFAULT_API_KEY_4, DEFAULT_API_KEY_5];
+        const defaultGeminiKeys = [DEFAULT_API_KEY_1, DEFAULT_API_KEY_2, DEFAULT_API_KEY_3, DEFAULT_API_KEY_4, DEFAULT_API_KEY_5, DEFAULT_API_KEY_6];
         apiKeys = savedGeminiKeys ? JSON.parse(savedGeminiKeys) : defaultGeminiKeys;
         apiKeys.forEach((key, i) => {
             const inputElement = document.getElementById(`apiKey${i + 1}`);
@@ -5115,6 +5120,26 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         }
     }
 
+    // ▼▼▼ [PERBAIKAN] Logika Pergiliran Kunci (Round-Robin) ▼▼▼
+    function getNextApiKey() {
+        if (apiKeys.length === 0) loadApiKeys();
+        const validApiKeys = apiKeys.filter(key => key && key.trim() !== '');
+        if (validApiKeys.length === 0) {
+            throw new Error("Tidak ada API Key yang valid yang dikonfigurasi.");
+        }
+
+        // 1. Ambil indeks terakhir, default ke -1 jika belum ada.
+        const lastKeyIndexStr = localStorage.getItem('lastKeyIndex');
+        const lastKeyIndex = lastKeyIndexStr ? parseInt(lastKeyIndexStr) : -1;
+
+        // 2. Tentukan indeks berikutnya dan simpan.
+        const nextIndex = (lastKeyIndex + 1) % validApiKeys.length;
+        localStorage.setItem('lastKeyIndex', nextIndex);
+
+        // 3. Kembalikan API key yang sesuai.
+        return validApiKeys[nextIndex];
+    }
+
     async function makeApiRequest(payload, signal = null, streaming = true) {
         if (apiKeys.length === 0) loadApiKeys();
         const validApiKeys = apiKeys.filter(key => key && key.trim() !== '');
@@ -5123,75 +5148,48 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
             throw new Error("Tidak ada API Key yang valid yang dikonfigurasi.");
         }
     
-        let startingIndex;
-        const lastKeyIndexStr = localStorage.getItem('lastKeyIndex');
-    
-        if (lastKeyIndexStr === null) {
-            console.log("Pengguna baru terdeteksi. Memilih API Key awal secara acak.");
-            startingIndex = Math.floor(Math.random() * validApiKeys.length);
-        } else {
-            const lastKeyIndex = parseInt(lastKeyIndexStr);
-            startingIndex = (lastKeyIndex + 1) % validApiKeys.length;
-        }
-    
-        for (let i = 0; i < validApiKeys.length; i++) {
-            const currentIndex = (startingIndex + i) % validApiKeys.length;
-            const currentApiKey = validApiKeys[currentIndex];
+        // [DIUBAH] Loop diganti dengan percobaan tunggal menggunakan kunci yang sudah digilir.
+        // Jika gagal, error akan dilempar dan ditangani oleh fungsi pemanggil.
+        const currentApiKey = getNextApiKey();
 
-            // ▼▼▼ [LOGIKA BARU] Cek model dari cache atau fetch baru ▼▼▼
-            let modelToUse = modelCache[currentApiKey];
-            if (!modelToUse) {
-                try {
-                    console.log(`Mencari model untuk API Key urutan ke-${currentIndex + 1}...`);
-                    modelToUse = await getBestModelForKey(currentApiKey);
-                    modelCache[currentApiKey] = modelToUse; // Simpan ke cache
-                } catch (modelError) {
-                    console.warn(`Gagal mendapatkan model untuk API Key urutan ke-${currentIndex + 1}: ${modelError.message}. Mencoba kunci berikutnya...`);
-                    continue; // Lanjut ke API key berikutnya
-                }
-            }
-            // ▲▲▲ AKHIR DARI LOGIKA BARU ▲▲▲
-
-            const apiAction = streaming ? 'streamGenerateContent' : 'generateContent'; // Nama model sudah termasuk dalam modelToUse
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${modelToUse}:${apiAction}?key=${currentApiKey}`;
-
-            console.log(`Mencoba API Key urutan ke-${currentIndex + 1}...`);
-
+        // Cek model dari cache atau fetch baru
+        let modelToUse = modelCache[currentApiKey];
+        if (!modelToUse) {
             try {
-                const fetchOptions = {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                };
-                if (signal) {
-                    fetchOptions.signal = signal;
-                }
-    
-                const response = await fetch(apiUrl, fetchOptions);
-    
-                if (response.ok) {
-                    console.log(`Berhasil menggunakan API Key urutan ke-${currentIndex + 1} (${currentApiKey.substring(0, 4)}...${currentApiKey.substring(currentApiKey.length - 4)})`);
-                    localStorage.setItem('lastKeyIndex', currentIndex);
-                    return response;
-                }
-    
-                if (response.status === 429) {
-                    console.warn(`API Key urutan ke-${currentIndex + 1} (${currentApiKey.substring(0, 4)}...) telah mencapai limit. Mencoba kunci berikutnya...`);
-                    // Tidak perlu throw error, biarkan loop berlanjut
-                } else {
-                    const errorBody = await response.text();
-                    console.error(`API Key urutan ke-${currentIndex + 1} gagal dengan status ${response.status}. Body:`, errorBody);
-                    // Jangan throw error di sini, biarkan loop mencoba kunci berikutnya
-                }
-    
-            } catch (error) {
-                if (error.name === 'AbortError') throw error; // Jika user membatalkan, hentikan proses
-                console.error(`Gagal dengan API Key urutan ke-${currentIndex + 1} (${currentApiKey.substring(0, 4)}...):`, error.message);
-                // Cukup log error dan biarkan loop melanjutkan ke kunci berikutnya
+                console.log(`Mencari model untuk API Key yang digunakan...`);
+                modelToUse = await getBestModelForKey(currentApiKey);
+                modelCache[currentApiKey] = modelToUse; // Simpan ke cache
+            } catch (modelError) {
+                console.error(`Gagal mendapatkan model untuk API Key: ${modelError.message}`);
+                throw new Error(`Gagal mendapatkan model yang valid untuk API Key yang sedang digunakan. ${modelError.message}`);
             }
         }
-    
-        throw new Error("Semua API Key yang tersedia telah mencapai limit atau gagal merespons.");
+
+        const apiAction = streaming ? 'streamGenerateContent' : 'generateContent';
+        const sseParam = streaming ? '?alt=sse' : '';
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${modelToUse}:${apiAction}${sseParam}&key=${currentApiKey}`;
+
+        console.log(`Mencoba API Key (${currentApiKey.substring(0, 4)}...${currentApiKey.substring(currentApiKey.length - 4)})...`);
+
+        const fetchOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        };
+        if (signal) {
+            fetchOptions.signal = signal;
+        }
+
+        const response = await fetch(apiUrl, fetchOptions);
+
+        if (response.ok) {
+            console.log(`Berhasil menggunakan API Key (${currentApiKey.substring(0, 4)}...${currentApiKey.substring(currentApiKey.length - 4)})`);
+            return response;
+        }
+
+        // Jika tidak OK, lemparkan error agar bisa ditangani oleh fungsi pemanggil (sendMessage)
+        const errorBody = await response.json();
+        throw new Error(errorBody.error?.message || `Request gagal dengan status ${response.status}`);
     }
 
     async function sendMessage() {
