@@ -1,20 +1,16 @@
-const CACHE_NAME = 'wayan-ai-cache-v20'; // [PENTING] Naikkan versi cache untuk menerapkan perubahan
+const CACHE_NAME = 'wayan-ai-cache-v20'; // [PENTING] Versi cache dinaikkan
 const OFFLINE_URL = 'offline.html';
 
 // Daftar aset inti yang akan di-cache saat instalasi
 const URLS_TO_CACHE = [
   '/',
   'index.html',
-  // 'style.css' tidak ada sebagai file terpisah, jadi saya hapus. CSS ada di dalam index.html
   'offline.html',
   'favicon-96x96.png',
   'favicon.svg',
   'apple-touch-icon.png',
   'site.webmanifest',
   'web-app-manifest-512x512.png',
-  'https://cdn.tailwindcss.com',
-  'https://cdn.jsdelivr.net/npm/marked/marked.min.js',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
 ];
 
 self.addEventListener('install', (event) => {
@@ -51,29 +47,42 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url);
-
-  if (url.hostname.includes('google.com') || url.hostname.includes('gstatic.com') || url.hostname.includes('firebaseapp.com') || url.hostname.includes('firebasestorage.googleapis.com')) {
+  // Abaikan permintaan non-GET dan permintaan ke ekstensi Chrome
+  if (event.request.method !== 'GET' || event.request.url.startsWith('chrome-extension://')) {
     return;
   }
 
-  if (event.request.method === 'GET') {
-    if (url.pathname === '/' || url.pathname.endsWith('/index.html')) {
-      event.respondWith(
-        fetch(event.request)
-          .then(networkResponse => {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
-            return networkResponse;
-          })
-          .catch(() => caches.match(event.request).then(cachedResponse => cachedResponse || caches.match(OFFLINE_URL)))
-      );
-    } else if (event.request.mode === 'navigate') {
-      event.respondWith(fetch(event.request).catch(() => caches.match(OFFLINE_URL)));
-    } else {
-      event.respondWith(
-        caches.match(event.request).then(cachedResponse => {
-          return cachedResponse || fetch(event.request).then(networkResponse => {
+  const url = new URL(event.request.url);
+
+  // [OPTIMASI] Gunakan strategi Stale-While-Revalidate untuk aset utama (HTML)
+  // Ini akan menyajikan dari cache terlebih dahulu (cepat), lalu memperbarui di latar belakang.
+  if (event.request.mode === 'navigate') {
+    event.respondWith((async () => {
+      try {
+        const preloadResponse = await event.preloadResponse;
+        if (preloadResponse) {
+          return preloadResponse;
+        }
+
+        const networkResponse = await fetch(event.request);
+        // Perbarui cache dengan versi baru
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(event.request, networkResponse.clone());
+        return networkResponse;
+      } catch (error) {
+        // Jika jaringan gagal, ambil dari cache
+        console.log('Fetch failed; returning offline page instead.', error);
+        const cache = await caches.open(CACHE_NAME);
+        const cachedResponse = await cache.match(event.request);
+        return cachedResponse || cache.match(OFFLINE_URL);
+      }
+    })());
+  }
+  // [OPTIMASI] Gunakan strategi Cache First untuk aset statis lainnya
+  else if (URLS_TO_CACHE.includes(url.pathname)) {
+    event.respondWith(
+      caches.match(event.request).then(cachedResponse => {
+        return cachedResponse || fetch(event.request).then(networkResponse => {
             return caches.open(CACHE_NAME).then(cache => {
               cache.put(event.request, networkResponse.clone());
               return networkResponse;
@@ -81,8 +90,10 @@ self.addEventListener('fetch', (event) => {
           }).catch(() => new Response('', { status: 503, statusText: 'Service Unavailable' }));
         })
       );
-    }
   }
+
+  // Untuk permintaan lainnya (misal: ke Firebase, Google Fonts, CDN), biarkan browser menanganinya (network-only).
+  // Ini adalah perilaku default, jadi kita tidak perlu menambahkan `return;` secara eksplisit.
 });
 
 let inactivityTimer = null;
