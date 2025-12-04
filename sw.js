@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wayan-ai-cache-v25'; // [PENTING] Versi cache dinaikkan
+const CACHE_NAME = 'wayan-ai-cache-v26'; // [PENTING] Versi cache dinaikkan
 const OFFLINE_URL = 'offline.html';
 
 // Daftar aset inti yang akan di-cache saat instalasi
