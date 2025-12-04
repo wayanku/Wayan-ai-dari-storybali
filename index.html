@@ -40,20 +40,24 @@
   <!-- Viewport diubah untuk menangani safe area (home bar) di iOS -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <!-- ▼▼▼ [OPTIMASI] Pemuatan Font yang Lebih Cepat ▼▼▼ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- ▲▲▲ AKHIR DARI OPTIMASI FONT ▲▲▲ -->
+
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Library untuk memformat Markdown -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
 
   <!-- ▼▼▼ [BARU] Firebase SDK ▼▼▼ -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js" defer></script>
   <!-- ▲▲▲ AKHIR DARI Firebase SDK ▲▲▲ -->
 
   <style>
-    /* [PERMINTAAN PENGGUNA] Mengimpor font 'Inter' agar mirip font iPhone di semua perangkat */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
     /* === CSS VARIABLES UNTUK DARK/LIGHT MODE === */
     :root {
       --bg-primary: #ffffff;
@@ -2687,6 +2691,10 @@
     // ===================================================================================
     // KODE SCRIPT UTAMA (VERSI GABUNGAN DENGAN PERBAIKAN FINAL)
     // ===================================================================================
+    
+    // [FIX] Membungkus semua logika dalam event listener ini untuk memastikan
+    // semua skrip (termasuk Firebase yang di-defer) sudah dimuat sebelum kode ini berjalan.
+    document.addEventListener('DOMContentLoaded', () => {
 
     // ▼▼▼ [BARU] Inisialisasi Firebase & Logika Otentikasi ▼▼▼
     // [DIUBAH] Menggunakan konfigurasi Firebase dari pengguna
@@ -6406,6 +6414,8 @@ document.getElementById('logoutBtn').addEventListener('click', signOut);
         const count = this.value.length;
         document.getElementById('storyCharCounter').textContent = `${count} / 150`;
     });
+    
+    }); // [FIX] Akhir dari event listener DOMContentLoaded
 </script>
 
 <!-- Onboarding Modal & Script (tidak diubah) -->
