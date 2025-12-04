@@ -26,7 +26,7 @@
   <meta property="og:title" content="Wayan AI - Asisten Cerdas dari Storybali">
   <meta property="og:description" content="Ngobrol dengan Wayan AI, asisten AI cerdas berbahasa Indonesia dari Storybali. Siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah.">
   <meta property="og:image" content="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true">
-  <meta property="og:url" content="https://wayanku.github.io/Wayan-ai-dari-storybali/">
+  <meta property="og:url" content="https://wayan-sudiarsana.github.io/Wayan-ai-dari-storybali/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="id_ID">
   <meta name="twitter:card" content="summary_large_image">
@@ -2395,23 +2395,23 @@
             <div id="settings-page-language" class="settings-page">
                 <div class="settings-card">
                     <!-- [DIUBAH] Setiap bahasa memiliki toggle switch sendiri -->
-                    <div class="settings-item" onclick="selectChoice('language', 'id', this.querySelector('input'))">
+                    <div class="settings-item nav-item" onclick="selectChoice('language', 'id', this.querySelector('input'))">
                         <div class="flex items-center space-x-4">
-                            <img src="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" alt="Indonesia Flag" class="w-6 h-auto rounded-sm">
+                            <img src="https://flagcdn.com/w40/id.png" alt="Indonesia Flag" class="w-6 h-auto rounded-sm">
                             <span class="text-sm font-medium text-gray-700" data-translate-key="langIndonesian">Indonesia</span>
                         </div>
                         <input type="radio" name="languageToggle" id="language-id" class="toggle-radio" value="id" onchange="selectChoice('language', this.value, this)" checked>
                     </div>
-                    <div class="settings-item" onclick="selectChoice('language', 'en', this.querySelector('input'))">
+                    <div class="settings-item nav-item" onclick="selectChoice('language', 'en', this.querySelector('input'))">
                         <div class="flex items-center space-x-4">
-                            <img src="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" alt="UK Flag" class="w-6 h-auto rounded-sm">
+                            <img src="https://flagcdn.com/w40/gb.png" alt="UK Flag" class="w-6 h-auto rounded-sm">
                             <span class="text-sm font-medium text-gray-700" data-translate-key="langEnglish">English</span>
                         </div>
                         <input type="radio" name="languageToggle" id="language-en" class="toggle-radio" value="en" onchange="selectChoice('language', this.value, this)" >
                     </div>
-                    <div class="settings-item" onclick="selectChoice('language', 'ja', this.querySelector('input'))">
+                    <div class="settings-item nav-item" onclick="selectChoice('language', 'ja', this.querySelector('input'))">
                         <div class="flex items-center space-x-4">
-                            <img src="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" alt="Japan Flag" class="w-6 h-auto rounded-sm">
+                            <img src="https://flagcdn.com/w40/jp.png" alt="Japan Flag" class="w-6 h-auto rounded-sm">
                             <span class="text-sm font-medium text-gray-700" data-translate-key="langJapanese">日本語</span>
                         </div>
                         <input type="radio" name="languageToggle" id="language-ja" class="toggle-radio" value="ja" onchange="selectChoice('language', this.value, this)" >
@@ -5786,6 +5786,12 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
             settings.fontSize = e.target.value;
             saveSettings();
         });
+
+        function applyFontSize(fontSize) {
+            document.getElementById('chatMessages').style.fontSize = fontSize === 'sm' ? '0.875rem' : fontSize === 'lg' ? '1.125rem' : '1rem';
+            document.getElementById('messageInput').style.fontSize = fontSize === 'sm' ? '0.875rem' : fontSize === 'lg' ? '1.125rem' : '1rem';
+            localStorage.setItem('fontSize', fontSize);
+        }
 
         document.getElementById('animationToggle').addEventListener('change', () => {
             toggleAnimations();
