@@ -4959,18 +4959,25 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let fullResponseText = "";
+            let sentenceBuffer = "";
+            let isFirstChunk = true;
 
             while (true) {
                 const { value, done } = await reader.read();
                 if (done) break;
                 const chunk = decoder.decode(value, { stream: true });
                 const lines = chunk.split('\n');
+
                 for (const line of lines) {
                     if (line.startsWith('data: ')) {
                         try {
                             const data = JSON.parse(line.substring(6));
                             if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
                                 const textPart = data.candidates[0].content.parts[0].text;
+                                if (isFirstChunk && contentEl.innerHTML.endsWith('█')) {
+                                    contentEl.innerHTML = contentEl.innerHTML.slice(0, -1);
+                                    isFirstChunk = false;
+                                }
                                 fullResponseText += textPart;
                                 contentEl.innerHTML = marked.parse(fullResponseText + '█');
                                 scrollToBottom();
@@ -4981,7 +4988,10 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             }
 
             let [mainAnswer, suggestionsPart] = fullResponseText.split('[SUGGESTIONS]');
+            // Hapus kursor di akhir dan parse markdown untuk tampilan final
             contentEl.innerHTML = marked.parse(mainAnswer.trim());
+            
+            // Tambahkan kembali tombol salin ke blok kode setelah render final
             enhanceCodeBlocks(contentEl);
             if (suggestionsEl && suggestionsPart) {
                 suggestionsEl.innerHTML = renderSuggestions(suggestionsPart.split('|').map(s => s.trim()).filter(Boolean));
@@ -5357,6 +5367,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let fullResponseText = "";
+            let sentenceBuffer = "";
 
             while (true) {
                 const { value, done } = await reader.read();
@@ -5373,7 +5384,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
                             if (data.candidates && data.candidates[0].content.parts[0].text) {
                                 const textPart = data.candidates[0].content.parts[0].text;
                                 fullResponseText += textPart;
-                                contentEl.innerHTML = marked.parse(fullResponseText + '█'); // Tambahkan kursor berkedip
+                                contentEl.innerHTML = marked.parse(fullResponseText + '█');
                                 scrollToBottom();
                             }
                         } catch (e) { /* Abaikan error parsing JSON yang tidak lengkap */ }
@@ -5436,27 +5447,39 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let fullResponseText = "";
+            let sentenceBuffer = "";
+            let isFirstChunk = true;
 
             while (true) {
                 const { value, done } = await reader.read();
                 if (done) break;
                 const chunk = decoder.decode(value, { stream: true });
                 const lines = chunk.split('\n');
+
                 for (const line of lines) {
                     if (line.startsWith('data: ')) {
                         try {
                             const data = JSON.parse(line.substring(6));
                             if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
                                 const textPart = data.candidates[0].content.parts[0].text;
+                                
+                                // Jika ini adalah chunk pertama, hapus kursor dari bubble sebelumnya
+                                if (isFirstChunk && contentEl.innerHTML.endsWith('█')) {
+                                    contentEl.innerHTML = contentEl.innerHTML.slice(0, -1);
+                                    isFirstChunk = false;
+                                }
+
                                 fullResponseText += textPart;
+                                // Perbarui bubble dengan teks yang sudah di-parse + kursor
                                 contentEl.innerHTML = marked.parse(fullResponseText + '█');
+                                
+                                // Scroll ke bawah untuk menjaga pesan tetap terlihat
                                 scrollToBottom();
                             }
                         } catch (e) {}
                     }
                 }
             }
-
             let [mainAnswer, suggestionsPart] = fullResponseText.split('[SUGGESTIONS]');
             contentEl.innerHTML = marked.parse(mainAnswer.trim());
             enhanceCodeBlocks(contentEl);
