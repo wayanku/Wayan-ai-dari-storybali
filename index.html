@@ -1,9 +1,3 @@
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -463,20 +457,16 @@
     .ai-message {
         max-width: 48rem;
         position: relative;
-        background-color: var(--bg-primary); /* [DIUBAH] Dibuat sama dengan latar utama agar lebih menyatu */
+        background-color: var(--bg-secondary); /* [DIUBAH] Warna solid untuk keterbacaan maksimal */
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
         border: 1px solid var(--border-color);
         padding: 0.75rem 1rem;
         border-radius: 1.25rem;
         border-top-left-radius: 0.375rem;
-        box-shadow: 0 4px 12px -2px rgba(var(--text-primary-rgba), 0.06); /* [BARU] Menambahkan bayangan lembut */
     }
     html.dark .ai-message {
-        background-color: var(--bg-tertiary); /* [DIUBAH] Warna solid yang sedikit lebih terang dari latar */
-        border-color: rgba(var(--bg-primary-rgba), 0.1);
-        box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.2); /* [BARU] Bayangan lebih terlihat di mode gelap */
-
+        background-color: var(--bg-secondary); /* [DIUBAH] Warna solid yang sedikit lebih terang dari latar */
     }
     /* ▲▲▲ AKHIR DARI PERBAIKAN TAMPILAN GELEMBUNG AI ▲▲▲ */
     /* [BARU] Gelembung khusus untuk indikator "mengetik" */
@@ -489,18 +479,18 @@
 
     .user-message {
         /* [PERMINTAAN PENGGUNA] Efek kaca untuk gelembung Pengguna */
-        /* [DIUBAH] Gradien diperbarui menjadi lebih cerah dan modern */
-        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        /* [DIUBAH] Menggunakan gradien biru yang lebih modern dan cerah */
+        background: linear-gradient(135deg, #2563eb, #4f46e5); /* [DIUBAH] Gradien disempurnakan */
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.15);
-        box-shadow: 0 6px 20px -4px rgba(79, 70, 229, 0.4); /* [DIUBAH] Efek glow yang lebih kuat */
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
         color: white;
         border-radius: 1.25rem; border-top-right-radius: 0.375rem;
         padding: 1rem; max-width: 85%;
     }
     html.dark .user-message {
-        /* [DIUBAH] Menggunakan warna solid yang lebih menonjol di mode gelap */
+        /* [DIUBAH] Menggunakan warna biru solid yang lebih menonjol di mode gelap */
         background: #2563eb;
         backdrop-filter: none; /* Hapus backdrop filter di mode gelap untuk warna solid */
         -webkit-backdrop-filter: none;
@@ -689,23 +679,22 @@
     .typing-indicator { display: none; align-items: center; margin-bottom: 1rem; }
     .typing-indicator.show { display: flex; animation: fadeInBounce 0.5s ease-out; }
     @keyframes fadeInBounce {
-        0% { opacity: 0; transform: translateY(10px) scale(0.9); }
-        60% { opacity: 1; transform: translateY(-3px) scale(1.02); }
+        0% { opacity: 0; transform: translateY(10px) scale(0.8); }
+        60% { opacity: 1; transform: translateY(-2px) scale(1.02); }
         100% { opacity: 1; transform: translateY(0) scale(1); }
     }
     .dot {
         width: 8px; height: 8px; border-radius: 50%;
-        /* [DIUBAH] Menggunakan warna solid agar lebih jelas */
-        background-color: var(--text-secondary);
-        animation: typing-bounce 1.4s infinite ease-in-out; margin: 0 2px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        animation: typing 1.4s infinite ease-in-out; margin: 0 2px;
     }
     html.dark .dot {
-        background-color: var(--text-secondary);
+        background: #888;
     }
     .dot:nth-child(1) { animation-delay: -0.32s; }
     .dot:nth-child(2) { animation-delay: -0.16s; }
     .dot:nth-child(3) { animation-delay: 0s; }
-    @keyframes typing-bounce {
+    @keyframes typing {
         0%, 80%, 100% { transform: scale(0.8) translateY(0); opacity: 0.5; }
         40% { transform: scale(1.2) translateY(-8px); opacity: 1; }
     }
@@ -772,21 +761,14 @@
     .action-btn {
         color: var(--text-secondary);
         background: none;
-        /* [DIUBAH] Menambahkan padding dan bentuk lingkaran untuk target klik yang lebih baik */
-        width: 2.25rem; /* 36px */
-        height: 2.25rem; /* 36px */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
+        /* [PENYEMPURNAAN IOS] Menghapus padding agar tombol lebih rapat dan minimalis */
+        padding: 0; 
         border: none;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: color 0.2s ease;
     }
-    .action-btn:hover { 
-        color: var(--text-primary); 
-        background-color: rgba(var(--text-primary-rgba), 0.08);
-    }
+    .action-btn:hover { color: #4f46e5; }
+    html.dark .action-btn:hover { color: var(--text-primary); }
     .action-btn.active {
         color: #4f46e5;
         transform: scale(1.1);
@@ -809,18 +791,12 @@
         align-items: center;
         justify-content: center;
         background-color: var(--bg-tertiary);
-        border-radius: 50%;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border-radius: 9999px;
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out, background-color 0.3s ease;
         border: none;
         cursor: pointer;
         color: var(--text-secondary);
     }
-    /* [BARU] Animasi transisi antara tombol Mic dan Kirim */
-    #micBtn { transform: scale(1) rotate(0deg); }
-    #sendBtn { transform: scale(0) rotate(-90deg); }
-    #micBtn.hidden-dynamic { opacity: 0; transform: scale(0) rotate(90deg); pointer-events: none; }
-    #sendBtn.visible-dynamic { opacity: 1; transform: scale(1) rotate(0deg); pointer-events: auto; }
-
     .dynamic-icon-btn.send-btn-active {
         background-color: #4f46e5;
         color: white;
@@ -1837,7 +1813,10 @@
                  <!-- Typing Indicator will be added here by JS -->
                  <div id="typingIndicator" class="typing-indicator items-start space-x-3">
                     <div onclick="showProfileModal()" class="ai-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden cursor-pointer"><img src="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" alt="StoryBali" class="w-full h-full object-cover"></div>
-                    <div class="typing-bubble"><div class="flex space-x-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+                    <div class="typing-bubble flex items-center">
+                        <div class="flex space-x-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                        <span class="ml-2 text-sm" style="color: var(--text-secondary);" data-translate-key="thinking">Wayan sedang berpikir...</span>
+                    </div>
                 </div>
                 <!-- Image Processing Indicator -->
                 <div id="imageProcessingIndicator" class="typing-indicator items-start space-x-3">
@@ -2889,6 +2868,7 @@
             systemNewChat: "Memulai percakapan baru.", systemResponseStopped: "Pembuatan respons dihentikan.", systemImageAnalysisStopped: "Analisis gambar dihentikan.",
             confirmDeleteSingleTitle: "Hapus Percakapan?", confirmDeleteSingleMsg: "Tindakan ini tidak dapat dibatalkan.", confirmDeleteSingleBtn: "Hapus",
             confirmDeleteAllTitle: "Hapus Semua Riwayat?", confirmResetTitle: "Reset Pengaturan?", confirmResetBtn: "Ya, Reset",
+            thinking: "Wayan sedang berpikir...",
             errorVoiceRecognition: "Maaf, browser Anda tidak mendukung fitur pengenalan suara.", errorSpeechRecog: "Error pengenalan suara: {error}", errorStartSpeechRecog: "Tidak dapat memulai pengenalan suara.",
             alertSettingsSaved: "Pengaturan berhasil disimpan!", alertResetConfirm: "Yakin ingin mereset semua pengaturan? SEMUA riwayat chat dan API Key akan dihapus. Halaman akan dimuat ulang.", alertResetSuccess: "Pengaturan telah direset ke default. Halaman akan dimuat ulang.",
             alertExportEmpty: "Belum ada riwayat chat di sesi ini untuk di-export!", alertExportSuccess: "Riwayat chat sesi ini berhasil di-export!",
@@ -2957,6 +2937,7 @@
             systemNewChat: "Starting a new conversation.", systemResponseStopped: "Response generation stopped.", systemImageAnalysisStopped: "Image analysis stopped.",
             confirmDeleteSingleTitle: "Delete Conversation?", confirmDeleteSingleMsg: "This action cannot be undone.", confirmDeleteSingleBtn: "Delete",
             confirmDeleteAllTitle: "Delete All History?", confirmResetTitle: "Reset Settings?", confirmResetBtn: "Yes, Reset",
+            thinking: "Wayan is thinking...",
             errorVoiceRecognition: "Sorry, your browser does not support the voice recognition feature.", errorSpeechRecog: "Speech recognition error: {error}", errorStartSpeechRecog: "Could not start speech recognition.",
             alertSettingsSaved: "Settings saved successfully!", alertResetConfirm: "Are you sure you want to reset all settings? ALL chat history and API Keys will be deleted. The page will reload.", alertResetSuccess: "Settings have been reset to default. The page will reload.",
             alertExportEmpty: "There is no chat history in this session to export!", alertExportSuccess: "Chat history for this session has been successfully exported!",
@@ -3024,6 +3005,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             systemNewChat: "新しい会話を開始しています。", systemResponseStopped: "応答の生成が停止しました。", systemImageAnalysisStopped: "画像分析が停止しました。",
             confirmDeleteSingleTitle: "会話を削除しますか？", confirmDeleteSingleMsg: "この操作は元に戻せません。", confirmDeleteSingleBtn: "削除",
             confirmDeleteAllTitle: "すべての履歴を削除しますか？", confirmResetTitle: "設定をリセットしますか？", confirmResetBtn: "はい、リセット",
+            thinking: "ワヤンは考えています...",
             errorVoiceRecognition: "申し訳ありませんが、お使いのブラウザは音声認識機能をサポートしていません。", errorSpeechRecog: "音声認識エラー: {error}", errorStartSpeechRecog: "音声認識を開始できませんでした。",
             alertSettingsSaved: "設定が正常に保存されました！", alertResetConfirm: "すべての設定をリセットしてもよろしいですか？すべてのチャット履歴とAPIキーが削除されます。ページがリロードされます。", alertResetSuccess: "設定がデフォルトにリセットされました。ページがリロードされます。",
             alertExportEmpty: "このセッションにはエクスポートするチャット履歴がありません！", alertExportSuccess: "このセッションのチャット履歴が正常にエクスポートされました！",
@@ -3423,11 +3405,11 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         const micBtn = document.getElementById('micBtn');
         const sendBtn = document.getElementById('sendBtn');
         if (messageInput.value.trim().length > 0) {
-            micBtn.classList.add('hidden-dynamic');
-            sendBtn.classList.add('visible-dynamic');
+            micBtn.style.opacity = '0'; micBtn.style.pointerEvents = 'none';
+            sendBtn.style.opacity = '1'; sendBtn.style.pointerEvents = 'auto';
         } else {
-            micBtn.classList.remove('hidden-dynamic');
-            sendBtn.classList.remove('visible-dynamic');
+            micBtn.style.opacity = '1'; micBtn.style.pointerEvents = 'auto';
+            sendBtn.style.opacity = '0'; sendBtn.style.pointerEvents = 'none';
         }
     }
     function videoNotAvailable() { alert(t('alertVideoNotAvailable')); }
@@ -5364,15 +5346,13 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         let contentEl, suggestionsEl;
 
         try {
+            // 1. Buat bubble chat AI yang kosong dan dapatkan elemennya
+            const bubbleElements = addMessage(null, false);
+            contentEl = bubbleElements.contentEl;
+            suggestionsEl = bubbleElements.suggestionsEl;
             // [OPTIMASI] Kirim hanya 10 pesan terakhir untuk menghemat token
             const fullHistory = getActiveChatHistory() || [];
             const historyForApi = fullHistory.map(({ role, parts }) => ({ role, parts })).slice(-MAX_HISTORY_FOR_PROMPT);
-
-            // 1. Buat bubble chat AI yang kosong dan dapatkan elemennya
-            const bubbleElements = addMessage('', false); // [DIUBAH] Kirim string kosong
-            contentEl = bubbleElements.contentEl;
-            suggestionsEl = bubbleElements.suggestionsEl;
-
             const payload = {
                 contents: historyForApi,
                 systemInstruction: { parts: [{ text: getSystemPrompt() }] },
@@ -5383,6 +5363,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
             const response = await makeApiRequest(payload, currentFetchController.signal);
             if (!response.body) throw new Error("Response body is null");
 
+            // 3. Baca stream
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let fullResponseText = "";
@@ -5395,16 +5376,24 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
                 const chunk = decoder.decode(value, { stream: true });
                 const lines = chunk.split('\n');
 
-                // [DIUBAH] Sembunyikan indikator mengetik saat data pertama diterima
-                if (isFirstChunk) {
-                    hideTypingIndicator();
-                    isFirstChunk = false;
-                }
-
                 for (const line of lines) {
                     if (line.startsWith('data: ')) {
-                        const textPart = processStreamChunk(line, contentEl);
-                        if (textPart) fullResponseText += textPart;
+                        const jsonStr = line.substring(6);
+                        try {
+                            const data = JSON.parse(jsonStr);
+                            if (data.candidates && data.candidates[0].content.parts[0].text) {
+                                const textPart = data.candidates[0].content.parts[0].text;
+                                fullResponseText += textPart;
+                                // ▼▼▼ [PENYEMPURNAAN] ▼▼▼
+                                // Sembunyikan indikator "mengetik" (tiga titik) saat teks pertama diterima.
+                                if (isFirstChunk) {
+                                    hideTypingIndicator();
+                                    isFirstChunk = false;
+                                }
+                                contentEl.innerHTML = marked.parse(fullResponseText + '█');
+                                scrollToBottom();
+                            }
+                        } catch (e) { /* Abaikan error parsing JSON yang tidak lengkap */ }
                     }
                 }
             }
@@ -5421,52 +5410,32 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
             playNotificationSound();
             showNativeNotification(t('aiName'), mainAnswer.trim().substring(0, 100) + '...');
         } catch (error) {
-            hideTypingIndicator(); // [DIUBAH] Pastikan indikator disembunyikan jika terjadi error
             if (error.name === 'AbortError') {
                 addSystemMessage(t('systemResponseStopped'), 'warning');
             } else {
                 console.error("Error in sendMessage:", error);
                 if (contentEl) {
                     contentEl.innerHTML = marked.parse(t('errorApiGeneral', { error: error.message }));
-                } else { // [DIUBAH] Tambahkan pesan error jika bubble belum dibuat
+                } else {
                     // Fallback jika bubble gagal dibuat
                     addOriginalMessage(t('errorApiGeneral', { error: error.message }), false, new Date().toISOString());
                 }
             }
         } finally {
-            hideTypingIndicator(); 
+            // [DIHAPUS] Indikator sudah disembunyikan saat streaming dimulai.
             document.getElementById('stopGeneratingContainer').style.display = 'none';
             currentFetchController = null;
         }
     }
     
-    // [BARU] Fungsi terpisah untuk memproses chunk data dari stream
-    function processStreamChunk(line, contentEl) {
-        try {
-            const jsonStr = line.substring(6);
-            const data = JSON.parse(jsonStr);
-            if (data.candidates && data.candidates[0].content.parts[0].text) {
-                const textPart = data.candidates[0].content.parts[0].text;
-                // Menggunakan innerText untuk mendapatkan teks saat ini tanpa HTML, lalu tambahkan teks baru
-                const currentText = contentEl.innerText.replace(/█$/, ''); // Hapus kursor jika ada
-                const newText = currentText + textPart;
-                contentEl.innerHTML = marked.parse(newText + '█'); // Parse ulang dengan kursor di akhir
-                scrollToBottom();
-                return textPart;
-            }
-        } catch (e) {
-            // Abaikan error parsing JSON yang tidak lengkap, ini normal terjadi di akhir stream
-        }
-        return null;
-    }
-
     async function analyzeImageWithQuestion(base64Image, userQuestion, mimeType) {
         currentFetchController = new AbortController();
         document.getElementById('stopGeneratingContainer').style.display = 'block';
 
         let contentEl, suggestionsEl;
+
         try {
-            const bubbleElements = addMessage('', false); // [DIUBAH] Kirim string kosong
+            const bubbleElements = addMessage(null, false);
             contentEl = bubbleElements.contentEl;
             suggestionsEl = bubbleElements.suggestionsEl;
             const imageData = base64Image.split(',')[1];
@@ -5493,16 +5462,34 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
                 const chunk = decoder.decode(value, { stream: true });
                 const lines = chunk.split('\n');
 
-                // [DIUBAH] Sembunyikan indikator saat data pertama diterima
-                if (isFirstChunk) {
-                    hideImageProcessingIndicator();
-                    isFirstChunk = false;
-                }
-
                 for (const line of lines) {
                     if (line.startsWith('data: ')) {
-                        const textPart = processStreamChunk(line, contentEl);
-                        if (textPart) fullResponseText += textPart;
+                        try {
+                            const data = JSON.parse(line.substring(6));
+                            if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+                                const textPart = data.candidates[0].content.parts[0].text;
+                                
+                                // Jika ini adalah chunk pertama, hapus kursor dari bubble sebelumnya
+                                if (isFirstChunk && contentEl.innerHTML.endsWith('█')) {
+                                    // ▼▼▼ [PENYEMPURNAAN] ▼▼▼
+                                    // Sembunyikan indikator "memproses gambar" saat teks pertama diterima.
+                                    // Ini memberikan transisi yang mulus dari "menganalisis" ke "menjawab".
+                                    hideImageProcessingIndicator();
+                                    // Juga sembunyikan indikator mengetik biasa sebagai fallback
+                                    hideTypingIndicator();
+
+                                    contentEl.innerHTML = contentEl.innerHTML.slice(0, -1);
+                                    isFirstChunk = false;
+                                }
+
+                                fullResponseText += textPart;
+                                // Perbarui bubble dengan teks yang sudah di-parse + kursor
+                                contentEl.innerHTML = marked.parse(fullResponseText + '█');
+                                
+                                // Scroll ke bawah untuk menjaga pesan tetap terlihat
+                                scrollToBottom();
+                            }
+                        } catch (e) {}
                     }
                 }
             }
@@ -5516,7 +5503,6 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
             playNotificationSound();
             showNativeNotification(t('aiName'), mainAnswer.trim().substring(0, 100) + '...');
         } catch (error) {
-            hideImageProcessingIndicator(); // [DIUBAH] Pastikan indikator disembunyikan jika terjadi error
             if (error.name === 'AbortError') {
                 addSystemMessage(t('systemImageAnalysisStopped'), 'warning');
             } else {
