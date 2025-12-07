@@ -2776,33 +2776,6 @@
     // KODE SCRIPT UTAMA (VERSI GABUNGAN DENGAN PERBAIKAN FINAL)
     // ===================================================================================
 
-    // Helper untuk mendeteksi iOS
-    function isIOS() {
-        return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    }
-
-    // Fungsi untuk membuka kunci AudioContext di iOS
-    function unlockAudio() {
-        // 1. Unlock Web Audio API (untuk ElevenLabs/SFX)
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (AudioContext) {
-            const ctx = new AudioContext();
-            const oscillator = ctx.createOscillator();
-            const gainNode = ctx.createGain();
-            gainNode.gain.value = 0; // Suara hening
-            oscillator.connect(gainNode);
-            gainNode.connect(ctx.destination);
-            oscillator.start(0);
-            oscillator.stop(0.001);
-        }
-
-        // 2. Unlock SpeechSynthesis (untuk suara browser bawaan)
-        if (window.speechSynthesis) {
-            const utterance = new SpeechSynthesisUtterance(' '); // Spasi kosong
-            window.speechSynthesis.speak(utterance);
-        }
-    }
     // ▼▼▼ [BARU] Inisialisasi Firebase & Logika Otentikasi ▼▼▼
     // [DIUBAH] Menggunakan konfigurasi Firebase dari pengguna
     const firebaseConfig = {
@@ -5972,233 +5945,6 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
     // ===================================================================================
 
     // ==========================================
-    // LOGIKA LIVE CALL (MODE PERCAKAPAN SUARA)
-    // ==========================================
-
-    let liveCallState = {
-        isActive: false,
-        isAiSpeaking: false,
-        recognition: null,
-        silenceTimer: null
-    };
-
-    // 1. Memulai Panggilan
-    async function startCall() {
-        if (isCallActive) return;
-        
-        // ▼▼▼ TAMBAHAN PENTING ▼▼▼
-        unlockAudio(); 
-        // ▲▲▲ AKHIR TAMBAHAN ▲▲▲
-
-        isCallActive = true;
-        
-        const modal = document.getElementById('callModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex'); // Gunakan flex agar centering bekerja
-        callHistory = [];
-
-        // Reset Status UI
-        updateCallStatus("Menghubungkan...", false);
-        document.getElementById('liveTranscript').textContent = "";
-
-        // Sapaan Awal
-        const greeting = t('callInitialGreeting') || "Halo! Wayan di sini. Mau ngobrolin apa hari ini?";
-        
-        // Simpan ke history chat agar tercatat
-        addToConversationHistory('model', greeting);
-        
-        // AI Bicara duluan
-        await speakInCall(greeting);
-    }
-
-    // 2. Mengakhiri Panggilan
-    function endCall() {
-        isCallActive = false;
-        
-        // Stop Recognition
-        if (callRecognition) {
-            callRecognition.onend = null; // Hapus listener agar tidak restart otomatis
-            callRecognition.stop();
-            callRecognition = null;
-        }
-
-        // Stop AI Speaking
-        stopReading(); // Menggunakan fungsi stop TTS yang sudah ada
-
-        // UI Reset
-        const modal = document.getElementById('callModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        
-        // Scroll chat utama ke bawah (karena history bertambah)
-        scrollToBottom();
-    }
-
-    // 3. AI Berbicara (TTS Wrapper untuk Call)
-    async function speakInCall(text) {
-        isSpeaking = true;
-        updateCallStatus("Wayan sedang bicara...", true); // True = Visualizer Aktif
-        
-        // Pastikan Mic MATI saat AI bicara agar audio output masuk ke Speaker (bukan mode telepon)
-        if (callRecognition) {
-            callRecognition.abort();
-            callRecognition = null;
-        }
-
-        // Gunakan fungsi TTS yang sudah ada (Browser atau ElevenLabs)
-        // Kita modifikasi sedikit flow-nya:
-        
-        const onSpeakFinished = () => {
-            isSpeaking = false;
-            if (isCallActive) {
-                // Beri jeda 500ms agar audio routing iOS kembali siap menerima input
-                setTimeout(listenUserInCall, 500); 
-            }
-        };
-
-        try {
-            if (settings.audioSource === 'elevenlabs') {
-                await playElevenLabsAudio(text);
-            } else {
-                await playBrowserAudio(text);
-            }
-        } catch (e) {
-            console.error("TTS Error in call:", e);
-        } finally {
-            // Setelah AI selesai bicara, langsung dengarkan User
-            if (liveCallState.isActive) {
-                liveCallState.isAiSpeaking = false;
-                listenUserInCall();
-            }
-        }
-    }
-
-    // 4. Mendengarkan Suara User (Speech Recognition)
-    function listenUserInCall() {
-        if (!liveCallState.isActive || liveCallState.isAiSpeaking) return;
-
-        updateCallStatus("Mendengarkan...", false); // False = Visualizer Idle (tapi bisa dibuat aktif jika mendeteksi suara)
-
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            alert("Browser tidak mendukung fitur suara.");
-            endCall();
-            return;
-        }
-
-        const recognition = new SpeechRecognition();
-        recognition.lang = settings.language === 'id' ? 'id-ID' : (settings.language === 'en' ? 'en-US' : 'ja-JP');
-        recognition.interimResults = true;
-        recognition.maxAlternatives = 1;
-
-        // PENTING UNTUK IOS: Matikan continuous agar event 'onend' lebih responsif
-        recognition.continuous = false; 
-
-        callRecognition = recognition;
-
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            
-            document.getElementById('liveTranscript').textContent = transcript;
-
-            // Di iOS, isFinal seringkali true saat user berhenti sejenak
-            if (event.results[0].isFinal) {
-                // Hentikan mic segera!
-                recognition.stop();
-                processUserVoiceInput(transcript);
-            }
-        };
-
-        recognition.onend = () => {
-            // Jika call masih aktif TAPI AI belum mulai proses bicara (misal cuma hening),
-            // nyalakan mic lagi. TAPI jika AI sedang 'thinking' atau 'speaking', jangan nyala.
-            if (isCallActive && !isSpeaking) {
-                // Beri jeda sedikit di iOS agar tidak crash loop
-                setTimeout(() => {
-                    if(!isSpeaking) {
-                        try { recognition.start(); } catch(e) {}
-                    }
-                }, 200);
-            }
-        };
-        
-        recognition.onerror = (event) => {
-            console.error("Speech Recog Error:", event.error);
-        };
-
-        try {
-            recognition.start();
-        } catch (e) {
-            console.error("Recog start error:", e);
-        }
-    }
-
-    // 5. Proses Input User & Kirim ke AI
-    async function processUserVoiceInput(userText) {
-        if (!userText.trim()) return;
-
-        // 1. Set flag agar mic tidak nyala otomatis di onend
-        isSpeaking = true; 
-        
-        // 2. Pastikan mic mati total
-        if (callRecognition) {
-            callRecognition.onend = null; // Hapus listener restart
-            callRecognition.stop();
-            callRecognition = null;
-        }
-
-        updateCallStatus("Wayan sedang berpikir...", true); // Visualizer aktif saat loading
-        addToConversationHistory('user', userText); // Simpan chat user
-
-        try {
-            const callSystemPrompt = getSystemPrompt(true); // Pastikan fungsi getSystemPrompt mendukung parameter isCall
-            
-            const fullHistory = getActiveChatHistory() || [];
-            const historyForApi = fullHistory.map(({ role, parts }) => ({ role, parts })).slice(-6);
-            
-            const payload = {
-                contents: historyForApi,
-                systemInstruction: { parts: [{ text: callSystemPrompt }] },
-                generationConfig: { temperature: 0.9, maxOutputTokens: 150 }
-            };
-
-            const response = await makeApiRequest(payload, null, false); 
-            const data = await response.json();
-            
-            let aiResponse = "Maaf, Wayan tidak mengerti.";
-            if (data.candidates && data.candidates[0].content) {
-                aiResponse = data.candidates[0].content.parts[0].text;
-            }
-            
-            aiResponse = aiResponse.replace(/[*#`]/g, '');
-
-            addToConversationHistory('model', aiResponse);
-
-            // 3. Panggil Speak
-            await speakInCall(aiResponse);
-
-        } catch (error) {
-            console.error("Call Error:", error);
-            await speakInCall("Maaf, ada gangguan.");
-        }
-    }
-
-    // Helper: Update UI Status & Visualizer
-    function updateCallStatus(text, isActive) {
-        const statusEl = document.getElementById('callStatusText');
-        const visualizer = document.getElementById('callVisualizer');
-        
-        if (statusEl) statusEl.textContent = text;
-        
-        if (visualizer) {
-            if (isActive) {
-                visualizer.classList.remove('idle');
-            } else {
-                visualizer.classList.add('idle');
-            }
-        }
-    }
-    // ==========================================
     // LOGIKA LIVE VISION (VIDEO MODE)
     // ==========================================
 
@@ -6212,13 +5958,9 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
     // 1. Mulai Mode Video
     async function startVideoMode() {
         // Stop audio call biasa jika sedang aktif
-        if (isCallActive) {
+        if (typeof liveCallState !== 'undefined' && liveCallState.isActive) {
             endCall();
         }
-
-        // ▼▼▼ TAMBAHAN PENTING ▼▼▼
-        unlockAudio();
-        // ▲▲▲ AKHIR TAMBAHAN ▲▲▲
 
         const modal = document.getElementById('videoModal');
         const videoEl = document.getElementById('cameraFeed');
@@ -6273,8 +6015,8 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
         }
 
         // Matikan Speech Recognition (jika aktif)
-        if (callRecognition) {
-            callRecognition.stop();
+        if (typeof liveCallState !== 'undefined' && liveCallState.recognition) {
+            liveCallState.recognition.stop();
         }
         
         stopReading(); // Stop TTS
@@ -6308,6 +6050,59 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
 
         // Convert ke Base64 (JPEG quality 0.7 agar ringan)
         return canvas.toDataURL('image/jpeg', 0.7);
+    }
+
+    // 5. Logic Mendengarkan Suara (Versi Vision)
+    function startVisionListening() {
+        // Kita reuse SpeechRecognition dari browser
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) return;
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
+        recognition.interimResults = true;
+        recognition.continuous = true; // Agar tidak mati sendiri
+
+        // Simpan referensi agar bisa distop
+        if(typeof liveCallState === 'undefined') liveCallState = {}; // Fallback jika kode call belum ada
+        liveCallState.recognition = recognition;
+
+        const transcriptEl = document.getElementById('visionTranscript');
+        const visualizer = document.getElementById('visionVisualizer');
+
+        recognition.onresult = async (event) => {
+            const transcript = Array.from(event.results)
+                .map(result => result[0].transcript)
+                .join('');
+            
+            transcriptEl.textContent = transcript;
+            transcriptEl.classList.remove('hidden');
+
+            // Deteksi jika user selesai bicara (isFinal)
+            if (event.results[event.results.length - 1].isFinal) {
+                const finalQuery = event.results[event.results.length - 1][0].transcript;
+                
+                // Pause listening
+                recognition.stop();
+                
+                // Proses Vision
+                await processVisionInput(finalQuery);
+            }
+        };
+        
+        recognition.onstart = () => {
+             visualizer.classList.remove('idle'); // Visualizer gerak
+        };
+
+        recognition.onend = () => {
+            if (videoState.active && !videoState.isProcessing) {
+                recognition.start(); // Restart jika belum processing
+            } else {
+                visualizer.classList.add('idle');
+            }
+        };
+
+        recognition.start();
     }
 
     // 6. Proses Kirim ke API (Gambar + Teks)
@@ -6353,17 +6148,24 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
             updateVisionStatus("Wayan bicara...");
             
             // Reuse fungsi TTS dari kode sebelumnya
-            await speakInCall(aiResponse);
+            if (settings.audioSource === 'elevenlabs') {
+                await playElevenLabsAudio(aiResponse);
+            } else {
+                await playBrowserAudio(aiResponse);
+            }
 
         } catch (e) {
             console.error("Vision API Error:", e);
-            await speakInCall("Maaf, koneksi video terganggu.");
+            await playBrowserAudio("Maaf, koneksi video terganggu.");
         } finally {
             // Selesai bicara, dengarkan lagi
             videoState.isProcessing = false;
             updateVisionStatus("Silakan bertanya...");
             document.getElementById('visionTranscript').textContent = "";
             document.getElementById('visionTranscript').classList.add('hidden');
+            
+            // Restart recognition
+            if(videoState.active) startVisionListening();
         }
     }
 
@@ -6371,55 +6173,202 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
     function updateVisionStatus(text) {
         document.getElementById('visionStatusText').textContent = text;
     }
-    // 5. Logic Mendengarkan Suara (Versi Vision)
-    function startVisionListening() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) return;
+    // ==========================================
+    // LOGIKA LIVE CALL (MODE PERCAKAPAN SUARA)
+    // ==========================================
 
-        // Stop instance lama
-        if (callRecognition) {
-            try { callRecognition.abort(); } catch(e){}
+    let liveCallState = {
+        isActive: false,
+        isAiSpeaking: false,
+        recognition: null,
+        silenceTimer: null
+    };
+
+    // 1. Memulai Panggilan
+    async function startCall() {
+        if (liveCallState.isActive) return;
+        
+        liveCallState.isActive = true;
+        const modal = document.getElementById('callModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex'); // Gunakan flex agar centering bekerja
+
+        // Reset Status UI
+        updateCallStatus("Menghubungkan...", false);
+        document.getElementById('liveTranscript').textContent = "";
+
+        // Sapaan Awal
+        const greeting = t('callInitialGreeting') || "Halo! Wayan di sini. Mau ngobrolin apa hari ini?";
+        
+        // Simpan ke history chat agar tercatat
+        addToConversationHistory('model', greeting);
+        
+        // AI Bicara duluan
+        await speakInCall(greeting);
+    }
+
+    // 2. Mengakhiri Panggilan
+    function endCall() {
+        liveCallState.isActive = false;
+        
+        // Stop Recognition
+        if (liveCallState.recognition) {
+            liveCallState.recognition.onend = null; // Hapus listener agar tidak restart otomatis
+            liveCallState.recognition.stop();
+            liveCallState.recognition = null;
+        }
+
+        // Stop AI Speaking
+        stopReading(); // Menggunakan fungsi stop TTS yang sudah ada
+
+        // UI Reset
+        const modal = document.getElementById('callModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        
+        // Scroll chat utama ke bawah (karena history bertambah)
+        scrollToBottom();
+    }
+
+    // 3. AI Berbicara (TTS Wrapper untuk Call)
+    async function speakInCall(text) {
+        liveCallState.isAiSpeaking = true;
+        updateCallStatus("Wayan sedang bicara...", true); // True = Visualizer Aktif
+        
+        // Gunakan fungsi TTS yang sudah ada (Browser atau ElevenLabs)
+        // Kita modifikasi sedikit flow-nya:
+        
+        try {
+            if (settings.audioSource === 'elevenlabs') {
+                await playElevenLabsAudio(text);
+            } else {
+                await playBrowserAudio(text);
+            }
+        } catch (e) {
+            console.error("TTS Error in call:", e);
+        } finally {
+            // Setelah AI selesai bicara, langsung dengarkan User
+            if (liveCallState.isActive) {
+                liveCallState.isAiSpeaking = false;
+                listenUserInCall();
+            }
+        }
+    }
+
+    // 4. Mendengarkan Suara User (Speech Recognition)
+    function listenUserInCall() {
+        if (!liveCallState.isActive || liveCallState.isAiSpeaking) return;
+
+        updateCallStatus("Mendengarkan...", false); // False = Visualizer Idle (tapi bisa dibuat aktif jika mendeteksi suara)
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert("Browser tidak mendukung fitur suara.");
+            endCall();
+            return;
         }
 
         const recognition = new SpeechRecognition();
-        recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
+        recognition.lang = settings.language === 'id' ? 'id-ID' : (settings.language === 'en' ? 'en-US' : 'ja-JP');
         recognition.interimResults = true;
         recognition.maxAlternatives = 1;
-        recognition.continuous = false; // iOS FIX
 
-        callRecognition = recognition;
-        const transcriptEl = document.getElementById('visionTranscript');
-        const visualizer = document.getElementById('visionVisualizer');
+        liveCallState.recognition = recognition;
 
-        recognition.onresult = async (event) => {
-            const transcript = event.results[0][0].transcript;
-            transcriptEl.textContent = transcript;
-            transcriptEl.classList.remove('hidden');
+        recognition.onresult = (event) => {
+            const transcript = Array.from(event.results)
+                .map(result => result[0].transcript)
+                .join('');
+            
+            document.getElementById('liveTranscript').textContent = transcript;
 
+            // Jika hasil final
             if (event.results[0].isFinal) {
-                recognition.stop();
-                videoState.isProcessing = true; // Flag agar tidak restart
-                
-                // Matikan listener restart
-                recognition.onend = null; 
-                
-                await processVisionInput(transcript);
-            }
-        };
-        
-        recognition.onstart = () => { visualizer.classList.remove('idle'); };
-        
-        recognition.onend = () => {
-            visualizer.classList.add('idle');
-            // Restart mic HANYA JIKA tidak sedang memproses gambar/AI bicara
-            if (videoState.active && !videoState.isProcessing) {
-                setTimeout(() => {
-                    try { recognition.start(); } catch(e){}
-                }, 200);
+                processUserVoiceInput(transcript);
             }
         };
 
-        try { recognition.start(); } catch(e){}
+        recognition.onend = () => {
+            // Jika recognition mati sendiri tapi AI tidak sedang proses, nyalakan lagi (Continuous listening feeling)
+            // Kecuali kita sudah mendapatkan input final dan sedang memprosesnya
+        };
+        
+        recognition.onerror = (event) => {
+            console.error("Speech Recog Error:", event.error);
+            if (event.error === 'no-speech') {
+                // Restart listening if just silence
+                if(liveCallState.isActive) recognition.start(); 
+            }
+        };
+
+        recognition.start();
+    }
+
+    // 5. Proses Input User & Kirim ke AI
+    async function processUserVoiceInput(userText) {
+        if (!userText.trim()) return;
+
+        // Hentikan recognition sementara AI berpikir
+        if (liveCallState.recognition) {
+            liveCallState.recognition.stop();
+        }
+
+        updateCallStatus("Wayan sedang berpikir...", true); // Visualizer aktif saat loading
+        addToConversationHistory('user', userText); // Simpan chat user
+
+        try {
+            // Gunakan sistem prompt khusus Call agar jawaban pendek
+            const callSystemPrompt = getSystemPrompt(true); // Pastikan fungsi getSystemPrompt mendukung parameter isCall
+            
+            // Siapkan payload seperti sendMessage
+            const fullHistory = getActiveChatHistory() || [];
+            // Ambil 6 percakapan terakhir untuk konteks
+            const historyForApi = fullHistory.map(({ role, parts }) => ({ role, parts })).slice(-6);
+            
+            const payload = {
+                contents: historyForApi,
+                systemInstruction: { parts: [{ text: callSystemPrompt }] },
+                generationConfig: { temperature: 0.9, maxOutputTokens: 150 } // Token sedikit agar jawaban cepat/pendek
+            };
+
+            // Panggil API (gunakan fungsi makeApiRequest yg sudah ada, tapi mode non-streaming biar simpel utk call)
+            const response = await makeApiRequest(payload, null, false); 
+            const data = await response.json();
+            
+            let aiResponse = "Maaf, Wayan tidak mengerti.";
+            if (data.candidates && data.candidates[0].content) {
+                aiResponse = data.candidates[0].content.parts[0].text;
+            }
+            
+            // Bersihkan teks dari markdown symbol agar TTS bacanya enak
+            aiResponse = aiResponse.replace(/[*#`]/g, '');
+
+            // Simpan respon AI
+            addToConversationHistory('model', aiResponse);
+
+            // AI Bicara lagi
+            await speakInCall(aiResponse);
+
+        } catch (error) {
+            console.error("Call Error:", error);
+            await speakInCall("Maaf, ada gangguan sinyal. Bisa ulangi?");
+        }
+    }
+
+    // Helper: Update UI Status & Visualizer
+    function updateCallStatus(text, isActive) {
+        const statusEl = document.getElementById('callStatusText');
+        const visualizer = document.getElementById('callVisualizer');
+        
+        if (statusEl) statusEl.textContent = text;
+        
+        if (visualizer) {
+            if (isActive) {
+                visualizer.classList.remove('idle');
+            } else {
+                visualizer.classList.add('idle');
+            }
+        }
     }
 
     window.addEventListener('load', async () => {
