@@ -7,11 +7,9 @@
   <meta http-equiv="Content-Style-Type" content="text/css">
   
   <!-- ▼▼▼ Meta Tags untuk SEO (Search Engine Optimization) yang Dioptimalkan ▼▼▼ -->
-<link rel="icon" type="image/webp" href="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" />
-<link rel="icon" type="image/webp" href="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" />
-<link rel="shortcut icon" href="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" />
-<link rel="apple-touch-icon" href="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" />
-<link rel="manifest" href="site.webmanifest" />
+  <link rel="icon" type="image/webp" href="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" />
+  <link rel="apple-touch-icon" href="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" />
+  <link rel="manifest" href="site.webmanifest" />
   <meta name="description" content="Wayan AI adalah asisten AI cerdas dari Storybali, siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah. Ngobrol dengan chatbot AI berbahasa Indonesia tentang apa saja!">
   <meta name="keywords" content="Wayan AI, Storybali, Asisten AI, AI Indonesia, Chatbot Indonesia, AI Bali, Asisten Virtual, Kecerdasan Buatan">
   <link rel="canonical" href="https://wayanku.github.io/Wayan-ai-dari-storybali/" />
@@ -20,7 +18,7 @@
   <meta property="og:title" content="Wayan AI - Asisten Cerdas dari Storybali">
   <meta property="og:description" content="Ngobrol dengan Wayan AI, asisten AI cerdas berbahasa Indonesia dari Storybali. Siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah.">
   <meta property="og:image" content="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true">
-  <meta property="og:url" content="https://wayan-sudiarsana.github.io/Wayan-ai-dari-storybali/">
+  <meta property="og:url" content="https://wayanku.github.io/Wayan-ai-dari-storybali/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="id_ID">
   <meta name="twitter:card" content="summary_large_image">
@@ -28,9 +26,6 @@
   <meta name="twitter:description" content="Ngobrol dengan Wayan AI, asisten AI cerdas berbahasa Indonesia dari Storybali. Siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah.">
   <meta name="twitter:image" content="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true">
   <!-- ▲▲▲ AKHIR DARI META TAGS ▲▲▲ -->
-
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2299.77">
   <!-- Viewport diubah untuk menangani safe area (home bar) di iOS -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -42,23 +37,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- ▲▲▲ AKHIR DARI OPTIMASI GOOGLE FONTS ▲▲▲ -->
 
-  <!-- ▼▼▼ [OPTIMASI] Menambahkan 'defer' untuk mencegah pemblokiran render ▼▼▼ -->
   <!-- ▼▼▼ [OPTIMASI] Memuat semua skrip eksternal dengan 'defer' untuk mencegah pemblokiran render ▼▼▼ -->
   <script src="https://cdn.tailwindcss.com" defer></script>
   <!-- Library untuk memformat Markdown -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
 
   <!-- ▼▼▼ [BARU] Firebase SDK ▼▼▼ -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js" defer></script>
   <!-- ▲▲▲ AKHIR DARI Firebase SDK ▲▲▲ -->
 
   <style>
-    /* [PERMINTAAN PENGGUNA] Mengimpor font 'Inter' agar mirip font iPhone di semua perangkat */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
     /* === CSS VARIABLES UNTUK DARK/LIGHT MODE === */
     :root {
       --bg-primary: #ffffff;
@@ -114,6 +104,36 @@
     html.dark .modal-content .text-gray-500 {
         color: var(--text-secondary) !important;
     }
+    
+    /* [FIX] Perbaikan kontras di mode gelap untuk elemen lain */
+    html.dark .settings-input,
+    html.dark .settings-select {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+    
+    html.dark .choice-btn {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+    
+    html.dark .choice-btn.active {
+        background-color: var(--bg-accent);
+        border-color: var(--text-primary);
+    }
+    
+    /* [FIX] Perbaikan modal di mode gelap */
+    html.dark .modal-content {
+        background-color: var(--modal-bg);
+        color: var(--text-primary);
+    }
+    
+    /* [FIX] Perbaikan TTS player di mode gelap */
+    html.dark .tts-player {
+        background-color: rgba(var(--bg-primary-rgba), 0.5);
+    }
 
     /* [FIX] Membuat header/footer modal pengaturan menjadi gelap */
     html.dark #settingsModal .modal-content > div[class*="bg-white"],
@@ -160,7 +180,7 @@
 
     body {
         /* [PERBAIKAN TAMPILAN IPHONE] Menggunakan font sistem untuk nuansa asli iOS */
-        /* [PERMINTAAN PENGGUNA] Menggunakan font 'Inter' agar mirip font iPhone di semua perangkat */
+        /* Menggunakan font 'Inter' agar mirip font iPhone di semua perangkat */
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         background-color: var(--bg-secondary) !important;
     }
@@ -1643,47 +1663,44 @@
         font-family: 'Inter', sans-serif;
     }
     #storyViewerModal.hidden {
+        /* Perbaikan kontras di mode gelap */
+        html.dark .settings-card label,
+        html.dark .settings-card h4 {
+            color: var(--text-primary) !important;
+        }
+        
+        html.dark .settings-input,
+        html.dark .settings-select {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+        
+        html.dark .choice-btn {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+        
+        html.dark .choice-btn.active {
+            background-color: var(--bg-accent);
+            border-color: var(--text-primary);
+        }
+        
+        /* Perbaikan modal di mode gelap */
+        html.dark .modal-content {
+            background-color: var(--modal-bg);
+            color: var(--text-primary);
+        }
+        
+        /* Perbaikan TTS player di mode gelap */
+        html.dark .tts-player {
+            background-color: rgba(var(--bg-primary-rgba), 0.5);
+        }
+    
+    #storyViewerModal {
+        /* [DIKEMBALIKAN] Latar belakang kembali menjadi warna solid acak, dengan transisi warna */
         opacity: 0;
-        transform: scale(1.05); /* Animasi zoom-out saat ditutup */
-        pointer-events: none;
-    }
-    .story-viewer-header {
-        padding-top: calc(0.75rem + env(safe-area-inset-top));
-    }
-    .story-viewer-content {
-        font-size: 1.75rem; /* 28px */
-        line-height: 2.25rem; /* 36px */
-        font-weight: 700; /* bold */
-    }
-    .story-viewer-footer {
-        padding-bottom: calc(1rem + env(safe-area-inset-bottom));
-        /* [DIUBAH] Flexbox untuk menata semua item di footer */
-        display: flex;
-    }
-    .story-progress-container {
-        display: flex;
-        gap: 4px;
-        width: 100%;
-    }
-    .story-progress-bar {
-        flex-grow: 1;
-        height: 3px;
-        background-color: rgba(255, 255, 255, 0.3);
-        border-radius: 2px;
-        overflow: hidden; /* [BARU] Diperlukan untuk progress fill */
-    }
-    /* [BARU] Gaya untuk progress fill yang aktif */
-    .story-progress-fill {
-        width: 0%;
-        height: 100%;
-        background-color: white;
-        overflow: hidden;
-    }
-    /* [BARU] Gaya untuk tombol hapus story */
-    #deleteStoryBtn {
-        background-color: rgba(0, 0, 0, 0.2);
-        transition: background-color 0.2s ease;
-        backdrop-filter: blur(5px);
     }
     /* ▼▼▼ [BARU] GAYA UNTUK MODAL BUAT STORY YANG DIROMBAK ▼▼▼ */
     #createStoryModal .modal-content {
@@ -1715,6 +1732,45 @@
     }
     #storyContentInput::placeholder {
         color: rgba(255, 255, 255, 0.6);
+    }
+    .story-viewer-header {
+        padding-top: calc(0.75rem + env(safe-area-inset-top));
+    }
+    .story-viewer-content {
+        font-size: 1.75rem; /* 28px */
+        line-height: 2.25rem; /* 36px */
+        font-weight: 700; /* bold */
+    }
+    .story-viewer-footer {
+        padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+        display: flex;
+    }
+    .story-progress-container {
+        display: flex;
+        gap: 4px;
+        width: 100%;
+    }
+    .story-progress-bar {
+        flex-grow: 1;
+        height: 3px;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    .story-progress-fill {
+        width: 0%;
+        height: 100%;
+        background-color: white;
+        overflow: hidden;
+    }
+    #deleteStoryBtn {
+        background-color: rgba(0, 0, 0, 0.2);
+        transition: background-color 0.2s ease;
+        backdrop-filter: blur(5px);
+    }
+    #storyViewerModal.hidden {
+        transform: scale(1.05); /* Animasi zoom-out saat ditutup */
+        pointer-events: none;
     }
     /* ▲▲▲ AKHIR DARI GAYA MODAL BUAT STORY ▲▲▲ */
     /* ▲▲▲ AKHIR DARI GAYA PENAMPIL STORY ▲▲▲ */
@@ -2777,81 +2833,56 @@
     // ===================================================================================
 
     // ▼▼▼ [BARU] Inisialisasi Firebase & Logika Otentikasi ▼▼▼
-    // [DIUBAH] Menggunakan konfigurasi Firebase dari pengguna
-    const firebaseConfig = {
-      apiKey: "AIzaSyDIRmhod4j-WfVEw0MfN7f0UhaOX-XpJuc",
-      authDomain: "storybali.firebaseapp.com",
-      databaseURL: "https://storybali-default-rtdb.firebaseio.com",
-      projectId: "storybali",
-      storageBucket: "storybali.appspot.com", // [FIX] Menghapus .firebasestorage dari nama bucket
-      messagingSenderId: "928239695333",
-      appId: "1:928239695333:web:7b4f6581c392614c51eb0c",
-      measurementId: "G-MTYGDZW92D"
-    };
+    let auth, db, googleProvider;
 
-    // Inisialisasi Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore(); // [BARU] Inisialisasi Firestore
-    const googleProvider = new firebase.auth.GoogleAuthProvider();
+    function setupFirebasePersistence() {
+        const firebaseConfig = {
+          apiKey: "AIzaSyDIRmhod4j-WfVEw0MfN7f0UhaOX-XpJuc",
+          authDomain: "storybali.firebaseapp.com",
+          databaseURL: "https://storybali-default-rtdb.firebaseio.com",
+          projectId: "storybali",
+          storageBucket: "storybali.appspot.com",
+          messagingSenderId: "928239695333",
+          appId: "1:928239695333:web:7b4f6581c392614c51eb0c",
+          measurementId: "G-MTYGDZW92D"
+        };
 
-    // ▼▼▼ TAMBAHKAN BARIS DI BAWAH INI ▼▼▼
-    auth.tenantId = null; // Pastikan tidak ada tenant ID yang mengganggu
-    auth.languageCode = 'id'; // Opsional, tapi bagus untuk konsistensi
-    auth.useDeviceLanguage();
+        firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        db = firebase.firestore();
+        googleProvider = new firebase.auth.GoogleAuthProvider();
 
-    // INI ADALAH BARIS KUNCINYA:
-    // Memberitahu Firebase untuk menggunakan domain utama kita sebagai domain otentikasi.
-    // Ini mencegah masalah "bounce tracking" yang disebabkan oleh redirect ke domain firebaseapp.com.
-    if (!auth.authDomain) {
-      auth.authDomain = 'wayanku.github.io';
+        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+            .then(() => {
+                console.log("Firebase persistence berhasil diatur ke LOCAL");
+                
+                auth.onAuthStateChanged(user => {
+                    if (user) {
+                        currentUser = user;
+                        updateUIForAuthState();
+                    } else {
+                        auth.getRedirectResult().then(result => {
+                            if (result && result.user) {
+                                currentUser = result.user;
+                                updateUIForAuthState();
+                            } else {
+                                currentUser = null;
+                                updateUIForAuthState();
+                            }
+                        }).catch(error => {
+                            console.error("Error getRedirectResult:", error);
+                            currentUser = null;
+                            updateUIForAuthState();
+                        });
+                    }
+                });
+            })
+            .catch((error) => {
+                console.error("Gagal mengatur persistence:", error);
+            });
     }
-    // ▲▲▲ AKHIR DARI KODE YANG DITAMBAHKAN ▲▲▲
-
-    // ▼▼▼ TAMBAHKAN BLOK KODE DI BAWAH INI ▼▼▼
-    // Memaksa Firebase untuk menggunakan penyimpanan lokal yang lebih persisten.
-    // Ini membantu melawan fitur pembersihan data otomatis oleh browser.
-    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      .then(() => {
-        console.log("Persistence berhasil diatur ke LOCAL.");
-      })
-      .catch((error) => {
-        console.error("Gagal mengatur persistence:", error);
-      });
-    // ▲▲▲ AKHIR DARI KODE YANG DITAMBAHKAN ▲▲▲
-
 
     let currentUser = null; // ▼▼▼ GUNAKAN KODE INI SEBAGAI PENGGANTI ▼▼▼
-
-    // Listener untuk status otentikasi & penanganan hasil redirect
-    auth.onAuthStateChanged(user => {
-      // Jika 'user' sudah ada, berarti login berhasil (baik dari sesi sebelumnya atau redirect)
-      if (user) {
-        currentUser = user;
-        console.log("onAuthStateChanged: Pengguna terdeteksi, login berhasil!", user.displayName);
-        updateUIForAuthState();
-      } else {
-        // Jika tidak ada user, cek apakah kita baru saja kembali dari redirect
-        auth.getRedirectResult().then(result => {
-          if (result && result.user) {
-            // Ini terjadi tepat setelah pengguna login via redirect
-            currentUser = result.user;
-            console.log("getRedirectResult: Berhasil mendapatkan hasil redirect login!", result.user.displayName);
-            updateUIForAuthState();
-          } else {
-            // Pengguna memang belum login dan tidak ada hasil redirect
-            console.log("onAuthStateChanged: Tidak ada pengguna yang login.");
-            currentUser = null;
-            updateUIForAuthState();
-          }
-        }).catch(error => {
-          console.error("Error saat getRedirectResult:", error);
-          alert("Terjadi error saat memproses login: " + error.message);
-          currentUser = null;
-          updateUIForAuthState();
-        });
-      }
-    });
 
      // Fungsi untuk logout
      function signOut() {
@@ -3412,7 +3443,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         const messageInput = document.getElementById('messageInput'); // Placeholder will be set by applyTranslations
         messageInput.disabled = !enabled;
         messageInput.placeholder = message;
-        document.querySelectorAll('.action-btn, .dynamic-icon-btn').forEach(btn => {
+        document.querySelectorAll('.action-btn, .dynamic-icon-btn, .new-chat-btn').forEach(btn => {
             btn.disabled = !enabled;
             btn.style.opacity = enabled ? '1' : '0.5';
             btn.style.cursor = enabled ? 'pointer' : 'not-allowed';
@@ -3474,7 +3505,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             delete allUserData[currentUserIP];
             saveChatLimitData(allUserData);
         }
-        setInputEnabled(true);
+        setInputEnabled(true, t('inputPlaceholder'));
     }
     function handleInputChange(event) {
         const messageInput = event.target;
@@ -3784,6 +3815,16 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         }
     }
     function startVoiceRecognition() {
+        // [FIX] Hentikan dan bersihkan instans yang mungkin masih ada sebelum memulai yang baru.
+        // Ini adalah langkah pencegahan paling penting untuk error 'already started'.
+        if (recognition) {
+            recognition.onend = null; // Hapus listener untuk mencegah panggilan ganda ke stopVoiceRecognition.
+            recognition.onerror = null;
+            recognition.onresult = null;
+            recognition.stop();
+            recognition = null;
+        }
+
         if (!('webkitSpeechRecognition' in window)) {
             alert(t('errorVoiceRecognition'));
             return;
@@ -3796,16 +3837,23 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         micBtn.classList.add('send-btn-active');
         micBtn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V6a1 1 0 00-1-1H5z" clip-rule="evenodd"></path></svg>`;
         micBtn.title = t('stopGenerating');
-
+        
         document.getElementById('messageInput').style.visibility = 'hidden';
         document.getElementById('voiceRecordingUI').style.display = 'flex';
         document.getElementById('voiceStatusText').textContent = t('listening');
 
         recognition = new webkitSpeechRecognition();
-        recognition.continuous = true;
+        recognition.continuous = true; // [FIX] Diubah ke true untuk mode dikte
         recognition.interimResults = true;
-        recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
+        recognition.lang = settings.language === 'id' ? 'id-ID' : 
+                          settings.language === 'ja' ? 'ja-JP' : 'en-US';
+        
+        let recognitionTimeout;
+        
         recognition.onresult = (event) => {
+            // Clear existing timeout
+            clearTimeout(recognitionTimeout);
+            
             let interim_transcript = '';
             for (let i = event.resultIndex; i < event.results.length; ++i) {
                 const transcript = event.results[i][0].transcript;
@@ -3815,18 +3863,27 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                     interim_transcript += transcript;
                 }
             }
+            
             const displayText = (finalTranscript + interim_transcript).trim();
             document.getElementById('voiceStatusText').textContent = displayText || t('listening');
+            
+            // Auto-stop after 2 seconds of silence
+            recognitionTimeout = setTimeout(() => {
+                if (recognition && finalTranscript.trim()) {
+                    stopVoiceRecognition(false);
+                }
+            }, 2000);
         };
         recognition.onerror = (event) => {
             console.error("Speech recognition error:", event.error);
-            if (event.error !== 'aborted') {
+            if (event.error !== 'aborted' && event.error !== 'no-speech') {
                 addSystemMessage(t('errorSpeechRecog', { error: event.error }), 'warning');
             }
             stopVoiceRecognition(false);
         };
         recognition.onend = () => {
             if (isRecording) {
+                // Jika masih dalam mode recording tapi recognition berhenti sendiri
                 stopVoiceRecognition(false);
             }
         };
@@ -3840,9 +3897,9 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     }
     function stopVoiceRecognition(isCancel = false) {
         if (!isRecording) return;
+        isRecording = false; // [FIX] Set isRecording ke false di awal untuk mencegah panggilan berulang.
         
         const currentText = document.getElementById('voiceStatusText').textContent.trim();
-        isRecording = false;
         if (recognition) {
             recognition.stop();
             recognition = null;
@@ -3862,6 +3919,10 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         micBtn.title = t('voiceModeTitle');
 
         document.getElementById('messageInput').style.visibility = 'visible';
+        if (!isCancel && finalTranscript) {
+            // Kirim pesan secara otomatis setelah rekaman selesai
+            sendMessage();
+        }
         document.getElementById('voiceRecordingUI').style.display = 'none';
         handleInputChange({ target: document.getElementById('messageInput') });
     }
@@ -3936,7 +3997,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         const previewWrapper = document.getElementById('backgroundPreviewWrapper'); // [DIUBAH] Nama variabel disesuaikan
 
         if (file) {
-            if (!file.type.startsWith('image/')) {
+            if (!file.type.startsWith('image/')) { // Validasi tipe file
                 alert(t('alertImageInvalid'));
                 event.target.value = '';
                 fileNameDisplay.textContent = '';
@@ -3945,15 +4006,15 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             const reader = new FileReader();
             reader.onload = e => {
                 const base64Image = e.target.result;
-                tempSettings.backgroundUrl = base64Image;
+                settings.backgroundUrl = base64Image; // [FIX] Langsung ubah settings
 
                 // [DIUBAH] Tampilkan wrapper pratinjau dan reset efek
                 previewWrapper.classList.remove('hidden');
                 fileNameDisplay.textContent = file.name;
                 
                 // Reset efek pratinjau ke default saat gambar baru diunggah
-                tempSettings.backgroundBlur = 'none';
-                tempSettings.backgroundSize = 'cover';
+                settings.backgroundBlur = 'light'; // [FIX] Default ke blur ringan
+                settings.backgroundSize = 'cover';
                 updatePreviewEffects();
                 applyPreviewBackground(); // [DIUBAH] Terapkan pratinjau langsung ke latar utama
             };
@@ -3962,11 +4023,11 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     }
 
     function removeCustomBackground() {
-        tempSettings.backgroundUrl = '';
+        settings.backgroundUrl = ''; // [FIX] Langsung ubah settings
         document.getElementById('backgroundFileInput').value = '';
         document.getElementById('backgroundFileName').textContent = '';
         document.getElementById('backgroundPreviewWrapper').classList.add('hidden'); // [DIUBAH] Sembunyikan wrapper
-        applyPreviewBackground(); // [DIUBAH] Terapkan pratinjau langsung (menghapus latar)
+        applyCustomBackground(); // [FIX] Gunakan fungsi apply utama
     }
 
     function loadSettingsData() {
@@ -3981,14 +4042,14 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     }
     function saveSettings() {
         localStorage.setItem('storybaliSettings', JSON.stringify(settings));
-    }
+    } 
     function saveAllSettings() {
         settings.customAiRolePrompt = document.getElementById('customRoleInput').value;
         settings.fontSize = document.getElementById('fontSizeSelect').value;
         settings.animationsEnabled = document.getElementById('animationToggle').checked;
         settings.soundEnabled = document.getElementById('soundToggle').checked;
         settings.readAiResponseEnabled = document.getElementById('readAiResponseToggle').checked;
-        settings.voiceURI = document.getElementById('voiceSelect').value;
+        settings.voiceURI = document.getElementById('voiceSelect')?.value;
         settings.audioSource = document.querySelector('.choice-btn[id^="audioSource-"].active').id.split('-')[1];
         settings.elevenLabsVoiceId = document.getElementById('elevenLabsVoiceSelect').value;
         settings.saveHistory = document.getElementById('saveHistoryToggle').checked;
@@ -3996,7 +4057,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         settings.backgroundUrl = tempSettings.backgroundUrl;
         settings.backgroundBlur = tempSettings.backgroundBlur; // [BARU] Simpan pengaturan blur
         settings.backgroundSize = tempSettings.backgroundSize; // [BARU] Simpan pengaturan ukuran
-
+        
         saveSettings(); 
         applySettings(); 
         alert(t('alertSettingsSaved'));
@@ -4060,7 +4121,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         if (settings.aiRole === 'kustom') document.getElementById('customRoleInput').value = settings.customAiRolePrompt;
         
         const voiceSelect = document.getElementById('voiceSelect');
-        if (settings.voiceURI && voiceSelect.options.length > 1) voiceSelect.value = settings.voiceURI;
+        if (settings.voiceURI && voiceSelect && voiceSelect.options.length > 1) voiceSelect.value = settings.voiceURI;
 
         const elevenLabsSelect = document.getElementById('elevenLabsVoiceSelect');
         if (settings.elevenLabsVoiceId && elevenLabsSelect.options.length > 1) {
@@ -4122,7 +4183,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.getElementById('saveHistoryToggle').checked = tempSettings.saveHistory;
 
         const voiceSelect = document.getElementById('voiceSelect');
-        if (tempSettings.voiceURI) voiceSelect.value = tempSettings.voiceURI;
+        if (tempSettings.voiceURI && voiceSelect) voiceSelect.value = tempSettings.voiceURI;
 
         const elevenLabsSelect = document.getElementById('elevenLabsVoiceSelect');
         if (tempSettings.elevenLabsVoiceId) elevenLabsSelect.value = tempSettings.elevenLabsVoiceId;
@@ -4203,62 +4264,33 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
 
     // ▼▼▼ [DIUBAH] FUNGSI UNTUK MENGONTROL PRATINJAU LATAR BELAKANG ▼▼▼
     function applyPreviewBackground() {
-        const chatContainer = document.querySelector('.chat-container');
+        const previewPanes = document.querySelectorAll('.preview-pane .preview-background');
+        const blurValue = { none: 'blur(0px)', light: 'blur(4px)', strong: 'blur(10px)' }[tempSettings.backgroundBlur] || 'blur(0px)';
         
-        chatContainer.classList.remove(
-            'custom-background', 
-            'background-blur-light', 
-            'background-blur-strong',
-            'background-size-cover',
-            'background-size-contain'
-        );
-        chatContainer.style.setProperty('--custom-bg-url', 'none');
-
-        if (tempSettings.backgroundUrl) {
-            chatContainer.classList.add('custom-background');
-            chatContainer.style.setProperty('--custom-bg-url', `url('${tempSettings.backgroundUrl}')`);
-
-            if (tempSettings.backgroundSize === 'contain') {
-                chatContainer.classList.add('background-size-contain');
-            } else {
-                chatContainer.classList.add('background-size-cover');
-            }
-
-            if (tempSettings.backgroundBlur === 'light') {
-                chatContainer.classList.add('background-blur-light');
-            } else if (tempSettings.backgroundBlur === 'strong') {
-                chatContainer.classList.add('background-blur-strong');
-            }
-        } else {
-            chatContainer.style.background = '';
-        }
+        previewPanes.forEach(pane => {
+            pane.style.backgroundImage = tempSettings.backgroundUrl ? `url('${tempSettings.backgroundUrl}')` : 'none';
+            pane.style.backgroundSize = tempSettings.backgroundSize;
+            pane.style.filter = blurValue;
+        });
     }
 
     // [DIUBAH] Fungsi baru untuk mengatur level blur dari tombol pilihan
     function setPreviewBlur(level) {
         tempSettings.backgroundBlur = level;
         updatePreviewEffects();
-        applyPreviewBackground();
+        applyPreviewBackground(); // Terapkan ke pratinjau
+        applyCustomBackground(); // Terapkan ke latar utama
     }
 
     // [DIUBAH] Fungsi baru untuk mengatur ukuran dari tombol pilihan
     function setPreviewSize(size) {
         tempSettings.backgroundSize = size;
         updatePreviewEffects();
-        applyPreviewBackground();
+        applyPreviewBackground(); // Terapkan ke pratinjau
+        applyCustomBackground(); // Terapkan ke latar utama
     }
 
     function updatePreviewEffects() {
-        const previewElements = document.querySelectorAll('.preview-background'); // [DIUBAH] Targetkan semua pane pratinjau
-        const blurValues = { none: 'blur(0px)', light: 'blur(4px)', strong: 'blur(10px)' };
-
-        previewElements.forEach(el => {
-            el.style.backgroundImage = `url('${tempSettings.backgroundUrl}')`;
-            el.style.filter = blurValues[tempSettings.backgroundBlur];
-            el.style.backgroundSize = tempSettings.backgroundSize;
-            el.style.backgroundPosition = 'center';
-        });
-
         // [DIUBAH] Update kelas 'active' untuk tombol pilihan blur
         document.querySelectorAll('[id^="blurBtn"]').forEach(btn => btn.classList.remove('active'));
         const activeBlurBtnId = `blurBtn${tempSettings.backgroundBlur.charAt(0).toUpperCase() + tempSettings.backgroundBlur.slice(1)}`;
@@ -4268,6 +4300,8 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.querySelectorAll('[id^="sizeBtn"]').forEach(btn => btn.classList.remove('active'));
         const activeSizeBtnId = `sizeBtn${tempSettings.backgroundSize.charAt(0).toUpperCase() + tempSettings.backgroundSize.slice(1)}`;
         document.getElementById(activeSizeBtnId)?.classList.add('active');
+
+        applyPreviewBackground();
     }
 
     function showConfirmModal({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', confirmClass = 'bg-red-600 hover:bg-red-700 text-white' }) {
@@ -4697,13 +4731,30 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     function hideImageProcessingIndicator() { document.getElementById('imageProcessingIndicator')?.classList.remove('show'); }
     
     // ▼▼▼ [DIUBAH] Logika Scroll dan Notifikasi Pesan Baru ▼▼▼
-    function scrollToBottom() {
+    function improvedScrollToBottom() {
         const chatMessages = document.getElementById('chatMessages');
-        setTimeout(() => chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' }), 100);
+        if (!chatMessages) return;
+        
+        // Cek apakah user sedang scroll ke atas
+        const isNearBottom = chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 150;
+        
+        if (isNearBottom || !userHasScrolledUp) {
+            requestAnimationFrame(() => {
+                chatMessages.scrollTo({ 
+                    top: chatMessages.scrollHeight, 
+                    behavior: 'smooth' 
+                });
+            });
+        } else {
+            showNewMessageNotification();
+        }
     }
 
     function forceScrollToBottom() {
-        scrollToBottom();
+        const chatMessages = document.getElementById('chatMessages');
+        if (chatMessages) {
+            chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
+        }
         document.getElementById('newMessageNotification').classList.add('hidden');
     }
 
@@ -5306,70 +5357,83 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
         return validApiKeys[nextIndex];
     }
 
-    async function makeApiRequest(payload, signal = null, streaming = true) {
+    async function improvedMakeApiRequest(payload, signal = null, streaming = true) {
         if (apiKeys.length === 0) loadApiKeys();
         const validApiKeys = apiKeys.filter(key => key && key.trim() !== '');
         
         if (validApiKeys.length === 0) {
             throw new Error("Tidak ada API Key yang valid yang dikonfigurasi.");
         }
-    
-        // ▼▼▼ [PERBAIKAN] Mengembalikan loop untuk mencoba semua API key jika terjadi error ▼▼▼
-        const startingIndex = getNextApiKeyIndex(); // Dapatkan indeks awal dari fungsi helper baru
-    
-        for (let i = 0; i < validApiKeys.length; i++) {
-            const currentIndex = (startingIndex + i) % validApiKeys.length;
+
+        const startingIndex = getNextApiKeyIndex();
+        const maxRetries = validApiKeys.length;
+
+        for (let attempt = 0; attempt < maxRetries; attempt++) {
+            const currentIndex = (startingIndex + attempt) % validApiKeys.length;
             const currentApiKey = validApiKeys[currentIndex];
 
-            // Cek model dari cache atau fetch baru
-            let modelToUse = modelCache[currentApiKey];
-            if (!modelToUse) {
-                try {
-                    console.log(`Mencari model untuk API Key urutan ke-${currentIndex + 1}...`);
-                    modelToUse = await getBestModelForKey(currentApiKey);
-                    modelCache[currentApiKey] = modelToUse; // Simpan ke cache
-                } catch (modelError) {
-                    console.warn(`Gagal mendapatkan model untuk API Key urutan ke-${currentIndex + 1}: ${modelError.message}. Mencoba kunci berikutnya...`);
-                    continue; // Lanjut ke API key berikutnya jika model tidak ditemukan
-                }
-            }
-
-            const apiAction = streaming ? 'streamGenerateContent' : 'generateContent';
-            // [PERBAIKAN] Memastikan URL API selalu benar, baik untuk streaming maupun non-streaming
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${modelToUse}:${apiAction}?key=${currentApiKey}${streaming ? '&alt=sse' : ''}`;
-
-            console.log(`Mencoba API Key urutan ke-${currentIndex + 1}...`);
-
             try {
+                // Cek model dari cache atau fetch baru
+                let modelToUse = modelCache[currentApiKey];
+                if (!modelToUse) {
+                    console.log(`Mencari model untuk API Key ${currentIndex + 1}...`);
+                    modelToUse = await getBestModelForKey(currentApiKey);
+                    modelCache[currentApiKey] = modelToUse;
+                }
+
+                const apiAction = streaming ? 'streamGenerateContent' : 'generateContent';
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${modelToUse}:${apiAction}?key=${currentApiKey}${streaming ? '&alt=sse' : ''}`;
+
                 const fetchOptions = {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 };
-                if (signal) { fetchOptions.signal = signal; }
-    
+                
+                if (signal) fetchOptions.signal = signal;
+
                 const response = await fetch(apiUrl, fetchOptions);
-    
+
                 if (response.ok) {
-                    console.log(`Berhasil menggunakan API Key urutan ke-${currentIndex + 1} (${currentApiKey.substring(0, 4)}...${currentApiKey.substring(currentApiKey.length - 4)})`);
-                    localStorage.setItem('lastKeyIndex', currentIndex); // Simpan indeks yang berhasil
-                    return response; // Kembalikan respons yang berhasil dan hentikan loop
+                    console.log(`✓ Berhasil menggunakan API Key ${currentIndex + 1}`);
+                    localStorage.setItem('lastKeyIndex', currentIndex);
+                    return response;
                 }
-    
-                // Jika tidak OK, log error dan biarkan loop berlanjut ke kunci berikutnya
+
+                // Handle specific error responses
                 const errorBody = await response.json();
-                console.warn(`API Key urutan ke-${currentIndex + 1} gagal dengan status ${response.status}: ${errorBody.error?.message}. Mencoba kunci berikutnya...`);
-    
+                const errorMessage = errorBody.error?.message || 'Unknown error';
+                
+                console.warn(`✗ API Key ${currentIndex + 1} gagal (${response.status}): ${errorMessage}`);
+                
+                // Jika quota exceeded, skip key ini untuk sementara
+                if (response.status === 429) {
+                    console.log(`API Key ${currentIndex + 1} mencapai quota limit, mencoba key berikutnya...`);
+                    continue;
+                }
+                
+                // Jika invalid key, hapus dari cache
+                if (response.status === 400 || response.status === 403) {
+                    delete modelCache[currentApiKey];
+                }
+
             } catch (error) {
-                if (error.name === 'AbortError') throw error; // Jika user membatalkan, hentikan semua proses
-                console.error(`Gagal total dengan API Key urutan ke-${currentIndex + 1}:`, error.message);
-                // Biarkan loop berlanjut ke kunci berikutnya
+                if (error.name === 'AbortError') {
+                    console.log('Request dibatalkan oleh user');
+                    throw error;
+                }
+                
+                console.error(`✗ Error dengan API Key ${currentIndex + 1}:`, error.message);
+                
+                // Lanjut ke key berikutnya
+                if (attempt < maxRetries - 1) {
+                    console.log('Mencoba API Key berikutnya...');
+                    continue;
+                }
             }
         }
     
-        // Jika loop selesai dan tidak ada kunci yang berhasil, baru lemparkan error
-        throw new Error("Semua API Key yang tersedia gagal atau telah mencapai limit. Silakan periksa API Key Anda di pengaturan.");
-        // ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲
+        throw new Error("Semua API Key gagal. Silakan periksa koneksi atau API Key Anda.");
     }
 
     async function sendMessage() {
@@ -5445,6 +5509,7 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
         let contentEl, suggestionsEl, sourcesEl;
 
         try {
+            let isFirstChunk = true; // Deklarasi hanya sekali di sini
             // 1. Buat bubble chat AI yang kosong dan dapatkan elemennya
             const bubbleElements = addMessage(null, false);
             contentEl = bubbleElements.contentEl;
@@ -5462,7 +5527,7 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
             };
 
             // 2. Lakukan request dan dapatkan stream
-            const response = await makeApiRequest(payload, currentFetchController.signal);
+            const response = await improvedMakeApiRequest(payload, currentFetchController.signal);
             if (!response.body) throw new Error("Response body is null");
 
             // 3. Baca stream
@@ -5470,7 +5535,6 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
             const decoder = new TextDecoder();
             let fullResponseText = "";
             let groundingMetadata = null; // [BARU] Untuk menyimpan sumber
-            let sentenceBuffer = "";
 
             while (true) {
                 const { value, done } = await reader.read();
@@ -5557,6 +5621,7 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
         let contentEl, suggestionsEl;
 
         try {
+            let isFirstChunk = true;
             const bubbleElements = addMessage(null, false);
             contentEl = bubbleElements.contentEl;
             suggestionsEl = bubbleElements.suggestionsEl;
@@ -5569,14 +5634,12 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
                 generationConfig: { temperature: 0.9, topK: 32, topP: 1, maxOutputTokens: 2048 }
             };
 
-            const response = await makeApiRequest(payload, currentFetchController.signal);
+            const response = await improvedMakeApiRequest(payload, currentFetchController.signal);
             if (!response.body) throw new Error("Response body is null");
 
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let fullResponseText = "";
-            let sentenceBuffer = "";
-            let isFirstChunk = true;
 
             while (true) {
                 const { value, done } = await reader.read();
@@ -6371,7 +6434,76 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
         }
     }
 
+    // 6. PERBAIKAN MEMORY LEAK DI STORY LISTENERS
+    function cleanupStoryListeners() {
+        // Pastikan unsubscribe dipanggil saat tidak diperlukan
+        if (unsubscribeStories) {
+            unsubscribeStories();
+            unsubscribeStories = null;
+        }
+        
+        if (unsubscribeComments) {
+            unsubscribeComments();
+            unsubscribeComments = null;
+        }
+    }
+
+    // Panggil cleanup saat logout atau destroy
+    function onAppDestroy() {
+        cleanupStoryListeners();
+        
+        // Cleanup audio players
+        if (elevenLabsAudioPlayer) {
+            elevenLabsAudioPlayer.pause();
+            elevenLabsAudioPlayer.src = '';
+        }
+        
+        if (geminiTtsAudioPlayer) {
+            geminiTtsAudioPlayer.pause();
+            geminiTtsAudioPlayer.src = '';
+        }
+        
+        // Stop recognition
+        if (recognition) {
+            recognition.stop();
+            recognition = null;
+        }
+        
+        if (callRecognition) {
+            callRecognition.stop();
+            callRecognition = null;
+        }
+    }
+
+    // 9. PERBAIKAN SAFE AREA UNTUK iOS
+    function fixIOSSafeArea() {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+            document.documentElement.classList.add('ios-device');
+        }
+    }
+
+    // 10. INIT FUNCTION - Panggil semua perbaikan
+    function initWayanAIFixes() {
+        console.log('🔧 Menerapkan perbaikan Wayan AI...');
+        
+        // Setup Firebase persistence dengan benar
+        setupFirebasePersistence();
+        
+        // Fix iOS safe area
+        fixIOSSafeArea();
+        
+        // Override fungsi yang bermasalah
+        window.scrollToBottom = improvedScrollToBottom;
+        
+        // Setup cleanup on page unload
+        window.addEventListener('beforeunload', onAppDestroy);
+        
+        console.log('✅ Perbaikan berhasil diterapkan!');
+    }
+
     window.addEventListener('load', async () => {
+        initWayanAIFixes(); // [FIX] Panggil inisialisasi di sini setelah semua skrip dimuat.
         loadApiKeys();
         loadSettingsData();
         applySettings();
