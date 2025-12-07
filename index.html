@@ -7,9 +7,11 @@
   <meta http-equiv="Content-Style-Type" content="text/css">
   
   <!-- ▼▼▼ Meta Tags untuk SEO (Search Engine Optimization) yang Dioptimalkan ▼▼▼ -->
-  <link rel="icon" type="image/webp" href="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" />
-  <link rel="apple-touch-icon" href="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" />
-  <link rel="manifest" href="site.webmanifest" />
+<link rel="icon" type="image/webp" href="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" />
+<link rel="icon" type="image/webp" href="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" />
+<link rel="shortcut icon" href="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" />
+<link rel="apple-touch-icon" href="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" />
+<link rel="manifest" href="site.webmanifest" />
   <meta name="description" content="Wayan AI adalah asisten AI cerdas dari Storybali, siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah. Ngobrol dengan chatbot AI berbahasa Indonesia tentang apa saja!">
   <meta name="keywords" content="Wayan AI, Storybali, Asisten AI, AI Indonesia, Chatbot Indonesia, AI Bali, Asisten Virtual, Kecerdasan Buatan">
   <link rel="canonical" href="https://wayanku.github.io/Wayan-ai-dari-storybali/" />
@@ -18,7 +20,7 @@
   <meta property="og:title" content="Wayan AI - Asisten Cerdas dari Storybali">
   <meta property="og:description" content="Ngobrol dengan Wayan AI, asisten AI cerdas berbahasa Indonesia dari Storybali. Siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah.">
   <meta property="og:image" content="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true">
-  <meta property="og:url" content="https://wayanku.github.io/Wayan-ai-dari-storybali/">
+  <meta property="og:url" content="https://wayan-sudiarsana.github.io/Wayan-ai-dari-storybali/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="id_ID">
   <meta name="twitter:card" content="summary_large_image">
@@ -26,6 +28,9 @@
   <meta name="twitter:description" content="Ngobrol dengan Wayan AI, asisten AI cerdas berbahasa Indonesia dari Storybali. Siap membantu menjawab pertanyaanmu dengan gaya santai dan ramah.">
   <meta name="twitter:image" content="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true">
   <!-- ▲▲▲ AKHIR DARI META TAGS ▲▲▲ -->
+
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2299.77">
   <!-- Viewport diubah untuk menangani safe area (home bar) di iOS -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -37,18 +42,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- ▲▲▲ AKHIR DARI OPTIMASI GOOGLE FONTS ▲▲▲ -->
 
+  <!-- ▼▼▼ [OPTIMASI] Menambahkan 'defer' untuk mencegah pemblokiran render ▼▼▼ -->
   <!-- ▼▼▼ [OPTIMASI] Memuat semua skrip eksternal dengan 'defer' untuk mencegah pemblokiran render ▼▼▼ -->
   <script src="https://cdn.tailwindcss.com" defer></script>
   <!-- Library untuk memformat Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
 
   <!-- ▼▼▼ [BARU] Firebase SDK ▼▼▼ -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js" defer></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js" defer></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <!-- ▲▲▲ AKHIR DARI Firebase SDK ▲▲▲ -->
 
   <style>
+    /* [PERMINTAAN PENGGUNA] Mengimpor font 'Inter' agar mirip font iPhone di semua perangkat */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
     /* === CSS VARIABLES UNTUK DARK/LIGHT MODE === */
     :root {
       --bg-primary: #ffffff;
@@ -104,36 +114,6 @@
     html.dark .modal-content .text-gray-500 {
         color: var(--text-secondary) !important;
     }
-    
-    /* [FIX] Perbaikan kontras di mode gelap untuk elemen lain */
-    html.dark .settings-input,
-    html.dark .settings-select {
-        background-color: var(--bg-tertiary);
-        color: var(--text-primary);
-        border-color: var(--border-color);
-    }
-    
-    html.dark .choice-btn {
-        background-color: var(--bg-tertiary);
-        color: var(--text-primary);
-        border-color: var(--border-color);
-    }
-    
-    html.dark .choice-btn.active {
-        background-color: var(--bg-accent);
-        border-color: var(--text-primary);
-    }
-    
-    /* [FIX] Perbaikan modal di mode gelap */
-    html.dark .modal-content {
-        background-color: var(--modal-bg);
-        color: var(--text-primary);
-    }
-    
-    /* [FIX] Perbaikan TTS player di mode gelap */
-    html.dark .tts-player {
-        background-color: rgba(var(--bg-primary-rgba), 0.5);
-    }
 
     /* [FIX] Membuat header/footer modal pengaturan menjadi gelap */
     html.dark #settingsModal .modal-content > div[class*="bg-white"],
@@ -180,7 +160,7 @@
 
     body {
         /* [PERBAIKAN TAMPILAN IPHONE] Menggunakan font sistem untuk nuansa asli iOS */
-        /* Menggunakan font 'Inter' agar mirip font iPhone di semua perangkat */
+        /* [PERMINTAAN PENGGUNA] Menggunakan font 'Inter' agar mirip font iPhone di semua perangkat */
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         background-color: var(--bg-secondary) !important;
     }
@@ -1349,14 +1329,6 @@
         color: #93c5fd;
     }
     /* ▲▲▲ AKHIR DARI GAYA LINK ▲▲▲ */
-    /* ▼▼▼ [BARU] GAYA UNTUK SUMBER PENCARIAN (GROUNDING) ▼▼▼ */
-    .grounding-sources {
-        margin-top: 1rem;
-        padding-top: 0.75rem;
-        border-top: 1px solid rgba(var(--text-primary-rgba), 0.1);
-        font-size: 0.75rem;
-    }
-    /* ▲▲▲ AKHIR DARI GAYA SUMBER PENCARIAN ▲▲▲ */
 
     /* ▼▼▼ [BARU] Gaya untuk Pembaca Teks (TTS Player) ▼▼▼ */
     .tts-player {
@@ -1663,44 +1635,47 @@
         font-family: 'Inter', sans-serif;
     }
     #storyViewerModal.hidden {
-        /* Perbaikan kontras di mode gelap */
-        html.dark .settings-card label,
-        html.dark .settings-card h4 {
-            color: var(--text-primary) !important;
-        }
-        
-        html.dark .settings-input,
-        html.dark .settings-select {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-            border-color: var(--border-color);
-        }
-        
-        html.dark .choice-btn {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-            border-color: var(--border-color);
-        }
-        
-        html.dark .choice-btn.active {
-            background-color: var(--bg-accent);
-            border-color: var(--text-primary);
-        }
-        
-        /* Perbaikan modal di mode gelap */
-        html.dark .modal-content {
-            background-color: var(--modal-bg);
-            color: var(--text-primary);
-        }
-        
-        /* Perbaikan TTS player di mode gelap */
-        html.dark .tts-player {
-            background-color: rgba(var(--bg-primary-rgba), 0.5);
-        }
-    
-    #storyViewerModal {
-        /* [DIKEMBALIKAN] Latar belakang kembali menjadi warna solid acak, dengan transisi warna */
         opacity: 0;
+        transform: scale(1.05); /* Animasi zoom-out saat ditutup */
+        pointer-events: none;
+    }
+    .story-viewer-header {
+        padding-top: calc(0.75rem + env(safe-area-inset-top));
+    }
+    .story-viewer-content {
+        font-size: 1.75rem; /* 28px */
+        line-height: 2.25rem; /* 36px */
+        font-weight: 700; /* bold */
+    }
+    .story-viewer-footer {
+        padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+        /* [DIUBAH] Flexbox untuk menata semua item di footer */
+        display: flex;
+    }
+    .story-progress-container {
+        display: flex;
+        gap: 4px;
+        width: 100%;
+    }
+    .story-progress-bar {
+        flex-grow: 1;
+        height: 3px;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+        overflow: hidden; /* [BARU] Diperlukan untuk progress fill */
+    }
+    /* [BARU] Gaya untuk progress fill yang aktif */
+    .story-progress-fill {
+        width: 0%;
+        height: 100%;
+        background-color: white;
+        overflow: hidden;
+    }
+    /* [BARU] Gaya untuk tombol hapus story */
+    #deleteStoryBtn {
+        background-color: rgba(0, 0, 0, 0.2);
+        transition: background-color 0.2s ease;
+        backdrop-filter: blur(5px);
     }
     /* ▼▼▼ [BARU] GAYA UNTUK MODAL BUAT STORY YANG DIROMBAK ▼▼▼ */
     #createStoryModal .modal-content {
@@ -1732,45 +1707,6 @@
     }
     #storyContentInput::placeholder {
         color: rgba(255, 255, 255, 0.6);
-    }
-    .story-viewer-header {
-        padding-top: calc(0.75rem + env(safe-area-inset-top));
-    }
-    .story-viewer-content {
-        font-size: 1.75rem; /* 28px */
-        line-height: 2.25rem; /* 36px */
-        font-weight: 700; /* bold */
-    }
-    .story-viewer-footer {
-        padding-bottom: calc(1rem + env(safe-area-inset-bottom));
-        display: flex;
-    }
-    .story-progress-container {
-        display: flex;
-        gap: 4px;
-        width: 100%;
-    }
-    .story-progress-bar {
-        flex-grow: 1;
-        height: 3px;
-        background-color: rgba(255, 255, 255, 0.3);
-        border-radius: 2px;
-        overflow: hidden;
-    }
-    .story-progress-fill {
-        width: 0%;
-        height: 100%;
-        background-color: white;
-        overflow: hidden;
-    }
-    #deleteStoryBtn {
-        background-color: rgba(0, 0, 0, 0.2);
-        transition: background-color 0.2s ease;
-        backdrop-filter: blur(5px);
-    }
-    #storyViewerModal.hidden {
-        transform: scale(1.05); /* Animasi zoom-out saat ditutup */
-        pointer-events: none;
     }
     /* ▲▲▲ AKHIR DARI GAYA MODAL BUAT STORY ▲▲▲ */
     /* ▲▲▲ AKHIR DARI GAYA PENAMPIL STORY ▲▲▲ */
@@ -1972,10 +1908,6 @@
                             <button onclick="triggerFileUpload()" class="action-btn" aria-label="Unggah File" data-translate-title="uploadFileTitle">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.122 2.122l7.81-7.81"></path></svg>
                             </button>
-                            <!-- Tombol Live Vision -->
-<button onclick="startVideoMode()" class="action-btn" aria-label="Live Vision" title="Mode Video Live">
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-</button>
                             <!-- [DIPINDAHKAN] Tombol Panggilan Suara -->
                             <button id="startCallBtn" onclick="startCall()" class="action-btn" aria-label="Mulai Panggilan Suara" data-translate-title="voiceCallTitle">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
@@ -2013,96 +1945,40 @@
     </div>
 </div>
     
-<!-- ▼▼▼ MODAL LIVE CALL BARU ▼▼▼ -->
-<div id="callModal" class="fixed inset-0 z-[200] flex-col items-center hidden text-white">
-    <!-- Tombol Tutup/Minimize di pojok -->
-    <div class="absolute top-6 right-6">
-        <button onclick="endCall()" class="p-2 rounded-full bg-white/10 hover:bg-white/20">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-    </div>
-
-    <!-- Area Tengah: Avatar & Status -->
-    <div class="flex-grow flex flex-col items-center justify-center w-full max-w-md px-6 text-center mt-10">
-        
-        <!-- Status Text -->
-        <h2 class="text-2xl font-bold mb-2">Wayan AI</h2>
-        <p id="callStatusText" class="text-indigo-200 text-sm font-medium mb-8">Menghubungkan...</p>
-
-        <!-- Avatar Container -->
-        <div class="call-avatar-container w-40 h-40 mb-8">
-            <div class="call-pulse-ring"></div>
-            <div class="call-pulse-ring"></div>
-            <div class="relative w-full h-full rounded-full overflow-hidden border-4 border-white/20 shadow-2xl z-10">
-                <img src="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" alt="Wayan AI" class="w-full h-full object-cover">
+<!-- ▼▼▼ MODAL PANGGILAN SUARA YANG DIROMBAK TOTAL ▼▼▼ -->
+<div id="callModal" class="fixed inset-0 z-50 flex-col items-center justify-between hidden p-8" style="background-color: rgba(0,0,0,0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+    <!-- Area Konten Atas -->
+    <div class="w-full text-center text-white">
+        <div class="relative inline-block">
+            <div class="call-avatar-container w-32 h-32 rounded-full p-1 mx-auto mb-4" style="border: 3px solid rgba(255,255,255,0.5);">
+                <img src="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" alt="Wayan AI Avatar" class="w-full h-full object-cover rounded-full">
             </div>
+            <!-- [BARU] Visualizer Suara -->
+            <div id="callVisualizer" class="absolute inset-0 rounded-full border-2 border-blue-400 opacity-0 transition-all duration-500" style="animation: call-visualizer-pulse 2s infinite ease-out;"></div>
         </div>
-
-        <!-- Visualizer -->
-        <div id="callVisualizer" class="audio-visualizer idle">
-            <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
-            <div class="viz-bar"></div><div class="viz-bar"></div>
-        </div>
-        
-        <!-- Transkrip Langsung (Opsional, agar user tahu apa yang didengar AI) -->
-        <p id="liveTranscript" class="mt-8 text-sm text-gray-400 h-6 overflow-hidden"></p>
+        <h2 class="text-2xl font-bold" data-translate-key="aiName">Wayan AI</h2>
+        <p id="callStatusText" class="text-lg mt-1 text-gray-300 transition-all duration-300" data-translate-key="callConnecting">Menghubungkan...</p>
     </div>
 
-    <!-- Controls Bawah -->
-    <div class="call-controls">
-        <!-- Tombol Akhiri -->
-        <button onclick="endCall()" class="call-btn btn-end shadow-lg shadow-red-500/30">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l-8 8m0-8l8 8"></path></svg>
+    <!-- Area Transkrip (di tengah) -->
+    <div id="callTranscriptPreview" class="w-full max-w-sm mx-auto my-4 p-3 rounded-lg text-sm text-white text-center" style="display: none; background-color: rgba(0,0,0,0.25); backdrop-filter: blur(5px);">
+        <!-- Transkrip akan muncul di sini -->
+    </div>
+
+    <!-- Wrapper untuk tombol di bagian bawah (posisi disesuaikan) -->
+    <div class="w-full flex items-center justify-center space-x-8">
+        <!-- Tombol Aksi Utama (Mikrofon/Kirim) -->
+        <button id="callActionBtn" class="w-16 h-16 call-action-button bg-blue-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform active:scale-95" data-translate-title="callStartSpeaking" style="display: none;">
+            <!-- Ikon akan diubah oleh JavaScript -->
+        </button>
+
+        <!-- Tombol Akhiri Panggilan -->
+        <button id="endCallBtn" onclick="endCall()" class="w-16 h-16 call-action-button bg-red-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform" data-translate-title="callEnd">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l-8 8m0-8l8 8"></path></svg>
         </button>
     </div>
 </div>
-<!-- ▲▲▲ AKHIR MODAL LIVE CALL ▲▲▲ -->
-
-<!-- ▼▼▼ MODAL LIVE VIDEO (VISION MODE) ▼▼▼ -->
-<div id="videoModal" class="fixed inset-0 hidden flex-col">
-    <!-- Elemen Video & Canvas (Canvas disembunyikan untuk capture) -->
-    <video id="cameraFeed" autoplay playsinline muted></video>
-    <canvas id="videoCanvas" class="hidden"></canvas>
-
-    <!-- Overlay UI -->
-    <div class="video-overlay-ui">
-        <!-- Header: Status & Close -->
-        <div class="flex justify-between items-start">
-            <button onclick="stopVideoMode()" class="p-2 rounded-full bg-black/40 text-white hover:bg-black/60 backdrop-blur-md">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-            
-            <div class="vision-status-pill">
-                <div class="pulsing-dot"></div>
-                <span id="visionStatusText">Wayan Melihat...</span>
-            </div>
-
-            <!-- Tombol Ganti Kamera (Front/Back) -->
-            <button onclick="switchCamera()" class="p-2 rounded-full bg-black/40 text-white hover:bg-black/60 backdrop-blur-md">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-            </button>
-        </div>
-
-        <!-- Center: Transkrip -->
-        <div class="flex-grow flex items-center justify-center">
-             <p id="visionTranscript" class="text-white/80 text-center font-medium px-4 py-2 bg-black/30 rounded-lg backdrop-blur-sm hidden"></p>
-        </div>
-
-        <!-- Footer: Visualizer Suara (Menggunakan style yang sama dengan Call Audio) -->
-        <div class="flex flex-col items-center gap-4 pb-8">
-            <div id="visionVisualizer" class="audio-visualizer idle">
-                <div class="viz-bar bg-white"></div><div class="viz-bar bg-white"></div><div class="viz-bar bg-white"></div>
-                <div class="viz-bar bg-white"></div><div class="viz-bar bg-white"></div>
-            </div>
-            
-            <!-- Tombol Mic Manual (Opsional, jika auto detect gagal) -->
-             <button id="visionMicBtn" class="w-16 h-16 rounded-full bg-white/20 border-2 border-white/50 flex items-center justify-center animate-pulse">
-                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd"></path></svg>
-            </button>
-        </div>
-    </div>
-</div>
-<!-- ▲▲▲ AKHIR MODAL LIVE VIDEO ▲▲▲ -->
+<!-- ▲▲▲ AKHIR DARI MODAL PANGGILAN SUARA ▲▲▲ -->
 
 <!-- ▼▼▼ [BARU] MODAL UNTUK MEMBUAT STORY BARU ▼▼▼ -->
 <div id="createStoryModal" class="fixed inset-0 modal-overlay z-[110] flex items-center justify-center hidden p-4"> <!-- [FIX] z-index dinaikkan -->
@@ -2716,12 +2592,11 @@
                         </div>
                         <div class="grid grid-cols-2 gap-2 w-full pt-2">
                             <button id="audioSource-browser" onclick="selectChoice('audioSource', 'browser', this)" class="choice-btn active" data-translate-key="audioSourceBrowser">Bawaan Browser</button>
-                            <button id="audioSource-gemini" onclick="selectChoice('audioSource', 'gemini', this)" class="choice-btn" data-translate-key="audioSourceGemini">Gemini</button>
                             <button id="audioSource-elevenlabs" onclick="selectChoice('audioSource', 'elevenlabs', this)" class="choice-btn" data-translate-key="audioSourceElevenLabs">ElevenLabs</button>
                         </div>
                     </div>
                 </div>
-                <div class="settings-card" id="geminiTtsSettings">
+                <div class="settings-card">
                     <div class="settings-item flex-col items-start" id="elevenLabsVoiceSettings">
                         <div class="flex items-center space-x-4 w-full justify-between">
                             <div class="flex items-center space-x-4">
@@ -2740,9 +2615,6 @@
                             </div>
                         </div>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 px-1" data-translate-key="elevenLabsHint">Pilih "ElevenLabs" sebagai Sumber Audio dan simpan API Key di tab "Lanjutan" untuk menggunakan fitur ini.</p>
-                    </div>
-                    <div class="settings-item flex-col items-start" id="geminiTtsHintContainer">
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 px-1" data-translate-key="geminiTtsHint">Menggunakan Google Text-to-Speech API. Pastikan kunci API Gemini Anda memiliki izin untuk layanan ini.</p>
                     </div>
                 </div>
             </div>
@@ -2833,56 +2705,81 @@
     // ===================================================================================
 
     // ▼▼▼ [BARU] Inisialisasi Firebase & Logika Otentikasi ▼▼▼
-    let auth, db, googleProvider;
+    // [DIUBAH] Menggunakan konfigurasi Firebase dari pengguna
+    const firebaseConfig = {
+      apiKey: "AIzaSyDIRmhod4j-WfVEw0MfN7f0UhaOX-XpJuc",
+      authDomain: "storybali.firebaseapp.com",
+      databaseURL: "https://storybali-default-rtdb.firebaseio.com",
+      projectId: "storybali",
+      storageBucket: "storybali.appspot.com", // [FIX] Menghapus .firebasestorage dari nama bucket
+      messagingSenderId: "928239695333",
+      appId: "1:928239695333:web:7b4f6581c392614c51eb0c",
+      measurementId: "G-MTYGDZW92D"
+    };
 
-    function setupFirebasePersistence() {
-        const firebaseConfig = {
-          apiKey: "AIzaSyDIRmhod4j-WfVEw0MfN7f0UhaOX-XpJuc",
-          authDomain: "storybali.firebaseapp.com",
-          databaseURL: "https://storybali-default-rtdb.firebaseio.com",
-          projectId: "storybali",
-          storageBucket: "storybali.appspot.com",
-          messagingSenderId: "928239695333",
-          appId: "1:928239695333:web:7b4f6581c392614c51eb0c",
-          measurementId: "G-MTYGDZW92D"
-        };
+    // Inisialisasi Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore(); // [BARU] Inisialisasi Firestore
+    const googleProvider = new firebase.auth.GoogleAuthProvider();
 
-        firebase.initializeApp(firebaseConfig);
-        auth = firebase.auth();
-        db = firebase.firestore();
-        googleProvider = new firebase.auth.GoogleAuthProvider();
+    // ▼▼▼ TAMBAHKAN BARIS DI BAWAH INI ▼▼▼
+    auth.tenantId = null; // Pastikan tidak ada tenant ID yang mengganggu
+    auth.languageCode = 'id'; // Opsional, tapi bagus untuk konsistensi
+    auth.useDeviceLanguage();
 
-        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-            .then(() => {
-                console.log("Firebase persistence berhasil diatur ke LOCAL");
-                
-                auth.onAuthStateChanged(user => {
-                    if (user) {
-                        currentUser = user;
-                        updateUIForAuthState();
-                    } else {
-                        auth.getRedirectResult().then(result => {
-                            if (result && result.user) {
-                                currentUser = result.user;
-                                updateUIForAuthState();
-                            } else {
-                                currentUser = null;
-                                updateUIForAuthState();
-                            }
-                        }).catch(error => {
-                            console.error("Error getRedirectResult:", error);
-                            currentUser = null;
-                            updateUIForAuthState();
-                        });
-                    }
-                });
-            })
-            .catch((error) => {
-                console.error("Gagal mengatur persistence:", error);
-            });
+    // INI ADALAH BARIS KUNCINYA:
+    // Memberitahu Firebase untuk menggunakan domain utama kita sebagai domain otentikasi.
+    // Ini mencegah masalah "bounce tracking" yang disebabkan oleh redirect ke domain firebaseapp.com.
+    if (!auth.authDomain) {
+      auth.authDomain = 'wayanku.github.io';
     }
+    // ▲▲▲ AKHIR DARI KODE YANG DITAMBAHKAN ▲▲▲
+
+    // ▼▼▼ TAMBAHKAN BLOK KODE DI BAWAH INI ▼▼▼
+    // Memaksa Firebase untuk menggunakan penyimpanan lokal yang lebih persisten.
+    // Ini membantu melawan fitur pembersihan data otomatis oleh browser.
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => {
+        console.log("Persistence berhasil diatur ke LOCAL.");
+      })
+      .catch((error) => {
+        console.error("Gagal mengatur persistence:", error);
+      });
+    // ▲▲▲ AKHIR DARI KODE YANG DITAMBAHKAN ▲▲▲
+
 
     let currentUser = null; // ▼▼▼ GUNAKAN KODE INI SEBAGAI PENGGANTI ▼▼▼
+
+    // Listener untuk status otentikasi & penanganan hasil redirect
+    auth.onAuthStateChanged(user => {
+      // Jika 'user' sudah ada, berarti login berhasil (baik dari sesi sebelumnya atau redirect)
+      if (user) {
+        currentUser = user;
+        console.log("onAuthStateChanged: Pengguna terdeteksi, login berhasil!", user.displayName);
+        updateUIForAuthState();
+      } else {
+        // Jika tidak ada user, cek apakah kita baru saja kembali dari redirect
+        auth.getRedirectResult().then(result => {
+          if (result && result.user) {
+            // Ini terjadi tepat setelah pengguna login via redirect
+            currentUser = result.user;
+            console.log("getRedirectResult: Berhasil mendapatkan hasil redirect login!", result.user.displayName);
+            updateUIForAuthState();
+          } else {
+            // Pengguna memang belum login dan tidak ada hasil redirect
+            console.log("onAuthStateChanged: Tidak ada pengguna yang login.");
+            currentUser = null;
+            updateUIForAuthState();
+          }
+        }).catch(error => {
+          console.error("Error saat getRedirectResult:", error);
+          alert("Terjadi error saat memproses login: " + error.message);
+          currentUser = null;
+          updateUIForAuthState();
+        });
+      }
+    });
 
      // Fungsi untuk logout
      function signOut() {
@@ -2952,7 +2849,6 @@
             settingAudioSource: "Sumber Audio", audioSourceBrowser: "Bawaan Browser", audioSourceElevenLabs: "ElevenLabs",
             settingVoiceType: "Jenis Suara (Bawaan)", settingElevenLabsVoice: "Suara ElevenLabs", elevenLabsNeedKey: "Masukkan API Key dulu", elevenLabsPreviewTitle: "Dengarkan Pratinjau Suara",
             elevenLabsHint: `Pilih "ElevenLabs" sebagai Sumber Audio dan simpan API Key di tab "Lanjutan" untuk menggunakan fitur ini.`,
-            audioSourceGemini: "Gemini", geminiTtsHint: `Menggunakan Google Text-to-Speech API. Pastikan kunci API Gemini Anda memiliki izin untuk layanan ini.`,
             settingSaveHistory: "Simpan Riwayat", exportHistory: "Export Riwayat Chat Ini", clearAllHistory: "Hapus SEMUA Percakapan",
             feedbackTitle: "Beri Masukan", feedbackSubtitle: "Punya ide atau saran? Beri tahu kami!", feedbackPlaceholder: "Tulis masukan Anda di sini...", feedbackSendButton: "Kirim Masukan",
             apiKeysTitle: "API Keys", saveApiKeysButton: "Simpan API Keys",
@@ -3022,7 +2918,6 @@
             settingAudioSource: "Audio Source", audioSourceBrowser: "Browser Default", audioSourceElevenLabs: "ElevenLabs",
             settingVoiceType: "Voice Type (Default)", settingElevenLabsVoice: "ElevenLabs Voice", elevenLabsNeedKey: "Enter API Key first", elevenLabsPreviewTitle: "Preview Voice",
             elevenLabsHint: `Select "ElevenLabs" as Audio Source and save an API Key in the "Advanced" tab to use this feature.`,
-            audioSourceGemini: "Gemini", geminiTtsHint: `Uses Google Text-to-Speech API. Ensure your Gemini API key has permissions for this service.`,
             settingSaveHistory: "Save History", exportHistory: "Export This Chat History", clearAllHistory: "Delete ALL Conversations",
             feedbackTitle: "Give Feedback", feedbackSubtitle: "Have ideas or suggestions? Let us know!", feedbackPlaceholder: "Write your feedback here...", feedbackSendButton: "Send Feedback",
             apiKeysTitle: "API Keys", saveApiKeysButton: "Save API Keys",
@@ -3091,7 +2986,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             settingAudioSource: "音声ソース", audioSourceBrowser: "ブラウザのデフォルト", audioSourceElevenLabs: "ElevenLabs",
             settingVoiceType: "声の種類 (デフォルト)", settingElevenLabsVoice: "ElevenLabsの声", elevenLabsNeedKey: "先にAPIキーを入力", elevenLabsPreviewTitle: "音声をプレビュー",
             elevenLabsHint: `この機能を使用するには、音声ソースとして「ElevenLabs」を選択し、「詳細」タブでAPIキーを保存してください。`,
-            audioSourceGemini: "Gemini", geminiTtsHint: `Google Text-to-Speech APIを使用します。お使いのGemini APIキーにこのサービスの権限があることを確認してください。`,
             settingSaveHistory: "履歴を保存", exportHistory: "このチャット履歴をエクスポート", clearAllHistory: "すべての会話を削除",
             feedbackTitle: "フィードバックを送信", feedbackSubtitle: "アイデアや提案がありますか？お知らせください！", feedbackPlaceholder: "ここにフィードバックを記入してください...", feedbackSendButton: "フィードバックを送信",
             apiKeysTitle: "APIキー", saveApiKeysButton: "APIキーを保存",
@@ -3381,7 +3275,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         backgroundBlur: 'none', // [BARU] 'none', 'light', 'strong'
         backgroundSize: 'cover', // [BARU] 'cover', 'contain'
 
-    };    
+    };
     
     let settings = { ...defaultSettings };
     let tempSettings = {}; // [DIUBAH] Variabel untuk pratinjau pengaturan
@@ -3389,7 +3283,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     let isReading = false;
     let elevenLabsAudioPlayer = new Audio();
     let elevenLabsPreviewPlayer = new Audio();
-    let geminiTtsAudioPlayer = new Audio(); // [BARU] Audio player untuk Gemini TTS
 
     // [FIX] Variabel global untuk menampung daftar suara dan promise untuk menandakan kesiapan
     let availableVoices = [];
@@ -3443,7 +3336,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         const messageInput = document.getElementById('messageInput'); // Placeholder will be set by applyTranslations
         messageInput.disabled = !enabled;
         messageInput.placeholder = message;
-        document.querySelectorAll('.action-btn, .dynamic-icon-btn, .new-chat-btn').forEach(btn => {
+        document.querySelectorAll('.action-btn, .dynamic-icon-btn').forEach(btn => {
             btn.disabled = !enabled;
             btn.style.opacity = enabled ? '1' : '0.5';
             btn.style.cursor = enabled ? 'pointer' : 'not-allowed';
@@ -3505,7 +3398,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             delete allUserData[currentUserIP];
             saveChatLimitData(allUserData);
         }
-        setInputEnabled(true, t('inputPlaceholder'));
+        setInputEnabled(true);
     }
     function handleInputChange(event) {
         const messageInput = event.target;
@@ -3815,16 +3708,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         }
     }
     function startVoiceRecognition() {
-        // [FIX] Hentikan dan bersihkan instans yang mungkin masih ada sebelum memulai yang baru.
-        // Ini adalah langkah pencegahan paling penting untuk error 'already started'.
-        if (recognition) {
-            recognition.onend = null; // Hapus listener untuk mencegah panggilan ganda ke stopVoiceRecognition.
-            recognition.onerror = null;
-            recognition.onresult = null;
-            recognition.stop();
-            recognition = null;
-        }
-
         if (!('webkitSpeechRecognition' in window)) {
             alert(t('errorVoiceRecognition'));
             return;
@@ -3837,23 +3720,16 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         micBtn.classList.add('send-btn-active');
         micBtn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V6a1 1 0 00-1-1H5z" clip-rule="evenodd"></path></svg>`;
         micBtn.title = t('stopGenerating');
-        
+
         document.getElementById('messageInput').style.visibility = 'hidden';
         document.getElementById('voiceRecordingUI').style.display = 'flex';
         document.getElementById('voiceStatusText').textContent = t('listening');
 
         recognition = new webkitSpeechRecognition();
-        recognition.continuous = true; // [FIX] Diubah ke true untuk mode dikte
+        recognition.continuous = true;
         recognition.interimResults = true;
-        recognition.lang = settings.language === 'id' ? 'id-ID' : 
-                          settings.language === 'ja' ? 'ja-JP' : 'en-US';
-        
-        let recognitionTimeout;
-        
+        recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
         recognition.onresult = (event) => {
-            // Clear existing timeout
-            clearTimeout(recognitionTimeout);
-            
             let interim_transcript = '';
             for (let i = event.resultIndex; i < event.results.length; ++i) {
                 const transcript = event.results[i][0].transcript;
@@ -3863,27 +3739,18 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
                     interim_transcript += transcript;
                 }
             }
-            
             const displayText = (finalTranscript + interim_transcript).trim();
             document.getElementById('voiceStatusText').textContent = displayText || t('listening');
-            
-            // Auto-stop after 2 seconds of silence
-            recognitionTimeout = setTimeout(() => {
-                if (recognition && finalTranscript.trim()) {
-                    stopVoiceRecognition(false);
-                }
-            }, 2000);
         };
         recognition.onerror = (event) => {
             console.error("Speech recognition error:", event.error);
-            if (event.error !== 'aborted' && event.error !== 'no-speech') {
+            if (event.error !== 'aborted') {
                 addSystemMessage(t('errorSpeechRecog', { error: event.error }), 'warning');
             }
             stopVoiceRecognition(false);
         };
         recognition.onend = () => {
             if (isRecording) {
-                // Jika masih dalam mode recording tapi recognition berhenti sendiri
                 stopVoiceRecognition(false);
             }
         };
@@ -3897,9 +3764,9 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     }
     function stopVoiceRecognition(isCancel = false) {
         if (!isRecording) return;
-        isRecording = false; // [FIX] Set isRecording ke false di awal untuk mencegah panggilan berulang.
         
         const currentText = document.getElementById('voiceStatusText').textContent.trim();
+        isRecording = false;
         if (recognition) {
             recognition.stop();
             recognition = null;
@@ -3919,10 +3786,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         micBtn.title = t('voiceModeTitle');
 
         document.getElementById('messageInput').style.visibility = 'visible';
-        if (!isCancel && finalTranscript) {
-            // Kirim pesan secara otomatis setelah rekaman selesai
-            sendMessage();
-        }
         document.getElementById('voiceRecordingUI').style.display = 'none';
         handleInputChange({ target: document.getElementById('messageInput') });
     }
@@ -3997,7 +3860,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         const previewWrapper = document.getElementById('backgroundPreviewWrapper'); // [DIUBAH] Nama variabel disesuaikan
 
         if (file) {
-            if (!file.type.startsWith('image/')) { // Validasi tipe file
+            if (!file.type.startsWith('image/')) {
                 alert(t('alertImageInvalid'));
                 event.target.value = '';
                 fileNameDisplay.textContent = '';
@@ -4006,15 +3869,15 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             const reader = new FileReader();
             reader.onload = e => {
                 const base64Image = e.target.result;
-                settings.backgroundUrl = base64Image; // [FIX] Langsung ubah settings
+                tempSettings.backgroundUrl = base64Image;
 
                 // [DIUBAH] Tampilkan wrapper pratinjau dan reset efek
                 previewWrapper.classList.remove('hidden');
                 fileNameDisplay.textContent = file.name;
                 
                 // Reset efek pratinjau ke default saat gambar baru diunggah
-                settings.backgroundBlur = 'light'; // [FIX] Default ke blur ringan
-                settings.backgroundSize = 'cover';
+                tempSettings.backgroundBlur = 'none';
+                tempSettings.backgroundSize = 'cover';
                 updatePreviewEffects();
                 applyPreviewBackground(); // [DIUBAH] Terapkan pratinjau langsung ke latar utama
             };
@@ -4023,11 +3886,11 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     }
 
     function removeCustomBackground() {
-        settings.backgroundUrl = ''; // [FIX] Langsung ubah settings
+        tempSettings.backgroundUrl = '';
         document.getElementById('backgroundFileInput').value = '';
         document.getElementById('backgroundFileName').textContent = '';
         document.getElementById('backgroundPreviewWrapper').classList.add('hidden'); // [DIUBAH] Sembunyikan wrapper
-        applyCustomBackground(); // [FIX] Gunakan fungsi apply utama
+        applyPreviewBackground(); // [DIUBAH] Terapkan pratinjau langsung (menghapus latar)
     }
 
     function loadSettingsData() {
@@ -4042,14 +3905,14 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     }
     function saveSettings() {
         localStorage.setItem('storybaliSettings', JSON.stringify(settings));
-    } 
+    }
     function saveAllSettings() {
         settings.customAiRolePrompt = document.getElementById('customRoleInput').value;
         settings.fontSize = document.getElementById('fontSizeSelect').value;
         settings.animationsEnabled = document.getElementById('animationToggle').checked;
         settings.soundEnabled = document.getElementById('soundToggle').checked;
         settings.readAiResponseEnabled = document.getElementById('readAiResponseToggle').checked;
-        settings.voiceURI = document.getElementById('voiceSelect')?.value;
+        settings.voiceURI = document.getElementById('voiceSelect').value;
         settings.audioSource = document.querySelector('.choice-btn[id^="audioSource-"].active').id.split('-')[1];
         settings.elevenLabsVoiceId = document.getElementById('elevenLabsVoiceSelect').value;
         settings.saveHistory = document.getElementById('saveHistoryToggle').checked;
@@ -4057,7 +3920,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         settings.backgroundUrl = tempSettings.backgroundUrl;
         settings.backgroundBlur = tempSettings.backgroundBlur; // [BARU] Simpan pengaturan blur
         settings.backgroundSize = tempSettings.backgroundSize; // [BARU] Simpan pengaturan ukuran
-        
+
         saveSettings(); 
         applySettings(); 
         alert(t('alertSettingsSaved'));
@@ -4114,14 +3977,13 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.getElementById(`personality-${settings.personality}`)?.classList.add('active');
         document.getElementById(`aiRole-${settings.aiRole}`)?.classList.add('active');
         document.getElementById(`audioSource-${settings.audioSource}`)?.classList.add('active');
-        document.getElementById(`audioSource-gemini`)?.classList.toggle('active', settings.audioSource === 'gemini');
         
         const customRoleContainer = document.getElementById('customRoleContainer');
         customRoleContainer.classList.toggle('hidden', settings.aiRole !== 'kustom');
         if (settings.aiRole === 'kustom') document.getElementById('customRoleInput').value = settings.customAiRolePrompt;
         
         const voiceSelect = document.getElementById('voiceSelect');
-        if (settings.voiceURI && voiceSelect && voiceSelect.options.length > 1) voiceSelect.value = settings.voiceURI;
+        if (settings.voiceURI && voiceSelect.options.length > 1) voiceSelect.value = settings.voiceURI;
 
         const elevenLabsSelect = document.getElementById('elevenLabsVoiceSelect');
         if (settings.elevenLabsVoiceId && elevenLabsSelect.options.length > 1) {
@@ -4147,7 +4009,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.getElementById('currentAiRole').textContent = t(roleMap[settings.aiRole]);
 
         // Update Background Summary
-        document.getElementById('currentBackground').textContent = settings.backgroundUrl ? t('backgroundFileSet') : 'Default'; // [FIX] Menggunakan terjemahan yang benar
+        document.getElementById('currentBackground').textContent = settings.backgroundUrl ? t('backgroundFileSet') : 'Default';
 
         // Update Audio Source Summary
         const audioMap = { browser: 'audioSourceBrowser', elevenlabs: 'audioSourceElevenLabs' };
@@ -4161,7 +4023,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.getElementById(`personality-${tempSettings.personality}`)?.classList.add('active');
         document.getElementById(`aiRole-${tempSettings.aiRole}`)?.classList.add('active');
         document.getElementById(`audioSource-${tempSettings.audioSource}`)?.classList.add('active');
-        document.getElementById(`audioSource-gemini`)?.classList.toggle('active', tempSettings.audioSource === 'gemini');
 
         // [BARU] Menetapkan status 'checked' untuk radio button
         document.querySelector(`input[name="languageToggle"][value="${tempSettings.language}"]`).checked = true;
@@ -4183,7 +4044,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.getElementById('saveHistoryToggle').checked = tempSettings.saveHistory;
 
         const voiceSelect = document.getElementById('voiceSelect');
-        if (tempSettings.voiceURI && voiceSelect) voiceSelect.value = tempSettings.voiceURI;
+        if (tempSettings.voiceURI) voiceSelect.value = tempSettings.voiceURI;
 
         const elevenLabsSelect = document.getElementById('elevenLabsVoiceSelect');
         if (tempSettings.elevenLabsVoiceId) elevenLabsSelect.value = tempSettings.elevenLabsVoiceId;
@@ -4221,10 +4082,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         // [DIUBAH] Logika notifikasi sistem dipindahkan ke sini agar lebih terpusat
         if (settingName === 'aiRole') {
             document.getElementById('customRoleContainer').classList.toggle('hidden', value !== 'kustom');
-            // [FIX] Perbarui tempSettings saat pilihan diubah
-            if (value === 'kustom') {
-                tempSettings.customAiRolePrompt = document.getElementById('customRoleInput').value;
-            }
             const roleKeyMap = { 'umum': 'roleGeneral', 'guru_jepang': 'roleJapaneseTeacher', 'guru_matematika': 'roleMathTeacher', 'dokter': 'roleDoctor', 'programmer': 'roleProgrammer', 'penerjemah': 'roleTranslator', 'kustom': 'roleCustom' };
             const roleNameKey = roleKeyMap[value];
             if (roleNameKey) addSystemMessage(t('systemRoleChanged', { roleName: t(roleNameKey) }), 'info');
@@ -4264,33 +4121,62 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
 
     // ▼▼▼ [DIUBAH] FUNGSI UNTUK MENGONTROL PRATINJAU LATAR BELAKANG ▼▼▼
     function applyPreviewBackground() {
-        const previewPanes = document.querySelectorAll('.preview-pane .preview-background');
-        const blurValue = { none: 'blur(0px)', light: 'blur(4px)', strong: 'blur(10px)' }[tempSettings.backgroundBlur] || 'blur(0px)';
+        const chatContainer = document.querySelector('.chat-container');
         
-        previewPanes.forEach(pane => {
-            pane.style.backgroundImage = tempSettings.backgroundUrl ? `url('${tempSettings.backgroundUrl}')` : 'none';
-            pane.style.backgroundSize = tempSettings.backgroundSize;
-            pane.style.filter = blurValue;
-        });
+        chatContainer.classList.remove(
+            'custom-background', 
+            'background-blur-light', 
+            'background-blur-strong',
+            'background-size-cover',
+            'background-size-contain'
+        );
+        chatContainer.style.setProperty('--custom-bg-url', 'none');
+
+        if (tempSettings.backgroundUrl) {
+            chatContainer.classList.add('custom-background');
+            chatContainer.style.setProperty('--custom-bg-url', `url('${tempSettings.backgroundUrl}')`);
+
+            if (tempSettings.backgroundSize === 'contain') {
+                chatContainer.classList.add('background-size-contain');
+            } else {
+                chatContainer.classList.add('background-size-cover');
+            }
+
+            if (tempSettings.backgroundBlur === 'light') {
+                chatContainer.classList.add('background-blur-light');
+            } else if (tempSettings.backgroundBlur === 'strong') {
+                chatContainer.classList.add('background-blur-strong');
+            }
+        } else {
+            chatContainer.style.background = '';
+        }
     }
 
     // [DIUBAH] Fungsi baru untuk mengatur level blur dari tombol pilihan
     function setPreviewBlur(level) {
         tempSettings.backgroundBlur = level;
         updatePreviewEffects();
-        applyPreviewBackground(); // Terapkan ke pratinjau
-        applyCustomBackground(); // Terapkan ke latar utama
+        applyPreviewBackground();
     }
 
     // [DIUBAH] Fungsi baru untuk mengatur ukuran dari tombol pilihan
     function setPreviewSize(size) {
         tempSettings.backgroundSize = size;
         updatePreviewEffects();
-        applyPreviewBackground(); // Terapkan ke pratinjau
-        applyCustomBackground(); // Terapkan ke latar utama
+        applyPreviewBackground();
     }
 
     function updatePreviewEffects() {
+        const previewElements = document.querySelectorAll('.preview-background'); // [DIUBAH] Targetkan semua pane pratinjau
+        const blurValues = { none: 'blur(0px)', light: 'blur(4px)', strong: 'blur(10px)' };
+
+        previewElements.forEach(el => {
+            el.style.backgroundImage = `url('${tempSettings.backgroundUrl}')`;
+            el.style.filter = blurValues[tempSettings.backgroundBlur];
+            el.style.backgroundSize = tempSettings.backgroundSize;
+            el.style.backgroundPosition = 'center';
+        });
+
         // [DIUBAH] Update kelas 'active' untuk tombol pilihan blur
         document.querySelectorAll('[id^="blurBtn"]').forEach(btn => btn.classList.remove('active'));
         const activeBlurBtnId = `blurBtn${tempSettings.backgroundBlur.charAt(0).toUpperCase() + tempSettings.backgroundBlur.slice(1)}`;
@@ -4300,8 +4186,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.querySelectorAll('[id^="sizeBtn"]').forEach(btn => btn.classList.remove('active'));
         const activeSizeBtnId = `sizeBtn${tempSettings.backgroundSize.charAt(0).toUpperCase() + tempSettings.backgroundSize.slice(1)}`;
         document.getElementById(activeSizeBtnId)?.classList.add('active');
-
-        applyPreviewBackground();
     }
 
     function showConfirmModal({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', confirmClass = 'bg-red-600 hover:bg-red-700 text-white' }) {
@@ -4613,13 +4497,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             // [DIUBAH] Kembalikan elemen untuk diisi oleh proses streaming
             return {
                 contentEl: messageDiv.querySelector('.markdown-content'),
-                // [BARU] Kembalikan elemen untuk sumber pencarian
-                sourcesEl: (() => {
-                    const sourcesDiv = document.createElement('div');
-                    sourcesDiv.className = 'grounding-sources';
-                    messageDiv.querySelector('.ai-message').appendChild(sourcesDiv);
-                    return sourcesDiv;
-                })(),
                 suggestionsEl: messageDiv.querySelector('.suggestions-container')
             };
         }
@@ -4731,30 +4608,13 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     function hideImageProcessingIndicator() { document.getElementById('imageProcessingIndicator')?.classList.remove('show'); }
     
     // ▼▼▼ [DIUBAH] Logika Scroll dan Notifikasi Pesan Baru ▼▼▼
-    function improvedScrollToBottom() {
+    function scrollToBottom() {
         const chatMessages = document.getElementById('chatMessages');
-        if (!chatMessages) return;
-        
-        // Cek apakah user sedang scroll ke atas
-        const isNearBottom = chatMessages.scrollHeight - chatMessages.scrollTop <= chatMessages.clientHeight + 150;
-        
-        if (isNearBottom || !userHasScrolledUp) {
-            requestAnimationFrame(() => {
-                chatMessages.scrollTo({ 
-                    top: chatMessages.scrollHeight, 
-                    behavior: 'smooth' 
-                });
-            });
-        } else {
-            showNewMessageNotification();
-        }
+        setTimeout(() => chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' }), 100);
     }
 
     function forceScrollToBottom() {
-        const chatMessages = document.getElementById('chatMessages');
-        if (chatMessages) {
-            chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
-        }
+        scrollToBottom();
         document.getElementById('newMessageNotification').classList.add('hidden');
     }
 
@@ -4916,7 +4776,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     // ===================================================================================
 
     function stopReading() {
-    if (!geminiTtsAudioPlayer.paused) { geminiTtsAudioPlayer.pause(); geminiTtsAudioPlayer.currentTime = 0; } // [BARU]
     if (speechSynthesis.speaking) { speechSynthesis.cancel(); }
     if (!elevenLabsAudioPlayer.paused) { elevenLabsAudioPlayer.pause(); elevenLabsAudioPlayer.currentTime = 0; }
     if (!elevenLabsPreviewPlayer.paused) { elevenLabsPreviewPlayer.pause(); elevenLabsPreviewPlayer.currentTime = 0; }
@@ -4931,49 +4790,6 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         activeTtsBubble.classList.remove('tts-active');
     }
 }
-
-    // [BARU] Fungsi untuk memutar audio dari Google/Gemini TTS
-    function playGeminiTtsAudio(text, audioPlayer = geminiTtsAudioPlayer) {
-        return new Promise(async (resolve, reject) => {
-            const apiKey = getNextApiKey(); // Menggunakan fungsi rotasi kunci API
-            if (!apiKey) {
-                return reject(new Error("Tidak ada kunci API Gemini yang valid."));
-            }
-            const apiUrl = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`;
-
-            // Pilih suara berdasarkan bahasa
-            const voiceSelection = {
-                'id': { languageCode: 'id-ID', name: 'id-ID-Wavenet-A' },
-                'en': { languageCode: 'en-US', name: 'en-US-Wavenet-F' },
-                'ja': { languageCode: 'ja-JP', name: 'ja-JP-Wavenet-A' }
-            };
-            const selectedVoice = voiceSelection[settings.language] || voiceSelection['id'];
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        input: { text: text },
-                        voice: selectedVoice,
-                        audioConfig: { audioEncoding: 'MP3' }
-                    })
-                });
-
-                if (!response.ok) throw new Error(`Google TTS API request failed with status ${response.status}`);
-
-                const data = await response.json();
-                const audioUrl = `data:audio/mp3;base64,${data.audioContent}`;
-                
-                audioPlayer.src = audioUrl;
-                audioPlayer.play();
-
-                audioPlayer.onended = () => resolve();
-                audioPlayer.onerror = () => reject(new Error("Audio playback error"));
-
-            } catch (error) { reject(error); }
-        });
-    }
 
     function playElevenLabsAudio(text, voiceId = null, audioPlayer = elevenLabsAudioPlayer) {
         return new Promise(async (resolve, reject) => {
@@ -5055,14 +4871,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         if (footer) footer.style.display = 'none';
         if (ttsPlayer) ttsPlayer.classList.add('active');
 
-        let audioPromise;
-        if (settings.audioSource === 'browser') {
-            audioPromise = playBrowserAudio(message);
-        } else if (settings.audioSource === 'gemini') {
-            audioPromise = playGeminiTtsAudio(message); // [BARU]
-        } else { // elevenlabs
-            audioPromise = playElevenLabsAudio(message);
-        }
+        const audioPromise = settings.audioSource === 'browser' ? playBrowserAudio(message) : playElevenLabsAudio(message);
 
         audioPromise.catch(error => {
             console.warn("Gagal memutar audio:", error.message);
@@ -5218,57 +5027,91 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     }
 
     function getSystemPrompt(isCall = false) {
-        // [DIUBAH] Mengadopsi struktur prompt baru dari input pengguna
         if (isCall) {
-            let callPrompt = `Kamu adalah Wayan, asisten AI Multimodal yang canggih.
-- Kamu bisa MENDENGAR suara pengguna secara real-time.
-- Gaya bicara: Santai, akrab, singkat (jangan ceramah), seperti ngobrol di telepon.
-- Jika pengguna menunjukkan sesuatu, komentari visualnya secara spesifik.`;
-
+            let callPrompt = `Kamu adalah Wayan, asisten AI yang sedang dalam panggilan suara. Berikan respons yang singkat, jelas, dan natural seperti sedang berbicara di telepon. Jawab dengan 1-2 kalimat saja kecuali jika diminta untuk menjelaskan lebih detail.`;
             if (settings.language === 'en') {
-                callPrompt += ' Speak in English.';
+                callPrompt += ' Please respond in English.';
             } else if (settings.language === 'ja') {
-                callPrompt += ' Speak in Japanese.';
+                callPrompt += ' Please respond in Japanese.';
             }
             return callPrompt;
         }
 
-        const coreIntelligenceInstruction = `[KECERDASAN TINGKAT TINGGI] Kamu adalah Wayan AI 3.0.
-1. Analisis pertanyaan secara mendalam.
-2. Jika pertanyaan membutuhkan logika (matematika, coding), gunakan langkah-langkah berpikir (Chain of Thought).
-3. Jika pertanyaan tentang fakta terkini, gunakan tools Google Search jika tersedia.`;
+        // [PERMINTAAN PENGGUNA] Instruksi kecerdasan fundamental yang berlaku di semua mode
+        const coreIntelligenceInstruction = `[KECERDASAN FUNDAMENTAL] Kamu adalah AI yang sangat cerdas dan berpengetahuan luas. Prioritas utamamu adalah memberikan jawaban yang akurat, komprehensif, dan to-the-point untuk SETIAP pertanyaan. Jika pertanyaan membutuhkan data real-time (seperti harga saham, berita terkini, cuaca), jelaskan bahwa kamu tidak memiliki akses real-time dan sarankan untuk verifikasi eksternal. Jangan pernah menolak menjawab karena keterbatasan pengetahuan, berusahalah memberikan informasi terbaik berdasarkan data yang kamu miliki.`;
+        
+        // [BARU] Profil singkat Wayan untuk memberikan konteks dan kepribadian yang lebih dalam.
+        const wayanProfile = `[PROFIL LATAR BELAKANG WAYAN - GUNAKAN SECARA KONTEKSTUAL]
+Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu punya pengalaman hidup yang beragam: pernah mengungsi saat Gunung Agung meletus (2017), sekolah SMK Tata Boga sambil jualan, kerja serabutan (petik buah, angkut kelapa), bahkan pernah tertipu kerja di Kamboja. Sekarang, kamu bekerja di pabrik sosis di Jepang. Hobimu mancing, main bola, dan bikin konten TikTok. Kamu dikenal ramah dan pekerja keras. Gunakan detail ini untuk memberi warna pada jawabanmu jika relevan (misal: saat membahas Bali, Jepang, kerja keras, atau hobi), tapi jangan membeberkan profil ini secara langsung. Jadilah teman ngobrol yang hangat dan punya cerita.`;
 
-        const wayanProfile = `[PERSONA: WAYAN]
-Nama: Wayan.
-Asal: Karangasem, Bali.
-Sifat: Ramah, suka bercanda, logat agak santai tapi sangat pintar.
-Gunakan persona ini untuk membuat percakapan terasa hidup.`;
-
-        const baseInstructions = `[FORMAT RESPON]
-- Gunakan Markdown yang rapi.
-- Untuk coding: Gunakan block code dengan syntax highlighting.
-- Di akhir jawaban, berikan 2-3 [SUGGESTIONS] yang relevan dipisahkan garis tegak (|).`;
+        const baseInstructions = `[FORMAT WAJIB]
+1.  **Format**: Gunakan Markdown (paragraf pendek, **bold**, \`code\`, blockquote \`>\`, dan list \`*\` atau \`1.\`) agar jawaban rapi dan mudah dibaca.
+2.  **Saran**: Setelah jawaban utama, berikan 2-3 saran pertanyaan lanjutan yang relevan dengan format: \`[SUGGESTIONS]Saran 1|Saran 2\`.
+3.  **Link**: Jika perlu, berikan link Markdown valid. Contoh: \`Judul\`.
+4.  **Emoji**: Gunakan emoji fungsional (✅, ❌, 💡, ⚠️) untuk kejelasan.`;
         
         const rolePrompts = {
-            guru_jepang: `Peran: Wayan-sensei (Guru Jepang). Ajarkan dengan detail: Kanji, Kana, Romaji, dan Arti.`,
-            guru_matematika: `Peran: Pak Wayan (Guru MTK). Jelaskan langkah demi langkah.`,
-            dokter: `Peran: Dr. Wayan (Virtual). DISCLAIMER: Ini info edukasi, bukan resep medis.`,
-            programmer: `Peran: Wayan Dev. Berikan kode yang efisien dan aman.`,
-            penerjemah: `Peran: Translator Wayan. Terjemahkan dengan nuansa bahasa yang tepat.`,
+            guru_jepang: `Peran: Guru Bahasa Jepang (Wayan-sensei). Gaya: Sabar, detail. Aturan: Selalu sertakan tulisan Jepang (Kanji/Kana), romaji, dan arti. Sapa dengan 'Konnichiwa, gakusei-san!'.`,
+            guru_matematika: `Peran: Guru Matematika (Pak Wayan). Gaya: Jelas, mudah dimengerti. Aturan: Jelaskan langkah pemecahan masalah secara rinci.`,
+            dokter: `Peran: Dokter Umum virtual (Dokter Wayan). Gaya: Informatif. Aturan: Jawab pertanyaan medis dengan pengetahuan umum. SELALU awali dan akhiri dengan disclaimer "Informasi ini bersifat edukatif dan tidak menggantikan konsultasi medis profesional. Segera kunjungi dokter." Jangan beri diagnosis/resep.`,
+            programmer: `Peran: Senior programmer (Wayan). Gaya: To-the-point, jelas. Aturan: Berikan contoh kode dalam blok Markdown. Jelaskan 'mengapa'.`,
+            penerjemah: `Peran: Penerjemah multibahasa (Wayan). Aturan: Deteksi bahasa, tanyakan target terjemahan, berikan terjemahan literal dan kontekstual.`,
         };
 
+        // [PERBAIKAN] Logika pembuatan prompt dirombak untuk memprioritaskan peran kustom.
         if (settings.aiRole === 'kustom' && settings.customAiRolePrompt) {
-            return `${coreIntelligenceInstruction} \n\n[PERAN KHUSUS]: ${settings.customAiRolePrompt} \n\n${baseInstructions}`;
+            // Untuk peran kustom, instruksi pengguna adalah yang utama, tapi tetap harus menjawab.
+            const customInstruction = `[PERAN KUSTOM UTAMA] Anda HARUS mengikuti peran ini: "${settings.customAiRolePrompt}". Abaikan persona 'Wayan' jika bertentangan. Tetap jawab semua pertanyaan pengguna.`;
+
+            let languageInstruction = '';
+            if (settings.language === 'en') {
+                languageInstruction = 'Please respond in English.';
+            } else if (settings.language === 'ja') {
+                languageInstruction = 'Please respond in Japanese.';
+            }
+            
+            // Instruksi dasar sekarang menjadi panduan format sekunder.
+            const secondaryInstructions = `\n\n[PANDUAN FORMAT] Ikuti panduan format ini:\n${baseInstructions}`;
+
+            return `${coreIntelligenceInstruction} ${customInstruction} ${languageInstruction} ${secondaryInstructions}`;
         }
         
-        let roleInstruction = rolePrompts[settings.aiRole] || '';
-        if (!roleInstruction) {
-            if (settings.personality === 'profesional') roleInstruction = "Gaya: Profesional, formal.";
-            else if (settings.personality === 'lucu') roleInstruction = "Gaya: Humoris, jenaka.";
-            else roleInstruction = "Gaya: Santai, bersahabat.";
+        // Logika untuk peran non-kustom (tetap sama)
+        let roleInstruction = '';
+        let personaRule = '';
+
+        if (rolePrompts[settings.aiRole]) {
+            roleInstruction = rolePrompts[settings.aiRole];
+        } else {
+            // Fallback ke personality jika role 'umum'
+            switch (settings.personality) {
+                case 'lucu':
+                    roleInstruction = `Peran: Wayan, teman ngobrol yang cerdas dan humoris. Gaya: Cerdas, ramah, dengan sentuhan humor yang relevan. Aturan: Gunakan gaya bahasa 'gue-lo' sebagai dasar, tapi bisa fleksibel menggunakan 'aku-kamu' jika konteks percakapan lebih personal atau serius. Gunakan emoji secukupnya (💡, 🤔, 😄). Tetap tunjukkan kecerdasanmu sebagai AI yang asyik. Selalu sebut nama 'Wayan'.`;
+                    break;
+                default: // 'santai'
+                    roleInstruction = `Peran: Wayan, teman ngobrol yang cerdas dari StoryBali. Gaya: Ramah, natural, dan mudah didekati. Aturan: Gunakan gaya bahasa 'gue-lo' sebagai dasar, tapi fleksibel untuk menggunakan 'aku-kamu' jika konteks percakapan dengan user terasa lebih personal atau butuh empati. Gunakan emoji secukupnya. Tunjukkan bahwa kamu adalah AI yang pintar tapi juga teman yang asyik diajak diskusi. Selalu sebut nama 'Wayan'.`;
+                    break;
+                case 'profesional':
+                    roleInstruction = `Peran: Asisten AI profesional. Gaya: Formal, baku, terstruktur, dan to-the-point. Aturan: Gunakan 'saya' dan 'Anda'. Hindari emoji dan bahasa gaul.`;
+                    break;
+            }
         }
 
-        return `${coreIntelligenceInstruction}\n${wayanProfile}\n${roleInstruction}\n${baseInstructions}`;
+        if (settings.personality === 'profesional') {
+            personaRule = "Jangan perkenalkan diri sebagai 'Wayan'. Bertindaklah sebagai asisten AI yang netral dan profesional.";
+        } else if (settings.aiRole !== 'umum') {
+            personaRule = "PENTING: Selalu sebutkan persona peranmu (misal: 'Dokter Wayan', 'Wayan-sensei') dalam jawaban untuk membangun karakter.";
+        } else {
+            personaRule = "PENTING: Selalu sebutkan nama 'Wayan' dalam jawaban untuk membangun karakter (misal: 'Menurut Wayan...').";
+        }
+
+        if (settings.language === 'en') {
+            roleInstruction += ' Please respond in English.';
+        } else if (settings.language === 'ja') {
+            roleInstruction += ' Please respond in Japanese.';
+        }
+
+        return `${coreIntelligenceInstruction} ${wayanProfile} ${roleInstruction} ${personaRule} ${baseInstructions}`;
     }
 
     // [BARU] Fungsi untuk mengambil model terbaik yang tersedia untuk sebuah API key
@@ -5357,83 +5200,70 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
         return validApiKeys[nextIndex];
     }
 
-    async function improvedMakeApiRequest(payload, signal = null, streaming = true) {
+    async function makeApiRequest(payload, signal = null, streaming = true) {
         if (apiKeys.length === 0) loadApiKeys();
         const validApiKeys = apiKeys.filter(key => key && key.trim() !== '');
         
         if (validApiKeys.length === 0) {
             throw new Error("Tidak ada API Key yang valid yang dikonfigurasi.");
         }
-
-        const startingIndex = getNextApiKeyIndex();
-        const maxRetries = validApiKeys.length;
-
-        for (let attempt = 0; attempt < maxRetries; attempt++) {
-            const currentIndex = (startingIndex + attempt) % validApiKeys.length;
+    
+        // ▼▼▼ [PERBAIKAN] Mengembalikan loop untuk mencoba semua API key jika terjadi error ▼▼▼
+        const startingIndex = getNextApiKeyIndex(); // Dapatkan indeks awal dari fungsi helper baru
+    
+        for (let i = 0; i < validApiKeys.length; i++) {
+            const currentIndex = (startingIndex + i) % validApiKeys.length;
             const currentApiKey = validApiKeys[currentIndex];
 
-            try {
-                // Cek model dari cache atau fetch baru
-                let modelToUse = modelCache[currentApiKey];
-                if (!modelToUse) {
-                    console.log(`Mencari model untuk API Key ${currentIndex + 1}...`);
+            // Cek model dari cache atau fetch baru
+            let modelToUse = modelCache[currentApiKey];
+            if (!modelToUse) {
+                try {
+                    console.log(`Mencari model untuk API Key urutan ke-${currentIndex + 1}...`);
                     modelToUse = await getBestModelForKey(currentApiKey);
-                    modelCache[currentApiKey] = modelToUse;
+                    modelCache[currentApiKey] = modelToUse; // Simpan ke cache
+                } catch (modelError) {
+                    console.warn(`Gagal mendapatkan model untuk API Key urutan ke-${currentIndex + 1}: ${modelError.message}. Mencoba kunci berikutnya...`);
+                    continue; // Lanjut ke API key berikutnya jika model tidak ditemukan
                 }
+            }
 
-                const apiAction = streaming ? 'streamGenerateContent' : 'generateContent';
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${modelToUse}:${apiAction}?key=${currentApiKey}${streaming ? '&alt=sse' : ''}`;
+            const apiAction = streaming ? 'streamGenerateContent' : 'generateContent';
+            // [PERBAIKAN] Memastikan URL API selalu benar, baik untuk streaming maupun non-streaming
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${modelToUse}:${apiAction}?key=${currentApiKey}${streaming ? '&alt=sse' : ''}`;
 
+            console.log(`Mencoba API Key urutan ke-${currentIndex + 1}...`);
+
+            try {
                 const fetchOptions = {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 };
-                
-                if (signal) fetchOptions.signal = signal;
-
+                if (signal) { fetchOptions.signal = signal; }
+    
                 const response = await fetch(apiUrl, fetchOptions);
-
+    
                 if (response.ok) {
-                    console.log(`✓ Berhasil menggunakan API Key ${currentIndex + 1}`);
-                    localStorage.setItem('lastKeyIndex', currentIndex);
-                    return response;
+                    console.log(`Berhasil menggunakan API Key urutan ke-${currentIndex + 1} (${currentApiKey.substring(0, 4)}...${currentApiKey.substring(currentApiKey.length - 4)})`);
+                    localStorage.setItem('lastKeyIndex', currentIndex); // Simpan indeks yang berhasil
+                    return response; // Kembalikan respons yang berhasil dan hentikan loop
                 }
-
-                // Handle specific error responses
+    
+                // Jika tidak OK, log error dan biarkan loop berlanjut ke kunci berikutnya
                 const errorBody = await response.json();
-                const errorMessage = errorBody.error?.message || 'Unknown error';
-                
-                console.warn(`✗ API Key ${currentIndex + 1} gagal (${response.status}): ${errorMessage}`);
-                
-                // Jika quota exceeded, skip key ini untuk sementara
-                if (response.status === 429) {
-                    console.log(`API Key ${currentIndex + 1} mencapai quota limit, mencoba key berikutnya...`);
-                    continue;
-                }
-                
-                // Jika invalid key, hapus dari cache
-                if (response.status === 400 || response.status === 403) {
-                    delete modelCache[currentApiKey];
-                }
-
+                console.warn(`API Key urutan ke-${currentIndex + 1} gagal dengan status ${response.status}: ${errorBody.error?.message}. Mencoba kunci berikutnya...`);
+    
             } catch (error) {
-                if (error.name === 'AbortError') {
-                    console.log('Request dibatalkan oleh user');
-                    throw error;
-                }
-                
-                console.error(`✗ Error dengan API Key ${currentIndex + 1}:`, error.message);
-                
-                // Lanjut ke key berikutnya
-                if (attempt < maxRetries - 1) {
-                    console.log('Mencoba API Key berikutnya...');
-                    continue;
-                }
+                if (error.name === 'AbortError') throw error; // Jika user membatalkan, hentikan semua proses
+                console.error(`Gagal total dengan API Key urutan ke-${currentIndex + 1}:`, error.message);
+                // Biarkan loop berlanjut ke kunci berikutnya
             }
         }
     
-        throw new Error("Semua API Key gagal. Silakan periksa koneksi atau API Key Anda.");
+        // Jika loop selesai dan tidak ada kunci yang berhasil, baru lemparkan error
+        throw new Error("Semua API Key yang tersedia gagal atau telah mencapai limit. Silakan periksa API Key Anda di pengaturan.");
+        // ▲▲▲ AKHIR DARI PERBAIKAN ▲▲▲
     }
 
     async function sendMessage() {
@@ -5502,39 +5332,42 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
         handleInputChange({ target: input });
         showTypingIndicator();
 
+        if (userData.count >= CHAT_LIMIT) {
+            const cooldownEndTime = new Date().getTime() + COOLDOWN_MINUTES * 60 * 1000;
+            userData.cooldownUntil = cooldownEndTime;
+            saveChatLimitData({ ...allUserData, [currentUserIP]: userData });
+            setTimeout(() => startCooldown(cooldownEndTime), 1000);
+        }
+
         currentFetchController = new AbortController();
         document.getElementById('stopGeneratingContainer').style.display = 'block';
 
         // ▲▲▲ AKHIR DARI PERUBAHAN LOGIKA PENGIRIMAN PESAN ▲▲▲
-        let contentEl, suggestionsEl, sourcesEl;
+        let contentEl, suggestionsEl;
 
         try {
-            let isFirstChunk = true; // Deklarasi hanya sekali di sini
             // 1. Buat bubble chat AI yang kosong dan dapatkan elemennya
             const bubbleElements = addMessage(null, false);
             contentEl = bubbleElements.contentEl;
             suggestionsEl = bubbleElements.suggestionsEl;
-            sourcesEl = bubbleElements.sourcesEl; // [BARU]
             // [OPTIMASI] Kirim hanya 10 pesan terakhir untuk menghemat token
             const fullHistory = getActiveChatHistory() || [];
             const historyForApi = fullHistory.map(({ role, parts }) => ({ role, parts })).slice(-MAX_HISTORY_FOR_PROMPT);
             const payload = {
                 contents: historyForApi,
                 systemInstruction: { parts: [{ text: getSystemPrompt() }] },
-                // [BARU] Menambahkan tools jika search mode aktif
-                tools: isSearchModeActive ? [{ "googleSearch": {} }] : [],
-                generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 8192 }
+                generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048 }
             };
 
             // 2. Lakukan request dan dapatkan stream
-            const response = await improvedMakeApiRequest(payload, currentFetchController.signal);
+            const response = await makeApiRequest(payload, currentFetchController.signal);
             if (!response.body) throw new Error("Response body is null");
 
             // 3. Baca stream
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let fullResponseText = "";
-            let groundingMetadata = null; // [BARU] Untuk menyimpan sumber
+            let sentenceBuffer = "";
 
             while (true) {
                 const { value, done } = await reader.read();
@@ -5549,10 +5382,6 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
                         try {
                             const data = JSON.parse(jsonStr);
                             if (data.candidates && data.candidates[0].content.parts[0].text) {
-                                // [BARU] Cek dan simpan grounding metadata
-                                if (data.candidates[0].groundingMetadata) {
-                                    groundingMetadata = data.candidates[0].groundingMetadata;
-                                }
                                 const textPart = data.candidates[0].content.parts[0].text;
                                 fullResponseText += textPart;
                                 // ▼▼▼ [PENYEMPURNAAN] ▼▼▼
@@ -5577,14 +5406,6 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
                 let dynamicSuggestions = suggestionsPart.split('|').map(s => s.trim()).filter(Boolean);
                 suggestionsEl.innerHTML = renderSuggestions(dynamicSuggestions);
             }
-            // [BARU] Render sumber jika ada
-            if (sourcesEl && groundingMetadata && groundingMetadata.groundingAttributions) {
-                sourcesEl.innerHTML = renderSources(groundingMetadata.groundingAttributions);
-            }
-            if (suggestionsEl && suggestionsPart) {
-                let dynamicSuggestions = suggestionsPart.split('|').map(s => s.trim()).filter(Boolean);
-                suggestionsEl.innerHTML = renderSuggestions(dynamicSuggestions);
-            }
             addToConversationHistory('model', mainAnswer.trim());
             playNotificationSound();
             showNativeNotification(t('aiName'), mainAnswer.trim().substring(0, 100) + '...');
@@ -5604,13 +5425,6 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
             // [DIHAPUS] Indikator sudah disembunyikan saat streaming dimulai.
             document.getElementById('stopGeneratingContainer').style.display = 'none';
             currentFetchController = null;
-            // [DIUBAH] Cooldown dipindahkan ke sini agar hanya berjalan jika request berhasil
-            if (userData.count >= CHAT_LIMIT) {
-                const cooldownEndTime = new Date().getTime() + COOLDOWN_MINUTES * 60 * 1000;
-                userData.cooldownUntil = cooldownEndTime;
-                saveChatLimitData({ ...allUserData, [currentUserIP]: userData });
-                setTimeout(() => startCooldown(cooldownEndTime), 1000);
-            }
         }
     }
     
@@ -5621,7 +5435,6 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
         let contentEl, suggestionsEl;
 
         try {
-            let isFirstChunk = true;
             const bubbleElements = addMessage(null, false);
             contentEl = bubbleElements.contentEl;
             suggestionsEl = bubbleElements.suggestionsEl;
@@ -5634,12 +5447,14 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
                 generationConfig: { temperature: 0.9, topK: 32, topP: 1, maxOutputTokens: 2048 }
             };
 
-            const response = await improvedMakeApiRequest(payload, currentFetchController.signal);
+            const response = await makeApiRequest(payload, currentFetchController.signal);
             if (!response.body) throw new Error("Response body is null");
 
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let fullResponseText = "";
+            let sentenceBuffer = "";
+            let isFirstChunk = true;
 
             while (true) {
                 const { value, done } = await reader.read();
@@ -5748,11 +5563,7 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
         const onAudioEnd = () => {
             isSpeaking = false;
             document.getElementById('callVisualizer').style.opacity = '0'; // Sembunyikan visualizer
-            // [FIX] Pastikan audio player di-reset untuk mencegah error di beberapa browser
-            if (geminiTtsAudioPlayer) geminiTtsAudioPlayer.src = '';
-            if (elevenLabsAudioPlayer) elevenLabsAudioPlayer.src = '';
-
-            if (isCallActive) {                
+            if (isCallActive) {
                 // Jeda singkat ini sangat penting untuk Safari agar browser
                 // sempat melepaskan kontrol audio sebelum mencoba merekam.
                 setTimeout(listenForUserSpeech, 150);
@@ -5760,10 +5571,10 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
         };
 
         try {
-            if (settings.audioSource === 'elevenlabs') { // [DIUBAH]
-                await playElevenLabsAudio(text);
-            } else if (settings.audioSource === 'gemini') { // [BARU]
-                await playGeminiTtsAudio(text);
+            if (settings.audioSource === 'elevenlabs') {
+                // Untuk ElevenLabs, event 'onended' sudah ditangani di dalam playElevenLabsAudio
+                // yang akan memanggil resolve() dari promise, yang kemudian memanggil onAudioEnd.
+                await playElevenLabsAudio(text).finally(onAudioEnd);
             } else {
                 // Untuk suara browser, kita gunakan event 'onend' dan 'onerror'.
                 await playBrowserAudio(text).finally(onAudioEnd);
@@ -5771,11 +5582,6 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
         } catch (error) {
             console.error("Error playing AI speech:", error);
             onAudioEnd();
-        } finally {
-            // [FIX] Pastikan onAudioEnd selalu terpanggil
-            if (!isSpeaking) { // Jika audio sudah selesai (misal dari promise)
-                onAudioEnd();
-            }
         }
     }
 
@@ -6007,503 +5813,8 @@ Gunakan persona ini untuk membuat percakapan terasa hidup.`;
     // ▲▲▲ AKHIR DARI BAGIAN FUNGSI PANGGILAN SUARA YANG DIROMBAK TOTAL ▲▲▲
     // ===================================================================================
 
-    // ==========================================
-    // LOGIKA LIVE VISION (VIDEO MODE)
-    // ==========================================
-
-    let videoState = {
-        active: false,
-        stream: null,
-        facingMode: 'user', // 'user' (depan) atau 'environment' (belakang)
-        isProcessing: false
-    };
-
-    // 1. Mulai Mode Video
-    async function startVideoMode() {
-        // Stop audio call biasa jika sedang aktif
-        if (typeof liveCallState !== 'undefined' && liveCallState.isActive) {
-            endCall();
-        }
-
-        const modal = document.getElementById('videoModal');
-        const videoEl = document.getElementById('cameraFeed');
-        
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        videoState.active = true;
-
-        updateVisionStatus("Membuka kamera...");
-        
-        try {
-            const constraints = {
-                video: { facingMode: videoState.facingMode, width: { ideal: 640 }, height: { ideal: 480 } },
-                audio: false // Kita handle audio terpisah lewat SpeechRecognition
-            };
-            
-            const stream = await navigator.mediaDevices.getUserMedia(constraints);
-            videoState.stream = stream;
-            videoEl.srcObject = stream;
-            
-            // Cek facing mode untuk mirror effect
-            const tracks = stream.getVideoTracks();
-            if(tracks.length > 0) {
-                const settings = tracks[0].getSettings();
-                // Update CSS class untuk mirroring
-                if(videoState.facingMode === 'environment') {
-                    videoEl.classList.add('facing-environment');
-                } else {
-                    videoEl.classList.remove('facing-environment');
-                }
-            }
-
-            // Mulai mendengarkan suara user (reuse fungsi call)
-            updateVisionStatus("Silakan bertanya...");
-            startVisionListening();
-
-        } catch (err) {
-            console.error("Camera Error:", err);
-            alert("Gagal membuka kamera. Pastikan izin diberikan.");
-            stopVideoMode();
-        }
-    }
-
-    // 2. Berhenti Mode Video
-    function stopVideoMode() {
-        videoState.active = false;
-        
-        // Matikan Kamera
-        if (videoState.stream) {
-            videoState.stream.getTracks().forEach(track => track.stop());
-            videoState.stream = null;
-        }
-
-        // Matikan Speech Recognition (jika aktif)
-        if (typeof liveCallState !== 'undefined' && liveCallState.recognition) {
-            liveCallState.recognition.stop();
-        }
-        
-        stopReading(); // Stop TTS
-
-        const modal = document.getElementById('videoModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    }
-
-    // 3. Ganti Kamera (Depan/Belakang)
-    function switchCamera() {
-        if (videoState.stream) {
-            videoState.stream.getTracks().forEach(track => track.stop());
-        }
-        videoState.facingMode = videoState.facingMode === 'user' ? 'environment' : 'user';
-        startVideoMode(); // Restart dengan mode baru
-    }
-
-    // 4. Capture Frame (Screenshot)
-    function captureVideoFrame() {
-        const videoEl = document.getElementById('cameraFeed');
-        const canvas = document.getElementById('videoCanvas');
-        const ctx = canvas.getContext('2d');
-
-        // Set ukuran canvas sesuai video
-        canvas.width = videoEl.videoWidth;
-        canvas.height = videoEl.videoHeight;
-
-        // Gambar frame video ke canvas
-        ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-
-        // Convert ke Base64 (JPEG quality 0.7 agar ringan)
-        return canvas.toDataURL('image/jpeg', 0.7);
-    }
-
-    // 5. Logic Mendengarkan Suara (Versi Vision)
-    function startVisionListening() {
-        // Kita reuse SpeechRecognition dari browser
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) return;
-
-        const recognition = new SpeechRecognition();
-        recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
-        recognition.interimResults = true;
-        recognition.continuous = true; // Agar tidak mati sendiri
-
-        // Simpan referensi agar bisa distop
-        if(typeof liveCallState === 'undefined') liveCallState = {}; // Fallback jika kode call belum ada
-        liveCallState.recognition = recognition;
-
-        const transcriptEl = document.getElementById('visionTranscript');
-        const visualizer = document.getElementById('visionVisualizer');
-
-        recognition.onresult = async (event) => {
-            const transcript = Array.from(event.results)
-                .map(result => result[0].transcript)
-                .join('');
-            
-            transcriptEl.textContent = transcript;
-            transcriptEl.classList.remove('hidden');
-
-            // Deteksi jika user selesai bicara (isFinal)
-            if (event.results[event.results.length - 1].isFinal) {
-                const finalQuery = event.results[event.results.length - 1][0].transcript;
-                
-                // Pause listening
-                recognition.stop();
-                
-                // Proses Vision
-                await processVisionInput(finalQuery);
-            }
-        };
-        
-        recognition.onstart = () => {
-             visualizer.classList.remove('idle'); // Visualizer gerak
-        };
-
-        recognition.onend = () => {
-            if (videoState.active && !videoState.isProcessing) {
-                recognition.start(); // Restart jika belum processing
-            } else {
-                visualizer.classList.add('idle');
-            }
-        };
-
-        recognition.start();
-    }
-
-    // 6. Proses Kirim ke API (Gambar + Teks)
-    async function processVisionInput(text) {
-        if (!text.trim()) return;
-        videoState.isProcessing = true;
-        updateVisionStatus("Wayan berpikir...");
-        
-        // 1. Ambil Screenshot saat ini
-        const base64Image = captureVideoFrame();
-        const imageData = base64Image.split(',')[1]; // Hapus header data:image/jpeg;base64
-
-        // 2. Siapkan Payload Gemini (Multimodal)
-        // Gunakan instruksi khusus agar AI tahu dia sedang melihat video feed
-        const visionSystemPrompt = `Kamu sedang melihat video feed langsung dari kamera pengguna. 
-        Jawablah pertanyaan pengguna berdasarkan apa yang kamu lihat di gambar ini. 
-        Jawab dengan singkat, santai, dan seperti teman ngobrol. 
-        Jangan gunakan markdown tebal/miring karena jawaban akan dibacakan suara.
-        ${settings.language === 'en' ? 'Speak English.' : 'Bicara Bahasa Indonesia.'}`;
-
-        try {
-            const payload = {
-                contents: [{
-                    parts: [
-                        { text: text }, // Pertanyaan User
-                        { inline_data: { mime_type: 'image/jpeg', data: imageData } } // Frame Gambar
-                    ]
-                }],
-                systemInstruction: { parts: [{ text: visionSystemPrompt }] },
-                generationConfig: { temperature: 0.7, maxOutputTokens: 150 }
-            };
-
-            // 3. Kirim ke API (Non-streaming agar simpel)
-            const response = await makeApiRequest(payload, null, false);
-            const data = await response.json();
-            
-            let aiResponse = "Maaf, Wayan tidak bisa melihat dengan jelas.";
-            if (data.candidates && data.candidates[0].content) {
-                aiResponse = data.candidates[0].content.parts[0].text;
-            }
-
-            // 4. AI Bicara (TTS)
-            updateVisionStatus("Wayan bicara...");
-            
-            // Reuse fungsi TTS dari kode sebelumnya
-            if (settings.audioSource === 'elevenlabs') {
-                await playElevenLabsAudio(aiResponse);
-            } else {
-                await playBrowserAudio(aiResponse);
-            }
-
-        } catch (e) {
-            console.error("Vision API Error:", e);
-            await playBrowserAudio("Maaf, koneksi video terganggu.");
-        } finally {
-            // Selesai bicara, dengarkan lagi
-            videoState.isProcessing = false;
-            updateVisionStatus("Silakan bertanya...");
-            document.getElementById('visionTranscript').textContent = "";
-            document.getElementById('visionTranscript').classList.add('hidden');
-            
-            // Restart recognition
-            if(videoState.active) startVisionListening();
-        }
-    }
-
-    // Helper Status
-    function updateVisionStatus(text) {
-        document.getElementById('visionStatusText').textContent = text;
-    }
-    // ==========================================
-    // LOGIKA LIVE CALL (MODE PERCAKAPAN SUARA)
-    // ==========================================
-
-    let liveCallState = {
-        isActive: false,
-        isAiSpeaking: false,
-        recognition: null,
-        silenceTimer: null
-    };
-
-    // 1. Memulai Panggilan
-    async function startCall() {
-        if (liveCallState.isActive) return;
-        
-        liveCallState.isActive = true;
-        const modal = document.getElementById('callModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex'); // Gunakan flex agar centering bekerja
-
-        // Reset Status UI
-        updateCallStatus("Menghubungkan...", false);
-        document.getElementById('liveTranscript').textContent = "";
-
-        // Sapaan Awal
-        const greeting = t('callInitialGreeting') || "Halo! Wayan di sini. Mau ngobrolin apa hari ini?";
-        
-        // Simpan ke history chat agar tercatat
-        addToConversationHistory('model', greeting);
-        
-        // AI Bicara duluan
-        await speakInCall(greeting);
-    }
-
-    // 2. Mengakhiri Panggilan
-    function endCall() {
-        liveCallState.isActive = false;
-        
-        // Stop Recognition
-        if (liveCallState.recognition) {
-            liveCallState.recognition.onend = null; // Hapus listener agar tidak restart otomatis
-            liveCallState.recognition.stop();
-            liveCallState.recognition = null;
-        }
-
-        // Stop AI Speaking
-        stopReading(); // Menggunakan fungsi stop TTS yang sudah ada
-
-        // UI Reset
-        const modal = document.getElementById('callModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        
-        // Scroll chat utama ke bawah (karena history bertambah)
-        scrollToBottom();
-    }
-
-    // 3. AI Berbicara (TTS Wrapper untuk Call)
-    async function speakInCall(text) {
-        liveCallState.isAiSpeaking = true;
-        updateCallStatus("Wayan sedang bicara...", true); // True = Visualizer Aktif
-        
-        // Gunakan fungsi TTS yang sudah ada (Browser atau ElevenLabs)
-        // Kita modifikasi sedikit flow-nya:
-        
-        try {
-            if (settings.audioSource === 'elevenlabs') {
-                await playElevenLabsAudio(text);
-            } else {
-                await playBrowserAudio(text);
-            }
-        } catch (e) {
-            console.error("TTS Error in call:", e);
-        } finally {
-            // Setelah AI selesai bicara, langsung dengarkan User
-            if (liveCallState.isActive) {
-                liveCallState.isAiSpeaking = false;
-                listenUserInCall();
-            }
-        }
-    }
-
-    // 4. Mendengarkan Suara User (Speech Recognition)
-    function listenUserInCall() {
-        if (!liveCallState.isActive || liveCallState.isAiSpeaking) return;
-
-        updateCallStatus("Mendengarkan...", false); // False = Visualizer Idle (tapi bisa dibuat aktif jika mendeteksi suara)
-
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            alert("Browser tidak mendukung fitur suara.");
-            endCall();
-            return;
-        }
-
-        const recognition = new SpeechRecognition();
-        recognition.lang = settings.language === 'id' ? 'id-ID' : (settings.language === 'en' ? 'en-US' : 'ja-JP');
-        recognition.interimResults = true;
-        recognition.maxAlternatives = 1;
-
-        liveCallState.recognition = recognition;
-
-        recognition.onresult = (event) => {
-            const transcript = Array.from(event.results)
-                .map(result => result[0].transcript)
-                .join('');
-            
-            document.getElementById('liveTranscript').textContent = transcript;
-
-            // Jika hasil final
-            if (event.results[0].isFinal) {
-                processUserVoiceInput(transcript);
-            }
-        };
-
-        recognition.onend = () => {
-            // Jika recognition mati sendiri tapi AI tidak sedang proses, nyalakan lagi (Continuous listening feeling)
-            // Kecuali kita sudah mendapatkan input final dan sedang memprosesnya
-        };
-        
-        recognition.onerror = (event) => {
-            console.error("Speech Recog Error:", event.error);
-            if (event.error === 'no-speech') {
-                // Restart listening if just silence
-                if(liveCallState.isActive) recognition.start(); 
-            }
-        };
-
-        recognition.start();
-    }
-
-    // 5. Proses Input User & Kirim ke AI
-    async function processUserVoiceInput(userText) {
-        if (!userText.trim()) return;
-
-        // Hentikan recognition sementara AI berpikir
-        if (liveCallState.recognition) {
-            liveCallState.recognition.stop();
-        }
-
-        updateCallStatus("Wayan sedang berpikir...", true); // Visualizer aktif saat loading
-        addToConversationHistory('user', userText); // Simpan chat user
-
-        try {
-            // Gunakan sistem prompt khusus Call agar jawaban pendek
-            const callSystemPrompt = getSystemPrompt(true); // Pastikan fungsi getSystemPrompt mendukung parameter isCall
-            
-            // Siapkan payload seperti sendMessage
-            const fullHistory = getActiveChatHistory() || [];
-            // Ambil 6 percakapan terakhir untuk konteks
-            const historyForApi = fullHistory.map(({ role, parts }) => ({ role, parts })).slice(-6);
-            
-            const payload = {
-                contents: historyForApi,
-                systemInstruction: { parts: [{ text: callSystemPrompt }] },
-                generationConfig: { temperature: 0.9, maxOutputTokens: 150 } // Token sedikit agar jawaban cepat/pendek
-            };
-
-            // Panggil API (gunakan fungsi makeApiRequest yg sudah ada, tapi mode non-streaming biar simpel utk call)
-            const response = await makeApiRequest(payload, null, false); 
-            const data = await response.json();
-            
-            let aiResponse = "Maaf, Wayan tidak mengerti.";
-            if (data.candidates && data.candidates[0].content) {
-                aiResponse = data.candidates[0].content.parts[0].text;
-            }
-            
-            // Bersihkan teks dari markdown symbol agar TTS bacanya enak
-            aiResponse = aiResponse.replace(/[*#`]/g, '');
-
-            // Simpan respon AI
-            addToConversationHistory('model', aiResponse);
-
-            // AI Bicara lagi
-            await speakInCall(aiResponse);
-
-        } catch (error) {
-            console.error("Call Error:", error);
-            await speakInCall("Maaf, ada gangguan sinyal. Bisa ulangi?");
-        }
-    }
-
-    // Helper: Update UI Status & Visualizer
-    function updateCallStatus(text, isActive) {
-        const statusEl = document.getElementById('callStatusText');
-        const visualizer = document.getElementById('callVisualizer');
-        
-        if (statusEl) statusEl.textContent = text;
-        
-        if (visualizer) {
-            if (isActive) {
-                visualizer.classList.remove('idle');
-            } else {
-                visualizer.classList.add('idle');
-            }
-        }
-    }
-
-    // 6. PERBAIKAN MEMORY LEAK DI STORY LISTENERS
-    function cleanupStoryListeners() {
-        // Pastikan unsubscribe dipanggil saat tidak diperlukan
-        if (unsubscribeStories) {
-            unsubscribeStories();
-            unsubscribeStories = null;
-        }
-        
-        if (unsubscribeComments) {
-            unsubscribeComments();
-            unsubscribeComments = null;
-        }
-    }
-
-    // Panggil cleanup saat logout atau destroy
-    function onAppDestroy() {
-        cleanupStoryListeners();
-        
-        // Cleanup audio players
-        if (elevenLabsAudioPlayer) {
-            elevenLabsAudioPlayer.pause();
-            elevenLabsAudioPlayer.src = '';
-        }
-        
-        if (geminiTtsAudioPlayer) {
-            geminiTtsAudioPlayer.pause();
-            geminiTtsAudioPlayer.src = '';
-        }
-        
-        // Stop recognition
-        if (recognition) {
-            recognition.stop();
-            recognition = null;
-        }
-        
-        if (callRecognition) {
-            callRecognition.stop();
-            callRecognition = null;
-        }
-    }
-
-    // 9. PERBAIKAN SAFE AREA UNTUK iOS
-    function fixIOSSafeArea() {
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (isIOS) {
-            document.documentElement.classList.add('ios-device');
-        }
-    }
-
-    // 10. INIT FUNCTION - Panggil semua perbaikan
-    function initWayanAIFixes() {
-        console.log('🔧 Menerapkan perbaikan Wayan AI...');
-        
-        // Setup Firebase persistence dengan benar
-        setupFirebasePersistence();
-        
-        // Fix iOS safe area
-        fixIOSSafeArea();
-        
-        // Override fungsi yang bermasalah
-        window.scrollToBottom = improvedScrollToBottom;
-        
-        // Setup cleanup on page unload
-        window.addEventListener('beforeunload', onAppDestroy);
-        
-        console.log('✅ Perbaikan berhasil diterapkan!');
-    }
 
     window.addEventListener('load', async () => {
-        initWayanAIFixes(); // [FIX] Panggil inisialisasi di sini setelah semua skrip dimuat.
         loadApiKeys();
         loadSettingsData();
         applySettings();
