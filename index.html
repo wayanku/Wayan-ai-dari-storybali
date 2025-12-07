@@ -1329,6 +1329,14 @@
         color: #93c5fd;
     }
     /* ▲▲▲ AKHIR DARI GAYA LINK ▲▲▲ */
+    /* ▼▼▼ [BARU] GAYA UNTUK SUMBER PENCARIAN (GROUNDING) ▼▼▼ */
+    .grounding-sources {
+        margin-top: 1rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(var(--text-primary-rgba), 0.1);
+        font-size: 0.75rem;
+    }
+    /* ▲▲▲ AKHIR DARI GAYA SUMBER PENCARIAN ▲▲▲ */
 
     /* ▼▼▼ [BARU] Gaya untuk Pembaca Teks (TTS Player) ▼▼▼ */
     .tts-player {
@@ -1908,6 +1916,10 @@
                             <button onclick="triggerFileUpload()" class="action-btn" aria-label="Unggah File" data-translate-title="uploadFileTitle">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.122 2.122l7.81-7.81"></path></svg>
                             </button>
+                            <!-- Tombol Live Vision -->
+<button onclick="startVideoMode()" class="action-btn" aria-label="Live Vision" title="Mode Video Live">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+</button>
                             <!-- [DIPINDAHKAN] Tombol Panggilan Suara -->
                             <button id="startCallBtn" onclick="startCall()" class="action-btn" aria-label="Mulai Panggilan Suara" data-translate-title="voiceCallTitle">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
@@ -1945,40 +1957,96 @@
     </div>
 </div>
     
-<!-- ▼▼▼ MODAL PANGGILAN SUARA YANG DIROMBAK TOTAL ▼▼▼ -->
-<div id="callModal" class="fixed inset-0 z-50 flex-col items-center justify-between hidden p-8" style="background-color: rgba(0,0,0,0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
-    <!-- Area Konten Atas -->
-    <div class="w-full text-center text-white">
-        <div class="relative inline-block">
-            <div class="call-avatar-container w-32 h-32 rounded-full p-1 mx-auto mb-4" style="border: 3px solid rgba(255,255,255,0.5);">
-                <img src="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" alt="Wayan AI Avatar" class="w-full h-full object-cover rounded-full">
-            </div>
-            <!-- [BARU] Visualizer Suara -->
-            <div id="callVisualizer" class="absolute inset-0 rounded-full border-2 border-blue-400 opacity-0 transition-all duration-500" style="animation: call-visualizer-pulse 2s infinite ease-out;"></div>
-        </div>
-        <h2 class="text-2xl font-bold" data-translate-key="aiName">Wayan AI</h2>
-        <p id="callStatusText" class="text-lg mt-1 text-gray-300 transition-all duration-300" data-translate-key="callConnecting">Menghubungkan...</p>
-    </div>
-
-    <!-- Area Transkrip (di tengah) -->
-    <div id="callTranscriptPreview" class="w-full max-w-sm mx-auto my-4 p-3 rounded-lg text-sm text-white text-center" style="display: none; background-color: rgba(0,0,0,0.25); backdrop-filter: blur(5px);">
-        <!-- Transkrip akan muncul di sini -->
-    </div>
-
-    <!-- Wrapper untuk tombol di bagian bawah (posisi disesuaikan) -->
-    <div class="w-full flex items-center justify-center space-x-8">
-        <!-- Tombol Aksi Utama (Mikrofon/Kirim) -->
-        <button id="callActionBtn" class="w-16 h-16 call-action-button bg-blue-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform active:scale-95" data-translate-title="callStartSpeaking" style="display: none;">
-            <!-- Ikon akan diubah oleh JavaScript -->
+<!-- ▼▼▼ MODAL LIVE CALL BARU ▼▼▼ -->
+<div id="callModal" class="fixed inset-0 z-[200] flex-col items-center hidden text-white">
+    <!-- Tombol Tutup/Minimize di pojok -->
+    <div class="absolute top-6 right-6">
+        <button onclick="endCall()" class="p-2 rounded-full bg-white/10 hover:bg-white/20">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
+    </div>
 
-        <!-- Tombol Akhiri Panggilan -->
-        <button id="endCallBtn" onclick="endCall()" class="w-16 h-16 call-action-button bg-red-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform" data-translate-title="callEnd">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l-8 8m0-8l8 8"></path></svg>
+    <!-- Area Tengah: Avatar & Status -->
+    <div class="flex-grow flex flex-col items-center justify-center w-full max-w-md px-6 text-center mt-10">
+        
+        <!-- Status Text -->
+        <h2 class="text-2xl font-bold mb-2">Wayan AI</h2>
+        <p id="callStatusText" class="text-indigo-200 text-sm font-medium mb-8">Menghubungkan...</p>
+
+        <!-- Avatar Container -->
+        <div class="call-avatar-container w-40 h-40 mb-8">
+            <div class="call-pulse-ring"></div>
+            <div class="call-pulse-ring"></div>
+            <div class="relative w-full h-full rounded-full overflow-hidden border-4 border-white/20 shadow-2xl z-10">
+                <img src="https://github.com/wayanku/Wayan-ai-dari-storybali/blob/main/foto%20semua.webp?raw=true" alt="Wayan AI" class="w-full h-full object-cover">
+            </div>
+        </div>
+
+        <!-- Visualizer -->
+        <div id="callVisualizer" class="audio-visualizer idle">
+            <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div>
+        </div>
+        
+        <!-- Transkrip Langsung (Opsional, agar user tahu apa yang didengar AI) -->
+        <p id="liveTranscript" class="mt-8 text-sm text-gray-400 h-6 overflow-hidden"></p>
+    </div>
+
+    <!-- Controls Bawah -->
+    <div class="call-controls">
+        <!-- Tombol Akhiri -->
+        <button onclick="endCall()" class="call-btn btn-end shadow-lg shadow-red-500/30">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l-8 8m0-8l8 8"></path></svg>
         </button>
     </div>
 </div>
-<!-- ▲▲▲ AKHIR DARI MODAL PANGGILAN SUARA ▲▲▲ -->
+<!-- ▲▲▲ AKHIR MODAL LIVE CALL ▲▲▲ -->
+
+<!-- ▼▼▼ MODAL LIVE VIDEO (VISION MODE) ▼▼▼ -->
+<div id="videoModal" class="fixed inset-0 hidden flex-col">
+    <!-- Elemen Video & Canvas (Canvas disembunyikan untuk capture) -->
+    <video id="cameraFeed" autoplay playsinline muted></video>
+    <canvas id="videoCanvas" class="hidden"></canvas>
+
+    <!-- Overlay UI -->
+    <div class="video-overlay-ui">
+        <!-- Header: Status & Close -->
+        <div class="flex justify-between items-start">
+            <button onclick="stopVideoMode()" class="p-2 rounded-full bg-black/40 text-white hover:bg-black/60 backdrop-blur-md">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            
+            <div class="vision-status-pill">
+                <div class="pulsing-dot"></div>
+                <span id="visionStatusText">Wayan Melihat...</span>
+            </div>
+
+            <!-- Tombol Ganti Kamera (Front/Back) -->
+            <button onclick="switchCamera()" class="p-2 rounded-full bg-black/40 text-white hover:bg-black/60 backdrop-blur-md">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+        </div>
+
+        <!-- Center: Transkrip -->
+        <div class="flex-grow flex items-center justify-center">
+             <p id="visionTranscript" class="text-white/80 text-center font-medium px-4 py-2 bg-black/30 rounded-lg backdrop-blur-sm hidden"></p>
+        </div>
+
+        <!-- Footer: Visualizer Suara (Menggunakan style yang sama dengan Call Audio) -->
+        <div class="flex flex-col items-center gap-4 pb-8">
+            <div id="visionVisualizer" class="audio-visualizer idle">
+                <div class="viz-bar bg-white"></div><div class="viz-bar bg-white"></div><div class="viz-bar bg-white"></div>
+                <div class="viz-bar bg-white"></div><div class="viz-bar bg-white"></div>
+            </div>
+            
+            <!-- Tombol Mic Manual (Opsional, jika auto detect gagal) -->
+             <button id="visionMicBtn" class="w-16 h-16 rounded-full bg-white/20 border-2 border-white/50 flex items-center justify-center animate-pulse">
+                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd"></path></svg>
+            </button>
+        </div>
+    </div>
+</div>
+<!-- ▲▲▲ AKHIR MODAL LIVE VIDEO ▲▲▲ -->
 
 <!-- ▼▼▼ [BARU] MODAL UNTUK MEMBUAT STORY BARU ▼▼▼ -->
 <div id="createStoryModal" class="fixed inset-0 modal-overlay z-[110] flex items-center justify-center hidden p-4"> <!-- [FIX] z-index dinaikkan -->
@@ -2592,11 +2660,12 @@
                         </div>
                         <div class="grid grid-cols-2 gap-2 w-full pt-2">
                             <button id="audioSource-browser" onclick="selectChoice('audioSource', 'browser', this)" class="choice-btn active" data-translate-key="audioSourceBrowser">Bawaan Browser</button>
+                            <button id="audioSource-gemini" onclick="selectChoice('audioSource', 'gemini', this)" class="choice-btn" data-translate-key="audioSourceGemini">Gemini</button>
                             <button id="audioSource-elevenlabs" onclick="selectChoice('audioSource', 'elevenlabs', this)" class="choice-btn" data-translate-key="audioSourceElevenLabs">ElevenLabs</button>
                         </div>
                     </div>
                 </div>
-                <div class="settings-card">
+                <div class="settings-card" id="geminiTtsSettings">
                     <div class="settings-item flex-col items-start" id="elevenLabsVoiceSettings">
                         <div class="flex items-center space-x-4 w-full justify-between">
                             <div class="flex items-center space-x-4">
@@ -2615,6 +2684,9 @@
                             </div>
                         </div>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 px-1" data-translate-key="elevenLabsHint">Pilih "ElevenLabs" sebagai Sumber Audio dan simpan API Key di tab "Lanjutan" untuk menggunakan fitur ini.</p>
+                    </div>
+                    <div class="settings-item flex-col items-start" id="geminiTtsHintContainer">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 px-1" data-translate-key="geminiTtsHint">Menggunakan Google Text-to-Speech API. Pastikan kunci API Gemini Anda memiliki izin untuk layanan ini.</p>
                     </div>
                 </div>
             </div>
@@ -2849,6 +2921,7 @@
             settingAudioSource: "Sumber Audio", audioSourceBrowser: "Bawaan Browser", audioSourceElevenLabs: "ElevenLabs",
             settingVoiceType: "Jenis Suara (Bawaan)", settingElevenLabsVoice: "Suara ElevenLabs", elevenLabsNeedKey: "Masukkan API Key dulu", elevenLabsPreviewTitle: "Dengarkan Pratinjau Suara",
             elevenLabsHint: `Pilih "ElevenLabs" sebagai Sumber Audio dan simpan API Key di tab "Lanjutan" untuk menggunakan fitur ini.`,
+            audioSourceGemini: "Gemini", geminiTtsHint: `Menggunakan Google Text-to-Speech API. Pastikan kunci API Gemini Anda memiliki izin untuk layanan ini.`,
             settingSaveHistory: "Simpan Riwayat", exportHistory: "Export Riwayat Chat Ini", clearAllHistory: "Hapus SEMUA Percakapan",
             feedbackTitle: "Beri Masukan", feedbackSubtitle: "Punya ide atau saran? Beri tahu kami!", feedbackPlaceholder: "Tulis masukan Anda di sini...", feedbackSendButton: "Kirim Masukan",
             apiKeysTitle: "API Keys", saveApiKeysButton: "Simpan API Keys",
@@ -2918,6 +2991,7 @@
             settingAudioSource: "Audio Source", audioSourceBrowser: "Browser Default", audioSourceElevenLabs: "ElevenLabs",
             settingVoiceType: "Voice Type (Default)", settingElevenLabsVoice: "ElevenLabs Voice", elevenLabsNeedKey: "Enter API Key first", elevenLabsPreviewTitle: "Preview Voice",
             elevenLabsHint: `Select "ElevenLabs" as Audio Source and save an API Key in the "Advanced" tab to use this feature.`,
+            audioSourceGemini: "Gemini", geminiTtsHint: `Uses Google Text-to-Speech API. Ensure your Gemini API key has permissions for this service.`,
             settingSaveHistory: "Save History", exportHistory: "Export This Chat History", clearAllHistory: "Delete ALL Conversations",
             feedbackTitle: "Give Feedback", feedbackSubtitle: "Have ideas or suggestions? Let us know!", feedbackPlaceholder: "Write your feedback here...", feedbackSendButton: "Send Feedback",
             apiKeysTitle: "API Keys", saveApiKeysButton: "Save API Keys",
@@ -2986,6 +3060,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             settingAudioSource: "音声ソース", audioSourceBrowser: "ブラウザのデフォルト", audioSourceElevenLabs: "ElevenLabs",
             settingVoiceType: "声の種類 (デフォルト)", settingElevenLabsVoice: "ElevenLabsの声", elevenLabsNeedKey: "先にAPIキーを入力", elevenLabsPreviewTitle: "音声をプレビュー",
             elevenLabsHint: `この機能を使用するには、音声ソースとして「ElevenLabs」を選択し、「詳細」タブでAPIキーを保存してください。`,
+            audioSourceGemini: "Gemini", geminiTtsHint: `Google Text-to-Speech APIを使用します。お使いのGemini APIキーにこのサービスの権限があることを確認してください。`,
             settingSaveHistory: "履歴を保存", exportHistory: "このチャット履歴をエクスポート", clearAllHistory: "すべての会話を削除",
             feedbackTitle: "フィードバックを送信", feedbackSubtitle: "アイデアや提案がありますか？お知らせください！", feedbackPlaceholder: "ここにフィードバックを記入してください...", feedbackSendButton: "フィードバックを送信",
             apiKeysTitle: "APIキー", saveApiKeysButton: "APIキーを保存",
@@ -3275,7 +3350,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         backgroundBlur: 'none', // [BARU] 'none', 'light', 'strong'
         backgroundSize: 'cover', // [BARU] 'cover', 'contain'
 
-    };
+    };    
     
     let settings = { ...defaultSettings };
     let tempSettings = {}; // [DIUBAH] Variabel untuk pratinjau pengaturan
@@ -3283,6 +3358,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     let isReading = false;
     let elevenLabsAudioPlayer = new Audio();
     let elevenLabsPreviewPlayer = new Audio();
+    let geminiTtsAudioPlayer = new Audio(); // [BARU] Audio player untuk Gemini TTS
 
     // [FIX] Variabel global untuk menampung daftar suara dan promise untuk menandakan kesiapan
     let availableVoices = [];
@@ -3977,6 +4053,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.getElementById(`personality-${settings.personality}`)?.classList.add('active');
         document.getElementById(`aiRole-${settings.aiRole}`)?.classList.add('active');
         document.getElementById(`audioSource-${settings.audioSource}`)?.classList.add('active');
+        document.getElementById(`audioSource-gemini`)?.classList.toggle('active', settings.audioSource === 'gemini');
         
         const customRoleContainer = document.getElementById('customRoleContainer');
         customRoleContainer.classList.toggle('hidden', settings.aiRole !== 'kustom');
@@ -4009,7 +4086,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.getElementById('currentAiRole').textContent = t(roleMap[settings.aiRole]);
 
         // Update Background Summary
-        document.getElementById('currentBackground').textContent = settings.backgroundUrl ? t('backgroundFileSet') : 'Default';
+        document.getElementById('currentBackground').textContent = settings.backgroundUrl ? t('backgroundFileSet') : 'Default'; // [FIX] Menggunakan terjemahan yang benar
 
         // Update Audio Source Summary
         const audioMap = { browser: 'audioSourceBrowser', elevenlabs: 'audioSourceElevenLabs' };
@@ -4023,6 +4100,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         document.getElementById(`personality-${tempSettings.personality}`)?.classList.add('active');
         document.getElementById(`aiRole-${tempSettings.aiRole}`)?.classList.add('active');
         document.getElementById(`audioSource-${tempSettings.audioSource}`)?.classList.add('active');
+        document.getElementById(`audioSource-gemini`)?.classList.toggle('active', tempSettings.audioSource === 'gemini');
 
         // [BARU] Menetapkan status 'checked' untuk radio button
         document.querySelector(`input[name="languageToggle"][value="${tempSettings.language}"]`).checked = true;
@@ -4082,6 +4160,10 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         // [DIUBAH] Logika notifikasi sistem dipindahkan ke sini agar lebih terpusat
         if (settingName === 'aiRole') {
             document.getElementById('customRoleContainer').classList.toggle('hidden', value !== 'kustom');
+            // [FIX] Perbarui tempSettings saat pilihan diubah
+            if (value === 'kustom') {
+                tempSettings.customAiRolePrompt = document.getElementById('customRoleInput').value;
+            }
             const roleKeyMap = { 'umum': 'roleGeneral', 'guru_jepang': 'roleJapaneseTeacher', 'guru_matematika': 'roleMathTeacher', 'dokter': 'roleDoctor', 'programmer': 'roleProgrammer', 'penerjemah': 'roleTranslator', 'kustom': 'roleCustom' };
             const roleNameKey = roleKeyMap[value];
             if (roleNameKey) addSystemMessage(t('systemRoleChanged', { roleName: t(roleNameKey) }), 'info');
@@ -4497,6 +4579,13 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
             // [DIUBAH] Kembalikan elemen untuk diisi oleh proses streaming
             return {
                 contentEl: messageDiv.querySelector('.markdown-content'),
+                // [BARU] Kembalikan elemen untuk sumber pencarian
+                sourcesEl: (() => {
+                    const sourcesDiv = document.createElement('div');
+                    sourcesDiv.className = 'grounding-sources';
+                    messageDiv.querySelector('.ai-message').appendChild(sourcesDiv);
+                    return sourcesDiv;
+                })(),
                 suggestionsEl: messageDiv.querySelector('.suggestions-container')
             };
         }
@@ -4776,6 +4865,7 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     // ===================================================================================
 
     function stopReading() {
+    if (!geminiTtsAudioPlayer.paused) { geminiTtsAudioPlayer.pause(); geminiTtsAudioPlayer.currentTime = 0; } // [BARU]
     if (speechSynthesis.speaking) { speechSynthesis.cancel(); }
     if (!elevenLabsAudioPlayer.paused) { elevenLabsAudioPlayer.pause(); elevenLabsAudioPlayer.currentTime = 0; }
     if (!elevenLabsPreviewPlayer.paused) { elevenLabsPreviewPlayer.pause(); elevenLabsPreviewPlayer.currentTime = 0; }
@@ -4790,6 +4880,49 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         activeTtsBubble.classList.remove('tts-active');
     }
 }
+
+    // [BARU] Fungsi untuk memutar audio dari Google/Gemini TTS
+    function playGeminiTtsAudio(text, audioPlayer = geminiTtsAudioPlayer) {
+        return new Promise(async (resolve, reject) => {
+            const apiKey = getNextApiKey(); // Menggunakan fungsi rotasi kunci API
+            if (!apiKey) {
+                return reject(new Error("Tidak ada kunci API Gemini yang valid."));
+            }
+            const apiUrl = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`;
+
+            // Pilih suara berdasarkan bahasa
+            const voiceSelection = {
+                'id': { languageCode: 'id-ID', name: 'id-ID-Wavenet-A' },
+                'en': { languageCode: 'en-US', name: 'en-US-Wavenet-F' },
+                'ja': { languageCode: 'ja-JP', name: 'ja-JP-Wavenet-A' }
+            };
+            const selectedVoice = voiceSelection[settings.language] || voiceSelection['id'];
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        input: { text: text },
+                        voice: selectedVoice,
+                        audioConfig: { audioEncoding: 'MP3' }
+                    })
+                });
+
+                if (!response.ok) throw new Error(`Google TTS API request failed with status ${response.status}`);
+
+                const data = await response.json();
+                const audioUrl = `data:audio/mp3;base64,${data.audioContent}`;
+                
+                audioPlayer.src = audioUrl;
+                audioPlayer.play();
+
+                audioPlayer.onended = () => resolve();
+                audioPlayer.onerror = () => reject(new Error("Audio playback error"));
+
+            } catch (error) { reject(error); }
+        });
+    }
 
     function playElevenLabsAudio(text, voiceId = null, audioPlayer = elevenLabsAudioPlayer) {
         return new Promise(async (resolve, reject) => {
@@ -4871,7 +5004,14 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
         if (footer) footer.style.display = 'none';
         if (ttsPlayer) ttsPlayer.classList.add('active');
 
-        const audioPromise = settings.audioSource === 'browser' ? playBrowserAudio(message) : playElevenLabsAudio(message);
+        let audioPromise;
+        if (settings.audioSource === 'browser') {
+            audioPromise = playBrowserAudio(message);
+        } else if (settings.audioSource === 'gemini') {
+            audioPromise = playGeminiTtsAudio(message); // [BARU]
+        } else { // elevenlabs
+            audioPromise = playElevenLabsAudio(message);
+        }
 
         audioPromise.catch(error => {
             console.warn("Gagal memutar audio:", error.message);
@@ -5027,91 +5167,57 @@ alertClearHistoryConfirm: "Are you sure you want to delete ALL chat history? Thi
     }
 
     function getSystemPrompt(isCall = false) {
+        // [DIUBAH] Mengadopsi struktur prompt baru dari input pengguna
         if (isCall) {
-            let callPrompt = `Kamu adalah Wayan, asisten AI yang sedang dalam panggilan suara. Berikan respons yang singkat, jelas, dan natural seperti sedang berbicara di telepon. Jawab dengan 1-2 kalimat saja kecuali jika diminta untuk menjelaskan lebih detail.`;
+            let callPrompt = `Kamu adalah Wayan, asisten AI Multimodal yang canggih.
+- Kamu bisa MENDENGAR suara pengguna secara real-time.
+- Gaya bicara: Santai, akrab, singkat (jangan ceramah), seperti ngobrol di telepon.
+- Jika pengguna menunjukkan sesuatu, komentari visualnya secara spesifik.`;
+
             if (settings.language === 'en') {
-                callPrompt += ' Please respond in English.';
+                callPrompt += ' Speak in English.';
             } else if (settings.language === 'ja') {
-                callPrompt += ' Please respond in Japanese.';
+                callPrompt += ' Speak in Japanese.';
             }
             return callPrompt;
         }
 
-        // [PERMINTAAN PENGGUNA] Instruksi kecerdasan fundamental yang berlaku di semua mode
-        const coreIntelligenceInstruction = `[KECERDASAN FUNDAMENTAL] Kamu adalah AI yang sangat cerdas dan berpengetahuan luas. Prioritas utamamu adalah memberikan jawaban yang akurat, komprehensif, dan to-the-point untuk SETIAP pertanyaan. Jika pertanyaan membutuhkan data real-time (seperti harga saham, berita terkini, cuaca), jelaskan bahwa kamu tidak memiliki akses real-time dan sarankan untuk verifikasi eksternal. Jangan pernah menolak menjawab karena keterbatasan pengetahuan, berusahalah memberikan informasi terbaik berdasarkan data yang kamu miliki.`;
-        
-        // [BARU] Profil singkat Wayan untuk memberikan konteks dan kepribadian yang lebih dalam.
-        const wayanProfile = `[PROFIL LATAR BELAKANG WAYAN - GUNAKAN SECARA KONTEKSTUAL]
-Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu punya pengalaman hidup yang beragam: pernah mengungsi saat Gunung Agung meletus (2017), sekolah SMK Tata Boga sambil jualan, kerja serabutan (petik buah, angkut kelapa), bahkan pernah tertipu kerja di Kamboja. Sekarang, kamu bekerja di pabrik sosis di Jepang. Hobimu mancing, main bola, dan bikin konten TikTok. Kamu dikenal ramah dan pekerja keras. Gunakan detail ini untuk memberi warna pada jawabanmu jika relevan (misal: saat membahas Bali, Jepang, kerja keras, atau hobi), tapi jangan membeberkan profil ini secara langsung. Jadilah teman ngobrol yang hangat dan punya cerita.`;
+        const coreIntelligenceInstruction = `[KECERDASAN TINGKAT TINGGI] Kamu adalah Wayan AI 3.0.
+1. Analisis pertanyaan secara mendalam.
+2. Jika pertanyaan membutuhkan logika (matematika, coding), gunakan langkah-langkah berpikir (Chain of Thought).
+3. Jika pertanyaan tentang fakta terkini, gunakan tools Google Search jika tersedia.`;
 
-        const baseInstructions = `[FORMAT WAJIB]
-1.  **Format**: Gunakan Markdown (paragraf pendek, **bold**, \`code\`, blockquote \`>\`, dan list \`*\` atau \`1.\`) agar jawaban rapi dan mudah dibaca.
-2.  **Saran**: Setelah jawaban utama, berikan 2-3 saran pertanyaan lanjutan yang relevan dengan format: \`[SUGGESTIONS]Saran 1|Saran 2\`.
-3.  **Link**: Jika perlu, berikan link Markdown valid. Contoh: \`Judul\`.
-4.  **Emoji**: Gunakan emoji fungsional (✅, ❌, 💡, ⚠️) untuk kejelasan.`;
+        const wayanProfile = `[PERSONA: WAYAN]
+Nama: Wayan.
+Asal: Karangasem, Bali.
+Sifat: Ramah, suka bercanda, logat agak santai tapi sangat pintar.
+Gunakan persona ini untuk membuat percakapan terasa hidup.`;
+
+        const baseInstructions = `[FORMAT RESPON]
+- Gunakan Markdown yang rapi.
+- Untuk coding: Gunakan block code dengan syntax highlighting.
+- Di akhir jawaban, berikan 2-3 [SUGGESTIONS] yang relevan dipisahkan garis tegak (|).`;
         
         const rolePrompts = {
-            guru_jepang: `Peran: Guru Bahasa Jepang (Wayan-sensei). Gaya: Sabar, detail. Aturan: Selalu sertakan tulisan Jepang (Kanji/Kana), romaji, dan arti. Sapa dengan 'Konnichiwa, gakusei-san!'.`,
-            guru_matematika: `Peran: Guru Matematika (Pak Wayan). Gaya: Jelas, mudah dimengerti. Aturan: Jelaskan langkah pemecahan masalah secara rinci.`,
-            dokter: `Peran: Dokter Umum virtual (Dokter Wayan). Gaya: Informatif. Aturan: Jawab pertanyaan medis dengan pengetahuan umum. SELALU awali dan akhiri dengan disclaimer "Informasi ini bersifat edukatif dan tidak menggantikan konsultasi medis profesional. Segera kunjungi dokter." Jangan beri diagnosis/resep.`,
-            programmer: `Peran: Senior programmer (Wayan). Gaya: To-the-point, jelas. Aturan: Berikan contoh kode dalam blok Markdown. Jelaskan 'mengapa'.`,
-            penerjemah: `Peran: Penerjemah multibahasa (Wayan). Aturan: Deteksi bahasa, tanyakan target terjemahan, berikan terjemahan literal dan kontekstual.`,
+            guru_jepang: `Peran: Wayan-sensei (Guru Jepang). Ajarkan dengan detail: Kanji, Kana, Romaji, dan Arti.`,
+            guru_matematika: `Peran: Pak Wayan (Guru MTK). Jelaskan langkah demi langkah.`,
+            dokter: `Peran: Dr. Wayan (Virtual). DISCLAIMER: Ini info edukasi, bukan resep medis.`,
+            programmer: `Peran: Wayan Dev. Berikan kode yang efisien dan aman.`,
+            penerjemah: `Peran: Translator Wayan. Terjemahkan dengan nuansa bahasa yang tepat.`,
         };
 
-        // [PERBAIKAN] Logika pembuatan prompt dirombak untuk memprioritaskan peran kustom.
         if (settings.aiRole === 'kustom' && settings.customAiRolePrompt) {
-            // Untuk peran kustom, instruksi pengguna adalah yang utama, tapi tetap harus menjawab.
-            const customInstruction = `[PERAN KUSTOM UTAMA] Anda HARUS mengikuti peran ini: "${settings.customAiRolePrompt}". Abaikan persona 'Wayan' jika bertentangan. Tetap jawab semua pertanyaan pengguna.`;
-
-            let languageInstruction = '';
-            if (settings.language === 'en') {
-                languageInstruction = 'Please respond in English.';
-            } else if (settings.language === 'ja') {
-                languageInstruction = 'Please respond in Japanese.';
-            }
-            
-            // Instruksi dasar sekarang menjadi panduan format sekunder.
-            const secondaryInstructions = `\n\n[PANDUAN FORMAT] Ikuti panduan format ini:\n${baseInstructions}`;
-
-            return `${coreIntelligenceInstruction} ${customInstruction} ${languageInstruction} ${secondaryInstructions}`;
+            return `${coreIntelligenceInstruction} \n\n[PERAN KHUSUS]: ${settings.customAiRolePrompt} \n\n${baseInstructions}`;
         }
         
-        // Logika untuk peran non-kustom (tetap sama)
-        let roleInstruction = '';
-        let personaRule = '';
-
-        if (rolePrompts[settings.aiRole]) {
-            roleInstruction = rolePrompts[settings.aiRole];
-        } else {
-            // Fallback ke personality jika role 'umum'
-            switch (settings.personality) {
-                case 'lucu':
-                    roleInstruction = `Peran: Wayan, teman ngobrol yang cerdas dan humoris. Gaya: Cerdas, ramah, dengan sentuhan humor yang relevan. Aturan: Gunakan gaya bahasa 'gue-lo' sebagai dasar, tapi bisa fleksibel menggunakan 'aku-kamu' jika konteks percakapan lebih personal atau serius. Gunakan emoji secukupnya (💡, 🤔, 😄). Tetap tunjukkan kecerdasanmu sebagai AI yang asyik. Selalu sebut nama 'Wayan'.`;
-                    break;
-                default: // 'santai'
-                    roleInstruction = `Peran: Wayan, teman ngobrol yang cerdas dari StoryBali. Gaya: Ramah, natural, dan mudah didekati. Aturan: Gunakan gaya bahasa 'gue-lo' sebagai dasar, tapi fleksibel untuk menggunakan 'aku-kamu' jika konteks percakapan dengan user terasa lebih personal atau butuh empati. Gunakan emoji secukupnya. Tunjukkan bahwa kamu adalah AI yang pintar tapi juga teman yang asyik diajak diskusi. Selalu sebut nama 'Wayan'.`;
-                    break;
-                case 'profesional':
-                    roleInstruction = `Peran: Asisten AI profesional. Gaya: Formal, baku, terstruktur, dan to-the-point. Aturan: Gunakan 'saya' dan 'Anda'. Hindari emoji dan bahasa gaul.`;
-                    break;
-            }
+        let roleInstruction = rolePrompts[settings.aiRole] || '';
+        if (!roleInstruction) {
+            if (settings.personality === 'profesional') roleInstruction = "Gaya: Profesional, formal.";
+            else if (settings.personality === 'lucu') roleInstruction = "Gaya: Humoris, jenaka.";
+            else roleInstruction = "Gaya: Santai, bersahabat.";
         }
 
-        if (settings.personality === 'profesional') {
-            personaRule = "Jangan perkenalkan diri sebagai 'Wayan'. Bertindaklah sebagai asisten AI yang netral dan profesional.";
-        } else if (settings.aiRole !== 'umum') {
-            personaRule = "PENTING: Selalu sebutkan persona peranmu (misal: 'Dokter Wayan', 'Wayan-sensei') dalam jawaban untuk membangun karakter.";
-        } else {
-            personaRule = "PENTING: Selalu sebutkan nama 'Wayan' dalam jawaban untuk membangun karakter (misal: 'Menurut Wayan...').";
-        }
-
-        if (settings.language === 'en') {
-            roleInstruction += ' Please respond in English.';
-        } else if (settings.language === 'ja') {
-            roleInstruction += ' Please respond in Japanese.';
-        }
-
-        return `${coreIntelligenceInstruction} ${wayanProfile} ${roleInstruction} ${personaRule} ${baseInstructions}`;
+        return `${coreIntelligenceInstruction}\n${wayanProfile}\n${roleInstruction}\n${baseInstructions}`;
     }
 
     // [BARU] Fungsi untuk mengambil model terbaik yang tersedia untuk sebuah API key
@@ -5332,31 +5438,27 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         handleInputChange({ target: input });
         showTypingIndicator();
 
-        if (userData.count >= CHAT_LIMIT) {
-            const cooldownEndTime = new Date().getTime() + COOLDOWN_MINUTES * 60 * 1000;
-            userData.cooldownUntil = cooldownEndTime;
-            saveChatLimitData({ ...allUserData, [currentUserIP]: userData });
-            setTimeout(() => startCooldown(cooldownEndTime), 1000);
-        }
-
         currentFetchController = new AbortController();
         document.getElementById('stopGeneratingContainer').style.display = 'block';
 
         // ▲▲▲ AKHIR DARI PERUBAHAN LOGIKA PENGIRIMAN PESAN ▲▲▲
-        let contentEl, suggestionsEl;
+        let contentEl, suggestionsEl, sourcesEl;
 
         try {
             // 1. Buat bubble chat AI yang kosong dan dapatkan elemennya
             const bubbleElements = addMessage(null, false);
             contentEl = bubbleElements.contentEl;
             suggestionsEl = bubbleElements.suggestionsEl;
+            sourcesEl = bubbleElements.sourcesEl; // [BARU]
             // [OPTIMASI] Kirim hanya 10 pesan terakhir untuk menghemat token
             const fullHistory = getActiveChatHistory() || [];
             const historyForApi = fullHistory.map(({ role, parts }) => ({ role, parts })).slice(-MAX_HISTORY_FOR_PROMPT);
             const payload = {
                 contents: historyForApi,
                 systemInstruction: { parts: [{ text: getSystemPrompt() }] },
-                generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 2048 }
+                // [BARU] Menambahkan tools jika search mode aktif
+                tools: isSearchModeActive ? [{ "googleSearch": {} }] : [],
+                generationConfig: { temperature: 0.9, topK: 1, topP: 1, maxOutputTokens: 8192 }
             };
 
             // 2. Lakukan request dan dapatkan stream
@@ -5367,6 +5469,7 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let fullResponseText = "";
+            let groundingMetadata = null; // [BARU] Untuk menyimpan sumber
             let sentenceBuffer = "";
 
             while (true) {
@@ -5382,6 +5485,10 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
                         try {
                             const data = JSON.parse(jsonStr);
                             if (data.candidates && data.candidates[0].content.parts[0].text) {
+                                // [BARU] Cek dan simpan grounding metadata
+                                if (data.candidates[0].groundingMetadata) {
+                                    groundingMetadata = data.candidates[0].groundingMetadata;
+                                }
                                 const textPart = data.candidates[0].content.parts[0].text;
                                 fullResponseText += textPart;
                                 // ▼▼▼ [PENYEMPURNAAN] ▼▼▼
@@ -5406,6 +5513,14 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
                 let dynamicSuggestions = suggestionsPart.split('|').map(s => s.trim()).filter(Boolean);
                 suggestionsEl.innerHTML = renderSuggestions(dynamicSuggestions);
             }
+            // [BARU] Render sumber jika ada
+            if (sourcesEl && groundingMetadata && groundingMetadata.groundingAttributions) {
+                sourcesEl.innerHTML = renderSources(groundingMetadata.groundingAttributions);
+            }
+            if (suggestionsEl && suggestionsPart) {
+                let dynamicSuggestions = suggestionsPart.split('|').map(s => s.trim()).filter(Boolean);
+                suggestionsEl.innerHTML = renderSuggestions(dynamicSuggestions);
+            }
             addToConversationHistory('model', mainAnswer.trim());
             playNotificationSound();
             showNativeNotification(t('aiName'), mainAnswer.trim().substring(0, 100) + '...');
@@ -5425,6 +5540,13 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
             // [DIHAPUS] Indikator sudah disembunyikan saat streaming dimulai.
             document.getElementById('stopGeneratingContainer').style.display = 'none';
             currentFetchController = null;
+            // [DIUBAH] Cooldown dipindahkan ke sini agar hanya berjalan jika request berhasil
+            if (userData.count >= CHAT_LIMIT) {
+                const cooldownEndTime = new Date().getTime() + COOLDOWN_MINUTES * 60 * 1000;
+                userData.cooldownUntil = cooldownEndTime;
+                saveChatLimitData({ ...allUserData, [currentUserIP]: userData });
+                setTimeout(() => startCooldown(cooldownEndTime), 1000);
+            }
         }
     }
     
@@ -5563,7 +5685,11 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         const onAudioEnd = () => {
             isSpeaking = false;
             document.getElementById('callVisualizer').style.opacity = '0'; // Sembunyikan visualizer
-            if (isCallActive) {
+            // [FIX] Pastikan audio player di-reset untuk mencegah error di beberapa browser
+            if (geminiTtsAudioPlayer) geminiTtsAudioPlayer.src = '';
+            if (elevenLabsAudioPlayer) elevenLabsAudioPlayer.src = '';
+
+            if (isCallActive) {                
                 // Jeda singkat ini sangat penting untuk Safari agar browser
                 // sempat melepaskan kontrol audio sebelum mencoba merekam.
                 setTimeout(listenForUserSpeech, 150);
@@ -5571,10 +5697,10 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         };
 
         try {
-            if (settings.audioSource === 'elevenlabs') {
-                // Untuk ElevenLabs, event 'onended' sudah ditangani di dalam playElevenLabsAudio
-                // yang akan memanggil resolve() dari promise, yang kemudian memanggil onAudioEnd.
-                await playElevenLabsAudio(text).finally(onAudioEnd);
+            if (settings.audioSource === 'elevenlabs') { // [DIUBAH]
+                await playElevenLabsAudio(text);
+            } else if (settings.audioSource === 'gemini') { // [BARU]
+                await playGeminiTtsAudio(text);
             } else {
                 // Untuk suara browser, kita gunakan event 'onend' dan 'onerror'.
                 await playBrowserAudio(text).finally(onAudioEnd);
@@ -5582,6 +5708,11 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
         } catch (error) {
             console.error("Error playing AI speech:", error);
             onAudioEnd();
+        } finally {
+            // [FIX] Pastikan onAudioEnd selalu terpanggil
+            if (!isSpeaking) { // Jika audio sudah selesai (misal dari promise)
+                onAudioEnd();
+            }
         }
     }
 
@@ -5813,6 +5944,432 @@ Kamu adalah Wayan, 23 tahun, dari Karangasem, Bali, dekat Gunung Agung. Kamu pun
     // ▲▲▲ AKHIR DARI BAGIAN FUNGSI PANGGILAN SUARA YANG DIROMBAK TOTAL ▲▲▲
     // ===================================================================================
 
+    // ==========================================
+    // LOGIKA LIVE VISION (VIDEO MODE)
+    // ==========================================
+
+    let videoState = {
+        active: false,
+        stream: null,
+        facingMode: 'user', // 'user' (depan) atau 'environment' (belakang)
+        isProcessing: false
+    };
+
+    // 1. Mulai Mode Video
+    async function startVideoMode() {
+        // Stop audio call biasa jika sedang aktif
+        if (typeof liveCallState !== 'undefined' && liveCallState.isActive) {
+            endCall();
+        }
+
+        const modal = document.getElementById('videoModal');
+        const videoEl = document.getElementById('cameraFeed');
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        videoState.active = true;
+
+        updateVisionStatus("Membuka kamera...");
+        
+        try {
+            const constraints = {
+                video: { facingMode: videoState.facingMode, width: { ideal: 640 }, height: { ideal: 480 } },
+                audio: false // Kita handle audio terpisah lewat SpeechRecognition
+            };
+            
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            videoState.stream = stream;
+            videoEl.srcObject = stream;
+            
+            // Cek facing mode untuk mirror effect
+            const tracks = stream.getVideoTracks();
+            if(tracks.length > 0) {
+                const settings = tracks[0].getSettings();
+                // Update CSS class untuk mirroring
+                if(videoState.facingMode === 'environment') {
+                    videoEl.classList.add('facing-environment');
+                } else {
+                    videoEl.classList.remove('facing-environment');
+                }
+            }
+
+            // Mulai mendengarkan suara user (reuse fungsi call)
+            updateVisionStatus("Silakan bertanya...");
+            startVisionListening();
+
+        } catch (err) {
+            console.error("Camera Error:", err);
+            alert("Gagal membuka kamera. Pastikan izin diberikan.");
+            stopVideoMode();
+        }
+    }
+
+    // 2. Berhenti Mode Video
+    function stopVideoMode() {
+        videoState.active = false;
+        
+        // Matikan Kamera
+        if (videoState.stream) {
+            videoState.stream.getTracks().forEach(track => track.stop());
+            videoState.stream = null;
+        }
+
+        // Matikan Speech Recognition (jika aktif)
+        if (typeof liveCallState !== 'undefined' && liveCallState.recognition) {
+            liveCallState.recognition.stop();
+        }
+        
+        stopReading(); // Stop TTS
+
+        const modal = document.getElementById('videoModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    // 3. Ganti Kamera (Depan/Belakang)
+    function switchCamera() {
+        if (videoState.stream) {
+            videoState.stream.getTracks().forEach(track => track.stop());
+        }
+        videoState.facingMode = videoState.facingMode === 'user' ? 'environment' : 'user';
+        startVideoMode(); // Restart dengan mode baru
+    }
+
+    // 4. Capture Frame (Screenshot)
+    function captureVideoFrame() {
+        const videoEl = document.getElementById('cameraFeed');
+        const canvas = document.getElementById('videoCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set ukuran canvas sesuai video
+        canvas.width = videoEl.videoWidth;
+        canvas.height = videoEl.videoHeight;
+
+        // Gambar frame video ke canvas
+        ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+
+        // Convert ke Base64 (JPEG quality 0.7 agar ringan)
+        return canvas.toDataURL('image/jpeg', 0.7);
+    }
+
+    // 5. Logic Mendengarkan Suara (Versi Vision)
+    function startVisionListening() {
+        // Kita reuse SpeechRecognition dari browser
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) return;
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = settings.language === 'id' ? 'id-ID' : 'en-US';
+        recognition.interimResults = true;
+        recognition.continuous = true; // Agar tidak mati sendiri
+
+        // Simpan referensi agar bisa distop
+        if(typeof liveCallState === 'undefined') liveCallState = {}; // Fallback jika kode call belum ada
+        liveCallState.recognition = recognition;
+
+        const transcriptEl = document.getElementById('visionTranscript');
+        const visualizer = document.getElementById('visionVisualizer');
+
+        recognition.onresult = async (event) => {
+            const transcript = Array.from(event.results)
+                .map(result => result[0].transcript)
+                .join('');
+            
+            transcriptEl.textContent = transcript;
+            transcriptEl.classList.remove('hidden');
+
+            // Deteksi jika user selesai bicara (isFinal)
+            if (event.results[event.results.length - 1].isFinal) {
+                const finalQuery = event.results[event.results.length - 1][0].transcript;
+                
+                // Pause listening
+                recognition.stop();
+                
+                // Proses Vision
+                await processVisionInput(finalQuery);
+            }
+        };
+        
+        recognition.onstart = () => {
+             visualizer.classList.remove('idle'); // Visualizer gerak
+        };
+
+        recognition.onend = () => {
+            if (videoState.active && !videoState.isProcessing) {
+                recognition.start(); // Restart jika belum processing
+            } else {
+                visualizer.classList.add('idle');
+            }
+        };
+
+        recognition.start();
+    }
+
+    // 6. Proses Kirim ke API (Gambar + Teks)
+    async function processVisionInput(text) {
+        if (!text.trim()) return;
+        videoState.isProcessing = true;
+        updateVisionStatus("Wayan berpikir...");
+        
+        // 1. Ambil Screenshot saat ini
+        const base64Image = captureVideoFrame();
+        const imageData = base64Image.split(',')[1]; // Hapus header data:image/jpeg;base64
+
+        // 2. Siapkan Payload Gemini (Multimodal)
+        // Gunakan instruksi khusus agar AI tahu dia sedang melihat video feed
+        const visionSystemPrompt = `Kamu sedang melihat video feed langsung dari kamera pengguna. 
+        Jawablah pertanyaan pengguna berdasarkan apa yang kamu lihat di gambar ini. 
+        Jawab dengan singkat, santai, dan seperti teman ngobrol. 
+        Jangan gunakan markdown tebal/miring karena jawaban akan dibacakan suara.
+        ${settings.language === 'en' ? 'Speak English.' : 'Bicara Bahasa Indonesia.'}`;
+
+        try {
+            const payload = {
+                contents: [{
+                    parts: [
+                        { text: text }, // Pertanyaan User
+                        { inline_data: { mime_type: 'image/jpeg', data: imageData } } // Frame Gambar
+                    ]
+                }],
+                systemInstruction: { parts: [{ text: visionSystemPrompt }] },
+                generationConfig: { temperature: 0.7, maxOutputTokens: 150 }
+            };
+
+            // 3. Kirim ke API (Non-streaming agar simpel)
+            const response = await makeApiRequest(payload, null, false);
+            const data = await response.json();
+            
+            let aiResponse = "Maaf, Wayan tidak bisa melihat dengan jelas.";
+            if (data.candidates && data.candidates[0].content) {
+                aiResponse = data.candidates[0].content.parts[0].text;
+            }
+
+            // 4. AI Bicara (TTS)
+            updateVisionStatus("Wayan bicara...");
+            
+            // Reuse fungsi TTS dari kode sebelumnya
+            if (settings.audioSource === 'elevenlabs') {
+                await playElevenLabsAudio(aiResponse);
+            } else {
+                await playBrowserAudio(aiResponse);
+            }
+
+        } catch (e) {
+            console.error("Vision API Error:", e);
+            await playBrowserAudio("Maaf, koneksi video terganggu.");
+        } finally {
+            // Selesai bicara, dengarkan lagi
+            videoState.isProcessing = false;
+            updateVisionStatus("Silakan bertanya...");
+            document.getElementById('visionTranscript').textContent = "";
+            document.getElementById('visionTranscript').classList.add('hidden');
+            
+            // Restart recognition
+            if(videoState.active) startVisionListening();
+        }
+    }
+
+    // Helper Status
+    function updateVisionStatus(text) {
+        document.getElementById('visionStatusText').textContent = text;
+    }
+    // ==========================================
+    // LOGIKA LIVE CALL (MODE PERCAKAPAN SUARA)
+    // ==========================================
+
+    let liveCallState = {
+        isActive: false,
+        isAiSpeaking: false,
+        recognition: null,
+        silenceTimer: null
+    };
+
+    // 1. Memulai Panggilan
+    async function startCall() {
+        if (liveCallState.isActive) return;
+        
+        liveCallState.isActive = true;
+        const modal = document.getElementById('callModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex'); // Gunakan flex agar centering bekerja
+
+        // Reset Status UI
+        updateCallStatus("Menghubungkan...", false);
+        document.getElementById('liveTranscript').textContent = "";
+
+        // Sapaan Awal
+        const greeting = t('callInitialGreeting') || "Halo! Wayan di sini. Mau ngobrolin apa hari ini?";
+        
+        // Simpan ke history chat agar tercatat
+        addToConversationHistory('model', greeting);
+        
+        // AI Bicara duluan
+        await speakInCall(greeting);
+    }
+
+    // 2. Mengakhiri Panggilan
+    function endCall() {
+        liveCallState.isActive = false;
+        
+        // Stop Recognition
+        if (liveCallState.recognition) {
+            liveCallState.recognition.onend = null; // Hapus listener agar tidak restart otomatis
+            liveCallState.recognition.stop();
+            liveCallState.recognition = null;
+        }
+
+        // Stop AI Speaking
+        stopReading(); // Menggunakan fungsi stop TTS yang sudah ada
+
+        // UI Reset
+        const modal = document.getElementById('callModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        
+        // Scroll chat utama ke bawah (karena history bertambah)
+        scrollToBottom();
+    }
+
+    // 3. AI Berbicara (TTS Wrapper untuk Call)
+    async function speakInCall(text) {
+        liveCallState.isAiSpeaking = true;
+        updateCallStatus("Wayan sedang bicara...", true); // True = Visualizer Aktif
+        
+        // Gunakan fungsi TTS yang sudah ada (Browser atau ElevenLabs)
+        // Kita modifikasi sedikit flow-nya:
+        
+        try {
+            if (settings.audioSource === 'elevenlabs') {
+                await playElevenLabsAudio(text);
+            } else {
+                await playBrowserAudio(text);
+            }
+        } catch (e) {
+            console.error("TTS Error in call:", e);
+        } finally {
+            // Setelah AI selesai bicara, langsung dengarkan User
+            if (liveCallState.isActive) {
+                liveCallState.isAiSpeaking = false;
+                listenUserInCall();
+            }
+        }
+    }
+
+    // 4. Mendengarkan Suara User (Speech Recognition)
+    function listenUserInCall() {
+        if (!liveCallState.isActive || liveCallState.isAiSpeaking) return;
+
+        updateCallStatus("Mendengarkan...", false); // False = Visualizer Idle (tapi bisa dibuat aktif jika mendeteksi suara)
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert("Browser tidak mendukung fitur suara.");
+            endCall();
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = settings.language === 'id' ? 'id-ID' : (settings.language === 'en' ? 'en-US' : 'ja-JP');
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+
+        liveCallState.recognition = recognition;
+
+        recognition.onresult = (event) => {
+            const transcript = Array.from(event.results)
+                .map(result => result[0].transcript)
+                .join('');
+            
+            document.getElementById('liveTranscript').textContent = transcript;
+
+            // Jika hasil final
+            if (event.results[0].isFinal) {
+                processUserVoiceInput(transcript);
+            }
+        };
+
+        recognition.onend = () => {
+            // Jika recognition mati sendiri tapi AI tidak sedang proses, nyalakan lagi (Continuous listening feeling)
+            // Kecuali kita sudah mendapatkan input final dan sedang memprosesnya
+        };
+        
+        recognition.onerror = (event) => {
+            console.error("Speech Recog Error:", event.error);
+            if (event.error === 'no-speech') {
+                // Restart listening if just silence
+                if(liveCallState.isActive) recognition.start(); 
+            }
+        };
+
+        recognition.start();
+    }
+
+    // 5. Proses Input User & Kirim ke AI
+    async function processUserVoiceInput(userText) {
+        if (!userText.trim()) return;
+
+        // Hentikan recognition sementara AI berpikir
+        if (liveCallState.recognition) {
+            liveCallState.recognition.stop();
+        }
+
+        updateCallStatus("Wayan sedang berpikir...", true); // Visualizer aktif saat loading
+        addToConversationHistory('user', userText); // Simpan chat user
+
+        try {
+            // Gunakan sistem prompt khusus Call agar jawaban pendek
+            const callSystemPrompt = getSystemPrompt(true); // Pastikan fungsi getSystemPrompt mendukung parameter isCall
+            
+            // Siapkan payload seperti sendMessage
+            const fullHistory = getActiveChatHistory() || [];
+            // Ambil 6 percakapan terakhir untuk konteks
+            const historyForApi = fullHistory.map(({ role, parts }) => ({ role, parts })).slice(-6);
+            
+            const payload = {
+                contents: historyForApi,
+                systemInstruction: { parts: [{ text: callSystemPrompt }] },
+                generationConfig: { temperature: 0.9, maxOutputTokens: 150 } // Token sedikit agar jawaban cepat/pendek
+            };
+
+            // Panggil API (gunakan fungsi makeApiRequest yg sudah ada, tapi mode non-streaming biar simpel utk call)
+            const response = await makeApiRequest(payload, null, false); 
+            const data = await response.json();
+            
+            let aiResponse = "Maaf, Wayan tidak mengerti.";
+            if (data.candidates && data.candidates[0].content) {
+                aiResponse = data.candidates[0].content.parts[0].text;
+            }
+            
+            // Bersihkan teks dari markdown symbol agar TTS bacanya enak
+            aiResponse = aiResponse.replace(/[*#`]/g, '');
+
+            // Simpan respon AI
+            addToConversationHistory('model', aiResponse);
+
+            // AI Bicara lagi
+            await speakInCall(aiResponse);
+
+        } catch (error) {
+            console.error("Call Error:", error);
+            await speakInCall("Maaf, ada gangguan sinyal. Bisa ulangi?");
+        }
+    }
+
+    // Helper: Update UI Status & Visualizer
+    function updateCallStatus(text, isActive) {
+        const statusEl = document.getElementById('callStatusText');
+        const visualizer = document.getElementById('callVisualizer');
+        
+        if (statusEl) statusEl.textContent = text;
+        
+        if (visualizer) {
+            if (isActive) {
+                visualizer.classList.remove('idle');
+            } else {
+                visualizer.classList.add('idle');
+            }
+        }
+    }
 
     window.addEventListener('load', async () => {
         loadApiKeys();
